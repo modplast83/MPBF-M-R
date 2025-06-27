@@ -102,10 +102,11 @@ function App() {
       <AuthProvider>
         {(authContext) => (
           <PermissionsProvider user={authContext.user}>
-            <Switch>
-              <Route path="/auth" component={AuthPage} />
-              <Route path="*">
-                <MainLayout>
+            <div>
+              <Switch>
+                <Route path="/auth" component={AuthPage} />
+                <Route path="*">
+                  <MainLayout>
                     <Switch>
                     <ProtectedRoute path="/" component={Dashboard} />
                     <ProtectedRoute path="/setup" component={SetupIndex} module="Setup" />
@@ -195,9 +196,10 @@ function App() {
                   </MainLayout>
                 </Route>
               </Switch>
+            </div>
             </PermissionsProvider>
           )}
-        </AuthProvider>
+      </AuthProvider>
     </ErrorBoundary>
   );
 }
