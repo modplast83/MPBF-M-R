@@ -1,6 +1,7 @@
 import { Express, Request, Response } from 'express';
 import { requireAuth } from './auth-utils';
 import { storage } from './storage';
+import { mobileStorage } from './mobile-storage';
 
 export function setupMobileRoutes(app: Express) {
   // Get production metrics for mobile dashboard
@@ -239,6 +240,143 @@ export function setupMobileRoutes(app: Express) {
     } catch (error) {
       console.error('Error fetching quality checks:', error);
       res.status(500).json({ error: 'Failed to fetch quality checks' });
+    }
+  });
+
+  // Mobile device management routes
+  
+  // Get all mobile devices
+  app.get('/api/mobile/devices', requireAuth, async (req: Request, res: Response) => {
+    try {
+      const devices = await mobileStorage.getMobileDevices();
+      res.json(devices);
+    } catch (error) {
+      console.error('Error fetching mobile devices:', error);
+      res.status(500).json({ error: 'Failed to fetch mobile devices' });
+    }
+  });
+
+  // Register a new mobile device
+  app.post('/api/mobile/devices/register', requireAuth, async (req: Request, res: Response) => {
+    try {
+      const { id, deviceName, deviceType, deviceModel, appVersion, osVersion } = req.body;
+      
+      if (!deviceName || !deviceType) {
+        return res.status(400).json({ error: 'Device name and type are required' });
+      }
+
+      const newDevice = await mobileStorage.registerMobileDevice({
+        id: id || `device_${Date.now()}`,
+        userId: req.user?.id || 'unknown',
+        deviceName,
+        deviceType,
+        deviceModel: deviceModel || null,
+        appVersion: appVersion || '1.0.0',
+        osVersion: osVersion || null,
+        pushToken: null,
+        isActive: true,
+        lastActive: new Date(),
+        registeredAt: new Date()
+      });
+
+      res.json(newDevice);
+    } catch (error) {
+      console.error('Error registering mobile device:', error);
+      res.status(500).json({ error: 'Failed to register mobile device' });
+    }
+  });
+
+  // Update device activity
+  app.patch('/api/mobile/devices/:id/activity', requireAuth, async (req: Request, res: Response) => {
+    try {
+      const { id } = req.params;
+      const updatedDevice = await mobileStorage.updateDeviceActivity(id);
+      
+      if (!updatedDevice) {
+        return res.status(404).json({ error: 'Device not found' });
+      }
+
+      res.json(updatedDevice);
+    } catch (error) {
+      console.error('Error updating device activity:', error);
+      res.status(500).json({ error: 'Failed to update device activity' });
+    }
+  });
+
+  // Deactivate a mobile device
+  app.patch('/api/mobile/devices/:id/deactivate', requireAuth, async (req: Request, res: Response) => {
+    try {
+      const { id } = req.params;
+      const updatedDevice = await mobileStorage.deactivateMobileDevice(id);
+      
+      if (!updatedDevice) {
+        return res.status(404).json({ error: 'Device not found' });
+      }
+
+      res.json(updatedDevice);
+    } catch (error) {
+      console.error('Error deactivating mobile device:', error);
+      res.status(500).json({ error: 'Failed to deactivate mobile device' });
+    }
+  });
+
+  // Delete a mobile device
+  app.delete('/api/mobile/devices/:id', requireAuth, async (req: Request, res: Response) => {
+    try {
+      const { id } = req.params;
+      await mobileStorage.deleteMobileDevice(id);
+      res.json({ success: true, message: 'Device deleted successfully' });
+    } catch (error) {
+      console.error('Error deleting mobile device:', error);
+      res.status(500).json({ error: 'Failed to delete mobile device' });
+    }
+  });
+
+  // Mobile task management routes
+  
+  // Get mobile tasks
+  app.get('/api/mobile/tasks', requireAuth, async (req: Request, res: Response) => {
+    try {
+      const tasks = await mobileStorage.getOperatorTasks();
+      res.json(tasks);
+    } catch (error) {
+      console.error('Error fetching mobile tasks:', error);
+      res.status(500).json({ error: 'Failed to fetch mobile tasks' });
+    }
+  });
+
+  // Get pending mobile tasks
+  app.get('/api/mobile/tasks/pending', requireAuth, async (req: Request, res: Response) => {
+    try {
+      const userId = req.user?.id || 'unknown';
+      const tasks = await mobileStorage.getPendingOperatorTasks(userId);
+      res.json(tasks);
+    } catch (error) {
+      console.error('Error fetching pending mobile tasks:', error);
+      res.status(500).json({ error: 'Failed to fetch pending mobile tasks' });
+    }
+  });
+
+  // Get mobile updates
+  app.get('/api/mobile/updates', requireAuth, async (req: Request, res: Response) => {
+    try {
+      const updates = await mobileStorage.getOperatorUpdates();
+      res.json(updates);
+    } catch (error) {
+      console.error('Error fetching mobile updates:', error);
+      res.status(500).json({ error: 'Failed to fetch mobile updates' });
+    }
+  });
+
+  // Get mobile stats
+  app.get('/api/mobile/stats', requireAuth, async (req: Request, res: Response) => {
+    try {
+      const userId = req.user?.id || 'unknown';
+      const stats = await mobileStorage.getOperatorTaskStats(userId);
+      res.json(stats);
+    } catch (error) {
+      console.error('Error fetching mobile stats:', error);
+      res.status(500).json({ error: 'Failed to fetch mobile stats' });
     }
   });
 }
