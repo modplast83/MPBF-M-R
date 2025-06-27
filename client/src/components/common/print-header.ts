@@ -1,7 +1,7 @@
 // Standardized print header for all printed documents
 export const generatePrintHeader = () => {
   const companyLogo = `
-    <img src="/attached_assets/FactoryLogoHPNGWiqons_1750997252532.png" 
+    <img src="/assets/FactoryLogoHPNGWiqons_1750997252532.png" 
          alt="Modern Plastic Bag Factory Logo" 
          style="width: 80px; height: 80px; object-fit: contain;" />
   `;

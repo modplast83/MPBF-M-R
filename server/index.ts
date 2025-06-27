@@ -10,7 +10,7 @@ const app = express();
 app.set('trust proxy', 1);
 
 // Serve static assets
-app.use('/attached_assets', express.static(path.resolve(import.meta.dirname, '..', 'attached_assets')));
+app.use('/assets', express.static(path.resolve(import.meta.dirname, '..', 'attached_assets')));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

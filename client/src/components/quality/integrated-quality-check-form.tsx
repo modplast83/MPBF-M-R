@@ -364,6 +364,301 @@ export function IntegratedQualityChecksManagement() {
     setShowViewDialog(true);
   };
 
+  // Handle print
+  const handlePrint = (check: QualityCheck) => {
+    const checkType = checkTypes.find(ct => ct.id === check.checkTypeId);
+    const roll = Array.isArray(rolls) ? rolls.find((r: any) => r.id === check.rollId) : null;
+    const jobOrder = Array.isArray(jobOrders) ? jobOrders.find((jo: any) => jo.id === check.jobOrderId) : null;
+    const order = jobOrder && Array.isArray(orders) ? orders.find((o: any) => o.id === jobOrder.orderId) : null;
+    const customer = order && Array.isArray(customers) ? customers.find((c: any) => c.id === order.customerId) : null;
+    const customerProduct = jobOrder && Array.isArray(customerProducts) ? customerProducts.find((cp: any) => cp.id === jobOrder.customerProductId) : null;
+    const item = customerProduct && Array.isArray(items) ? items.find((i: any) => i.id === customerProduct.itemId) : null;
+    const user = Array.isArray(users) ? users.find((u: any) => u.id === check.performedBy) : null;
+
+    // Create a new window for printing
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) {
+      toast({
+        title: "Print Error",
+        description: "Unable to open print window. Please check your browser settings.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Create checklist items section
+    const checklistSection = check.checklistResults && check.checklistResults.length > 0 ? `
+      <div class="section">
+        <h3 class="section-title">Checklist Results</h3>
+        <div class="checklist-grid">
+          ${check.checklistResults.map(item => `
+            <div class="checklist-item">
+              <span class="checkmark">✓</span>
+              <span>${item}</span>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    ` : '';
+
+    // Create parameter values section
+    const parametersSection = check.parameterValues && check.parameterValues.length > 0 ? `
+      <div class="section">
+        <h3 class="section-title">Parameter Values</h3>
+        <div class="parameters-list">
+          ${check.parameterValues.map(param => `
+            <div class="parameter-item">${param}</div>
+          `).join('')}
+        </div>
+      </div>
+    ` : '';
+
+    // Create the print document HTML
+    const printContent = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Quality Check #${check.id} - Modern Plastic Bag Factory</title>
+        <style>
+          body { font-family: Arial, sans-serif; margin: 20px; color: #333; }
+          .print-header { 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            margin-bottom: 30px; 
+            padding-bottom: 20px; 
+            border-bottom: 3px solid #065f46; 
+          }
+          .company-logo { 
+            width: 80px; 
+            height: 80px; 
+            object-fit: contain; 
+          }
+          .company-info { 
+            text-align: center; 
+            flex: 1; 
+          }
+          .company-name-en { 
+            font-size: 24px; 
+            font-weight: bold; 
+            color: #065f46; 
+            margin: 0; 
+          }
+          .company-name-ar { 
+            font-size: 18px; 
+            color: #059669; 
+            margin: 5px 0 0 0; 
+            font-family: 'Arial', sans-serif; 
+          }
+          .report-title { 
+            font-size: 20px; 
+            color: #065f46; 
+            margin: 15px 0 0 0; 
+            font-weight: bold; 
+          }
+          .info-box {
+            border: 2px solid #059669;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #f0fdf4, #ecfdf5);
+          }
+          .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+          }
+          .info-item {
+            display: flex;
+            flex-direction: column;
+          }
+          .info-label {
+            font-weight: bold;
+            color: #065f46;
+            margin-bottom: 5px;
+            font-size: 14px;
+          }
+          .info-value {
+            color: #374151;
+            font-size: 16px;
+          }
+          .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+          }
+          .status-passed { background: #d1fae5; color: #065f46; }
+          .status-failed { background: #fee2e2; color: #dc2626; }
+          .status-pending { background: #f3f4f6; color: #6b7280; }
+          .section {
+            margin-bottom: 25px;
+          }
+          .section-title {
+            color: #065f46;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #d1d5db;
+          }
+          .checklist-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 10px;
+          }
+          .checklist-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 12px;
+            background: #f9fafb;
+            border-radius: 6px;
+            border-left: 3px solid #059669;
+          }
+          .checkmark {
+            color: #059669;
+            font-weight: bold;
+            margin-right: 10px;
+            font-size: 16px;
+          }
+          .parameters-list {
+            display: grid;
+            gap: 8px;
+          }
+          .parameter-item {
+            padding: 10px 15px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-family: monospace;
+          }
+          .notes-section {
+            background: #fffbeb;
+            border: 1px solid #fbbf24;
+            border-radius: 8px;
+            padding: 15px;
+          }
+          @media print {
+            button { display: none; }
+            .print-header { page-break-inside: avoid; }
+          }
+          .print-footer {
+            margin-top: 40px;
+            text-align: center;
+            padding-top: 20px;
+            border-top: 2px solid #065f46;
+            font-size: 12px;
+            color: #6b7280;
+          }
+          .print-button {
+            background: #059669;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            font-weight: bold;
+          }
+          .print-button:hover {
+            background: #065f46;
+          }
+        </style>
+      </head>
+      <body>
+        <button class="print-button" onclick="window.print(); window.close();">Print Quality Check</button>
+        
+        <div class="print-header">
+          <img src="/attached_assets/company-logo.png" alt="Company Logo" class="company-logo" />
+          <div class="company-info">
+            <h1 class="company-name-en">Modern Plastic Bag Factory</h1>
+            <h2 class="company-name-ar">مصنع أكياس البلاستيك الحديث</h2>
+            <h3 class="report-title">Quality Check Report #${check.id}</h3>
+          </div>
+          <div style="width: 80px;"></div>
+        </div>
+        
+        <div class="info-box">
+          <div class="info-grid">
+            <div class="info-item">
+              <div class="info-label">Check Type:</div>
+              <div class="info-value">${checkType?.name || 'Unknown'}</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">Target Stage:</div>
+              <div class="info-value">${checkType?.targetStage || 'N/A'}</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">Status:</div>
+              <div class="info-value">
+                <span class="status-badge status-${check.status}">${check.status.toUpperCase()}</span>
+              </div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">Performed By:</div>
+              <div class="info-value">${user ? `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.username : check.performedBy}</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">Check Date:</div>
+              <div class="info-value">${format(new Date(check.timestamp), "MMM dd, yyyy HH:mm")}</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">Roll ID:</div>
+              <div class="info-value">${check.rollId ? `${check.rollId} (${roll?.serialNumber || 'N/A'})` : 'N/A'}</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">Job Order:</div>
+              <div class="info-value">${check.jobOrderId ? `JO-${check.jobOrderId}` : 'N/A'}</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">Customer:</div>
+              <div class="info-value">${customer?.name || 'N/A'}</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">Product:</div>
+              <div class="info-value">${item?.name || 'N/A'}</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">Issue Severity:</div>
+              <div class="info-value">${check.issueSeverity || 'N/A'}</div>
+            </div>
+          </div>
+        </div>
+        
+        ${checklistSection}
+        ${parametersSection}
+        
+        ${check.notes ? `
+        <div class="section">
+          <h3 class="section-title">Notes</h3>
+          <div class="notes-section">
+            ${check.notes}
+          </div>
+        </div>
+        ` : ''}
+        
+        <div class="print-footer">
+          <p><strong>Modern Plastic Bag Factory</strong> | مصنع أكياس البلاستيك الحديث</p>
+          <p>Generated on ${new Date().toLocaleString()}</p>
+          <p>Quality Check Report #${check.id} - Status: ${check.status.toUpperCase()}</p>
+        </div>
+      </body>
+      </html>
+    `;
+    
+    // Write to the print window and trigger print
+    printWindow.document.open();
+    printWindow.document.write(printContent);
+    printWindow.document.close();
+    
+    toast({
+      title: "Print Ready",
+      description: "Quality check print view has been prepared.",
+    });
+  };
+
   // Get helper functions
   const getCheckTypeName = (checkTypeId: string) => {
     const checkType = checkTypes.find(ct => ct.id === checkTypeId);
@@ -788,6 +1083,9 @@ export function IntegratedQualityChecksManagement() {
                           <div className="flex items-center justify-end gap-2">
                             <Button variant="ghost" size="sm" onClick={() => handleView(check)}>
                               <Eye className="w-4 h-4" />
+                            </Button>
+                            <Button variant="ghost" size="sm" onClick={() => handlePrint(check)}>
+                              <Printer className="w-4 h-4" />
                             </Button>
                             <Button variant="ghost" size="sm" onClick={() => handleEdit(check)}>
                               <Edit className="w-4 h-4" />

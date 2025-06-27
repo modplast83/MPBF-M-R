@@ -103,16 +103,24 @@ This is a comprehensive production management system built with React, TypeScrip
 - Health check endpoints for monitoring
 
 ## Recent Changes
+- June 27, 2025: Added print functionality to Quality Checks page action column:
+  - Added comprehensive print function (handlePrint) with standardized company header
+  - Created professional Quality Check print reports with company logo and branding
+  - Included complete check details: type, status, performer, dates, roll info, job order details
+  - Added checklist results and parameter values sections to print output
+  - Applied consistent green color scheme (#065f46, #059669) matching other reports
+  - Added print button with Printer icon to Quality Checks table actions column
+  - Print reports include bilingual company name and professional footer
 - June 27, 2025: Fixed order printing to include standardized header and company logo:
   - Updated handlePrintOrder function in order-details.tsx with professional print header
-  - Added company logo (/attached_assets/company-logo.png) to order reports
+  - Added company logo (/assets/company-logo.png) to order reports
   - Applied consistent green color scheme (#065f46, #059669) and bilingual company name
   - Enhanced order information box with gradient background and improved styling
   - Updated print footer with Modern Plastic Bag Factory branding
   - Order reports now match the standardized format used across all other print functions
 - June 27, 2025: Fixed JO Mix print function to include standardized header and company logo:
   - Updated handlePrintMix function in jo-mix.tsx with professional print header
-  - Added company logo (/attached_assets/company-logo.png) to JO Mix reports
+  - Added company logo (/assets/company-logo.png) to JO Mix reports
   - Applied consistent green color scheme and bilingual company name formatting
   - Enhanced print footer with Modern Plastic Bag Factory branding
   - JO Mix reports now match the standardized format used across all other print functions

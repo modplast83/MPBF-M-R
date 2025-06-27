@@ -22,7 +22,7 @@
     "paths": {
       "@/*": ["./client/src/*"],
       "@shared/*": ["./shared/*"],
-      "@assets/*": ["./attached_assets/*"],
+      "@assets/*": ["./assets/*"],
       "@lib/*": ["./client/src/lib/*"],
       "@components/*": ["./client/src/components/*"],
       "@pages/*": ["./client/src/pages/*"],
