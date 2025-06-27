@@ -243,24 +243,90 @@ export default function JoMixPage() {
         <head>
           <title>JO Mix Report - ${mix.mixNumber}</title>
           <style>
-            body { font-family: Arial, sans-serif; margin: 20px; }
-            .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #333; padding-bottom: 20px; }
+            body { font-family: Arial, sans-serif; margin: 20px; color: #333; }
+            .print-header { 
+              display: flex; 
+              align-items: center; 
+              justify-content: space-between; 
+              margin-bottom: 30px; 
+              padding-bottom: 20px; 
+              border-bottom: 3px solid #065f46; 
+            }
+            .company-logo { 
+              width: 80px; 
+              height: 80px; 
+              object-fit: contain; 
+            }
+            .company-info { 
+              text-align: center; 
+              flex: 1; 
+            }
+            .company-name-en { 
+              font-size: 24px; 
+              font-weight: bold; 
+              color: #065f46; 
+              margin: 0; 
+            }
+            .company-name-ar { 
+              font-size: 18px; 
+              color: #059669; 
+              margin: 5px 0 0 0; 
+              font-family: 'Arial', sans-serif; 
+            }
+            .report-title { 
+              font-size: 20px; 
+              color: #065f46; 
+              margin: 15px 0 0 0; 
+              font-weight: bold; 
+            }
             .section { margin-bottom: 25px; }
-            .section h3 { background-color: #f5f5f5; padding: 10px; margin: 0 0 15px 0; }
+            .section h3 { 
+              background: linear-gradient(135deg, #065f46, #059669); 
+              color: white; 
+              padding: 12px; 
+              margin: 0 0 15px 0; 
+              border-radius: 5px; 
+              font-size: 16px; 
+            }
             table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-            th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-            th { background-color: #f2f2f2; font-weight: bold; }
+            th, td { border: 1px solid #d1d5db; padding: 10px; text-align: left; }
+            th { 
+              background: linear-gradient(135deg, #f0fdf4, #ecfdf5); 
+              font-weight: bold; 
+              color: #065f46; 
+            }
+            tr:nth-child(even) { background-color: #f9fafb; }
             .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-            .info-item { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #eee; }
-            .info-label { font-weight: bold; }
-            .footer { margin-top: 40px; text-align: center; font-size: 12px; color: #666; }
-            @media print { body { margin: 0; } }
+            .info-item { 
+              display: flex; 
+              justify-content: space-between; 
+              padding: 8px 0; 
+              border-bottom: 1px solid #e5e7eb; 
+            }
+            .info-label { font-weight: bold; color: #065f46; }
+            .footer { 
+              margin-top: 40px; 
+              text-align: center; 
+              padding-top: 20px; 
+              border-top: 2px solid #065f46; 
+              font-size: 12px; 
+              color: #6b7280; 
+            }
+            @media print { 
+              body { margin: 0; } 
+              .print-header { page-break-inside: avoid; }
+            }
           </style>
         </head>
         <body>
-          <div class="header">
-            <h1>JO Mix Production Report</h1>
-            <h2>Mix Number: ${mix.mixNumber}</h2>
+          <div class="print-header">
+            <img src="/attached_assets/company-logo.png" alt="Company Logo" class="company-logo" />
+            <div class="company-info">
+              <h1 class="company-name-en">Modern Plastic Bag Factory</h1>
+              <h2 class="company-name-ar">مصنع أكياس البلاستيك الحديث</h2>
+              <h3 class="report-title">JO Mix Production Report</h3>
+            </div>
+            <div style="width: 80px;"></div>
           </div>
           
           <div class="section">
@@ -348,8 +414,9 @@ export default function JoMixPage() {
           ` : ''}
 
           <div class="footer">
+            <p><strong>Modern Plastic Bag Factory</strong> | مصنع أكياس البلاستيك الحديث</p>
             <p>Generated on ${new Date().toLocaleString()}</p>
-            <p>Production Management System - JO Mix Report</p>
+            <p>JO Mix Production Report - Mix Number: ${mix.mixNumber}</p>
           </div>
         </body>
       </html>

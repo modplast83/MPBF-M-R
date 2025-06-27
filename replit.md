@@ -103,6 +103,12 @@ This is a comprehensive production management system built with React, TypeScrip
 - Health check endpoints for monitoring
 
 ## Recent Changes
+- June 27, 2025: Fixed JO Mix print function to include standardized header and company logo:
+  - Updated handlePrintMix function in jo-mix.tsx with professional print header
+  - Added company logo (/attached_assets/company-logo.png) to JO Mix reports
+  - Applied consistent green color scheme and bilingual company name formatting
+  - Enhanced print footer with Modern Plastic Bag Factory branding
+  - JO Mix reports now match the standardized format used across all other print functions
 - June 27, 2025: Added standardized print headers to all printed documents across the application:
   - Created reusable print header component with company logo and bilingual company name
   - Company logo (PNG): Actual company logo with green circular design and "MODERN PLASTIC BAG FACTORY" text
