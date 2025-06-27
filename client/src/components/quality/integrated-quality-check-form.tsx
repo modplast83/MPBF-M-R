@@ -571,7 +571,7 @@ export function IntegratedQualityChecksManagement() {
         <button class="print-button" onclick="window.print(); window.close();">Print Quality Check</button>
         
         <div class="print-header">
-          <img src="/attached_assets/company-logo.png" alt="Company Logo" class="company-logo" />
+          <img src="/assets/company-logo.png" alt="Company Logo" class="company-logo" />
           <div class="company-info">
             <h1 class="company-name-en">Modern Plastic Bag Factory</h1>
             <h2 class="company-name-ar">مصنع أكياس البلاستيك الحديث</h2>

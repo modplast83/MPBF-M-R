@@ -15,7 +15,7 @@ import { useTranslation } from "react-i18next";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { format } from "date-fns";
 import { QuickActions } from "@/components/ui/quick-actions";
-import { Plus, RefreshCw, Filter, Search, AlertTriangle, Clock, CheckCircle, X, Eye, Trash2, Wrench, Settings } from "lucide-react";
+import { Plus, RefreshCw, Filter, Search, AlertTriangle, Clock, CheckCircle, X, Eye, Trash2, Wrench, Settings, Printer, Edit } from "lucide-react";
 import { useLocation } from "wouter";
 import { API_ENDPOINTS } from "@/lib/constants";
 import { apiRequest } from "@/lib/queryClient";
@@ -91,6 +91,7 @@ export default function MaintenanceRequestsPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
   const [isStatusDialogOpen, setIsStatusDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState<MaintenanceRequest | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -102,6 +103,15 @@ export default function MaintenanceRequestsPage() {
     damageType: "",
     severity: "Normal",
     description: "",
+  });
+
+  const [editFormData, setEditFormData] = useState({
+    machineId: "",
+    damageType: "",
+    severity: "Normal",
+    description: "",
+    status: "pending",
+    notes: "",
   });
 
   // Fetch maintenance requests
@@ -266,6 +276,156 @@ export default function MaintenanceRequestsPage() {
   const handleChangeStatus = (request: MaintenanceRequest) => {
     setSelectedRequest(request);
     setIsStatusDialogOpen(true);
+  };
+
+  const handleEditRequest = (request: MaintenanceRequest) => {
+    setSelectedRequest(request);
+    setEditFormData({
+      machineId: request.machineId,
+      damageType: request.damageType,
+      severity: request.severity,
+      description: request.description,
+      status: request.status,
+      notes: request.notes || "",
+    });
+    setIsEditDialogOpen(true);
+  };
+
+  const handlePrint = (request: MaintenanceRequest) => {
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) return;
+
+    const machineName = getMachineName(request.machineId);
+    const reporterName = getUserName(request.reportedBy);
+    const actionCount = getActionCount(request.id);
+
+    const printContent = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Maintenance Request #${request.id}</title>
+          <style>
+            @media print { body { margin: 0; } }
+            body { font-family: Arial, sans-serif; margin: 20px; color: #333; }
+            .header { text-align: center; margin-bottom: 30px; padding: 20px; background: linear-gradient(135deg, #065f46 0%, #059669 100%); color: white; border-radius: 8px; }
+            .company-logo { display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 10px; }
+            .company-logo img { width: 60px; height: 60px; }
+            .company-name { font-size: 24px; font-weight: bold; }
+            .company-name-ar { font-size: 18px; opacity: 0.9; }
+            .report-title { font-size: 20px; margin-top: 15px; }
+            .info-section { margin: 20px 0; }
+            .info-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee; }
+            .info-label { font-weight: bold; color: #065f46; }
+            .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
+            .status-pending { background: #fef3c7; color: #92400e; }
+            .status-progress { background: #dbeafe; color: #1e40af; }
+            .status-completed { background: #d1fae5; color: #065f46; }
+            .description-box { margin: 20px 0; padding: 15px; background: #f9fafb; border-left: 4px solid #059669; }
+            .footer { text-align: center; margin-top: 40px; padding-top: 20px; border-top: 2px solid #065f46; color: #666; }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <div class="company-logo">
+              <img src="/assets/company-logo.png" alt="Company Logo" />
+              <div>
+                <div class="company-name">Modern Plastic Bag Factory</div>
+                <div class="company-name-ar">مصنع أكياس البلاستيك الحديث</div>
+              </div>
+            </div>
+            <div class="report-title">Maintenance Request Report</div>
+          </div>
+
+          <div class="info-section">
+            <div class="info-row">
+              <span class="info-label">Request ID:</span>
+              <span>#${request.id}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Date Created:</span>
+              <span>${format(new Date(request.createdAt), 'MMM dd, yyyy')}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Machine:</span>
+              <span>${machineName}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Damage Type:</span>
+              <span>${request.damageType}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Severity:</span>
+              <span>${request.severity}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Status:</span>
+              <span class="status-badge status-${request.status.replace('_', '-')}">${request.status.toUpperCase()}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Reported By:</span>
+              <span>${reporterName}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Actions Count:</span>
+              <span>${actionCount} action${actionCount !== 1 ? 's' : ''}</span>
+            </div>
+            ${request.assignedTo ? `
+            <div class="info-row">
+              <span class="info-label">Assigned To:</span>
+              <span>${getUserName(request.assignedTo)}</span>
+            </div>
+            ` : ''}
+            ${request.completedAt ? `
+            <div class="info-row">
+              <span class="info-label">Completed At:</span>
+              <span>${format(new Date(request.completedAt), 'MMM dd, yyyy')}</span>
+            </div>
+            ` : ''}
+          </div>
+
+          <div class="description-box">
+            <div class="info-label" style="margin-bottom: 10px;">Description:</div>
+            <div>${request.description}</div>
+          </div>
+
+          ${request.notes ? `
+          <div class="description-box">
+            <div class="info-label" style="margin-bottom: 10px;">Notes:</div>
+            <div>${request.notes}</div>
+          </div>
+          ` : ''}
+
+          <div class="footer">
+            <div>Modern Plastic Bag Factory - Maintenance Department</div>
+            <div>Generated on ${format(new Date(), 'MMM dd, yyyy HH:mm')}</div>
+          </div>
+        </body>
+      </html>
+    `;
+
+    printWindow.document.write(printContent);
+    printWindow.document.close();
+    printWindow.print();
+  };
+
+  const handleEditSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!editFormData.machineId || !editFormData.damageType || !editFormData.description) {
+      toast({
+        title: "Validation Error",
+        description: "Please fill in all required fields",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const updateData = {
+      ...editFormData,
+      priority: editFormData.severity === "High" ? 1 : editFormData.severity === "Normal" ? 2 : 3,
+    };
+
+    updateRequestMutation.mutate({ id: selectedRequest?.id!, data: updateData });
   };
 
   // Filter requests
@@ -605,6 +765,22 @@ export default function MaintenanceRequestsPage() {
                       <Button
                         size="sm"
                         variant="outline"
+                        onClick={() => handlePrint(request)}
+                        title="Print Request"
+                      >
+                        <Printer className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleEditRequest(request)}
+                        title="Edit Request"
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
                         onClick={() => handleChangeStatus(request)}
                         title="Change Status"
                       >
@@ -676,6 +852,22 @@ export default function MaintenanceRequestsPage() {
                             title="View Details"
                           >
                             <Eye className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handlePrint(request)}
+                            title="Print Request"
+                          >
+                            <Printer className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleEditRequest(request)}
+                            title="Edit Request"
+                          >
+                            <Edit className="h-4 w-4" />
                           </Button>
                           <Button
                             size="sm"
