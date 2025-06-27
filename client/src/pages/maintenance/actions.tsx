@@ -781,6 +781,42 @@ export default function MaintenanceActionsPage() {
                       {action.description.length > 80 ? `${action.description.substring(0, 80)}...` : action.description}
                     </p>
                   </div>
+                  
+                  <div className="mt-3 pt-3 border-t flex justify-end gap-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleViewAction(action)}
+                      title="View Action Details"
+                    >
+                      <Eye className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handlePrint(action)}
+                      title="Print Action"
+                    >
+                      <Printer className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleEditAction(action)}
+                      title="Edit Action"
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleDeleteAction(action.id)}
+                      title="Delete Action"
+                      className="text-red-600 hover:text-red-700"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </Card>
               ))}
             </div>
@@ -799,6 +835,7 @@ export default function MaintenanceActionsPage() {
                     <TableHead className="text-center">{t("maintenance.actions.partsCost")}</TableHead>
                     <TableHead className="text-center">{t("maintenance.actions.status")}</TableHead>
                     <TableHead className="text-center">{t("maintenance.actions.description")}</TableHead>
+                    <TableHead className="text-center">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -830,6 +867,43 @@ export default function MaintenanceActionsPage() {
                       <TableCell className="max-w-xs truncate text-center" title={action.description}>
                         {action.description}
                       </TableCell>
+                      <TableCell className="text-center">
+                        <div className="flex justify-center gap-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleViewAction(action)}
+                            title="View Action Details"
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handlePrint(action)}
+                            title="Print Action"
+                          >
+                            <Printer className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleEditAction(action)}
+                            title="Edit Action"
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleDeleteAction(action.id)}
+                            title="Delete Action"
+                            className="text-red-600 hover:text-red-700"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -838,6 +912,220 @@ export default function MaintenanceActionsPage() {
           )}
         </CardContent>
       </Card>
+
+      {/* View Action Dialog */}
+      <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Maintenance Action Details</DialogTitle>
+            <DialogDescription>
+              View detailed information about this maintenance action.
+            </DialogDescription>
+          </DialogHeader>
+          {selectedAction && (
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label className="text-sm font-medium text-gray-600">Action ID</Label>
+                  <p className="text-sm font-medium">#{selectedAction.id}</p>
+                </div>
+                <div>
+                  <Label className="text-sm font-medium text-gray-600">Date</Label>
+                  <p className="text-sm">{format(new Date(selectedAction.actionDate), 'MMM dd, yyyy')}</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label className="text-sm font-medium text-gray-600">Machine</Label>
+                  <p className="text-sm">{getMachineName(selectedAction.machineId)}</p>
+                </div>
+                <div>
+                  <Label className="text-sm font-medium text-gray-600">Maintenance Request</Label>
+                  <p className="text-sm">{getRequestInfo(selectedAction.requestId)}</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label className="text-sm font-medium text-gray-600">Action Type</Label>
+                  <Badge variant="secondary" className="text-xs">
+                    {selectedAction.actionType}
+                  </Badge>
+                </div>
+                <div>
+                  <Label className="text-sm font-medium text-gray-600">Status</Label>
+                  {getStatusBadge(selectedAction.status)}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label className="text-sm font-medium text-gray-600">Performed By</Label>
+                  <p className="text-sm">{getUserName(selectedAction.performedBy)}</p>
+                </div>
+                <div>
+                  <Label className="text-sm font-medium text-gray-600">Labor Hours</Label>
+                  <p className="text-sm">{selectedAction.hours}h</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label className="text-sm font-medium text-gray-600">Parts Cost</Label>
+                  <p className="text-sm">${selectedAction.cost.toFixed(2)}</p>
+                </div>
+                {selectedAction.partReplaced && (
+                  <div>
+                    <Label className="text-sm font-medium text-gray-600">Part Replaced</Label>
+                    <p className="text-sm">{selectedAction.partReplaced}</p>
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <Label className="text-sm font-medium text-gray-600">Description</Label>
+                <p className="text-sm mt-1 p-3 bg-gray-50 rounded-md">{selectedAction.description}</p>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Action Dialog */}
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Edit Maintenance Action</DialogTitle>
+            <DialogDescription>
+              Update the maintenance action details.
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleEditSubmit} className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="edit-requestId">Maintenance Request *</Label>
+                <Select value={editFormData.requestId} onValueChange={(value) => setEditFormData({...editFormData, requestId: value})}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Request" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {requests.map((request: MaintenanceRequest) => (
+                      <SelectItem key={request.id} value={request.id.toString()}>
+                        {request.requestNumber || `#${request.id}`} - {request.damageType}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <Label htmlFor="edit-machineId">Machine *</Label>
+                <Select value={editFormData.machineId} onValueChange={(value) => setEditFormData({...editFormData, machineId: value})}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Machine" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {machines.map((machine: Machine) => (
+                      <SelectItem key={machine.id} value={machine.id}>
+                        {machine.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="edit-actionType">Action Type *</Label>
+                <Select value={editFormData.actionType} onValueChange={(value) => setEditFormData({...editFormData, actionType: value})}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Action Type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="repair">Repair</SelectItem>
+                    <SelectItem value="replacement">Replacement</SelectItem>
+                    <SelectItem value="maintenance">Maintenance</SelectItem>
+                    <SelectItem value="inspection">Inspection</SelectItem>
+                    <SelectItem value="cleaning">Cleaning</SelectItem>
+                    <SelectItem value="calibration">Calibration</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <Label htmlFor="edit-status">Status *</Label>
+                <Select value={editFormData.status} onValueChange={(value) => setEditFormData({...editFormData, status: value})}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="completed">Completed</SelectItem>
+                    <SelectItem value="in_progress">In Progress</SelectItem>
+                    <SelectItem value="pending">Pending</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div>
+              <Label htmlFor="edit-description">Description *</Label>
+              <Textarea
+                id="edit-description"
+                placeholder="Describe the action taken"
+                value={editFormData.description}
+                onChange={(e) => setEditFormData({...editFormData, description: e.target.value})}
+                rows={3}
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="edit-cost">Parts Cost ($)</Label>
+                <Input
+                  id="edit-cost"
+                  type="number"
+                  step="0.01"
+                  placeholder="0.00"
+                  value={editFormData.cost}
+                  onChange={(e) => setEditFormData({...editFormData, cost: e.target.value})}
+                />
+              </div>
+              <div>
+                <Label htmlFor="edit-hours">Labor Hours</Label>
+                <Input
+                  id="edit-hours"
+                  type="number"
+                  step="0.5"
+                  placeholder="0.0"
+                  value={editFormData.hours}
+                  onChange={(e) => setEditFormData({...editFormData, hours: e.target.value})}
+                />
+              </div>
+            </div>
+
+            <div>
+              <Label htmlFor="edit-partReplaced">Part Replaced</Label>
+              <Input
+                id="edit-partReplaced"
+                placeholder="Part name or description"
+                value={editFormData.partReplaced}
+                onChange={(e) => setEditFormData({...editFormData, partReplaced: e.target.value})}
+              />
+            </div>
+
+            <div className="flex justify-end space-x-2">
+              <Button type="button" variant="outline" onClick={() => setIsEditDialogOpen(false)}>
+                Cancel
+              </Button>
+              <Button type="submit" disabled={editActionMutation.isPending}>
+                {editActionMutation.isPending ? "Updating..." : "Update Action"}
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
