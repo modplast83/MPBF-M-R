@@ -372,13 +372,44 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
       <head>
         <title>Order #${order.id} - Modern Plastic Bag Factory</title>
         <style>
-          body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            color: #333;
+          body { font-family: Arial, sans-serif; margin: 20px; color: #333; }
+          .print-header { 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            margin-bottom: 30px; 
+            padding-bottom: 20px; 
+            border-bottom: 3px solid #065f46; 
+          }
+          .company-logo { 
+            width: 80px; 
+            height: 80px; 
+            object-fit: contain; 
+          }
+          .company-info { 
+            text-align: center; 
+            flex: 1; 
+          }
+          .company-name-en { 
+            font-size: 24px; 
+            font-weight: bold; 
+            color: #065f46; 
+            margin: 0; 
+          }
+          .company-name-ar { 
+            font-size: 18px; 
+            color: #059669; 
+            margin: 5px 0 0 0; 
+            font-family: 'Arial', sans-serif; 
+          }
+          .report-title { 
+            font-size: 20px; 
+            color: #065f46; 
+            margin: 15px 0 0 0; 
+            font-weight: bold; 
           }
           h1, h2, h3 {
-            color: #2563eb;
+            color: #065f46;
           }
           table {
             width: 100%;
@@ -386,58 +417,70 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
             margin-bottom: 20px;
           }
           th, td {
-            border: 1px solid #ddd;
+            border: 1px solid #d1d5db;
             padding: 8px;
             text-align: center;
           }
           th {
-            background-color: #f2f7ff;
+            background: linear-gradient(135deg, #f0fdf4, #ecfdf5);
+            font-weight: bold;
+            color: #065f46;
           }
-          .order-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-          }
+          tr:nth-child(even) { background-color: #f9fafb; }
           .info-box {
-            border: 1px solid #ddd;
+            border: 2px solid #059669;
             padding: 15px;
-            border-radius: 5px;
+            border-radius: 8px;
             margin-bottom: 20px;
+            background: linear-gradient(135deg, #f0fdf4, #ecfdf5);
           }
           .info-row {
             display: flex;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
           }
           .info-label {
             font-weight: bold;
             width: 150px;
+            color: #065f46;
           }
           @media print {
             button { display: none; }
+            .print-header { page-break-inside: avoid; }
           }
           .print-footer {
-            margin-top: 30px;
+            margin-top: 40px;
             text-align: center;
+            padding-top: 20px;
+            border-top: 2px solid #065f46;
             font-size: 12px;
-            color: #666;
+            color: #6b7280;
           }
           .print-button {
-            background: #2563eb;
+            background: #059669;
             color: white;
             border: none;
-            padding: 10px 16px;
-            border-radius: 4px;
+            padding: 12px 20px;
+            border-radius: 6px;
             cursor: pointer;
             margin-bottom: 20px;
+            font-weight: bold;
+          }
+          .print-button:hover {
+            background: #065f46;
           }
         </style>
       </head>
       <body>
         <button class="print-button" onclick="window.print(); window.close();">Print Order</button>
         
-        <div class="order-header">
-          <h1>Order #${order.id}</h1>
-          <h2>Status: ${order.status}</h2>
+        <div class="print-header">
+          <img src="/attached_assets/company-logo.png" alt="Company Logo" class="company-logo" />
+          <div class="company-info">
+            <h1 class="company-name-en">Modern Plastic Bag Factory</h1>
+            <h2 class="company-name-ar">مصنع أكياس البلاستيك الحديث</h2>
+            <h3 class="report-title">Order Report #${order.id}</h3>
+          </div>
+          <div style="width: 80px;"></div>
         </div>
         
         <div class="info-box">
@@ -506,7 +549,9 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
         </table>
         
         <div class="print-footer">
-          <p>Modern Plastic Bag Factory - Order Report - Generated on ${new Date().toLocaleString()}</p>
+          <p><strong>Modern Plastic Bag Factory</strong> | مصنع أكياس البلاستيك الحديث</p>
+          <p>Generated on ${new Date().toLocaleString()}</p>
+          <p>Order Report #${order.id} - Status: ${order.status.toUpperCase()}</p>
         </div>
       </body>
       </html>

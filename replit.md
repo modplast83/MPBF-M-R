@@ -103,6 +103,13 @@ This is a comprehensive production management system built with React, TypeScrip
 - Health check endpoints for monitoring
 
 ## Recent Changes
+- June 27, 2025: Fixed order printing to include standardized header and company logo:
+  - Updated handlePrintOrder function in order-details.tsx with professional print header
+  - Added company logo (/attached_assets/company-logo.png) to order reports
+  - Applied consistent green color scheme (#065f46, #059669) and bilingual company name
+  - Enhanced order information box with gradient background and improved styling
+  - Updated print footer with Modern Plastic Bag Factory branding
+  - Order reports now match the standardized format used across all other print functions
 - June 27, 2025: Fixed JO Mix print function to include standardized header and company logo:
   - Updated handlePrintMix function in jo-mix.tsx with professional print header
   - Added company logo (/attached_assets/company-logo.png) to JO Mix reports
