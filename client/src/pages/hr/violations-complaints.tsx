@@ -984,10 +984,10 @@ export default function ViolationsComplaints() {
                 <div className="space-y-3">
                   <h4 className="font-semibold text-lg">Violation Details</h4>
                   <div className="space-y-2">
-                    <p><strong>Type:</strong> {getViolationTypeBadge(selectedViolation.violationType)}</p>
+                    <div className="flex items-center gap-2 mb-2"><strong>Type:</strong> {getViolationTypeBadge(selectedViolation.violationType)}</div>
                     <p><strong>Subtype:</strong> {selectedViolation.violationSubtype}</p>
-                    <p><strong>Severity:</strong> {getSeverityBadge(selectedViolation.severity)}</p>
-                    <p><strong>Status:</strong> {getStatusBadge(selectedViolation.status)}</p>
+                    <div className="flex items-center gap-2 mb-2"><strong>Severity:</strong> {getSeverityBadge(selectedViolation.severity)}</div>
+                    <div className="flex items-center gap-2 mb-2"><strong>Status:</strong> {getStatusBadge(selectedViolation.status)}</div>
                   </div>
                 </div>
               </div>

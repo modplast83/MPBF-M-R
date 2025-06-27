@@ -935,11 +935,11 @@ export default function MaintenanceRequestsPage() {
                 </div>
                 <div>
                   <Label className="font-semibold">Severity:</Label>
-                  <p>{getSeverityBadge(selectedRequest.severity)}</p>
+                  <div className="mt-1">{getSeverityBadge(selectedRequest.severity)}</div>
                 </div>
                 <div>
                   <Label className="font-semibold">Status:</Label>
-                  <p>{getStatusBadge(selectedRequest.status)}</p>
+                  <div className="mt-1">{getStatusBadge(selectedRequest.status)}</div>
                 </div>
                 <div>
                   <Label className="font-semibold">Reported By:</Label>
@@ -978,7 +978,7 @@ export default function MaintenanceRequestsPage() {
             <div className="space-y-4">
               <div>
                 <Label className="font-semibold">Current Status:</Label>
-                <p className="mt-1">{getStatusBadge(selectedRequest.status)}</p>
+                <div className="mt-1">{getStatusBadge(selectedRequest.status)}</div>
               </div>
               <div>
                 <Label className="font-semibold">Select New Status:</Label>
