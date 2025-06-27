@@ -3,7 +3,7 @@ export const generatePrintHeader = () => {
   const companyLogo = `
     <img src="/assets/FactoryLogoHPNGWiqons_1750997252532.png" 
          alt="Modern Plastic Bag Factory Logo" 
-         style="width: 80px; height: 80px; object-fit: contain;" />
+         style="width: 120px; height: 120px; object-fit: contain;" />
   `;
 
   return `
