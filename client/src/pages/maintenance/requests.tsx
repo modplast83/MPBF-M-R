@@ -1037,6 +1037,126 @@ export default function MaintenanceRequestsPage() {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Edit Request Dialog */}
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Edit Maintenance Request</DialogTitle>
+            <DialogDescription>
+              Update the details of this maintenance request
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleEditSubmit} className="space-y-4">
+            <div>
+              <Label htmlFor="edit-machineId">{t("maintenance.requests.machine")} *</Label>
+              <Select 
+                value={editFormData.machineId} 
+                onValueChange={(value) => setEditFormData({...editFormData, machineId: value})}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder={t("maintenance.requests.machine")} />
+                </SelectTrigger>
+                <SelectContent>
+                  {machines.map((machine: Machine) => (
+                    <SelectItem key={machine.id} value={machine.id}>
+                      {machine.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <Label htmlFor="edit-damageType">{t("maintenance.requests.damageType")} *</Label>
+              <Select 
+                value={editFormData.damageType} 
+                onValueChange={(value) => setEditFormData({...editFormData, damageType: value})}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder={t("maintenance.requests.damageType")} />
+                </SelectTrigger>
+                <SelectContent>
+                  {damageTypes.map((type) => (
+                    <SelectItem key={type} value={type}>
+                      {type}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <Label htmlFor="edit-severity">{t("maintenance.requests.severity")} *</Label>
+              <Select 
+                value={editFormData.severity} 
+                onValueChange={(value) => setEditFormData({...editFormData, severity: value})}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder={t("maintenance.requests.severity")} />
+                </SelectTrigger>
+                <SelectContent>
+                  {severityLevels.map((level) => (
+                    <SelectItem key={level.value} value={level.value}>
+                      {level.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <Label htmlFor="edit-status">Status</Label>
+              <Select 
+                value={editFormData.status} 
+                onValueChange={(value) => setEditFormData({...editFormData, status: value})}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select status" />
+                </SelectTrigger>
+                <SelectContent>
+                  {STATUS_OPTIONS.map((status) => (
+                    <SelectItem key={status} value={status}>
+                      {status.charAt(0).toUpperCase() + status.slice(1).replace('_', ' ')}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <Label htmlFor="edit-description">{t("maintenance.requests.description")} *</Label>
+              <Textarea
+                id="edit-description"
+                placeholder={t("maintenance.requests.description")}
+                value={editFormData.description}
+                onChange={(e) => setEditFormData({...editFormData, description: e.target.value})}
+                rows={3}
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="edit-notes">Notes</Label>
+              <Textarea
+                id="edit-notes"
+                placeholder="Additional notes or updates..."
+                value={editFormData.notes}
+                onChange={(e) => setEditFormData({...editFormData, notes: e.target.value})}
+                rows={2}
+              />
+            </div>
+
+            <div className="flex justify-end space-x-2">
+              <Button type="button" variant="outline" onClick={() => setIsEditDialogOpen(false)}>
+                {t("common.cancel")}
+              </Button>
+              <Button type="submit" disabled={updateRequestMutation.isPending}>
+                {updateRequestMutation.isPending ? "Updating..." : "Update Request"}
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

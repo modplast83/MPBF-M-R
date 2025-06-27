@@ -16,7 +16,7 @@ import { useTranslation } from "react-i18next";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { format } from "date-fns";
 import { QuickActions } from "@/components/ui/quick-actions";
-import { Plus, RefreshCw, Filter, Search, Wrench, FileText, DollarSign } from "lucide-react";
+import { Plus, RefreshCw, Filter, Search, Wrench, FileText, DollarSign, Eye, Printer, Edit, Trash2 } from "lucide-react";
 import { API_ENDPOINTS } from "@/lib/constants";
 import { apiRequest } from "@/lib/queryClient";
 
@@ -67,6 +67,9 @@ export default function MaintenanceActionsPage() {
   const queryClient = useQueryClient();
   const isMobile = useIsMobile();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [selectedAction, setSelectedAction] = useState<MaintenanceAction | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   
@@ -83,6 +86,17 @@ export default function MaintenanceActionsPage() {
     laborHours: "",
     notes: "",
     readyToWork: false,
+  });
+
+  const [editFormData, setEditFormData] = useState({
+    requestId: "",
+    machineId: "",
+    actionType: "",
+    description: "",
+    cost: "",
+    hours: "",
+    status: "pending",
+    partReplaced: "",
   });
 
   // Fetch maintenance actions
@@ -108,6 +122,17 @@ export default function MaintenanceActionsPage() {
     queryKey: ['/api/users'],
     queryFn: () => apiRequest('GET', '/api/users')
   });
+
+  // Helper functions
+  const getMachineName = (machineId: string) => {
+    const machine = machines.find((m: Machine) => m.id === machineId);
+    return machine ? machine.name : machineId;
+  };
+
+  const getUserName = (userId: string) => {
+    const user = users.find((u: User) => u.id === userId);
+    return user ? `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.username : userId;
+  };
 
   // Auto-populate form when requestId is provided in URL
   useEffect(() => {
@@ -142,6 +167,48 @@ export default function MaintenanceActionsPage() {
       toast({
         title: "Error",
         description: error.message || "Failed to record maintenance action",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Update action mutation
+  const updateActionMutation = useMutation({
+    mutationFn: ({ id, data }: { id: number; data: any }) => 
+      apiRequest('PUT', `${API_ENDPOINTS.MAINTENANCE_ACTIONS}/${id}`, data),
+    onSuccess: () => {
+      toast({
+        title: "Success",
+        description: "Maintenance action updated successfully",
+      });
+      setIsEditDialogOpen(false);
+      refetchActions();
+      queryClient.invalidateQueries({ queryKey: [API_ENDPOINTS.MAINTENANCE_ACTIONS] });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to update maintenance action",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Delete action mutation
+  const deleteActionMutation = useMutation({
+    mutationFn: (id: number) => apiRequest('DELETE', `${API_ENDPOINTS.MAINTENANCE_ACTIONS}/${id}`),
+    onSuccess: () => {
+      toast({
+        title: "Success",
+        description: "Maintenance action deleted successfully",
+      });
+      refetchActions();
+      queryClient.invalidateQueries({ queryKey: [API_ENDPOINTS.MAINTENANCE_ACTIONS] });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to delete maintenance action",
         variant: "destructive",
       });
     },
@@ -211,6 +278,236 @@ export default function MaintenanceActionsPage() {
     }
   };
 
+  // Handler functions for new CRUD operations
+  const handleViewAction = (action: MaintenanceAction) => {
+    setSelectedAction(action);
+    setIsViewDialogOpen(true);
+  };
+
+  const handleEditAction = (action: MaintenanceAction) => {
+    setSelectedAction(action);
+    setEditFormData({
+      requestId: action.requestId.toString(),
+      machineId: action.machineId,
+      actionType: action.actionType,
+      description: action.description,
+      cost: action.cost.toString(),
+      hours: action.hours.toString(),
+      status: action.status,
+      partReplaced: action.partReplaced || "",
+    });
+    setIsEditDialogOpen(true);
+  };
+
+  const handleDeleteAction = (actionId: number) => {
+    if (window.confirm('Are you sure you want to delete this maintenance action?')) {
+      deleteActionMutation.mutate(actionId);
+    }
+  };
+
+  const handlePrint = (action: MaintenanceAction) => {
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) return;
+
+    const printContent = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Maintenance Action Report</title>
+          <style>
+            body { 
+              font-family: Arial, sans-serif; 
+              margin: 0; 
+              padding: 20px; 
+              color: #333;
+            }
+            .header {
+              text-align: center;
+              border-bottom: 3px solid #065f46;
+              padding-bottom: 20px;
+              margin-bottom: 30px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              gap: 20px;
+            }
+            .logo {
+              width: 80px;
+              height: 80px;
+            }
+            .company-info {
+              text-align: center;
+            }
+            .company-name {
+              font-size: 24px;
+              font-weight: bold;
+              color: #065f46;
+              margin: 0;
+            }
+            .company-name-ar {
+              font-size: 20px;
+              font-weight: bold;
+              color: #059669;
+              margin: 5px 0 0 0;
+            }
+            .content {
+              max-width: 800px;
+              margin: 0 auto;
+            }
+            .action-header {
+              background: linear-gradient(135deg, #065f46, #059669);
+              color: white;
+              padding: 20px;
+              border-radius: 8px;
+              margin-bottom: 30px;
+              text-align: center;
+            }
+            .action-title {
+              font-size: 28px;
+              font-weight: bold;
+              margin: 0;
+            }
+            .action-subtitle {
+              font-size: 16px;
+              margin: 10px 0 0 0;
+              opacity: 0.9;
+            }
+            .details-grid {
+              display: grid;
+              grid-template-columns: 1fr 1fr;
+              gap: 20px;
+              margin-bottom: 30px;
+            }
+            .detail-item {
+              background: #f8fafc;
+              padding: 15px;
+              border-radius: 8px;
+              border-left: 4px solid #059669;
+            }
+            .detail-label {
+              font-weight: bold;
+              color: #065f46;
+              margin-bottom: 5px;
+            }
+            .detail-value {
+              color: #374151;
+            }
+            .description-section {
+              background: #f8fafc;
+              padding: 20px;
+              border-radius: 8px;
+              margin-bottom: 30px;
+              border-left: 4px solid #059669;
+            }
+            .section-title {
+              font-size: 18px;
+              font-weight: bold;
+              color: #065f46;
+              margin-bottom: 15px;
+            }
+            .footer {
+              text-align: center;
+              margin-top: 40px;
+              padding-top: 20px;
+              border-top: 2px solid #e5e7eb;
+              color: #6b7280;
+              font-size: 14px;
+            }
+            @media print {
+              body { margin: 0; }
+              .no-print { display: none; }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <img src="/assets/company-logo.png" alt="Company Logo" class="logo" />
+            <div class="company-info">
+              <h1 class="company-name">Modern Plastic Bag Factory</h1>
+              <h2 class="company-name-ar">مصنع أكياس البلاستيك الحديث</h2>
+            </div>
+          </div>
+
+          <div class="content">
+            <div class="action-header">
+              <h1 class="action-title">Maintenance Action Report</h1>
+              <p class="action-subtitle">Action ID: #${action.id} | Date: ${format(new Date(action.actionDate), 'MMM dd, yyyy HH:mm')}</p>
+            </div>
+
+            <div class="details-grid">
+              <div class="detail-item">
+                <div class="detail-label">Request ID:</div>
+                <div class="detail-value">#${action.requestId}</div>
+              </div>
+              <div class="detail-item">
+                <div class="detail-label">Machine:</div>
+                <div class="detail-value">${getMachineName(action.machineId)}</div>
+              </div>
+              <div class="detail-item">
+                <div class="detail-label">Action Type:</div>
+                <div class="detail-value">${action.actionType}</div>
+              </div>
+              <div class="detail-item">
+                <div class="detail-label">Performed By:</div>
+                <div class="detail-value">${getUserName(action.performedBy)}</div>
+              </div>
+              <div class="detail-item">
+                <div class="detail-label">Status:</div>
+                <div class="detail-value">${action.status.charAt(0).toUpperCase() + action.status.slice(1)}</div>
+              </div>
+              <div class="detail-item">
+                <div class="detail-label">Hours Spent:</div>
+                <div class="detail-value">${action.hours.toFixed(2)} hours</div>
+              </div>
+              <div class="detail-item">
+                <div class="detail-label">Cost:</div>
+                <div class="detail-value">$${action.cost.toLocaleString()}</div>
+              </div>
+              ${action.partReplaced ? `
+              <div class="detail-item">
+                <div class="detail-label">Part Replaced:</div>
+                <div class="detail-value">${action.partReplaced}</div>
+              </div>
+              ` : ''}
+            </div>
+
+            <div class="description-section">
+              <div class="section-title">Action Description</div>
+              <div>${action.description}</div>
+            </div>
+          </div>
+
+          <div class="footer">
+            <p>Generated on ${format(new Date(), 'PPpp')} | Modern Plastic Bag Factory</p>
+          </div>
+        </body>
+      </html>
+    `;
+
+    printWindow.document.write(printContent);
+    printWindow.document.close();
+    printWindow.focus();
+    printWindow.print();
+  };
+
+  const handleEditSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedAction) return;
+
+    const updateData = {
+      requestId: parseInt(editFormData.requestId),
+      machineId: editFormData.machineId,
+      actionType: editFormData.actionType,
+      description: editFormData.description,
+      cost: parseFloat(editFormData.cost),
+      hours: parseFloat(editFormData.hours),
+      status: editFormData.status,
+      partReplaced: editFormData.partReplaced || undefined,
+    };
+
+    updateActionMutation.mutate({ id: selectedAction.id, data: updateData });
+  };
+
   // Filter actions
   const filteredActions = actions.filter((action: MaintenanceAction) => {
     const matchesSearch = searchQuery === "" || 
@@ -222,16 +519,6 @@ export default function MaintenanceActionsPage() {
     
     return matchesSearch && matchesStatus;
   });
-
-  const getMachineName = (machineId: string) => {
-    const machine = machines.find((m: Machine) => m.id === machineId);
-    return machine ? machine.name : machineId;
-  };
-
-  const getUserName = (userId: string) => {
-    const user = users.find((u: User) => u.id === userId);
-    return user ? `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.username : userId;
-  };
 
   const getRequestInfo = (requestId: number) => {
     const request = requests.find((r: MaintenanceRequest) => r.id === requestId);
