@@ -231,8 +231,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Setup IoT Integration routes
   setupIotRoutes(app);
   
-  // Setup Mobile App routes
-  setupMobileRoutes(app);
+
   
   // Training API Routes
   
@@ -6885,8 +6884,7 @@ COMMIT;
   // Setup notification routes
   setupNotificationRoutes(app);
   
-  // Setup mobile routes
-  setupMobileRoutes(app);
+
 
   const httpServer = createServer(app);
   return httpServer;

@@ -733,75 +733,7 @@ export const insertIotAlertSchema = createInsertSchema(iotAlerts).omit({ id: tru
 export type InsertIotAlert = z.infer<typeof insertIotAlertSchema>;
 export type IotAlert = typeof iotAlerts.$inferSelect;
 
-// Mobile App - Operator Tasks
-export const operatorTasks = pgTable("operator_tasks", {
-  id: serial("id").primaryKey(),
-  assignedTo: text("assigned_to").notNull().references(() => users.id),
-  taskType: text("task_type").notNull(), // quality_check, maintenance, production_update, material_input
-  title: text("title").notNull(),
-  description: text("description"),
-  priority: text("priority").notNull().default("normal"), // low, normal, high, urgent
-  status: text("status").notNull().default("pending"), // pending, in_progress, completed, cancelled
-  dueDate: timestamp("due_date"),
-  relatedJobOrderId: integer("related_job_order_id").references(() => jobOrders.id),
-  relatedMachineId: text("related_machine_id").references(() => machines.id),
-  relatedRollId: text("related_roll_id").references(() => rolls.id),
-  assignedBy: text("assigned_by").references(() => users.id),
-  startedAt: timestamp("started_at"),
-  completedAt: timestamp("completed_at"),
-  estimatedDuration: integer("estimated_duration"), // in minutes
-  actualDuration: integer("actual_duration"), // in minutes
-  notes: text("notes"),
-  attachments: text("attachments").array(), // photo URLs
-  gpsLocation: text("gps_location"), // latitude,longitude
-  createdAt: timestamp("created_at").defaultNow(),
-});
 
-export const insertOperatorTaskSchema = createInsertSchema(operatorTasks).omit({ id: true, createdAt: true });
-export type InsertOperatorTask = z.infer<typeof insertOperatorTaskSchema>;
-export type OperatorTask = typeof operatorTasks.$inferSelect;
-
-// Mobile App - Quick Updates from operators
-export const operatorUpdates = pgTable("operator_updates", {
-  id: serial("id").primaryKey(),
-  operatorId: text("operator_id").notNull().references(() => users.id),
-  updateType: text("update_type").notNull(), // status_update, issue_report, progress_update, completion_report
-  title: text("title").notNull(),
-  message: text("message").notNull(),
-  relatedJobOrderId: integer("related_job_order_id").references(() => jobOrders.id),
-  relatedMachineId: text("related_machine_id").references(() => machines.id),
-  relatedRollId: text("related_roll_id").references(() => rolls.id),
-  priority: text("priority").default("normal"),
-  status: text("status").default("new"), // new, acknowledged, resolved
-  photos: text("photos").array(), // photo URLs
-  gpsLocation: text("gps_location"),
-  acknowledgedBy: text("acknowledged_by").references(() => users.id),
-  acknowledgedAt: timestamp("acknowledged_at"),
-  createdAt: timestamp("created_at").defaultNow(),
-});
-
-export const insertOperatorUpdateSchema = createInsertSchema(operatorUpdates).omit({ id: true, createdAt: true });
-export type InsertOperatorUpdate = z.infer<typeof insertOperatorUpdateSchema>;
-export type OperatorUpdate = typeof operatorUpdates.$inferSelect;
-
-// Mobile App - Device Registration
-export const mobileDevices = pgTable("mobile_devices", {
-  id: text("id").primaryKey(),
-  userId: text("user_id").notNull().references(() => users.id),
-  deviceName: text("device_name").notNull(),
-  deviceType: text("device_type").notNull(), // android, ios
-  deviceModel: text("device_model"),
-  appVersion: text("app_version"),
-  osVersion: text("os_version"),
-  pushToken: text("push_token"), // for push notifications
-  isActive: boolean("is_active").default(true),
-  lastActive: timestamp("last_active").defaultNow(),
-  registeredAt: timestamp("registered_at").defaultNow(),
-});
-
-export const insertMobileDeviceSchema = createInsertSchema(mobileDevices).omit({ registeredAt: true });
-export type InsertMobileDevice = z.infer<typeof insertMobileDeviceSchema>;
-export type MobileDevice = typeof mobileDevices.$inferSelect;
 
 
 

@@ -92,20 +92,20 @@ import { User } from "@shared/schema";
 function App() {
   // Remove any existing demo data flag
   useEffect(() => {
-    localStorage.removeItem('demoDataInitialized');
+    if (typeof window !== 'undefined' && window.localStorage) {
+      localStorage.removeItem('demoDataInitialized');
+    }
   }, []);
-
-
 
   return (
     <ErrorBoundary>
       <AuthProvider>
         {(authContext) => (
           <PermissionsProvider user={authContext.user}>
-              <Switch>
-                <Route path="/auth" component={AuthPage} />
-                <Route path="*">
-                  <MainLayout>
+            <Switch>
+              <Route path="/auth" component={AuthPage} />
+              <Route path="*">
+                <MainLayout>
                     <Switch>
                     <ProtectedRoute path="/" component={Dashboard} />
                     <ProtectedRoute path="/setup" component={SetupIndex} module="Setup" />
