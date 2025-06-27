@@ -162,16 +162,7 @@ export const SIDEBAR_ITEMS = [
           { title: "Dashboard", path: "/maintenance/dashboard" },
         ],
       },
-      {
-        title: "Mobile Operations",
-        path: "/mobile",
-        icon: "smartphone",
-        subItems: [
-          { title: "Operator Tasks", path: "/mobile/tasks" },
-          { title: "Quick Updates", path: "/mobile/updates" },
-          { title: "Device Management", path: "/mobile/devices" },
-        ],
-      },
+
     ],
   },
   {

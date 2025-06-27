@@ -55,7 +55,7 @@ import { emailService } from './services/email-service';
 import { dashboardStorage } from './dashboard-storage';
 import { setupNotificationRoutes } from "./notification-routes";
 import { setupIotRoutes } from "./iot-routes";
-import { setupMobileRoutes } from "./mobile-routes";
+
 
 // Extend the Request type to include express-fileupload properties
 declare global {
