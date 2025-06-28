@@ -152,17 +152,24 @@ export default function Products() {
     doc.text(`Total Products: ${products.length}`, 20, 55);
     
     // Prepare table data
-    const tableData = products.map((product, index) => [
-      index + 1,
-      product.id.toString(),
-      getCategoryName(product.categoryId),
-      getItemName(product.itemId),
-      product.sizeCaption || '-',
-      product.thickness ? product.thickness.toString() : '-',
-      product.lengthCm ? product.lengthCm.toString() : '-',
-      product.width ? product.width.toString() : '-',
-      product.unitWeight ? product.unitWeight.toString() + ' kg' : '-'
-    ]);
+    const tableData = products.map((product, index) => {
+      const autoLength = product.lengthCm || 0;
+      const cuttingLength = product.cuttingLength || 0;
+      const maxLength = Math.max(autoLength, cuttingLength);
+      const lengthDisplay = maxLength > 0 ? Math.floor(maxLength).toString() : '-';
+      
+      return [
+        index + 1,
+        product.id.toString(),
+        getCategoryName(product.categoryId),
+        getItemName(product.itemId),
+        product.sizeCaption || '-',
+        product.thickness ? product.thickness.toString() : '-',
+        lengthDisplay,
+        product.width ? product.width.toString() : '-',
+        product.unitWeight ? product.unitWeight.toString() + ' kg' : '-'
+      ];
+    });
 
     // Add table
     autoTable(doc, {
@@ -247,7 +254,12 @@ export default function Products() {
     {
       header: t("common.length") + " (cm)",
       id: "lengthCm",
-      cell: (row: CustomerProduct) => row.lengthCm ? `${row.lengthCm}` : "-"
+      cell: (row: CustomerProduct) => {
+        const autoLength = row.lengthCm || 0;
+        const cuttingLength = row.cuttingLength || 0;
+        const maxLength = Math.max(autoLength, cuttingLength);
+        return maxLength > 0 ? Math.floor(maxLength).toString() : "-";
+      }
     },
     {
       header: "Cutting Unit",

@@ -99,6 +99,7 @@ export const SIDEBAR_ITEMS = [
           { title: "Machines", path: "/setup/machines" },
           { title: "Users", path: "/setup/users" },
           { title: "ABA Formulas", path: "/setup/aba-formulas" },
+          { title: "Geofence Management", path: "/hr/geofences" },
           { title: "Quality Check Types", path: "/quality/check-types" },
         ],
       },
@@ -145,7 +146,6 @@ export const SIDEBAR_ITEMS = [
           { title: "employee_management", path: "/hr/employee-management" },
 
           { title: "overtime_leave", path: "/hr/overtime-leave" },
-          { title: "geofence_management", path: "/hr/geofences" },
           { title: "employee_of_the_month", path: "/hr/employee-of-month" },
           { title: "violation_and_complaint", path: "/hr/violations-complaints" },
           { title: "training_management", path: "/hr/training" },

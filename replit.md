@@ -103,6 +103,11 @@ This is a comprehensive production management system built with React, TypeScrip
 - Health check endpoints for monitoring
 
 ## Recent Changes
+- June 28, 2025: Moved Geofence Management from HR section to Setup section in navigation sidebar:
+  - Relocated Geofence Management page from HR module to Setup module for better organization
+  - Updated SIDEBAR_ITEMS configuration to place geofence management under Setup section
+  - Maintained existing route path (/hr/geofences) and translations for compatibility
+  - Geofence Management now appears alongside other system configuration options like Users, Sections, and Machines
 - June 28, 2025: Added comprehensive JO Mix reports feature:
   - Created new JO Mix reports page at /reports/jo-mix with complete filtering system
   - Implemented filtering by material type, job orders, users, and items for completed JO Mix data
