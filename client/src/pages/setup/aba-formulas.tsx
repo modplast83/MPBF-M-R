@@ -34,6 +34,7 @@ interface AbaFormula {
   name: string;
   description?: string;
   aToB: number;
+  abRatio?: string; // Original A:B ratio as text like "2:1"
   createdAt: string;
   materials: AbaFormulaMaterial[];
 }
@@ -433,10 +434,10 @@ export default function AbaFormulas() {
                     <TableCell className="font-medium">{formula.name}</TableCell>
                     <TableCell>{formula.description || "-"}</TableCell>
                     <TableCell>
-                      <Badge variant="outline">{formula.aToB}:1</Badge>
+                      <Badge variant="outline">{formula.abRatio || `${formula.aToB}:1`}</Badge>
                     </TableCell>
                     <TableCell>
-                      <Badge variant="secondary">{formula.materials.length} materials</Badge>
+                      <Badge variant="secondary" className="text-center">{formula.materials.length} materials</Badge>
                     </TableCell>
                     <TableCell>{new Date(formula.createdAt).toLocaleDateString()}</TableCell>
                     <TableCell>
@@ -703,7 +704,7 @@ export default function AbaFormulas() {
                   <Label className="text-sm font-semibold text-gray-600">A:B Ratio</Label>
                   <div>
                     <Badge variant="outline" className="text-sm">
-                      {viewingFormula.aToB}:1
+                      {viewingFormula.abRatio || `${viewingFormula.aToB}:1`}
                     </Badge>
                   </div>
                 </div>

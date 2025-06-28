@@ -1119,8 +1119,8 @@ export default function MaintenanceActionsPage() {
               <Button type="button" variant="outline" onClick={() => setIsEditDialogOpen(false)}>
                 Cancel
               </Button>
-              <Button type="submit" disabled={editActionMutation.isPending}>
-                {editActionMutation.isPending ? "Updating..." : "Update Action"}
+              <Button type="submit" disabled={updateActionMutation.isPending}>
+                {updateActionMutation.isPending ? "Updating..." : "Update Action"}
               </Button>
             </div>
           </form>

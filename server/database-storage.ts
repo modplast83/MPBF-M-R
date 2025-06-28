@@ -2666,6 +2666,7 @@ export class DatabaseStorage implements IStorage {
       result.push({
         ...formula,
         aToB: this.parseAbRatio(formula.abRatio), // Convert "2:1" to 2
+        abRatio: formula.abRatio, // Include original ratio text like "2:1"
         materials
       });
     }
