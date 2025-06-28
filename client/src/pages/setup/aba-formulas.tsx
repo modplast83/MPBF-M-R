@@ -550,7 +550,7 @@ export default function AbaFormulas() {
                   </div>
                 </div>
                 <p className="text-sm text-muted-foreground mt-1">
-                  Ratio: {formData.aValue}:{formData.bValue} = {(formData.aValue / formData.bValue).toFixed(2)}:1
+                  Ratio: {formData.aValue.toFixed(2)}:{formData.bValue.toFixed(2)} = {(formData.aValue / formData.bValue).toFixed(2)}:1.00
                 </p>
               </div>
             </div>
