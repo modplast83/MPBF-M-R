@@ -103,6 +103,15 @@ This is a comprehensive production management system built with React, TypeScrip
 - Health check endpoints for monitoring
 
 ## Recent Changes
+- June 28, 2025: Added comprehensive JO Mix reports feature:
+  - Created new JO Mix reports page at /reports/jo-mix with complete filtering system
+  - Implemented filtering by material type, job orders, users, and items for completed JO Mix data
+  - Added daily, monthly, and yearly report periods for flexible time-based analysis
+  - Created summary statistics dashboard showing total mixes, quantities, and material breakdown
+  - Added professional PDF export functionality with company branding and standardized header
+  - Enhanced reports navigation with new JO Mix Reports card in main reports index
+  - Fixed jsPDF autoTable import issues for proper PDF generation
+  - Integrated with existing JO Mix API endpoints to display real production data
 - June 27, 2025: Completed removal of Mobile Operations module:
   - Removed all mobile-related frontend components, backend routes, and database tables
   - Deleted mobile device registration, operator tasks, and mobile updates functionality

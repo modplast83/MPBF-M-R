@@ -11,7 +11,7 @@ import { Separator } from "@/components/ui/separator";
 import { useTranslation } from "react-i18next";
 import { CalendarDays, FileText, Filter, Download } from "lucide-react";
 import jsPDF from "jspdf";
-import "jspdf-autotable";
+import autoTable from "jspdf-autotable";
 
 interface JoMix {
   id: number;
@@ -313,7 +313,7 @@ export default function JoMixReports() {
     ]);
 
     // Add table
-    (doc as any).autoTable({
+    autoTable(doc, {
       startY: 95,
       head: [['Mix Number', 'Date', 'Quantity', 'Screw', 'Formula', 'Created By', 'Materials']],
       body: tableRows,
@@ -333,7 +333,7 @@ export default function JoMixReports() {
     });
 
     // Footer
-    const pageCount = (doc as any).internal.getNumberOfPages();
+    const pageCount = doc.internal.getNumberOfPages();
     for (let i = 1; i <= pageCount; i++) {
       doc.setPage(i);
       doc.setFontSize(10);
@@ -510,8 +510,6 @@ export default function JoMixReports() {
                   else if (reportPeriod === "monthly") setSelectedMonth(date || new Date());
                   else setSelectedYear(date || new Date());
                 }}
-                dateFormat={reportPeriod === "daily" ? "MMM dd, yyyy" : 
-                           reportPeriod === "monthly" ? "MMM yyyy" : "yyyy"}
               />
             </div>
 
