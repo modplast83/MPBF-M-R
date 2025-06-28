@@ -308,6 +308,22 @@ export default function ReportsIndex() {
           </Card>
         </Link>
         
+        <Link href="/reports/jo-mix" className="block no-underline text-current">
+          <Card className="h-full hover:shadow-md transition-shadow">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-lg">JO Mix Reports</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-center h-32 bg-red-50 rounded mb-3">
+                <span className="material-icons text-4xl text-red-400">blender</span>
+              </div>
+              <p className="text-sm text-gray-600">
+                Analyze completed JO Mix production by kg with material, job order, and user filtering
+              </p>
+            </CardContent>
+          </Card>
+        </Link>
+        
         <Card className="h-full">
           <CardHeader className="pb-2">
             <CardTitle className="text-lg">{t("reports.efficiency_report")}</CardTitle>
