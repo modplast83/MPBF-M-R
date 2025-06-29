@@ -156,6 +156,11 @@ export default function UsersPage() {
         delete cleanData.id;
       }
       
+      // Handle "none" section value
+      if (cleanData.sectionId === "none") {
+        cleanData.sectionId = "";
+      }
+      
       if (editUser) {
         return apiRequest("PUT", `${API_ENDPOINTS.USERS}/${editUser.id}`, cleanData);
       } else {
@@ -190,7 +195,7 @@ export default function UsersPage() {
       firstName: user.firstName || "",
       lastName: user.lastName || "",
       phone: user.phone || "",
-      sectionId: user.sectionId || "",
+      sectionId: user.sectionId || "none",
       position: user.position || "",
       hireDate: user.hireDate ? new Date(user.hireDate).toISOString().split('T')[0] : "",
       contractType: user.contractType || "full_time",
@@ -497,7 +502,7 @@ export default function UsersPage() {
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              <SelectItem value="">No Section</SelectItem>
+                              <SelectItem value="none">No Section</SelectItem>
                               {sections.map((section) => (
                                 <SelectItem key={section.id} value={section.id}>
                                   {section.name}
