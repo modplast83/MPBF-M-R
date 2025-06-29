@@ -1,5 +1,6 @@
 import { Switch, Route } from "wouter";
 import Dashboard from "@/pages/dashboard";
+import MyDashboard from "@/pages/my-dashboard";
 import SetupIndex from "@/pages/setup/index";
 import Categories from "@/pages/setup/categories";
 import Products from "@/pages/setup/products";
@@ -110,6 +111,7 @@ function App() {
                   <MainLayout>
                     <Switch>
                     <ProtectedRoute path="/" component={Dashboard} />
+                    <ProtectedRoute path="/my-dashboard" component={MyDashboard} module="My Dashboard" />
                     <ProtectedRoute path="/setup" component={SetupIndex} module="Setup" />
                     <ProtectedRoute path="/setup/categories" component={Categories} module="Categories" />
                     <ProtectedRoute path="/setup/products" component={Products} module="Products" />

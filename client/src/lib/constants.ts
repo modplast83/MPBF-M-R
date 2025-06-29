@@ -170,7 +170,7 @@ export const SIDEBAR_ITEMS = [
     items: [
       {
         title: "My Dashboard",
-        path: "/employee-dashboard",
+        path: "/my-dashboard",
         icon: "person",
       },
     ],
