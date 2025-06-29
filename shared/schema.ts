@@ -101,7 +101,9 @@ export const users = pgTable("users", {
 });
 
 export const upsertUserSchema = createInsertSchema(users);
+export const insertUserSchema = createInsertSchema(users).omit({ id: true });
 export type UpsertUser = typeof users.$inferInsert;
+export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
 
 // Customers table

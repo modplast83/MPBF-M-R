@@ -17,7 +17,7 @@ import {
   insertMaterialInputItemSchema,
   insertPlatePricingParameterSchema, insertPlateCalculationSchema,
   plateCalculationRequestSchema, PlateCalculationRequest,
-  User, upsertUserSchema, UpsertUser,
+  User, upsertUserSchema, UpsertUser, insertUserSchema, InsertUser,
 
   insertTimeAttendanceSchema, insertEmployeeOfMonthSchema,
   insertHrViolationSchema, insertHrComplaintSchema,
@@ -1036,7 +1036,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   app.post("/api/users", async (req: Request, res: Response) => {
     try {
-      const validatedData = upsertUserSchema.parse(req.body);
+      const validatedData = insertUserSchema.parse(req.body);
       
       const existingUser = await storage.getUserByUsername(validatedData.username);
       if (existingUser) {

@@ -234,8 +234,14 @@ export class DatabaseStorage implements IStorage {
       // Create a clean copy to avoid mutating the input
       const cleanUserData = { ...userData };
       
+      // Generate ID for new users
+      if (!cleanUserData.id) {
+        const { v4: uuidv4 } = await import('uuid');
+        cleanUserData.id = uuidv4();
+      }
+      
       // Handle the special case for password updating
-      const isUpdate = !!cleanUserData.id;
+      const isUpdate = !!userData.id; // Use original userData to check if this was an update
       const isPasswordUnchanged = cleanUserData.password === "UNCHANGED_PASSWORD";
       
       if (isUpdate && isPasswordUnchanged) {
