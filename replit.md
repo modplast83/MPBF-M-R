@@ -103,6 +103,18 @@ This is a comprehensive production management system built with React, TypeScrip
 - Health check endpoints for monitoring
 
 ## Recent Changes
+- June 29, 2025: Implemented comprehensive My Dashboard module for personalized user experience:
+  - Created professional user-centric dashboard at /my-dashboard with complete functionality
+  - Added real-time attendance tracking with check-in/check-out, break management, and automatic time calculation
+  - Integrated personal statistics showing working hours, attendance rate, violations, and training progress
+  - Built quick actions system for common tasks (check-in/out, break controls, maintenance requests, schedule access)
+  - Added comprehensive tabs for attendance history, violations, trainings, maintenance requests, and performance overview
+  - Implemented maintenance request submission directly from dashboard with machine selection and issue tracking
+  - Added real-time status display with current work state, today's working time, and section assignment
+  - Integrated with all existing modules: HR time attendance, violations, trainings, maintenance, and user permissions
+  - Added professional navigation entry under Employee section with proper permissions and routing
+  - Dashboard provides personalized view of user's work data, performance metrics, and recent activity
+  - All data displays are filtered by current user and properly integrated with existing database structure
 - June 28, 2025: Moved Geofence Management from HR section to Setup section in navigation sidebar:
   - Relocated Geofence Management page from HR module to Setup module for better organization
   - Updated SIDEBAR_ITEMS configuration to place geofence management under Setup section
