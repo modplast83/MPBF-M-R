@@ -216,6 +216,9 @@ export default function AttendancePage() {
             <DialogContent className="sm:max-w-md">
               <DialogHeader>
                 <DialogTitle>Manual Attendance Entry</DialogTitle>
+                <DialogDescription>
+                  Manually record attendance for employees who cannot use the automatic check-in system
+                </DialogDescription>
               </DialogHeader>
               <div className="space-y-4">
                 <div>
