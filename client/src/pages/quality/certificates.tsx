@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Award, Search, Filter, Download, Eye, Plus, Calendar, Building, User } from "lucide-react";
 import { format } from "date-fns";
 import { useTranslation } from "react-i18next";
@@ -262,6 +262,9 @@ export default function CertificatesPage() {
         <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{t("quality.certificates.generate_training_certificate")}</DialogTitle>
+            <DialogDescription>
+              Generate and manage training certificates for quality management purposes
+            </DialogDescription>
           </DialogHeader>
           <div className="p-4 text-center text-gray-500">
             {t("quality.certificates.generator_implementation_message")}

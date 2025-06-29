@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
@@ -180,6 +180,9 @@ export default function GeofenceManagement() {
               <DialogTitle>
                 {selectedGeofence ? "Edit Geofence" : "Create New Geofence"}
               </DialogTitle>
+              <DialogDescription>
+                {selectedGeofence ? "Modify the selected geofence settings and location parameters" : "Set up a new geographical boundary for location-based attendance tracking"}
+              </DialogDescription>
             </DialogHeader>
             
             <Form {...form}>
