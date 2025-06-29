@@ -103,6 +103,15 @@ This is a comprehensive production management system built with React, TypeScrip
 - Health check endpoints for monitoring
 
 ## Recent Changes
+- June 29, 2025: Successfully merged Employee Management page with Users page into single comprehensive Users page:
+  - Consolidated /hr/employee-management and /setup/users into unified /setup/users page
+  - Created comprehensive user management interface with 5 tabbed sections (Basic Info, Work Details, Schedule, Emergency, Financial)
+  - Added complete employee profile management including work schedules, emergency contacts, bank details, and allowances
+  - Enhanced user table with view, edit, and delete actions for all user types
+  - Implemented professional form validation using React Hook Form with Zod schemas
+  - Added detailed user profile view dialog showing all employee information
+  - Removed duplicate Employee Management route and navigation references
+  - Users page now serves as single source for both system users and employee profile management
 - June 29, 2025: Implemented comprehensive My Dashboard module for personalized user experience:
   - Created professional user-centric dashboard at /my-dashboard with complete functionality
   - Added real-time attendance tracking with check-in/check-out, break management, and automatic time calculation
