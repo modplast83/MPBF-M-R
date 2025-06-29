@@ -1036,9 +1036,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   app.post("/api/users", async (req: Request, res: Response) => {
     try {
-      console.log("POST /api/users received data:", JSON.stringify(req.body, null, 2));
       const validatedData = insertUserSchema.parse(req.body);
-      console.log("Validated data:", JSON.stringify(validatedData, null, 2));
       
       const existingUser = await storage.getUserByUsername(validatedData.username);
       if (existingUser) {

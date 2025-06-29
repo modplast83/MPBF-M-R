@@ -1,0 +1,115 @@
+
+> rest-express@1.0.0 dev
+> NODE_ENV=development tsx server/index.ts
+
+SendGrid email service initialized successfully
+Checking for admin user existence...
+Admin user already exists, no need to create.
+Admin user check completed
+4:11:30 PM [express] serving on port 5000
+Getting user data for: admin
+4:12:09 PM [express] GET /api/user 200 in 700ms :: {"id":"00U1","username":"admin","isAdmin":true,"s…
+4:12:10 PM [express] GET /api/modules 304 in 937ms :: [{"id":1,"name":"Categories","displayName":"Ca…
+4:12:11 PM [express] GET /api/notifications 304 in 929ms :: []
+4:12:11 PM [express] GET /api/permissions 304 in 1155ms :: [{"id":2070,"sectionId":"SEC001","moduleI…
+4:12:11 PM [express] GET /api/notifications/unread-count 304 in 1629ms
+4:12:44 PM [express] GET /api/notifications 304 in 3046ms :: []
+4:12:44 PM [express] GET /api/notifications/unread-count 304 in 3042ms
+4:13:14 PM [express] GET /api/permissions 304 in 3279ms :: [{"id":2070,"sectionId":"SEC001","moduleI…
+4:13:16 PM [express] GET /api/notifications/unread-count 304 in 929ms
+4:13:16 PM [express] GET /api/notifications 304 in 2343ms :: []
+4:13:49 PM [express] GET /api/notifications/unread-count 304 in 3029ms
+4:13:49 PM [express] GET /api/notifications 304 in 3051ms :: []
+4:14:17 PM [express] GET /api/permissions 304 in 3266ms :: [{"id":2070,"sectionId":"SEC001","moduleI…
+4:14:20 PM [express] GET /api/notifications/unread-count 304 in 930ms
+4:14:22 PM [express] GET /api/notifications 304 in 2321ms :: []
+4:14:43 PM [express] GET /api/users 200 in 2978ms :: [{"id":"08528fc1-ccfd-40d6-91aa-5c7cd237b644","…
+4:14:44 PM [express] GET /api/sections 200 in 3038ms :: [{"id":"SEC001","name":"Management"},{"id":"…
+4:14:51 PM [express] GET /api/notifications/unread-count 304 in 912ms
+4:14:53 PM [express] GET /api/notifications 304 in 911ms :: []
+4:15:21 PM [express] GET /api/permissions 304 in 3262ms :: [{"id":2070,"sectionId":"SEC001","moduleI…
+4:15:22 PM [express] GET /api/notifications/unread-count 304 in 938ms
+4:15:24 PM [express] GET /api/notifications 304 in 930ms :: []
+POST /api/users received data: {
+  "username": "EmpTEST",
+  "email": "modplast83@gmail.com",
+  "firstName": "EMP",
+  "lastName": "TEST",
+  "phone": "",
+  "sectionId": "SEC004",
+  "position": "Operator",
+  "hireDate": "2020-01-01",
+  "contractType": "full_time",
+  "workSchedule": {
+    "startTime": "07:00",
+    "endTime": "19:00",
+    "workingDays": [
+      "monday",
+      "tuesday",
+      "wednesday",
+      "thursday",
+      "friday"
+    ],
+    "breakDuration": 1
+  },
+  "emergencyContact": {
+    "name": "",
+    "phone": "",
+    "relationship": ""
+  },
+  "bankDetails": {
+    "accountNumber": "",
+    "bankName": "",
+    "branchName": ""
+  },
+  "allowances": {
+    "transport": 0,
+    "housing": 0,
+    "food": 0,
+    "other": 0
+  }
+}
+4:15:25 PM [express] POST /api/users 400 in 700ms :: {"message":"Invalid user data","errors":[{"code…
+4:15:55 PM [express] GET /api/notifications/unread-count 304 in 3056ms
+4:15:56 PM [express] GET /api/notifications 304 in 1612ms :: []
+POST /api/users received data: {
+  "username": "EmpTEST",
+  "email": "modplast83@gmail.com",
+  "firstName": "EMP",
+  "lastName": "TEST",
+  "phone": "",
+  "sectionId": "SEC004",
+  "position": "Operator",
+  "hireDate": "2020-01-01",
+  "contractType": "full_time",
+  "workSchedule": {
+    "startTime": "07:00",
+    "endTime": "19:00",
+    "workingDays": [
+      "monday",
+      "tuesday",
+      "wednesday",
+      "thursday",
+      "friday"
+    ],
+    "breakDuration": 1
+  },
+  "emergencyContact": {
+    "name": "",
+    "phone": "",
+    "relationship": ""
+  },
+  "bankDetails": {
+    "accountNumber": "",
+    "bankName": "",
+    "branchName": ""
+  },
+  "allowances": {
+    "transport": 0,
+    "housing": 0,
+    "food": 400,
+    "other": 0
+  }
+}
+4:16:14 PM [express] POST /api/users 400 in 2806ms :: {"message":"Invalid user data","errors":[{"cod…
+4:16:22 PM [express] GET /api/permissions 304 in 1168ms :: [{"id":2070,"sectionId":"SEC001","moduleI…

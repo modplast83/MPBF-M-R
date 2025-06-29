@@ -238,9 +238,6 @@ export class DatabaseStorage implements IStorage {
       if (!cleanUserData.id) {
         const { v4: uuidv4 } = await import('uuid');
         cleanUserData.id = uuidv4();
-        console.log("Generated new user ID:", cleanUserData.id);
-      } else {
-        console.log("Using existing user ID:", cleanUserData.id);
       }
       
       // Handle the special case for password updating

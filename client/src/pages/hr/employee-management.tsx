@@ -163,12 +163,18 @@ export default function EmployeeManagement() {
   });
 
   const handleSubmit = (data: UserForm) => {
+    // Transform date string to Date object if provided
+    const transformedData = {
+      ...data,
+      hireDate: data.hireDate ? new Date(data.hireDate) : null
+    };
+
     if (selectedEmployee) {
       // Update existing employee
-      updateEmployeeMutation.mutate({ id: selectedEmployee.id, data });
+      updateEmployeeMutation.mutate({ id: selectedEmployee.id, data: transformedData });
     } else {
       // Create new employee
-      const { id, ...createData } = data;
+      const { id, ...createData } = transformedData;
       createEmployeeMutation.mutate(createData);
     }
   };

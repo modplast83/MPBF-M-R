@@ -101,7 +101,9 @@ export const users = pgTable("users", {
 });
 
 export const upsertUserSchema = createInsertSchema(users);
-export const insertUserSchema = createInsertSchema(users).omit({ id: true });
+export const insertUserSchema = createInsertSchema(users).omit({ id: true }).extend({
+  hireDate: z.union([z.date(), z.string().transform(str => str ? new Date(str) : null), z.null()]).optional()
+});
 export type UpsertUser = typeof users.$inferInsert;
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
