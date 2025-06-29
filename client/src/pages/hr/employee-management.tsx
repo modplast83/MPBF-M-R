@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
@@ -116,6 +116,29 @@ export default function EmployeeManagement() {
     }
   });
 
+  // Create employee mutation
+  const createEmployeeMutation = useMutation({
+    mutationFn: (data: Omit<UserForm, 'id'>) =>
+      apiRequest('POST', '/api/users', data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/users'] });
+      setIsDialogOpen(false);
+      setSelectedEmployee(null);
+      form.reset();
+      toast({
+        title: "Success",
+        description: "Employee profile created successfully"
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to create employee profile",
+        variant: "destructive"
+      });
+    }
+  });
+
   // Update employee mutation
   const updateEmployeeMutation = useMutation({
     mutationFn: ({ id, data }: { id: string, data: Partial<UserForm> }) =>
@@ -141,7 +164,12 @@ export default function EmployeeManagement() {
 
   const handleSubmit = (data: UserForm) => {
     if (selectedEmployee) {
+      // Update existing employee
       updateEmployeeMutation.mutate({ id: selectedEmployee.id, data });
+    } else {
+      // Create new employee
+      const { id, ...createData } = data;
+      createEmployeeMutation.mutate(createData);
     }
   };
 
@@ -155,7 +183,6 @@ export default function EmployeeManagement() {
       lastName: employee.lastName || "",
       phone: employee.phone || "",
       sectionId: employee.sectionId || "",
-
       position: employee.position || "",
       hireDate: employee.hireDate ? new Date(employee.hireDate).toISOString().split('T')[0] : "",
       contractType: employee.contractType || "full_time",
@@ -168,6 +195,45 @@ export default function EmployeeManagement() {
       emergencyContact: employee.emergencyContact,
       bankDetails: employee.bankDetails,
       allowances: employee.allowances || {
+        transport: 0,
+        housing: 0,
+        food: 0,
+        other: 0
+      }
+    });
+    setIsDialogOpen(true);
+  };
+
+  const handleCreateNew = () => {
+    setSelectedEmployee(null);
+    form.reset({
+      id: "",
+      username: "",
+      email: "",
+      firstName: "",
+      lastName: "",
+      phone: "",
+      sectionId: "",
+      position: "",
+      hireDate: new Date().toISOString().split('T')[0],
+      contractType: "full_time",
+      workSchedule: {
+        startTime: "08:00",
+        endTime: "17:00",
+        workingDays: ["monday", "tuesday", "wednesday", "thursday", "friday"],
+        breakDuration: 1
+      },
+      emergencyContact: {
+        name: "",
+        phone: "",
+        relationship: ""
+      },
+      bankDetails: {
+        accountNumber: "",
+        bankName: "",
+        branchName: ""
+      },
+      allowances: {
         transport: 0,
         housing: 0,
         food: 0,
@@ -203,10 +269,7 @@ export default function EmployeeManagement() {
         
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <Button onClick={() => {
-              setSelectedEmployee(null);
-              form.reset();
-            }} className="w-full sm:w-auto">
+            <Button onClick={handleCreateNew} className="w-full sm:w-auto">
               <UserPlus className="h-4 w-4 mr-2" />
               {t("hr.employee_management.add_employee")}
             </Button>
@@ -216,6 +279,9 @@ export default function EmployeeManagement() {
               <DialogTitle>
                 {selectedEmployee ? t("hr.employee_management.edit_profile") : t("hr.employee_management.create_profile")}
               </DialogTitle>
+              <DialogDescription>
+                {selectedEmployee ? "Update employee information and work details" : "Create a new employee profile with personal and work information"}
+              </DialogDescription>
             </DialogHeader>
             
             <Form {...form}>
