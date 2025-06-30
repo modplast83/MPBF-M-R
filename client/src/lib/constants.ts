@@ -143,8 +143,6 @@ export const SIDEBAR_ITEMS = [
         icon: "people",
         subItems: [
           { title: "attendance", path: "/hr/enhanced-attendance" },
-          { title: "employee_management", path: "/hr/employee-management" },
-
           { title: "overtime_leave", path: "/hr/overtime-leave" },
           { title: "employee_of_the_month", path: "/hr/employee-of-month" },
           { title: "violation_and_complaint", path: "/hr/violations-complaints" },
