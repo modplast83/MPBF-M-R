@@ -59,7 +59,7 @@ export function ResponsiveTable<T>({
   const [searchQuery, setSearchQuery] = useState("");
   const [internalCurrentPage, setInternalCurrentPage] = useState(1);
   const [internalPageSize, setInternalPageSize] = useState(DEFAULT_PAGE_SIZE);
-  
+
   // Use external state if provided, otherwise use internal state
   const currentPage = externalCurrentPage !== undefined ? externalCurrentPage : internalCurrentPage;
   const pageSize = externalPageSize !== undefined ? externalPageSize : internalPageSize;
@@ -90,7 +90,7 @@ export function ResponsiveTable<T>({
   // Use the dir prop or fallback to isRTL from context
   const direction = dir || (isRTL ? 'rtl' : 'ltr');
   const isRightToLeft = direction === 'rtl';
-  
+
   // Function to get the title column of a row
   const getTitleColumn = (row: T) => {
     const titleColumn = columns.find(col => col.meta?.isTitle);
@@ -145,132 +145,97 @@ export function ResponsiveTable<T>({
     }
 
     return (
-      <div className="space-y-3">
-        {paginatedData.map((row, index) => (
-          <Card key={index} className="overflow-hidden hover:shadow-md transition-all duration-200">
-            <CardWrapper>
-              <CardHeader className="p-3 pb-2 flex flex-row justify-between items-start space-y-0">
-                <div>
-                  {titleValue && (
-                    <CardTitle className="text-base font-semibold">
-                      {titleValue}
-                    </CardTitle>
-                  )}
-                </div>
-              </CardHeader>
-              <CardContent className="p-3 pt-1">
-                <div className="space-y-2">
-                  {columns.filter(col => !col.meta?.hideOnMobile && !col.meta?.isTitle && !col.meta?.isAction).map((col, colIndex) => {
-                    let renderedContent: React.ReactNode;
-                    if (col.cell) {
-                      renderedContent = col.cell(row);
-                    } else if (col.accessorKey && typeof col.accessorKey !== 'function') {
-                      const value = row[col.accessorKey as keyof T];
-                      if (value !== undefined && value !== null) {
-                        renderedContent = typeof value === 'object' ? JSON.stringify(value) : String(value);
-                      }
-                    }
-                    return (
-                      <div key={colIndex} className="flex items-center justify-between text-sm">
-                        <span className="text-gray-600">{col.header}:</span>
-                        <span className="font-medium">{renderedContent}</span>
-                      </div>
-                    );
-                  })}
-                </div>
-              </CardContent>
-            </CardWrapper>
-          </Card>))
-        }
-          const titleValue = getTitleColumn(row);
-          const actionElement = getActionColumn(row);
-          const url = getRowUrl ? getRowUrl(row) : undefined;
-          
-          const CardWrapper = ({ children }: { children: React.ReactNode }) => {
-            if (url) {
-              return (
-                <a href={url} className="block no-underline text-inherit">
-                  {children}
-                </a>
-              );
-            } else if (onRowClick) {
-              return (
-                <div onClick={() => onRowClick(row)} className="cursor-pointer">
-                  {children}
-                </div>
-              );
-            } else {
-              return <>{children}</>;
-            }
-          };
-          
-          return (
-            <Card key={index} className="overflow-hidden hover:shadow-md transition-all duration-200">
-              <CardWrapper>
-                <CardHeader className="p-3 pb-2 flex flex-row justify-between items-start space-y-0">
-                  <div>
-                    {titleValue && (
-                      <CardTitle className="text-sm font-semibold">
-                        {titleValue}
-                      </CardTitle>
-                    )}
+        <div className="space-y-3">
+          {paginatedData.map((row, index) => {
+            const titleValue = getTitleColumn(row);
+            const actionElement = getActionColumn(row);
+            const url = getRowUrl ? getRowUrl(row) : undefined;
+
+            const CardWrapper = ({ children }: { children: React.ReactNode }) => {
+              if (url) {
+                return (
+                  <a href={url} className="block no-underline text-inherit">
+                    {children}
+                  </a>
+                );
+              } else if (onRowClick) {
+                return (
+                  <div onClick={() => onRowClick(row)} className="cursor-pointer">
+                    {children}
                   </div>
-                  {/* Display a badge or status if appropriate */}
-                  {columns.some(col => col.header.toLowerCase().includes('status')) && 
-                    columns.map((col, idx) => {
-                      if (col.header.toLowerCase().includes('status') && col.cell) {
-                        return <div key={idx}>{col.cell(row)}</div>;
-                      }
-                      return null;
-                    })
-                  }
-                </CardHeader>
-                <CardContent className="p-3 pt-1">
-                  <div className="space-y-2">
-                    {columns
-                      .filter(col => !col.meta?.hideOnMobile && !col.meta?.isTitle && !col.meta?.isAction)
-                      .map((col, colIndex) => {
-                        // Handle cell rendering differently to avoid type issues
-                        let renderedContent: React.ReactNode;
-                        
-                        if (col.cell) {
-                          renderedContent = col.cell(row);
-                        } else if (col.accessorKey && typeof col.accessorKey !== 'function') {
-                          const value = row[col.accessorKey as keyof T];
-                          if (value !== undefined && value !== null) {
-                            renderedContent = typeof value === 'object' ? JSON.stringify(value) : String(value);
-                          } else {
-                            return null; // Skip rendering if no content
-                          }
-                        } else {
-                          return null; // Skip rendering if no way to get content
+                );
+              } else {
+                return <>{children}</>;
+              }
+            };
+
+            return (
+              <Card key={index} className="overflow-hidden hover:shadow-md transition-all duration-200">
+                <CardWrapper>
+                  <CardHeader className="p-3 pb-2 flex flex-row justify-between items-start space-y-0">
+                    <div>
+                      {titleValue && (
+                        <CardTitle className="text-sm font-semibold">
+                          {titleValue}
+                        </CardTitle>
+                      )}
+                    </div>
+                    {/* Display a badge or status if appropriate */}
+                    {columns.some(col => col.header.toLowerCase().includes('status')) && 
+                      columns.map((col, idx) => {
+                        if (col.header.toLowerCase().includes('status') && col.cell) {
+                          return <div key={idx}>{col.cell(row)}</div>;
                         }
-                        
-                        return (
-                          <div key={colIndex} className="flex items-center justify-between text-sm">
-                            <span className="text-gray-500">{col.header}:</span>
-                            <span className="font-medium">{renderedContent}</span>
-                          </div>
-                        );
-                      })}
-                  </div>
-                </CardContent>
-                {(actionElement || (url && onRowClick)) && (
-                  <CardFooter className="p-2 pt-0 flex justify-end border-t border-gray-100">
-                    {actionElement || (
-                      <span className="text-primary-500 text-xs flex items-center">
-                        {t("common.view_details")}
-                        <ArrowRight className="ml-1 h-3 w-3" />
-                      </span>
-                    )}
+                        return null;
+                      })
+                    }
+                  </CardHeader>
+                  <CardContent className="p-3 pt-1">
+                    <div className="space-y-2">
+                      {columns
+                        .filter(col => !col.meta?.hideOnMobile && !col.meta?.isTitle && !col.meta?.isAction)
+                        .map((col, colIndex) => {
+                          // Handle cell rendering differently to avoid type issues
+                          let renderedContent: React.ReactNode;
+
+                          if (col.cell) {
+                            renderedContent = col.cell(row);
+                          } else if (col.accessorKey && typeof col.accessorKey !== 'function') {
+                            const value = row[col.accessorKey as keyof T];
+                            if (value !== undefined && value !== null) {
+                              renderedContent = typeof value === 'object' ? JSON.stringify(value) : String(value);
+                            } else {
+                              return null; // Skip rendering if no content
+                            }
+                          } else {
+                            return null; // Skip rendering if no way to get content
+                          }
+
+                          return (
+                            <div key={colIndex} className="flex items-center justify-between text-sm">
+                              <span className="text-gray-500">{col.header}:</span>
+                              <span className="font-medium">{renderedContent}</span>
+                            </div>
+                          );
+                        })}
+                    </div>
+                  </CardContent>
+                  {(actionElement || (url && onRowClick)) && (
+                    <CardFooter className="p-2 pt-0 flex justify-end border-t border-gray-100">
+                      {actionElement || (
+                        <span className="text-primary-500 text-xs flex items-center">
+                          {t("common.view_details")}
+                          <ArrowRight className="ml-1 h-3 w-3" />
+                        </span>
+                      )}
                   </CardFooter>
-                )}
-              </CardWrapper>
-            </Card>
-          );
-        })}
-      </div>
-    );
+                  )}
+                </CardWrapper>
+              </Card>
+            );
+          })}
+        </div>
+      );
   };
 
   // Desktop view is handled by the parent component
