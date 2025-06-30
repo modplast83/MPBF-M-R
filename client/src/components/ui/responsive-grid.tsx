@@ -23,7 +23,7 @@ interface ResponsiveGridProps {
 export function ResponsiveGrid({
   children,
   className,
-  cols = { xs: 1, sm: 2, md: 3, lg: 4, xl: 4 },
+  cols = { xs: 1, sm: 2, md: 2, lg: 3, xl: 4 },
   gap = { x: 4, y: 4 },
   rowGap,
   colGap,

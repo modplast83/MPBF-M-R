@@ -98,7 +98,7 @@ export function GestureInterface() {
   const gestureAreaRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  
+
   // Touch tracking state
   const [touchStart, setTouchStart] = useState<TouchPoint | null>(null);
   const [touchEnd, setTouchEnd] = useState<TouchPoint | null>(null);
@@ -112,7 +112,7 @@ export function GestureInterface() {
     mutationFn: async ({ actionId, payload }: { actionId: string; payload?: any }) => {
       const action = GESTURE_ACTIONS.find(a => a.id === actionId);
       if (!action?.endpoint) return;
-      
+
       return apiRequest('POST', action.endpoint, payload || {
         timestamp: new Date().toISOString(),
         source: 'gesture_interface'
@@ -123,7 +123,7 @@ export function GestureInterface() {
       queryClient.invalidateQueries({ queryKey: ['/api/production'] });
       queryClient.invalidateQueries({ queryKey: ['/api/quality-checks'] });
       queryClient.invalidateQueries({ queryKey: ['/api/job-orders'] });
-      
+
       toast({
         title: "Action Completed",
         description: `${action?.name} executed successfully`,
@@ -133,7 +133,7 @@ export function GestureInterface() {
     onError: (error, variables) => {
       const action = GESTURE_ACTIONS.find(a => a.id === variables.actionId);
       console.error(`Failed to execute ${action?.name}:`, error);
-      
+
       toast({
         title: "Action Failed",
         description: `Failed to execute ${action?.name}`,
@@ -146,18 +146,18 @@ export function GestureInterface() {
   const handleTouchStart = (e: React.TouchEvent) => {
     if (!isActive) return;
     e.preventDefault();
-    
+
     const touch = e.touches[0];
     const touchPoint: TouchPoint = {
       x: touch.clientX,
       y: touch.clientY,
       timestamp: Date.now()
     };
-    
+
     setTouchStart(touchPoint);
     setTouchEnd(null);
     setIsLongPress(false);
-    
+
     // Start long press timer
     longPressTimer.current = setTimeout(() => {
       setIsLongPress(true);
@@ -169,7 +169,7 @@ export function GestureInterface() {
   const handleTouchMove = (e: React.TouchEvent) => {
     if (!isActive || !touchStart) return;
     e.preventDefault();
-    
+
     const touch = e.touches[0];
     setTouchEnd({
       x: touch.clientX,
@@ -181,34 +181,34 @@ export function GestureInterface() {
   const handleTouchEnd = (e: React.TouchEvent) => {
     if (!isActive || !touchStart) return;
     e.preventDefault();
-    
+
     // Clear long press timer
     if (longPressTimer.current) {
       clearTimeout(longPressTimer.current);
     }
-    
+
     if (isLongPress) {
       setIsLongPress(false);
       return;
     }
-    
+
     if (!touchEnd) {
       // This was a tap
       handleTap();
       return;
     }
-    
+
     // Calculate swipe direction and distance
     const deltaX = touchEnd.x - touchStart.x;
     const deltaY = touchEnd.y - touchStart.y;
     const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-    
+
     // Minimum swipe distance threshold
     if (distance < 50) {
       handleTap();
       return;
     }
-    
+
     // Determine swipe direction
     if (Math.abs(deltaX) > Math.abs(deltaY)) {
       // Horizontal swipe
@@ -229,17 +229,17 @@ export function GestureInterface() {
         setDetectedGesture('swipe_down');
       }
     }
-    
+
     navigator.vibrate?.(100); // Haptic feedback
   };
 
   const handleTap = () => {
     setTapCount(prev => prev + 1);
-    
+
     if (doubleTapTimer.current) {
       clearTimeout(doubleTapTimer.current);
     }
-    
+
     doubleTapTimer.current = setTimeout(() => {
       if (tapCount + 1 >= 2) {
         executeAction('quality_check');
@@ -253,12 +253,12 @@ export function GestureInterface() {
   const executeAction = (actionId: string) => {
     const action = GESTURE_ACTIONS.find(a => a.id === actionId);
     if (!action) return;
-    
+
     setLastAction(action.name);
-    
+
     // Execute the action through API
     executeActionMutation.mutate({ actionId });
-    
+
     // Clear gesture detection after a delay
     setTimeout(() => {
       setDetectedGesture(null);

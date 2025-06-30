@@ -146,7 +146,42 @@ export function ResponsiveTable<T>({
 
     return (
       <div className="space-y-3">
-        {paginatedData.map((row, index) => {
+        {paginatedData.map((row, index) => (
+          <Card key={index} className="overflow-hidden hover:shadow-md transition-all duration-200">
+            <CardWrapper>
+              <CardHeader className="p-3 pb-2 flex flex-row justify-between items-start space-y-0">
+                <div>
+                  {titleValue && (
+                    <CardTitle className="text-base font-semibold">
+                      {titleValue}
+                    </CardTitle>
+                  )}
+                </div>
+              </CardHeader>
+              <CardContent className="p-3 pt-1">
+                <div className="space-y-2">
+                  {columns.filter(col => !col.meta?.hideOnMobile && !col.meta?.isTitle && !col.meta?.isAction).map((col, colIndex) => {
+                    let renderedContent: React.ReactNode;
+                    if (col.cell) {
+                      renderedContent = col.cell(row);
+                    } else if (col.accessorKey && typeof col.accessorKey !== 'function') {
+                      const value = row[col.accessorKey as keyof T];
+                      if (value !== undefined && value !== null) {
+                        renderedContent = typeof value === 'object' ? JSON.stringify(value) : String(value);
+                      }
+                    }
+                    return (
+                      <div key={colIndex} className="flex items-center justify-between text-sm">
+                        <span className="text-gray-600">{col.header}:</span>
+                        <span className="font-medium">{renderedContent}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </CardContent>
+            </CardWrapper>
+          </Card>))
+        }
           const titleValue = getTitleColumn(row);
           const actionElement = getActionColumn(row);
           const url = getRowUrl ? getRowUrl(row) : undefined;
