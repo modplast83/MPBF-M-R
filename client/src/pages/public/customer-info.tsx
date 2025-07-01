@@ -285,15 +285,6 @@ export default function CustomerInfoPage() {
               {/* Registration Numbers */}
               <div className="grid md:grid-cols-3 gap-6">
                 <div>
-                  <Label
-                    htmlFor="commercialRegistrationNo"
-                    className="text-lg font-semibold"
-                  >
-                    CR No. *
-                    <span className="block font-arabic text-[16px] text-center text-[#000000] font-semibold">
-                      رقم السجل التجاري
-                    </span>
-                  </Label>
                   <Input
                     id="commercialRegistrationNo"
                     {...register("commercialRegistrationNo")}
@@ -309,12 +300,6 @@ export default function CustomerInfoPage() {
                 </div>
 
                 <div>
-                  <Label htmlFor="unifiedNo" className="text-lg font-semibold">
-                    Unified No. *
-                    <span className="block font-arabic text-[16px] text-center text-[#000000] font-semibold">
-                      الرقم الموحد
-                    </span>
-                  </Label>
                   <Input
                     id="unifiedNo"
                     {...register("unifiedNo")}
