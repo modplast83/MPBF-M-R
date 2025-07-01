@@ -292,7 +292,7 @@ export default function CustomerInfoPage() {
                     className="text-lg font-semibold"
                   >
                     CR No. *
-                    <span className="block text-sm font-normal text-gray-600 font-arabic font-bold text-right">
+                    <span className="block font-arabic text-[16px] text-center text-[#000000] font-semibold">
                       رقم السجل التجاري
                     </span>
                   </Label>
