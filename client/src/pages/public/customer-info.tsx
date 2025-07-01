@@ -332,9 +332,7 @@ export default function CustomerInfoPage() {
                 </div>
 
                 <div>
-                  <Label htmlFor="vatNo" className="text-lg font-semibold">
-                    VAT No. *
-                  </Label>
+                  <Label htmlFor="vatNo" className="peer-disabled:cursor-not-allowed peer-disabled:opacity-70 font-semibold text-center pl-[93px] pr-[93px] text-[16px] text-[#000000]">الرقم الضريبي</Label>
                   <Input
                     id="vatNo"
                     {...register("vatNo")}
@@ -358,9 +356,7 @@ export default function CustomerInfoPage() {
 
                 <div className="grid md:grid-cols-3 gap-6">
                   <div>
-                    <Label htmlFor="province" className="text-lg font-semibold">
-                      Province *
-                    </Label>
+                    <Label htmlFor="province" className="peer-disabled:cursor-not-allowed peer-disabled:opacity-70 font-semibold text-center text-[16px] text-[#000000] pl-[115px] pr-[115px]">المنطقة</Label>
                     <Select
                       value={selectedProvince}
                       onValueChange={(value) => {
@@ -393,9 +389,7 @@ export default function CustomerInfoPage() {
                   </div>
 
                   <div>
-                    <Label htmlFor="city" className="text-lg font-semibold">
-                      City *
-                    </Label>
+                    <Label htmlFor="city" className="peer-disabled:cursor-not-allowed peer-disabled:opacity-70 font-semibold text-[16px] text-center text-[#000000] pl-[120px] pr-[120px]">المدينة</Label>
                     <Select
                       value={selectedCity}
                       onValueChange={(value) => {
@@ -426,10 +420,8 @@ export default function CustomerInfoPage() {
                   <div>
                     <Label
                       htmlFor="neighborName"
-                      className="text-lg font-semibold"
-                    >
-                      Neighborhood *
-                    </Label>
+                      className="peer-disabled:cursor-not-allowed peer-disabled:opacity-70 font-semibold text-[16px] text-[#000000] pl-[120px] pr-[120px]"
+                    >الحي</Label>
                     <Select
                       onValueChange={(value) => setValue("neighborName", value)}
                       disabled={!selectedCity}
@@ -460,10 +452,8 @@ export default function CustomerInfoPage() {
                   <div>
                     <Label
                       htmlFor="buildingNo"
-                      className="text-lg font-semibold"
-                    >
-                      Building No. *
-                    </Label>
+                      className="peer-disabled:cursor-not-allowed peer-disabled:opacity-70 font-semibold text-[16px] text-[#000000] text-center pl-[104px] pr-[104px]"
+                    >رقم المبنى</Label>
                     <Input
                       id="buildingNo"
                       {...register("buildingNo")}
@@ -496,10 +486,8 @@ export default function CustomerInfoPage() {
                   <div>
                     <Label
                       htmlFor="postalCode"
-                      className="text-lg font-semibold"
-                    >
-                      Postal Code *
-                    </Label>
+                      className="peer-disabled:cursor-not-allowed peer-disabled:opacity-70 font-semibold text-[16px] text-center text-[#000000] pl-[100px] pr-[100px]"
+                    >الرمز البريدي</Label>
                     <Input
                       id="postalCode"
                       {...register("postalCode")}
@@ -526,10 +514,8 @@ export default function CustomerInfoPage() {
                   <div>
                     <Label
                       htmlFor="responseName"
-                      className="text-lg font-semibold"
-                    >
-                      Response Name
-                    </Label>
+                      className="peer-disabled:cursor-not-allowed peer-disabled:opacity-70 font-semibold text-center text-[#000000] text-[16px] pl-[83px] pr-[83px]"
+                    >الشخص المسؤول</Label>
                     <Input
                       id="responseName"
                       {...register("responseName")}
@@ -541,10 +527,8 @@ export default function CustomerInfoPage() {
                   <div>
                     <Label
                       htmlFor="responseNo"
-                      className="text-lg font-semibold"
-                    >
-                      Response No.
-                    </Label>
+                      className="peer-disabled:cursor-not-allowed peer-disabled:opacity-70 font-semibold text-center text-[16px] text-[#000000] pl-[103px] pr-[103px]"
+                    >رقم التواصل</Label>
                     <Input
                       id="responseNo"
                       {...register("responseNo")}
