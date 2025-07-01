@@ -211,8 +211,7 @@ export default function CustomerInfoPage() {
       {/* Header with Welcome Message and Logo */}
       <div className="bg-white shadow-sm border-b">
         <div className="container mx-auto px-4 py-8 text-center">
-          <h1 className="text-4xl font-bold text-green-800 mb-2">Welcome to Modern Plastic Bag Factory</h1>
-          <h2 className="text-3xl font-bold text-green-700 mb-6 font-arabic font-bold">أهلاً وسهلاً بكم في مصنع أكياس البلاستيك الحديث</h2>
+          
 
           {/* Company Logo */}
           <div className="flex justify-center mb-6">
@@ -259,16 +258,13 @@ export default function CustomerInfoPage() {
           <CardContent>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               {/* Commercial Names */}
-              <div className="grid md:grid-cols-2 gap-6">
+              <div className="grid md:grid-cols-1 gap-6">
                 <div>
                   <Label
                     htmlFor="commercialNameAr"
                     className="text-lg font-semibold text-right"
                   >
                     <span className="font-arabic font-bold">الاسم التجاري بالعربية *</span>
-                    <span className="block text-sm font-normal text-gray-600">
-                      Commercial Name (Arabic)
-                    </span>
                   </Label>
                   <Input
                     id="commercialNameAr"
@@ -283,32 +279,6 @@ export default function CustomerInfoPage() {
                   {errors.commercialNameAr && (
                     <p className="text-red-600 text-sm mt-1">
                       {errors.commercialNameAr.message}
-                    </p>
-                  )}
-                </div>
-
-                <div>
-                  <Label
-                    htmlFor="commercialNameEn"
-                    className="text-lg font-semibold"
-                  >
-                    Commercial Name (English) *
-                    <span className="block text-sm font-normal text-gray-600 font-arabic font-bold">
-                      الاسم التجاري بالإنجليزية
-                    </span>
-                  </Label>
-                  <Input
-                    id="commercialNameEn"
-                    {...register("commercialNameEn")}
-                    onChange={(e) =>
-                      handleNameChange("commercialNameEn", e.target.value)
-                    }
-                    className="mt-2 text-lg py-3 text-center"
-                    placeholder="Modern Plastic Bag Factory"
-                  />
-                  {errors.commercialNameEn && (
-                    <p className="text-red-600 text-sm mt-1">
-                      {errors.commercialNameEn.message}
                     </p>
                   )}
                 </div>
