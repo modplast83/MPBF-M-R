@@ -193,12 +193,12 @@ export default function CustomerInfoPage() {
           <CardContent className="pt-6">
             <CheckCircle className="w-16 h-16 text-green-600 mx-auto mb-4" />
             <h2 className="text-2xl font-bold text-green-800 mb-2">
-              Thank you! شكراً لك!
+              Thank you! <span className="font-arabic font-bold">شكراً لك!</span>
             </h2>
             <p className="text-gray-600">
               Your information has been submitted successfully.
               <br />
-              معلوماتك تم إرسالها بنجاح.
+              <span className="font-arabic font-bold">معلوماتك تم إرسالها بنجاح.</span>
             </p>
           </CardContent>
         </Card>
@@ -211,8 +211,8 @@ export default function CustomerInfoPage() {
       {/* Header with Welcome Message and Logo */}
       <div className="bg-white shadow-sm border-b">
         <div className="container mx-auto px-4 py-8 text-center">
-          <h1 className="text-4xl font-bold text-green-800 mb-2"></h1>
-          <h2 className="text-3xl font-bold text-green-700 mb-6 font-arabic"></h2>
+          <h1 className="text-4xl font-bold text-green-800 mb-2">Welcome to Modern Plastic Bag Factory</h1>
+          <h2 className="text-3xl font-bold text-green-700 mb-6 font-arabic font-bold">أهلاً وسهلاً بكم في مصنع أكياس البلاستيك الحديث</h2>
 
           {/* Company Logo */}
           <div className="flex justify-center mb-6">
@@ -243,7 +243,7 @@ export default function CustomerInfoPage() {
           <p className="text-lg text-gray-700">
             Please fill out your business information below
           </p>
-          <p className="text-lg text-gray-700 font-arabic">
+          <p className="text-lg text-gray-700 font-arabic font-bold">
             يرجى تعبئة معلومات شركتكم أدناه
           </p>
         </div>
@@ -253,7 +253,7 @@ export default function CustomerInfoPage() {
         <Card className="max-w-4xl mx-auto shadow-lg">
           <CardHeader>
             <CardTitle className="text-2xl font-bold text-center text-green-800">
-              Customer Information معلومات العميل
+              Customer Information <span className="font-arabic font-bold">معلومات العميل</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -386,7 +386,7 @@ export default function CustomerInfoPage() {
               {/* Address Information */}
               <div className="space-y-4">
                 <h3 className="text-xl font-bold text-green-700 text-center">
-                  Address Information معلومات العنوان
+                  Address Information <span className="font-arabic font-bold">معلومات العنوان</span>
                 </h3>
 
                 <div className="grid md:grid-cols-3 gap-6">
@@ -576,7 +576,7 @@ export default function CustomerInfoPage() {
               {/* Contact Information */}
               <div className="space-y-4">
                 <h3 className="text-xl font-bold text-green-700 text-center">
-                  Contact Information معلومات الاتصال
+                  Contact Information <span className="font-arabic font-bold">معلومات الاتصال</span>
                 </h3>
 
                 <div className="grid md:grid-cols-2 gap-6">
