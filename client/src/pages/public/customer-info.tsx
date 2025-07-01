@@ -264,7 +264,7 @@ export default function CustomerInfoPage() {
                     htmlFor="commercialNameAr"
                     className="text-lg font-semibold text-right"
                   >
-                    <span className="font-arabic font-bold">الاسم التجاري بالعربية *</span>
+                    <span className="font-arabic font-bold text-center pl-[70px] pr-[70px] ml-[0px] mr-[0px] text-[16px]">الاسم التجاري بالعربية</span>
                   </Label>
                   <Input
                     id="commercialNameAr"
@@ -334,9 +334,6 @@ export default function CustomerInfoPage() {
                 <div>
                   <Label htmlFor="vatNo" className="text-lg font-semibold">
                     VAT No. *
-                    <span className="block text-sm font-normal text-gray-600 font-arabic font-bold text-right">
-                      الرقم الضريبي
-                    </span>
                   </Label>
                   <Input
                     id="vatNo"
@@ -363,9 +360,6 @@ export default function CustomerInfoPage() {
                   <div>
                     <Label htmlFor="province" className="text-lg font-semibold">
                       Province *
-                      <span className="block text-sm font-normal text-gray-600 font-arabic font-bold text-right">
-                        المنطقة
-                      </span>
                     </Label>
                     <Select
                       value={selectedProvince}
@@ -401,9 +395,6 @@ export default function CustomerInfoPage() {
                   <div>
                     <Label htmlFor="city" className="text-lg font-semibold">
                       City *
-                      <span className="block text-sm font-normal text-gray-600 font-arabic font-bold text-right">
-                        المدينة
-                      </span>
                     </Label>
                     <Select
                       value={selectedCity}
@@ -438,9 +429,6 @@ export default function CustomerInfoPage() {
                       className="text-lg font-semibold"
                     >
                       Neighborhood *
-                      <span className="block text-sm font-normal text-gray-600 font-arabic font-bold text-right">
-                        الحي
-                      </span>
                     </Label>
                     <Select
                       onValueChange={(value) => setValue("neighborName", value)}
@@ -475,9 +463,6 @@ export default function CustomerInfoPage() {
                       className="text-lg font-semibold"
                     >
                       Building No. *
-                      <span className="block text-sm font-normal text-gray-600 font-arabic font-bold text-right">
-                        رقم المبنى
-                      </span>
                     </Label>
                     <Input
                       id="buildingNo"
@@ -494,15 +479,6 @@ export default function CustomerInfoPage() {
                   </div>
 
                   <div>
-                    <Label
-                      htmlFor="additionalNo"
-                      className="text-lg font-semibold"
-                    >
-                      Additional No. *
-                      <span className="block text-sm font-normal text-gray-600 font-arabic font-bold text-right">
-                        الرقم الإضافي
-                      </span>
-                    </Label>
                     <Input
                       id="additionalNo"
                       {...register("additionalNo")}
@@ -523,9 +499,6 @@ export default function CustomerInfoPage() {
                       className="text-lg font-semibold"
                     >
                       Postal Code *
-                      <span className="block text-sm font-normal text-gray-600 font-arabic font-bold text-right">
-                        الرمز البريدي
-                      </span>
                     </Label>
                     <Input
                       id="postalCode"
@@ -556,9 +529,6 @@ export default function CustomerInfoPage() {
                       className="text-lg font-semibold"
                     >
                       Response Name
-                      <span className="block text-sm font-normal text-gray-600 font-arabic font-bold text-right">
-                        اسم الشخص المسؤول
-                      </span>
                     </Label>
                     <Input
                       id="responseName"
@@ -574,9 +544,6 @@ export default function CustomerInfoPage() {
                       className="text-lg font-semibold"
                     >
                       Response No.
-                      <span className="block text-sm font-normal text-gray-600 font-arabic font-bold text-right">
-                        رقم الهاتف
-                      </span>
                     </Label>
                     <Input
                       id="responseNo"
