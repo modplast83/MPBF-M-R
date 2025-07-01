@@ -20,7 +20,8 @@ import {
   TimeAttendance, InsertTimeAttendance,
   Training, InsertTraining,
   TrainingPoint, InsertTrainingPoint,
-  TrainingEvaluation, InsertTrainingEvaluation
+  TrainingEvaluation, InsertTrainingEvaluation,
+  CustomerInformation, InsertCustomerInformation
 } from "../shared/schema";
 import session from "express-session";
 

@@ -122,6 +122,9 @@ import {
   trainingCertificates,
   type TrainingCertificate,
   type InsertCertificate,
+  customerInformation,
+  type CustomerInformation,
+  type InsertCustomerInformation,
 
 
 
@@ -2996,5 +2999,14 @@ export class DatabaseStorage implements IStorage {
     
     const sequenceNumber = (todayMixes.length + 1).toString().padStart(3, '0');
     return `MIX${dateStr}${sequenceNumber}`;
+  }
+
+  // Customer Information Registration (Public Form)
+  async createCustomerInformation(customerInfo: InsertCustomerInformation): Promise<CustomerInformation> {
+    const [created] = await db
+      .insert(customerInformation)
+      .values(customerInfo)
+      .returning();
+    return created;
   }
 }

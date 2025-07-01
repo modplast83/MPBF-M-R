@@ -1,6 +1,16 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  /* Arabic font styling */
+  .font-arabic {
+    font-family: 'Noto Sans Arabic', 'Times New Roman', serif;
+    direction: rtl;
+  }
+}
 
 @layer utilities {
   /* Custom shimmer animation for loading states */

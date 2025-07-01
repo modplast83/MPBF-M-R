@@ -46,6 +46,7 @@ import ImportExport from "@/pages/system/import-export";
 import SmsIndex from "@/pages/system/sms/index";
 import AuthPage from "@/pages/AuthPage";
 import NotFound from "@/pages/not-found";
+import CustomerInfoPage from "@/pages/public/customer-info";
 import MainLayout from "@/components/layout/main-layout";
 import { AuthProvider } from "@/hooks/use-auth-v2";
 import { PermissionsProvider } from "@/hooks/use-permissions";
@@ -107,6 +108,7 @@ function App() {
             <div>
               <Switch>
                 <Route path="/auth" component={AuthPage} />
+                <Route path="/customer-info" component={CustomerInfoPage} />
                 <Route path="*">
                   <MainLayout>
                     <Switch>
