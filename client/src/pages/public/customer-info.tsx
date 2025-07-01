@@ -239,9 +239,7 @@ export default function CustomerInfoPage() {
             </div>
           </div>
 
-          <p className="text-lg text-gray-700">
-            Please fill out your business information below
-          </p>
+          <p className="text-lg text-gray-700">Please fill out your business information</p>
           <p className="text-lg text-gray-700 font-arabic font-bold">
             يرجى تعبئة معلومات شركتكم أدناه
           </p>
