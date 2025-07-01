@@ -10,6 +10,24 @@
     font-family: 'Noto Sans Arabic', 'Times New Roman', serif;
     direction: rtl;
   }
+  
+  /* Enhanced responsive design for mobile forms */
+  @media (max-width: 640px) {
+    .customer-form-container {
+      padding: 1rem;
+    }
+    
+    .customer-form-input input,
+    .customer-form-input select {
+      font-size: 16px !important; /* Prevents zoom on iOS */
+    }
+  }
+  
+  /* Better text alignment for Arabic RTL content */
+  .rtl-content {
+    text-align: center;
+    unicode-bidi: bidi-override;
+  }
 }
 
 @layer utilities {
