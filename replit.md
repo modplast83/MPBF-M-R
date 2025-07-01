@@ -103,6 +103,21 @@ This is a comprehensive production management system built with React, TypeScrip
 - Health check endpoints for monitoring
 
 ## Recent Changes
+- July 1, 2025: Created comprehensive public Customer Information registration page:
+  - Added new public route at /customer-info accessible without authentication
+  - Built professional bilingual form (English/Arabic) for business information collection
+  - Implemented comprehensive address system with Saudi Arabia provinces, cities, and neighborhoods
+  - Added auto-translation placeholder for commercial names (Arabic ↔ English)
+  - Created robust form validation with Zod schemas for business data integrity
+  - Designed mobile-optimized interface with bold fonts and clear spacing
+  - Added company logo display and bilingual welcome messaging
+  - Integrated complete address validation with cascading dropdowns (Province → City → Neighborhood)
+  - Implemented all required field validations: 10-digit Commercial Registration, 10-digit Unified No, 14-digit VAT No, 4-digit Building/Additional numbers, 5-digit Postal Code
+  - Added success confirmation screen with bilingual messaging
+  - Created customer_information database table for storing submissions
+  - Added public API endpoint (/api/customer-information) for form submissions
+  - Enhanced Arabic font support with Noto Sans Arabic for proper text rendering
+  - Form successfully captures: Commercial Names (AR/EN), Registration Numbers, Complete Saudi Address, Contact Information
 - June 29, 2025: Successfully merged Employee Management page with Users page into single comprehensive Users page:
   - Consolidated /hr/employee-management and /setup/users into unified /setup/users page
   - Created comprehensive user management interface with 5 tabbed sections (Basic Info, Work Details, Schedule, Emergency, Financial)
