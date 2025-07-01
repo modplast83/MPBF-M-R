@@ -252,7 +252,6 @@ export default function CustomerInfoPage() {
           </p>
         </div>
       </div>
-
       {/* Main Form */}
       <div className="container mx-auto px-4 py-8">
         <Card className="max-w-4xl mx-auto shadow-lg">
@@ -275,7 +274,7 @@ export default function CustomerInfoPage() {
                     {...register("commercialNameAr")}
                     onChange={(e) => handleNameChange("commercialNameAr", e.target.value)}
                     className="mt-2 text-lg py-3 font-arabic"
-                    placeholder="اسم الشركة التجاري"
+                    placeholder="مصنع أكياس الحديث للمنتجات البلاستيكية"
                     dir="rtl"
                   />
                   {errors.commercialNameAr && (
@@ -293,7 +292,7 @@ export default function CustomerInfoPage() {
                     {...register("commercialNameEn")}
                     onChange={(e) => handleNameChange("commercialNameEn", e.target.value)}
                     className="mt-2 text-lg py-3"
-                    placeholder="Company Commercial Name"
+                    placeholder="Modern Plastic Bag Factory"
                   />
                   {errors.commercialNameEn && (
                     <p className="text-red-600 text-sm mt-1">{errors.commercialNameEn.message}</p>
@@ -312,7 +311,7 @@ export default function CustomerInfoPage() {
                     id="commercialRegistrationNo"
                     {...register("commercialRegistrationNo")}
                     className="mt-2 text-lg py-3"
-                    placeholder="1234567890"
+                    placeholder="2050052901"
                     maxLength={10}
                   />
                   {errors.commercialRegistrationNo && (
@@ -329,7 +328,7 @@ export default function CustomerInfoPage() {
                     id="unifiedNo"
                     {...register("unifiedNo")}
                     className="mt-2 text-lg py-3"
-                    placeholder="1234567890"
+                    placeholder="7007685592"
                     maxLength={10}
                   />
                   {errors.unifiedNo && (
@@ -346,7 +345,7 @@ export default function CustomerInfoPage() {
                     id="vatNo"
                     {...register("vatNo")}
                     className="mt-2 text-lg py-3"
-                    placeholder="12345678901234"
+                    placeholder="300511028200003"
                     maxLength={14}
                   />
                   {errors.vatNo && (
@@ -357,7 +356,7 @@ export default function CustomerInfoPage() {
 
               {/* Address Information */}
               <div className="space-y-4">
-                <h3 className="text-xl font-bold text-green-700">
+                <h3 className="text-xl font-bold text-green-700 text-center">
                   Address Information معلومات العنوان
                 </h3>
                 
@@ -378,7 +377,7 @@ export default function CustomerInfoPage() {
                       }}
                     >
                       <SelectTrigger className="mt-2 text-lg py-3">
-                        <SelectValue placeholder="Select Province اختر المنطقة" />
+                        <SelectValue placeholder="اختر المنطقة" />
                       </SelectTrigger>
                       <SelectContent>
                         {saudiProvinces.map((province) => (
@@ -408,7 +407,7 @@ export default function CustomerInfoPage() {
                       disabled={!selectedProvince}
                     >
                       <SelectTrigger className="mt-2 text-lg py-3">
-                        <SelectValue placeholder="Select City اختر المدينة" />
+                        <SelectValue placeholder="اختر المدينة" />
                       </SelectTrigger>
                       <SelectContent>
                         {availableCities.map((city) => (
@@ -433,7 +432,7 @@ export default function CustomerInfoPage() {
                       disabled={!selectedCity}
                     >
                       <SelectTrigger className="mt-2 text-lg py-3">
-                        <SelectValue placeholder="Select Neighborhood اختر الحي" />
+                        <SelectValue placeholder="اختر الحي" />
                       </SelectTrigger>
                       <SelectContent>
                         {availableNeighborhoods.map((neighborhood) => (
@@ -459,7 +458,7 @@ export default function CustomerInfoPage() {
                       id="buildingNo"
                       {...register("buildingNo")}
                       className="mt-2 text-lg py-3"
-                      placeholder="1234"
+                      placeholder="3865"
                       maxLength={4}
                     />
                     {errors.buildingNo && (
@@ -476,7 +475,7 @@ export default function CustomerInfoPage() {
                       id="additionalNo"
                       {...register("additionalNo")}
                       className="mt-2 text-lg py-3"
-                      placeholder="5678"
+                      placeholder="7760"
                       maxLength={4}
                     />
                     {errors.additionalNo && (
@@ -493,7 +492,7 @@ export default function CustomerInfoPage() {
                       id="postalCode"
                       {...register("postalCode")}
                       className="mt-2 text-lg py-3"
-                      placeholder="12345"
+                      placeholder="32432"
                       maxLength={5}
                     />
                     {errors.postalCode && (
@@ -519,7 +518,7 @@ export default function CustomerInfoPage() {
                       id="responseName"
                       {...register("responseName")}
                       className="mt-2 text-lg py-3"
-                      placeholder="Full Name الاسم الكامل"
+                      placeholder="الاسم الكامل"
                     />
                   </div>
 
@@ -532,7 +531,7 @@ export default function CustomerInfoPage() {
                       id="responseNo"
                       {...register("responseNo")}
                       className="mt-2 text-lg py-3"
-                      placeholder="+966 5xxxxxxxx"
+                      placeholder="+966 532044751"
                     />
                   </div>
                 </div>
