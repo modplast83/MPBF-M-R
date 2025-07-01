@@ -35,7 +35,8 @@ import {
   insertAbaFormulaSchema, insertAbaFormulaMaterialSchema,
   InsertAbaFormula, InsertAbaFormulaMaterial,
   insertJoMixSchema, insertJoMixItemSchema, insertJoMixMaterialSchema,
-  InsertJoMix, InsertJoMixItem, InsertJoMixMaterial
+  InsertJoMix, InsertJoMixItem, InsertJoMixMaterial,
+  insertCustomerInformationSchema, InsertCustomerInformation
 } from "../shared/schema";
 import { z } from "zod";
 import path from 'path';
@@ -6884,6 +6885,31 @@ COMMIT;
   // Setup notification routes
   setupNotificationRoutes(app);
   
+  // Customer Information Registration (Public API - No Authentication Required)
+  app.post("/api/customer-information", async (req: Request, res: Response) => {
+    try {
+      const validatedData = insertCustomerInformationSchema.parse(req.body);
+      
+      // Ensure at least one commercial name is provided
+      if (!validatedData.commercialNameAr && !validatedData.commercialNameEn) {
+        return res.status(400).json({ 
+          message: "At least one commercial name (Arabic or English) is required" 
+        });
+      }
+      
+      const customerInfo = await storage.createCustomerInformation(validatedData);
+      res.status(201).json(customerInfo);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ 
+          message: "Invalid customer information data", 
+          errors: error.errors 
+        });
+      }
+      console.error("Error creating customer information:", error);
+      res.status(500).json({ message: "Failed to save customer information" });
+    }
+  });
 
 
   const httpServer = createServer(app);

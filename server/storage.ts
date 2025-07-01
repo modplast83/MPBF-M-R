@@ -313,6 +313,9 @@ export interface IStorage {
   createTrainingFieldEvaluation(evaluation: any): Promise<any>;
   updateTrainingFieldEvaluation(id: number, evaluation: Partial<any>): Promise<any | undefined>;
   deleteTrainingFieldEvaluation(id: number): Promise<boolean>;
+  
+  // Customer Information Registration (Public Form)
+  createCustomerInformation(customerInfo: InsertCustomerInformation): Promise<CustomerInformation>;
 }
 
 export class MemStorage {

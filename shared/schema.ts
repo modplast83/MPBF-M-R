@@ -1422,3 +1422,34 @@ export const joMixMaterials = pgTable("jo_mix_materials", {
 export const insertJoMixMaterialSchema = createInsertSchema(joMixMaterials).omit({ id: true, createdAt: true });
 export type InsertJoMixMaterial = z.infer<typeof insertJoMixMaterialSchema>;
 export type JoMixMaterial = typeof joMixMaterials.$inferSelect;
+
+// Customer Information Registration (Public Form)
+export const customerInformation = pgTable("customer_information", {
+  id: serial("id").primaryKey(),
+  commercialNameAr: text("commercial_name_ar"),
+  commercialNameEn: text("commercial_name_en"),
+  commercialRegistrationNo: varchar("commercial_registration_no", { length: 10 }),
+  unifiedNo: varchar("unified_no", { length: 10 }),
+  vatNo: varchar("vat_no", { length: 14 }),
+  province: text("province").notNull(),
+  city: text("city").notNull(),
+  neighborName: text("neighbor_name").notNull(),
+  buildingNo: varchar("building_no", { length: 4 }),
+  additionalNo: varchar("additional_no", { length: 4 }),
+  postalCode: varchar("postal_code", { length: 5 }),
+  responseName: text("response_name"),
+  responseNo: text("response_no"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const insertCustomerInformationSchema = createInsertSchema(customerInformation, {
+  commercialRegistrationNo: z.string().length(10, "Commercial Registration No must be exactly 10 digits"),
+  unifiedNo: z.string().length(10, "Unified No must be exactly 10 digits"),
+  vatNo: z.string().length(14, "VAT No must be exactly 14 digits"),
+  buildingNo: z.string().length(4, "Building No must be exactly 4 digits"),
+  additionalNo: z.string().length(4, "Additional No must be exactly 4 digits"),
+  postalCode: z.string().length(5, "Postal Code must be exactly 5 digits"),
+}).omit({ id: true, createdAt: true });
+
+export type InsertCustomerInformation = z.infer<typeof insertCustomerInformationSchema>;
+export type CustomerInformation = typeof customerInformation.$inferSelect;
