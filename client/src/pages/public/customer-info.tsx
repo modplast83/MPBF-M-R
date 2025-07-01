@@ -628,10 +628,10 @@ export default function CustomerInfoPage() {
                   {submitMutation.isPending ? (
                     <>
                       <Loader2 className="w-5 h-5 animate-spin mr-2" />
-                      Submitting... جاري الإرسال
+                      Submitting... <span className="font-arabic font-bold">جاري الإرسال</span>
                     </>
                   ) : (
-                    " إرسال المعلومات"
+                    <span className="font-arabic font-bold">إرسال المعلومات</span>
                   )}
                 </Button>
               </div>
