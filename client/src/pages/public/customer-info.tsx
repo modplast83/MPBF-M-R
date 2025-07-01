@@ -504,7 +504,7 @@ export default function CustomerInfoPage() {
 
               {/* Contact Information */}
               <div className="space-y-4">
-                <h3 className="text-xl font-bold text-green-700">
+                <h3 className="text-xl font-bold text-green-700 text-center">
                   Contact Information معلومات الاتصال
                 </h3>
                 
