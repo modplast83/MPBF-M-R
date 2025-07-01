@@ -271,7 +271,7 @@ export default function CustomerInfoPage() {
                       handleNameChange("commercialNameAr", e.target.value)
                     }
                     className="mt-2 text-lg py-3 font-arabic text-center"
-                    placeholder="مصنع أكياس الحديث للمنتجات البلاستيكية"
+                    placeholder="مصنع أكياس البلاستيك الحديث"
                     dir="rtl"
                   />
                   {errors.commercialNameAr && (
@@ -284,6 +284,7 @@ export default function CustomerInfoPage() {
 
               {/* Registration Numbers */}
               <div className="grid md:grid-cols-3 gap-6">
+                <span className="font-arabic font-bold text-center pl-[70px] pr-[70px] ml-[0px] mr-[0px] text-[16px]">السجل التجاري</span>
                 <div>
                   <Input
                     id="commercialRegistrationNo"
@@ -298,7 +299,7 @@ export default function CustomerInfoPage() {
                     </p>
                   )}
                 </div>
-
+<span className="font-arabic font-bold text-center pl-[70px] pr-[70px] ml-[0px] mr-[0px] text-[16px]">الرقم الموحد</span>
                 <div>
                   <Input
                     id="unifiedNo"
@@ -450,7 +451,7 @@ export default function CustomerInfoPage() {
                       </p>
                     )}
                   </div>
-
+<span className="font-arabic font-bold text-center pl-[70px] pr-[70px] ml-[0px] mr-[0px] text-[16px]">الرقم الاضافي</span>
                   <div>
                     <Input
                       id="additionalNo"
