@@ -247,88 +247,117 @@ export default function CustomerInfoPage() {
       </div>
       {/* Main Form */}
       <div className="container mx-auto px-4 py-8">
-        <Card className="max-w-4xl mx-auto shadow-lg">
-          <CardHeader>
+        <Card className="max-w-5xl mx-auto shadow-lg">
+          <CardHeader className="pb-6">
             <CardTitle className="text-2xl font-bold text-center text-green-800">
               Customer Information <span className="font-arabic font-bold">معلومات العميل</span>
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <CardContent className="px-4 sm:px-6 lg:px-8">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
               {/* Commercial Names */}
-              <div className="grid md:grid-cols-1 gap-6">
-                <div>
-                  <Label
-                    htmlFor="commercialNameAr"
-                    className="text-lg font-semibold text-right"
-                  >
-                    <span className="font-arabic font-bold text-center pl-[70px] pr-[70px] ml-[0px] mr-[0px] text-[16px]">الاسم التجاري بالعربية</span>
-                  </Label>
-                  <Input
-                    id="commercialNameAr"
-                    {...register("commercialNameAr")}
-                    onChange={(e) =>
-                      handleNameChange("commercialNameAr", e.target.value)
-                    }
-                    className="mt-2 text-lg py-3 font-arabic text-center"
-                    placeholder="مصنع أكياس البلاستيك الحديث"
-                    dir="rtl"
-                  />
-                  {errors.commercialNameAr && (
-                    <p className="text-red-600 text-sm mt-1">
-                      {errors.commercialNameAr.message}
-                    </p>
-                  )}
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                  <div className="w-full">
+                    <Label htmlFor="commercialNameAr" className="block text-center font-semibold text-[16px] text-[#000000] mb-2">
+                      الاسم التجاري بالعربية *
+                    </Label>
+                    <Input
+                      id="commercialNameAr"
+                      {...register("commercialNameAr")}
+                      onChange={(e) =>
+                        handleNameChange("commercialNameAr", e.target.value)
+                      }
+                      className="text-lg py-3 font-arabic text-center w-full"
+                      placeholder="مصنع أكياس البلاستيك الحديث"
+                      dir="rtl"
+                    />
+                    {errors.commercialNameAr && (
+                      <p className="text-red-600 text-sm mt-1 text-center">
+                        {errors.commercialNameAr.message}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="w-full">
+                    <Label htmlFor="commercialNameEn" className="block text-center font-semibold text-[16px] text-[#000000] mb-2">
+                      Commercial Name (English) *
+                    </Label>
+                    <Input
+                      id="commercialNameEn"
+                      {...register("commercialNameEn")}
+                      onChange={(e) =>
+                        handleNameChange("commercialNameEn", e.target.value)
+                      }
+                      className="text-lg py-3 text-center w-full"
+                      placeholder="Modern Plastic Bag Factory"
+                      dir="ltr"
+                    />
+                    {errors.commercialNameEn && (
+                      <p className="text-red-600 text-sm mt-1 text-center">
+                        {errors.commercialNameEn.message}
+                      </p>
+                    )}
+                  </div>
                 </div>
               </div>
 
               {/* Registration Numbers */}
-              <div className="grid md:grid-cols-3 gap-6">
-                <span className="font-arabic font-bold text-center pl-[70px] pr-[70px] ml-[0px] mr-[0px] text-[16px]">السجل التجاري</span>
-                <div>
-                  <Input
-                    id="commercialRegistrationNo"
-                    {...register("commercialRegistrationNo")}
-                    className="mt-2 text-lg py-3 text-center"
-                    placeholder="2050052901"
-                    maxLength={10}
-                  />
-                  {errors.commercialRegistrationNo && (
-                    <p className="text-red-600 text-sm mt-1">
-                      {errors.commercialRegistrationNo.message}
-                    </p>
-                  )}
-                </div>
-<span className="font-arabic font-bold text-center pl-[70px] pr-[70px] ml-[0px] mr-[0px] text-[16px]">الرقم الموحد</span>
-                <div>
-                  <Input
-                    id="unifiedNo"
-                    {...register("unifiedNo")}
-                    className="mt-2 text-lg py-3 text-center"
-                    placeholder="7007685592"
-                    maxLength={10}
-                  />
-                  {errors.unifiedNo && (
-                    <p className="text-red-600 text-sm mt-1">
-                      {errors.unifiedNo.message}
-                    </p>
-                  )}
-                </div>
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
+                  <div className="w-full">
+                    <Label htmlFor="commercialRegistrationNo" className="block text-center font-semibold text-[16px] text-[#000000] mb-2">
+                      رقم السجل التجاري *
+                    </Label>
+                    <Input
+                      id="commercialRegistrationNo"
+                      {...register("commercialRegistrationNo")}
+                      className="text-lg py-3 text-center w-full"
+                      placeholder="2050052901"
+                      maxLength={10}
+                    />
+                    {errors.commercialRegistrationNo && (
+                      <p className="text-red-600 text-sm mt-1 text-center">
+                        {errors.commercialRegistrationNo.message}
+                      </p>
+                    )}
+                  </div>
 
-                <div>
-                  <Label htmlFor="vatNo" className="peer-disabled:cursor-not-allowed peer-disabled:opacity-70 font-semibold text-center pl-[93px] pr-[93px] text-[16px] text-[#000000]">الرقم الضريبي</Label>
-                  <Input
-                    id="vatNo"
-                    {...register("vatNo")}
-                    className="mt-2 text-lg py-3 text-center"
-                    placeholder="300511028200003"
-                    maxLength={14}
-                  />
-                  {errors.vatNo && (
-                    <p className="text-red-600 text-sm mt-1">
-                      {errors.vatNo.message}
-                    </p>
-                  )}
+                  <div className="w-full">
+                    <Label htmlFor="unifiedNo" className="block text-center font-semibold text-[16px] text-[#000000] mb-2">
+                      الرقم الموحد *
+                    </Label>
+                    <Input
+                      id="unifiedNo"
+                      {...register("unifiedNo")}
+                      className="text-lg py-3 text-center w-full"
+                      placeholder="7007685592"
+                      maxLength={10}
+                    />
+                    {errors.unifiedNo && (
+                      <p className="text-red-600 text-sm mt-1 text-center">
+                        {errors.unifiedNo.message}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="w-full sm:col-span-2 lg:col-span-1">
+                    <Label htmlFor="vatNo" className="block text-center font-semibold text-[16px] text-[#000000] mb-2">
+                      الرقم الضريبي
+                    </Label>
+                    <Input
+                      id="vatNo"
+                      {...register("vatNo")}
+                      className="text-lg py-3 text-center w-full"
+                      placeholder="300511028200003"
+                      maxLength={14}
+                    />
+                    {errors.vatNo && (
+                      <p className="text-red-600 text-sm mt-1 text-center">
+                        {errors.vatNo.message}
+                      </p>
+                    )}
+                  </div>
                 </div>
               </div>
 
@@ -338,9 +367,12 @@ export default function CustomerInfoPage() {
                   Address Information <span className="font-arabic font-bold">معلومات العنوان</span>
                 </h3>
 
-                <div className="grid md:grid-cols-3 gap-6">
-                  <div>
-                    <Label htmlFor="province" className="peer-disabled:cursor-not-allowed peer-disabled:opacity-70 font-semibold text-center text-[16px] text-[#000000] pl-[115px] pr-[115px]">المنطقة</Label>
+                {/* Location Dropdowns */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
+                  <div className="w-full">
+                    <Label htmlFor="province" className="block text-center font-semibold text-[16px] text-[#000000] mb-2">
+                      المنطقة
+                    </Label>
                     <Select
                       value={selectedProvince}
                       onValueChange={(value) => {
@@ -351,7 +383,7 @@ export default function CustomerInfoPage() {
                         setValue("neighborName", "");
                       }}
                     >
-                      <SelectTrigger className="mt-2 text-lg py-3 text-center">
+                      <SelectTrigger className="text-lg py-3 text-center w-full">
                         <SelectValue placeholder="اختر المنطقة" />
                       </SelectTrigger>
                       <SelectContent>
@@ -366,14 +398,16 @@ export default function CustomerInfoPage() {
                       </SelectContent>
                     </Select>
                     {errors.province && (
-                      <p className="text-red-600 text-sm mt-1">
+                      <p className="text-red-600 text-sm mt-1 text-center">
                         {errors.province.message}
                       </p>
                     )}
                   </div>
 
-                  <div>
-                    <Label htmlFor="city" className="peer-disabled:cursor-not-allowed peer-disabled:opacity-70 font-semibold text-[16px] text-center text-[#000000] pl-[120px] pr-[120px]">المدينة</Label>
+                  <div className="w-full">
+                    <Label htmlFor="city" className="block text-center font-semibold text-[16px] text-[#000000] mb-2">
+                      المدينة
+                    </Label>
                     <Select
                       value={selectedCity}
                       onValueChange={(value) => {
@@ -383,7 +417,7 @@ export default function CustomerInfoPage() {
                       }}
                       disabled={!selectedProvince}
                     >
-                      <SelectTrigger className="mt-2 text-lg py-3 text-center">
+                      <SelectTrigger className="text-lg py-3 text-center w-full">
                         <SelectValue placeholder="اختر المدينة" />
                       </SelectTrigger>
                       <SelectContent>
@@ -395,22 +429,21 @@ export default function CustomerInfoPage() {
                       </SelectContent>
                     </Select>
                     {errors.city && (
-                      <p className="text-red-600 text-sm mt-1">
+                      <p className="text-red-600 text-sm mt-1 text-center">
                         {errors.city.message}
                       </p>
                     )}
                   </div>
 
-                  <div>
-                    <Label
-                      htmlFor="neighborName"
-                      className="peer-disabled:cursor-not-allowed peer-disabled:opacity-70 font-semibold text-[16px] text-[#000000] pl-[120px] pr-[120px]"
-                    >الحي</Label>
+                  <div className="w-full sm:col-span-2 lg:col-span-1">
+                    <Label htmlFor="neighborName" className="block text-center font-semibold text-[16px] text-[#000000] mb-2">
+                      الحي
+                    </Label>
                     <Select
                       onValueChange={(value) => setValue("neighborName", value)}
                       disabled={!selectedCity}
                     >
-                      <SelectTrigger className="mt-2 text-lg py-3 text-center">
+                      <SelectTrigger className="text-lg py-3 text-center w-full">
                         <SelectValue placeholder="اختر الحي" />
                       </SelectTrigger>
                       <SelectContent>
@@ -425,62 +458,64 @@ export default function CustomerInfoPage() {
                       </SelectContent>
                     </Select>
                     {errors.neighborName && (
-                      <p className="text-red-600 text-sm mt-1">
+                      <p className="text-red-600 text-sm mt-1 text-center">
                         {errors.neighborName.message}
                       </p>
                     )}
                   </div>
                 </div>
 
-                <div className="grid md:grid-cols-3 gap-6">
-                  <div>
-                    <Label
-                      htmlFor="buildingNo"
-                      className="peer-disabled:cursor-not-allowed peer-disabled:opacity-70 font-semibold text-[16px] text-[#000000] text-center pl-[104px] pr-[104px]"
-                    >رقم المبنى</Label>
+                {/* Address Details */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
+                  <div className="w-full">
+                    <Label htmlFor="buildingNo" className="block text-center font-semibold text-[16px] text-[#000000] mb-2">
+                      رقم المبنى
+                    </Label>
                     <Input
                       id="buildingNo"
                       {...register("buildingNo")}
-                      className="mt-2 text-lg py-3 text-center"
+                      className="text-lg py-3 text-center w-full"
                       placeholder="3865"
                       maxLength={4}
                     />
                     {errors.buildingNo && (
-                      <p className="text-red-600 text-sm mt-1">
+                      <p className="text-red-600 text-sm mt-1 text-center">
                         {errors.buildingNo.message}
                       </p>
                     )}
                   </div>
-<span className="font-arabic font-bold text-center pl-[70px] pr-[70px] ml-[0px] mr-[0px] text-[16px]">الرقم الاضافي</span>
-                  <div>
+
+                  <div className="w-full">
+                    <Label htmlFor="additionalNo" className="block text-center font-semibold text-[16px] text-[#000000] mb-2">
+                      الرقم الإضافي
+                    </Label>
                     <Input
                       id="additionalNo"
                       {...register("additionalNo")}
-                      className="mt-2 text-lg py-3 text-center"
+                      className="text-lg py-3 text-center w-full"
                       placeholder="7760"
                       maxLength={4}
                     />
                     {errors.additionalNo && (
-                      <p className="text-red-600 text-sm mt-1">
+                      <p className="text-red-600 text-sm mt-1 text-center">
                         {errors.additionalNo.message}
                       </p>
                     )}
                   </div>
 
-                  <div>
-                    <Label
-                      htmlFor="postalCode"
-                      className="peer-disabled:cursor-not-allowed peer-disabled:opacity-70 font-semibold text-[16px] text-center text-[#000000] pl-[100px] pr-[100px]"
-                    >الرمز البريدي</Label>
+                  <div className="w-full sm:col-span-2 lg:col-span-1">
+                    <Label htmlFor="postalCode" className="block text-center font-semibold text-[16px] text-[#000000] mb-2">
+                      الرمز البريدي
+                    </Label>
                     <Input
                       id="postalCode"
                       {...register("postalCode")}
-                      className="mt-2 text-lg py-3 text-center"
+                      className="text-lg py-3 text-center w-full"
                       placeholder="32432"
                       maxLength={5}
                     />
                     {errors.postalCode && (
-                      <p className="text-red-600 text-sm mt-1">
+                      <p className="text-red-600 text-sm mt-1 text-center">
                         {errors.postalCode.message}
                       </p>
                     )}
@@ -489,51 +524,59 @@ export default function CustomerInfoPage() {
               </div>
 
               {/* Contact Information */}
-              <div className="space-y-4">
+              <div className="space-y-6">
                 <h3 className="text-xl font-bold text-green-700 text-center">
                   Contact Information <span className="font-arabic font-bold">معلومات الاتصال</span>
                 </h3>
 
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div>
-                    <Label
-                      htmlFor="responseName"
-                      className="peer-disabled:cursor-not-allowed peer-disabled:opacity-70 font-semibold text-center text-[#000000] text-[16px] pl-[83px] pr-[83px]"
-                    >الشخص المسؤول</Label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                  <div className="w-full">
+                    <Label htmlFor="responseName" className="block text-center font-semibold text-[16px] text-[#000000] mb-2">
+                      الشخص المسؤول
+                    </Label>
                     <Input
                       id="responseName"
                       {...register("responseName")}
-                      className="mt-2 text-lg py-3 text-center"
+                      className="text-lg py-3 text-center w-full"
                       placeholder="الاسم الكامل"
                     />
+                    {errors.responseName && (
+                      <p className="text-red-600 text-sm mt-1 text-center">
+                        {errors.responseName.message}
+                      </p>
+                    )}
                   </div>
 
-                  <div>
-                    <Label
-                      htmlFor="responseNo"
-                      className="peer-disabled:cursor-not-allowed peer-disabled:opacity-70 font-semibold text-center text-[16px] text-[#000000] pl-[103px] pr-[103px]"
-                    >رقم التواصل</Label>
+                  <div className="w-full">
+                    <Label htmlFor="responseNo" className="block text-center font-semibold text-[16px] text-[#000000] mb-2">
+                      رقم التواصل
+                    </Label>
                     <Input
                       id="responseNo"
                       {...register("responseNo")}
-                      className="mt-2 text-lg py-3 text-center"
+                      className="text-lg py-3 text-center w-full"
                       placeholder="+966 532044751"
                     />
+                    {errors.responseNo && (
+                      <p className="text-red-600 text-sm mt-1 text-center">
+                        {errors.responseNo.message}
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>
 
               {/* Submit Button */}
-              <div className="text-center pt-6">
+              <div className="text-center pt-8">
                 <Button
                   type="submit"
                   disabled={submitMutation.isPending}
-                  className="bg-green-600 hover:bg-green-700 text-white px-12 py-4 text-lg font-bold rounded-lg shadow-lg"
+                  className="bg-green-600 hover:bg-green-700 text-white px-8 sm:px-12 py-3 sm:py-4 text-base sm:text-lg font-bold rounded-lg shadow-lg w-full sm:w-auto transition-all duration-200"
                 >
                   {submitMutation.isPending ? (
                     <>
                       <Loader2 className="w-5 h-5 animate-spin mr-2" />
-                      Submitting... <span className="font-arabic font-bold">جاري الإرسال</span>
+                      <span className="font-arabic font-bold">جاري الإرسال...</span>
                     </>
                   ) : (
                     <span className="font-arabic font-bold">إرسال المعلومات</span>
