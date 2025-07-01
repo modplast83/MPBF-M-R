@@ -586,14 +586,14 @@ export default function CustomerInfoPage() {
                       className="text-lg font-semibold"
                     >
                       Response Name
-                      <span className="block text-sm font-normal text-gray-600">
+                      <span className="block text-sm font-normal text-gray-600 font-arabic font-bold text-right">
                         اسم الشخص المسؤول
                       </span>
                     </Label>
                     <Input
                       id="responseName"
                       {...register("responseName")}
-                      className="mt-2 text-lg py-3"
+                      className="mt-2 text-lg py-3 text-center"
                       placeholder="الاسم الكامل"
                     />
                   </div>
@@ -604,14 +604,14 @@ export default function CustomerInfoPage() {
                       className="text-lg font-semibold"
                     >
                       Response No.
-                      <span className="block text-sm font-normal text-gray-600">
+                      <span className="block text-sm font-normal text-gray-600 font-arabic font-bold text-right">
                         رقم الهاتف
                       </span>
                     </Label>
                     <Input
                       id="responseNo"
                       {...register("responseNo")}
-                      className="mt-2 text-lg py-3"
+                      className="mt-2 text-lg py-3 text-center"
                       placeholder="+966 532044751"
                     />
                   </div>
