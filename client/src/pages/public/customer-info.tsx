@@ -11,6 +11,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, CheckCircle } from "lucide-react";
 
+import FactoryLogoHPNGW_Green from "@assets/FactoryLogoHPNGW Green.png";
+
 // Customer information form schema
 const customerInfoSchema = z.object({
   commercialNameAr: z.string().optional(),
@@ -206,9 +208,9 @@ export default function CustomerInfoPage() {
           <div className="flex justify-center mb-6">
             <div className="w-32 h-32 bg-green-600 rounded-full flex items-center justify-center">
               <img
-                src="/assets/company-logo.png"
+                src={FactoryLogoHPNGW_Green}
                 alt="Modern Plastic Bag Factory Logo"
-                className="w-28 h-28 object-contain"
+                className="w-28 h-28 object-contain ml-[0px] mr-[0px] pl-[0px] pr-[0px] pt-[0px] pb-[0px]"
                 onError={(e) => {
                   // Fallback to styled div if image fails to load
                   const target = e.target as HTMLImageElement;
@@ -237,7 +239,7 @@ export default function CustomerInfoPage() {
         <Card className="max-w-5xl mx-auto shadow-lg">
           <CardHeader className="pb-6">
             <CardTitle className="text-2xl font-bold text-center text-green-800">
-              Customer Information <span className="font-arabic font-bold">معلومات العميل</span>
+              Customer Info <span className="font-arabic font-bold">معلومات العميل</span>
             </CardTitle>
           </CardHeader>
           <CardContent className="px-4 sm:px-6 lg:px-8">
@@ -268,7 +270,7 @@ export default function CustomerInfoPage() {
 
                   <div className="w-full">
                     <Label htmlFor="commercialNameEn" className="block text-center font-semibold text-[16px] text-[#000000] mb-2">
-                      Commercial Name (English) *
+                      Commercial Name (En) *
                     </Label>
                     <Input
                       id="commercialNameEn"
@@ -351,7 +353,7 @@ export default function CustomerInfoPage() {
               {/* Address Information */}
               <div className="space-y-4">
                 <h3 className="text-xl font-bold text-green-700 text-center">
-                  Address Information <span className="font-arabic font-bold">معلومات العنوان</span>
+                  Address Info <span className="font-arabic font-bold">معلومات العنوان</span>
                 </h3>
 
                 {/* Location Dropdowns */}
@@ -513,7 +515,7 @@ export default function CustomerInfoPage() {
               {/* Contact Information */}
               <div className="space-y-6">
                 <h3 className="text-xl font-bold text-green-700 text-center">
-                  Contact Information <span className="font-arabic font-bold">معلومات الاتصال</span>
+                  Contact Info <span className="font-arabic font-bold">معلومات الاتصال</span>
                 </h3>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
