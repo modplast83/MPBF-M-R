@@ -6886,6 +6886,37 @@ COMMIT;
   // Setup notification routes
   setupNotificationRoutes(app);
   
+  // Get all customer information records (Admin only)
+  app.get("/api/customer-information", requireAuth, async (req: Request, res: Response) => {
+    try {
+      const customerInfos = await storage.getAllCustomerInformation();
+      res.json(customerInfos);
+    } catch (error) {
+      console.error("Error fetching customer information:", error);
+      res.status(500).json({ message: "Failed to fetch customer information" });
+    }
+  });
+
+  // Delete customer information record (Admin only)
+  app.delete("/api/customer-information/:id", requireAuth, async (req: Request, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid customer information ID" });
+      }
+
+      const deleted = await storage.deleteCustomerInformation(id);
+      if (!deleted) {
+        return res.status(404).json({ message: "Customer information not found" });
+      }
+
+      res.json({ message: "Customer information deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting customer information:", error);
+      res.status(500).json({ message: "Failed to delete customer information" });
+    }
+  });
+
   // Customer Information Registration (Public API - No Authentication Required)
   app.post("/api/customer-information", async (req: Request, res: Response) => {
     try {

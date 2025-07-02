@@ -3002,11 +3002,30 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Customer Information Registration (Public Form)
+  async getAllCustomerInformation(): Promise<CustomerInformation[]> {
+    return await db.select().from(customerInformation).orderBy(desc(customerInformation.createdAt));
+  }
+
+  async getCustomerInformation(id: number): Promise<CustomerInformation | undefined> {
+    const [record] = await db
+      .select()
+      .from(customerInformation)
+      .where(eq(customerInformation.id, id));
+    return record;
+  }
+
   async createCustomerInformation(customerInfo: InsertCustomerInformation): Promise<CustomerInformation> {
     const [created] = await db
       .insert(customerInformation)
       .values(customerInfo)
       .returning();
     return created;
+  }
+
+  async deleteCustomerInformation(id: number): Promise<boolean> {
+    const result = await db
+      .delete(customerInformation)
+      .where(eq(customerInformation.id, id));
+    return result.rowCount > 0;
   }
 }
