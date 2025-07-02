@@ -27,6 +27,7 @@ import WarehouseReportsPage from "@/pages/reports/warehouse";
 import QualityReportsPage from "@/pages/reports/quality";
 import WorkflowReportsPage from "@/pages/reports/workflow";
 import JoMixReports from "@/pages/reports/jo-mix";
+import CustomerInfoReport from "@/pages/reports/customer-info-report";
 import SystemIndex from "@/pages/system/index";
 // Quality Module imports
 import QualityIndex from "@/pages/quality/index";
@@ -137,6 +138,7 @@ function App() {
                     <ProtectedRoute path="/reports/quality" component={QualityReportsPage} module="Quality Reports" />
                     <ProtectedRoute path="/reports/workflow" component={WorkflowReportsPage} module="Workflow Reports" />
                     <ProtectedRoute path="/reports/jo-mix" component={JoMixReports} module="JO Mix Reports" />
+                    <ProtectedRoute path="/reports/customer-info-report" component={CustomerInfoReport} module="Customer Information Reports" />
                     <ProtectedRoute path="/quality" component={QualityIndex} module="Quality" />
                     <ProtectedRoute path="/quality/unified-dashboard" component={UnifiedQualityDashboard} module="Unified Dashboard" />
                     <ProtectedRoute path="/quality/check-types" component={QualityCheckTypes} module="Check Types" />
