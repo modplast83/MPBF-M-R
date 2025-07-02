@@ -77,25 +77,14 @@ const citiesByProvince: Record<string, Array<{ value: string; label: string; lab
 
 const neighborhoodsByCity: Record<string, Array<{ value: string; label: string; labelAr: string }>> = {
   riyadh_city: [
-    { value: "olaya", label: "Olaya العليا", labelAr: "العليا" },
-    { value: "malaz", label: "Malaz الملز", labelAr: "الملز" },
-    { value: "sulaymaniyah", label: "Sulaymaniyah السليمانية", labelAr: "السليمانية" },
-    { value: "naseem", label: "Naseem النسيم", labelAr: "النسيم" },
-    { value: "murabba", label: "Murabba المربع", labelAr: "المربع" },
+    { value: "other", label: "Other أخرى", labelAr: "أخرى" },
   ],
   jeddah: [
-    { value: "alsalamah", label: "Al Salamah السلامة", labelAr: "السلامة" },
-    { value: "alrawdah", label: "Al Rawdah الروضة", labelAr: "الروضة" },
-    { value: "alsharafiyah", label: "Al Sharafiyah الشرفية", labelAr: "الشرفية" },
-    { value: "alkandara", label: "Al Kandara الكندرة", labelAr: "الكندرة" },
-    { value: "alhamra", label: "Al Hamra الحمراء", labelAr: "الحمراء" },
+    { value: "other", label: "Other أخرى", labelAr: "أخرى" },
   ],
   dammam: [
-    { value: "alalama", label: "Al Alama العلاما", labelAr: "العلاما" },
-    { value: "aldana", label: "Al Dana الدانة", labelAr: "الدانة" },
-    { value: "alfaisaliyah", label: "Al Faisaliyah الفيصلية", labelAr: "الفيصلية" },
-    { value: "almanar", label: "Al Manar المنار", labelAr: "المنار" },
-    { value: "alzahran", label: "Al Zahran الزهران", labelAr: "الزهران" },
+    { value: "other", label: "Other أخرى", labelAr: "أخرى" },
+
   ],
   // Add more neighborhoods for other cities as needed
 };
@@ -239,7 +228,7 @@ export default function CustomerInfoPage() {
             </div>
           </div>
 
-          <p className="text-lg text-gray-700">Please fill out your business information</p>
+          <p className="text-lg font-extrabold text-[#ff0000]">نموذج تحديث بيانات العميل</p>
           <p className="text-lg text-gray-700 font-arabic font-bold">
             يرجى تعبئة معلومات شركتكم أدناه
           </p>
@@ -555,7 +544,7 @@ export default function CustomerInfoPage() {
                       id="responseNo"
                       {...register("responseNo")}
                       className="text-lg py-3 text-center w-full"
-                      placeholder="+966 532044751"
+                      placeholder="0532044751"
                     />
                     {errors.responseNo && (
                       <p className="text-red-600 text-sm mt-1 text-center">
