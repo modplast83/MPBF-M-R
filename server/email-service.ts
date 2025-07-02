@@ -14,8 +14,8 @@ interface CustomerFormData {
   unifiedNo: string;
   vatNo?: string;
   province: string;
-  city: string;
-  neighborName: string;
+  city?: string;
+  neighborName?: string;
   buildingNo: string;
   additionalNo: string;
   postalCode: string;
@@ -106,14 +106,14 @@ export async function sendCustomerFormNotification(customerData: CustomerFormDat
             <span class="field-label">Province:</span>
             <span class="field-value">${customerData.province}</span>
           </div>
-          <div class="field">
+          ${customerData.city ? `<div class="field">
             <span class="field-label">City:</span>
             <span class="field-value">${customerData.city}</span>
-          </div>
-          <div class="field">
+          </div>` : ''}
+          ${customerData.neighborName ? `<div class="field">
             <span class="field-label">Neighborhood:</span>
             <span class="field-value">${customerData.neighborName}</span>
-          </div>
+          </div>` : ''}
           <div class="field">
             <span class="field-label">Building Number:</span>
             <span class="field-value">${customerData.buildingNo}</span>
