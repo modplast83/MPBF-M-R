@@ -164,7 +164,7 @@ export default function CustomerInfoReport() {
           ${records.map(record => `
             <div class="record">
               <div class="record-header">
-                <strong>Customer ID: ${record.id}</strong> | Registered: ${format(new Date(record.createdAt), 'dd/MM/yyyy')}
+                <strong>Customer ID: ${record.id}</strong> | Registered: ${formatDate(new Date(record.createdAt), 'dd/MM/yyyy')}
               </div>
               <div class="record-content">
                 <div class="section-title">Commercial Names</div>
@@ -225,7 +225,7 @@ export default function CustomerInfoReport() {
       'Postal Code': record.postalCode || '',
       'Contact Name': record.responseName || '',
       'Contact Number': record.responseNo || '',
-      'Registration Date': format(new Date(record.createdAt), 'dd/MM/yyyy HH:mm')
+      'Registration Date': formatDate(new Date(record.createdAt), 'dd/MM/yyyy HH:mm')
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(exportData);
@@ -238,7 +238,7 @@ export default function CustomerInfoReport() {
     }));
     worksheet['!cols'] = colWidths;
 
-    const fileName = `Customer_Information_Report_${format(new Date(), 'yyyy-MM-dd_HHmm')}.xlsx`;
+    const fileName = `Customer_Information_Report_${formatDate(new Date(), 'yyyy-MM-dd_HHmm')}.xlsx`;
     XLSX.writeFile(workbook, fileName);
 
     toast({
@@ -406,7 +406,7 @@ export default function CustomerInfoReport() {
                         </div>
                       </TableCell>
                       <TableCell className="text-sm">
-                        {format(new Date(record.createdAt), 'dd/MM/yyyy')}
+                        {formatDate(new Date(record.createdAt), 'dd/MM/yyyy')}
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
@@ -461,7 +461,7 @@ export default function CustomerInfoReport() {
                                   </div>
                                 )}
                                 <div>
-                                  <p><strong>Registration Date:</strong> {format(new Date(record.createdAt), 'dd/MM/yyyy HH:mm')}</p>
+                                  <p><strong>Registration Date:</strong> {formatDate(new Date(record.createdAt), 'dd/MM/yyyy HH:mm')}</p>
                                 </div>
                               </div>
                             </DialogContent>
