@@ -229,9 +229,7 @@ export default function CustomerInfoPage() {
           </div>
 
           <p className="text-lg font-extrabold text-[#ff0000]">نموذج تحديث بيانات العميل</p>
-          <p className="text-lg text-gray-700 font-arabic font-bold">
-            يرجى تعبئة معلومات شركتكم أدناه
-          </p>
+          <p className="text-gray-700 font-arabic font-bold text-[16px]">يرجى تعبئة المعلومات التجارية أدناه</p>
         </div>
       </div>
       {/* Main Form */}
