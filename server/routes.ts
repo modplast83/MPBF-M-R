@@ -55,6 +55,7 @@ import sgMail from '@sendgrid/mail';
 import { emailService } from './services/email-service';
 import { dashboardStorage } from './dashboard-storage';
 import { setupNotificationRoutes } from "./notification-routes";
+import { sendCustomerFormNotification } from "./email-service";
 import { setupIotRoutes } from "./iot-routes";
 
 
@@ -6897,7 +6898,32 @@ COMMIT;
         });
       }
       
+      // Save customer information to database
       const customerInfo = await storage.createCustomerInformation(validatedData);
+      
+      // Send email notification about new customer registration
+      try {
+        await sendCustomerFormNotification({
+          commercialNameAr: validatedData.commercialNameAr || '',
+          commercialNameEn: validatedData.commercialNameEn || '',
+          commercialRegistrationNo: validatedData.commercialRegistrationNo || '',
+          unifiedNo: validatedData.unifiedNo || '',
+          vatNo: validatedData.vatNo || '',
+          province: validatedData.province,
+          city: validatedData.city,
+          neighborName: validatedData.neighborName,
+          buildingNo: validatedData.buildingNo || '',
+          additionalNo: validatedData.additionalNo || '',
+          postalCode: validatedData.postalCode || '',
+          responseName: validatedData.responseName || '',
+          responseNo: validatedData.responseNo || ''
+        });
+        console.log('Customer registration notification email sent successfully');
+      } catch (emailError) {
+        console.error('Failed to send customer registration notification email:', emailError);
+        // Don't fail the request if email fails - log and continue
+      }
+      
       res.status(201).json(customerInfo);
     } catch (error) {
       if (error instanceof z.ZodError) {

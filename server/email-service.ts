@@ -152,9 +152,9 @@ export async function sendCustomerFormNotification(customerData: CustomerFormDat
 
     // Send notification email
     await mailService.send({
-      to: 'admin@modernplasticbag.com', // Replace with your actual email
-      from: 'notifications@modernplasticbag.com', // Replace with your verified sender email
-      subject: `🆕 New Customer Registration: ${customerData.commercialNameEn}`,
+      to: 'info@modernplasticbag.com', // Replace with your actual admin email
+      from: 'noreply@modernplasticbag.com', // Replace with your verified SendGrid sender email
+      subject: `🆕 New Customer Registration: ${customerData.commercialNameEn || customerData.commercialNameAr}`,
       html: emailHtml,
       text: `
 New Customer Registration Submitted

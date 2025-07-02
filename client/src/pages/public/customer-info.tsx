@@ -117,22 +117,129 @@ export default function CustomerInfoPage() {
   const watchedCommercialNameAr = watch("commercialNameAr");
   const watchedCommercialNameEn = watch("commercialNameEn");
 
-  // Auto-translation logic
-  const handleNameChange = async (field: "commercialNameAr" | "commercialNameEn", value: string) => {
+  // Enhanced auto-translation with comprehensive business terms
+  const handleNameChange = (field: "commercialNameAr" | "commercialNameEn", value: string) => {
     setValue(field, value);
     
-    if (value && value.length > 2) {
-      try {
-        if (field === "commercialNameAr" && !watchedCommercialNameEn) {
-          const translated = await translateText(value, "ar", "en");
-          setValue("commercialNameEn", translated);
-        } else if (field === "commercialNameEn" && !watchedCommercialNameAr) {
-          const translated = await translateText(value, "en", "ar");
-          setValue("commercialNameAr", translated);
-        }
-      } catch (error) {
-        // Translation failed, continue without auto-fill
-        console.log("Translation failed:", error);
+    // Comprehensive translation mapping for business terms
+    const arabicToEnglish: Record<string, string> = {
+      "مصنع": "Factory",
+      "شركة": "Company", 
+      "مؤسسة": "Establishment",
+      "تجارة": "Trading",
+      "صناعة": "Manufacturing",
+      "أكياس": "Bags",
+      "بلاستيك": "Plastic",
+      "بلاستيكية": "Plastic",
+      "الحديث": "Modern",
+      "الحديثة": "Modern",
+      "للتجارة": "Trading",
+      "التجارية": "Commercial",
+      "الصناعية": "Industrial",
+      "المحدودة": "Limited",
+      "ذات مسؤولية محدودة": "LLC",
+      "المساهمة": "Corporation",
+      "التقنية": "Technology",
+      "الخدمات": "Services",
+      "الاستشارية": "Consulting",
+      "للاستثمار": "Investment",
+      "الغذائية": "Food",
+      "الطبية": "Medical",
+      "الهندسية": "Engineering",
+      "العامة": "General",
+      "الدولية": "International",
+      "العربية": "Arab",
+      "السعودية": "Saudi",
+      "الرياض": "Riyadh",
+      "جدة": "Jeddah",
+      "الدمام": "Dammam",
+      "مكة": "Makkah",
+      "المدينة": "Madinah",
+      "متقدمة": "Advanced",
+      "جديدة": "New",
+      "كبيرة": "Large",
+      "صغيرة": "Small",
+      "متوسطة": "Medium",
+      "عالية": "High",
+      "جودة": "Quality"
+    };
+
+    const englishToArabic: Record<string, string> = {
+      "Factory": "مصنع",
+      "Company": "شركة",
+      "Corporation": "شركة",
+      "Establishment": "مؤسسة",
+      "Trading": "للتجارة",
+      "Manufacturing": "صناعة",
+      "Bags": "أكياس",
+      "Plastic": "بلاستيك",
+      "Modern": "الحديث",
+      "Commercial": "التجارية",
+      "Industrial": "الصناعية",
+      "Limited": "المحدودة",
+      "LLC": "ذات مسؤولية محدودة",
+      "Technology": "التقنية",
+      "Services": "الخدمات",
+      "Consulting": "الاستشارية",
+      "Investment": "للاستثمار",
+      "Food": "الغذائية",
+      "Medical": "الطبية",
+      "Engineering": "الهندسية",
+      "General": "العامة",
+      "International": "الدولية",
+      "Arab": "العربية",
+      "Saudi": "السعودية",
+      "Riyadh": "الرياض",
+      "Jeddah": "جدة",
+      "Dammam": "الدمام",
+      "Makkah": "مكة",
+      "Madinah": "المدينة",
+      "Advanced": "متقدمة",
+      "New": "جديدة", 
+      "Large": "كبيرة",
+      "Small": "صغيرة",
+      "Medium": "متوسطة",
+      "High": "عالية",
+      "Quality": "جودة"
+    };
+
+    // Auto-translate when user types
+    if (field === "commercialNameAr" && value.trim()) {
+      let translatedText = value;
+      
+      // Replace Arabic words with English equivalents
+      Object.entries(arabicToEnglish).forEach(([arabic, english]) => {
+        const regex = new RegExp(`\\b${arabic}\\b`, 'gi');
+        translatedText = translatedText.replace(regex, english);
+      });
+      
+      // Clean up extra spaces and format properly
+      translatedText = translatedText
+        .replace(/\s+/g, ' ')
+        .trim()
+        .split(' ')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+        .join(' ');
+      
+      // Only auto-fill if English field is empty and translation is meaningful
+      if (translatedText !== value && translatedText.trim() && !watchedCommercialNameEn) {
+        setValue("commercialNameEn", translatedText);
+      }
+    } else if (field === "commercialNameEn" && value.trim()) {
+      let translatedText = value;
+      
+      // Replace English words with Arabic equivalents
+      Object.entries(englishToArabic).forEach(([english, arabic]) => {
+        const regex = new RegExp(`\\b${english}\\b`, 'gi');
+        translatedText = translatedText.replace(regex, arabic);
+      });
+      
+      // Clean up extra spaces
+      translatedText = translatedText.replace(/\s+/g, ' ').trim();
+      
+      // Only auto-fill if Arabic field is empty and translation is meaningful
+      if (translatedText !== value && translatedText.trim() && !watchedCommercialNameAr) {
+        setValue("commercialNameAr", translatedText);
       }
     }
   };
@@ -257,7 +364,7 @@ export default function CustomerInfoPage() {
                       onChange={(e) =>
                         handleNameChange("commercialNameAr", e.target.value)
                       }
-                      className="text-lg py-3 font-arabic text-center w-full"
+                      className="text-lg py-3 font-arabic text-[14px] text-center w-full"
                       placeholder="مصنع أكياس البلاستيك الحديث"
                       dir="rtl"
                     />
@@ -270,7 +377,7 @@ export default function CustomerInfoPage() {
 
                   <div className="w-full">
                     <Label htmlFor="commercialNameEn" className="block text-center font-semibold text-[16px] text-[#000000] mb-2">
-                      Commercial Name (En) *
+                      الإسم التجاري (En) *
                     </Label>
                     <Input
                       id="commercialNameEn"
@@ -278,7 +385,7 @@ export default function CustomerInfoPage() {
                       onChange={(e) =>
                         handleNameChange("commercialNameEn", e.target.value)
                       }
-                      className="text-lg py-3 text-center w-full"
+                      className="text-lg py-3 text-[14px] text-center w-full"
                       placeholder="Modern Plastic Bag Factory"
                       dir="ltr"
                     />
@@ -372,7 +479,7 @@ export default function CustomerInfoPage() {
                         setValue("neighborName", "");
                       }}
                     >
-                      <SelectTrigger className="text-lg py-3 text-center w-full">
+                      <SelectTrigger className="text-lg py-3 text-[14px] text-center w-full">
                         <SelectValue placeholder="اختر المنطقة" />
                       </SelectTrigger>
                       <SelectContent>
@@ -406,7 +513,7 @@ export default function CustomerInfoPage() {
                       }}
                       disabled={!selectedProvince}
                     >
-                      <SelectTrigger className="text-lg py-3 text-center w-full">
+                      <SelectTrigger className="text-lg py-3 text-[14px] text-center w-full">
                         <SelectValue placeholder="اختر المدينة" />
                       </SelectTrigger>
                       <SelectContent>
@@ -432,7 +539,7 @@ export default function CustomerInfoPage() {
                       onValueChange={(value) => setValue("neighborName", value)}
                       disabled={!selectedCity}
                     >
-                      <SelectTrigger className="text-lg py-3 text-center w-full">
+                      <SelectTrigger className="text-lg py-3 text-[14px] text-center w-full">
                         <SelectValue placeholder="اختر الحي" />
                       </SelectTrigger>
                       <SelectContent>
@@ -526,8 +633,8 @@ export default function CustomerInfoPage() {
                     <Input
                       id="responseName"
                       {...register("responseName")}
-                      className="text-lg py-3 text-center w-full"
-                      placeholder="الاسم الكامل"
+                      className="text-lg py-3 text-[14px] text-center w-full"
+                      placeholder="الشخص المفوض"
                     />
                     {errors.responseName && (
                       <p className="text-red-600 text-sm mt-1 text-center">
@@ -544,7 +651,7 @@ export default function CustomerInfoPage() {
                       id="responseNo"
                       {...register("responseNo")}
                       className="text-lg py-3 text-center w-full"
-                      placeholder="0532044751"
+                      placeholder="05*********"
                     />
                     {errors.responseNo && (
                       <p className="text-red-600 text-sm mt-1 text-center">
