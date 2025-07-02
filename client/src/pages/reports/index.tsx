@@ -324,6 +324,22 @@ export default function ReportsIndex() {
           </Card>
         </Link>
         
+        <Link href="/reports/customer-info-report" className="block no-underline text-current">
+          <Card className="h-full hover:shadow-md transition-shadow">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-lg">Customer Information</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-center h-32 bg-teal-50 rounded mb-3">
+                <span className="material-icons text-4xl text-teal-400">business</span>
+              </div>
+              <p className="text-sm text-gray-600">
+                View, print, and manage customer registration information with filtering and export options
+              </p>
+            </CardContent>
+          </Card>
+        </Link>
+        
         <Card className="h-full">
           <CardHeader className="pb-2">
             <CardTitle className="text-lg">{t("reports.efficiency_report")}</CardTitle>
