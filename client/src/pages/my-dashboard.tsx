@@ -169,7 +169,8 @@ export default function MyDashboard() {
     mutationFn: () => apiRequest('POST', '/api/hr/check-in', {
       userId: user?.id,
       latitude: 0,
-      longitude: 0
+      longitude: 0,
+      manualEntry: true
     }),
     onSuccess: () => {
       toast({
@@ -192,7 +193,8 @@ export default function MyDashboard() {
     mutationFn: () => apiRequest('POST', '/api/hr/check-out', {
       userId: user?.id,
       latitude: 0,
-      longitude: 0
+      longitude: 0,
+      manualEntry: true
     }),
     onSuccess: () => {
       toast({

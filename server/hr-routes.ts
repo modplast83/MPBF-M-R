@@ -257,12 +257,17 @@ export function setupHRRoutes(app: Express) {
   // Enhanced Time Attendance with geofencing and overtime validation
   app.post("/api/hr/check-in", async (req, res) => {
     try {
-      const { userId, latitude, longitude } = req.body;
+      const { userId, latitude, longitude, manualEntry = false } = req.body;
       
-      // Check if user is within geofence
-      const geofences = await storage.checkUserInGeofence(latitude, longitude);
-      if (geofences.length === 0) {
-        return res.status(400).json({ error: "You are not within the factory area" });
+      // Skip geofence validation for manual entries or when coordinates are default (0,0)
+      const skipGeofenceValidation = manualEntry || (latitude === 0 && longitude === 0);
+      
+      if (!skipGeofenceValidation) {
+        // Check if user is within geofence for GPS-based check-ins
+        const geofences = await storage.checkUserInGeofence(latitude, longitude);
+        if (geofences.length === 0) {
+          return res.status(400).json({ error: "You are not within the factory area" });
+        }
       }
       
       // Check if already checked in today
