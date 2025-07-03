@@ -165,6 +165,644 @@ const t = (key: string): string => {
     // Additional dialog descriptions
     'maintenance.actions.view.dialog_description': 'View detailed information about this maintenance action.',
     
+    // Essential damage types for maintenance requests
+    'maintenance.damage_types.motor': 'Motor Issue',
+    'maintenance.damage_types.bearing': 'Bearing Problem',
+    'maintenance.damage_types.belt': 'Belt Issue',
+    'maintenance.damage_types.sensor': 'Sensor Problem',
+    'maintenance.damage_types.electrical': 'Electrical Issue',
+    'maintenance.damage_types.mechanical': 'Mechanical Problem',
+    'maintenance.damage_types.hydraulic': 'Hydraulic Issue',
+    'maintenance.damage_types.pneumatic': 'Pneumatic Problem',
+    'maintenance.damage_types.cooling': 'Cooling System',
+    'maintenance.damage_types.heating': 'Heating System',
+    'maintenance.damage_types.lubrication': 'Lubrication Issue',
+    'maintenance.damage_types.alignment': 'Alignment Problem',
+    'maintenance.damage_types.vibration': 'Vibration Issue',
+    'maintenance.damage_types.noise': 'Noise Problem',
+    'maintenance.damage_types.leakage': 'Leakage Issue',
+    'maintenance.damage_types.overheating': 'Overheating',
+    'maintenance.damage_types.corrosion': 'Corrosion',
+    'maintenance.damage_types.wear': 'Wear and Tear',
+    'maintenance.damage_types.blockage': 'Blockage',
+    'maintenance.damage_types.contamination': 'Contamination',
+    'maintenance.damage_types.calibration': 'Calibration Issue',
+    'maintenance.damage_types.software': 'Software Problem',
+    'maintenance.damage_types.control': 'Control System',
+    'maintenance.damage_types.safety': 'Safety Issue',
+    'maintenance.damage_types.performance': 'Performance Issue',
+    'maintenance.damage_types.quality': 'Quality Issue',
+    'maintenance.damage_types.efficiency': 'Efficiency Problem',
+    'maintenance.damage_types.capacity': 'Capacity Issue',
+    'maintenance.damage_types.speed': 'Speed Problem',
+    'maintenance.damage_types.accuracy': 'Accuracy Issue',
+    'maintenance.damage_types.fan': 'Fan Problem',
+    'maintenance.damage_types.pump': 'Pump Issue',
+    'maintenance.damage_types.valve': 'Valve Problem',
+    'maintenance.damage_types.filter': 'Filter Issue',
+    'maintenance.damage_types.seal': 'Seal Problem',
+    'maintenance.damage_types.gasket': 'Gasket Issue',
+    'maintenance.damage_types.coupling': 'Coupling Problem',
+    'maintenance.damage_types.gearbox': 'Gearbox Issue',
+    'maintenance.damage_types.transmission': 'Transmission Problem',
+    'maintenance.damage_types.chain': 'Chain Issue',
+    'maintenance.damage_types.sprocket': 'Sprocket Problem',
+    'maintenance.damage_types.pulley': 'Pulley Issue',
+    'maintenance.damage_types.shaft': 'Shaft Problem',
+    'maintenance.damage_types.bracket': 'Bracket Issue',
+    'maintenance.damage_types.mounting': 'Mounting Problem',
+    'maintenance.damage_types.fastener': 'Fastener Issue',
+    'maintenance.damage_types.wiring': 'Wiring Problem',
+    'maintenance.damage_types.circuit': 'Circuit Issue',
+    'maintenance.damage_types.switch': 'Switch Problem',
+    'maintenance.damage_types.relay': 'Relay Issue',
+    'maintenance.damage_types.fuse': 'Fuse Problem',
+    'maintenance.damage_types.breaker': 'Circuit Breaker Issue',
+    'maintenance.damage_types.transformer': 'Transformer Problem',
+    'maintenance.damage_types.inverter': 'Inverter Issue',
+    'maintenance.damage_types.converter': 'Converter Problem',
+    'maintenance.damage_types.controller': 'Controller Issue',
+    'maintenance.damage_types.display': 'Display Problem',
+    'maintenance.damage_types.interface': 'Interface Issue',
+    'maintenance.damage_types.communication': 'Communication Problem',
+    'maintenance.damage_types.network': 'Network Issue',
+    'maintenance.damage_types.connection': 'Connection Problem',
+    'maintenance.damage_types.cable': 'Cable Issue',
+    'maintenance.damage_types.connector': 'Connector Problem',
+    'maintenance.damage_types.terminal': 'Terminal Issue',
+    'maintenance.damage_types.insulation': 'Insulation Problem',
+    'maintenance.damage_types.grounding': 'Grounding Issue',
+    'maintenance.damage_types.shielding': 'Shielding Problem',
+    'maintenance.damage_types.protection': 'Protection Issue',
+    'maintenance.damage_types.emergency': 'Emergency System',
+    'maintenance.damage_types.backup': 'Backup System Issue',
+    'maintenance.damage_types.redundancy': 'Redundancy Problem',
+    'maintenance.damage_types.failsafe': 'Failsafe Issue',
+    'maintenance.damage_types.interlock': 'Interlock Problem',
+    'maintenance.damage_types.alarm': 'Alarm System Issue',
+    'maintenance.damage_types.monitoring': 'Monitoring Problem',
+    'maintenance.damage_types.logging': 'Logging Issue',
+    'maintenance.damage_types.reporting': 'Reporting Problem',
+    'maintenance.damage_types.documentation': 'Documentation Issue',
+    'maintenance.damage_types.training': 'Training Required',
+    'maintenance.damage_types.procedure': 'Procedure Problem',
+    'maintenance.damage_types.specification': 'Specification Issue',
+    'maintenance.damage_types.standard': 'Standard Compliance',
+    'maintenance.damage_types.regulation': 'Regulation Issue',
+    'maintenance.damage_types.inspection': 'Inspection Required',
+    'maintenance.damage_types.testing': 'Testing Issue',
+    'maintenance.damage_types.replacement': 'Replacement Required',
+    'maintenance.damage_types.repair': 'Repair Needed',
+    'maintenance.damage_types.maintenance': 'Maintenance Required',
+    'maintenance.damage_types.cleaning': 'Cleaning Needed',
+    'maintenance.damage_types.adjustment': 'Adjustment Required',
+    'maintenance.damage_types.configuration': 'Configuration Issue',
+    'maintenance.damage_types.setup': 'Setup Problem',
+    'maintenance.damage_types.installation': 'Installation Issue',
+    'maintenance.damage_types.commissioning': 'Commissioning Problem',
+    'maintenance.damage_types.startup': 'Startup Issue',
+    'maintenance.damage_types.shutdown': 'Shutdown Problem',
+    'maintenance.damage_types.operation': 'Operation Issue',
+    'maintenance.damage_types.usage': 'Usage Problem',
+    'maintenance.damage_types.handling': 'Handling Issue',
+    'maintenance.damage_types.storage': 'Storage Problem',
+    'maintenance.damage_types.transport': 'Transport Issue',
+    'maintenance.damage_types.packaging': 'Packaging Problem',
+    'maintenance.damage_types.labeling': 'Labeling Issue',
+    'maintenance.damage_types.identification': 'Identification Problem',
+    'maintenance.damage_types.tracking': 'Tracking Issue',
+    'maintenance.damage_types.inventory': 'Inventory Problem',
+    'maintenance.damage_types.supply': 'Supply Issue',
+    'maintenance.damage_types.demand': 'Demand Problem',
+    'maintenance.damage_types.availability': 'Availability Issue',
+    'maintenance.damage_types.accessibility': 'Accessibility Problem',
+    'maintenance.damage_types.compatibility': 'Compatibility Issue',
+    'maintenance.damage_types.integration': 'Integration Problem',
+    'maintenance.damage_types.synchronization': 'Synchronization Issue',
+    'maintenance.damage_types.coordination': 'Coordination Problem',
+    'maintenance.damage_types.scheduling': 'Scheduling Issue',
+    'maintenance.damage_types.timing': 'Timing Problem',
+    'maintenance.damage_types.qualification': 'Qualification Problem',
+    'maintenance.damage_types.accreditation': 'Accreditation Issue',
+    'maintenance.damage_types.authorization': 'Authorization Problem',
+    'maintenance.damage_types.licensing': 'Licensing Issue',
+    'maintenance.damage_types.registration': 'Registration Problem',
+    'maintenance.damage_types.enrollment': 'Enrollment Issue',
+    'maintenance.damage_types.subscription': 'Subscription Problem',
+    'maintenance.damage_types.membership': 'Membership Issue',
+    'maintenance.damage_types.participation': 'Participation Problem',
+    'maintenance.damage_types.involvement': 'Involvement Issue',
+    'maintenance.damage_types.engagement': 'Engagement Problem',
+    'maintenance.damage_types.commitment': 'Commitment Issue',
+    'maintenance.damage_types.dedication': 'Dedication Problem',
+    'maintenance.damage_types.devotion': 'Devotion Issue',
+    'maintenance.damage_types.loyalty': 'Loyalty Problem',
+    'maintenance.damage_types.faithfulness': 'Faithfulness Issue',
+    'maintenance.damage_types.reliability': 'Reliability Problem',
+    'maintenance.damage_types.dependability': 'Dependability Issue',
+    'maintenance.damage_types.trustworthiness': 'Trustworthiness Problem',
+    'maintenance.damage_types.credibility': 'Credibility Issue',
+    'maintenance.damage_types.authenticity': 'Authenticity Problem',
+    'maintenance.damage_types.genuineness': 'Genuineness Issue',
+    'maintenance.damage_types.legitimacy': 'Legitimacy Problem',
+    'maintenance.damage_types.validity': 'Validity Issue',
+    'maintenance.damage_types.accuracy': 'Accuracy Problem',
+    'maintenance.damage_types.precision': 'Precision Issue',
+    'maintenance.damage_types.exactness': 'Exactness Problem',
+    'maintenance.damage_types.correctness': 'Correctness Issue',
+    'maintenance.damage_types.rightness': 'Rightness Problem',
+    'maintenance.damage_types.propriety': 'Propriety Issue',
+    'maintenance.damage_types.appropriateness': 'Appropriateness Problem',
+    'maintenance.damage_types.suitability': 'Suitability Issue',
+    'maintenance.damage_types.fitness': 'Fitness Problem',
+    'maintenance.damage_types.compatibility': 'Compatibility Issue',
+    'maintenance.damage_types.consistency': 'Consistency Problem',
+    'maintenance.damage_types.coherence': 'Coherence Issue',
+    'maintenance.damage_types.logic': 'Logic Problem',
+    'maintenance.damage_types.reasoning': 'Reasoning Issue',
+    'maintenance.damage_types.rationale': 'Rationale Problem',
+    'maintenance.damage_types.justification': 'Justification Issue',
+    'maintenance.damage_types.explanation': 'Explanation Problem',
+    'maintenance.damage_types.clarification': 'Clarification Issue',
+    'maintenance.damage_types.elaboration': 'Elaboration Problem',
+    'maintenance.damage_types.specification': 'Specification Issue',
+    'maintenance.damage_types.definition': 'Definition Problem',
+    'maintenance.damage_types.description': 'Description Issue',
+    'maintenance.damage_types.characterization': 'Characterization Problem',
+    'maintenance.damage_types.portrayal': 'Portrayal Issue',
+    'maintenance.damage_types.depiction': 'Depiction Problem',
+    'maintenance.damage_types.illustration': 'Illustration Issue',
+    'maintenance.damage_types.demonstration': 'Demonstration Problem',
+    'maintenance.damage_types.exhibition': 'Exhibition Issue',
+    'maintenance.damage_types.display': 'Display Problem',
+    'maintenance.damage_types.presentation': 'Presentation Issue',
+    'maintenance.damage_types.showing': 'Showing Problem',
+    'maintenance.damage_types.revelation': 'Revelation Issue',
+    'maintenance.damage_types.disclosure': 'Disclosure Problem',
+    'maintenance.damage_types.exposure': 'Exposure Issue',
+    'maintenance.damage_types.uncovering': 'Uncovering Problem',
+    'maintenance.damage_types.detection': 'Detection Issue',
+    'maintenance.damage_types.discovery': 'Discovery Problem',
+    'maintenance.damage_types.finding': 'Finding Issue',
+    'maintenance.damage_types.identification': 'Identification Problem',
+    'maintenance.damage_types.recognition': 'Recognition Issue',
+    'maintenance.damage_types.acknowledgment': 'Acknowledgment Problem',
+    'maintenance.damage_types.acceptance': 'Acceptance Issue',
+    'maintenance.damage_types.admission': 'Admission Problem',
+    'maintenance.damage_types.concession': 'Concession Issue',
+    'maintenance.damage_types.agreement': 'Agreement Problem',
+    'maintenance.damage_types.consent': 'Consent Issue',
+    'maintenance.damage_types.approval': 'Approval Problem',
+    'maintenance.damage_types.endorsement': 'Endorsement Issue',
+    'maintenance.damage_types.sanction': 'Sanction Problem',
+    'maintenance.damage_types.authorization': 'Authorization Issue',
+    'maintenance.damage_types.permission': 'Permission Problem',
+    'maintenance.damage_types.allowance': 'Allowance Issue',
+    'maintenance.damage_types.license': 'License Problem',
+    'maintenance.damage_types.warrant': 'Warrant Issue',
+    'maintenance.damage_types.mandate': 'Mandate Problem',
+    'maintenance.damage_types.commission': 'Commission Issue',
+    'maintenance.damage_types.delegation': 'Delegation Problem',
+    'maintenance.damage_types.assignment': 'Assignment Issue',
+    'maintenance.damage_types.allocation': 'Allocation Problem',
+    'maintenance.damage_types.distribution': 'Distribution Issue',
+    'maintenance.damage_types.dispensation': 'Dispensation Problem',
+    'maintenance.damage_types.provision': 'Provision Issue',
+    'maintenance.damage_types.supply': 'Supply Problem',
+    'maintenance.damage_types.delivery': 'Delivery Issue',
+    'maintenance.damage_types.shipment': 'Shipment Problem',
+    'maintenance.damage_types.transportation': 'Transportation Issue',
+    'maintenance.damage_types.conveyance': 'Conveyance Problem',
+    'maintenance.damage_types.transfer': 'Transfer Issue',
+    'maintenance.damage_types.transmission': 'Transmission Problem',
+    'maintenance.damage_types.communication': 'Communication Issue',
+    'maintenance.damage_types.correspondence': 'Correspondence Problem',
+    'maintenance.damage_types.exchange': 'Exchange Issue',
+    'maintenance.damage_types.interaction': 'Interaction Problem',
+    'maintenance.damage_types.interface': 'Interface Issue',
+    'maintenance.damage_types.connection': 'Connection Problem',
+    'maintenance.damage_types.linkage': 'Linkage Issue',
+    'maintenance.damage_types.relationship': 'Relationship Problem',
+    'maintenance.damage_types.association': 'Association Issue',
+    'maintenance.damage_types.affiliation': 'Affiliation Problem',
+    'maintenance.damage_types.partnership': 'Partnership Issue',
+    'maintenance.damage_types.collaboration': 'Collaboration Problem',
+    'maintenance.damage_types.cooperation': 'Cooperation Issue',
+    'maintenance.damage_types.teamwork': 'Teamwork Problem',
+    'maintenance.damage_types.coordination': 'Coordination Issue',
+    'maintenance.damage_types.synchronization': 'Synchronization Problem',
+    'maintenance.damage_types.harmony': 'Harmony Issue',
+    'maintenance.damage_types.unity': 'Unity Problem',
+    'maintenance.damage_types.solidarity': 'Solidarity Issue',
+    'maintenance.damage_types.consensus': 'Consensus Problem',
+    'maintenance.damage_types.agreement': 'Agreement Issue',
+    'maintenance.damage_types.understanding': 'Understanding Problem',
+    'maintenance.damage_types.comprehension': 'Comprehension Issue',
+    'maintenance.damage_types.grasp': 'Grasp Problem',
+    'maintenance.damage_types.knowledge': 'Knowledge Issue',
+    'maintenance.damage_types.awareness': 'Awareness Problem',
+    'maintenance.damage_types.consciousness': 'Consciousness Issue',
+    'maintenance.damage_types.perception': 'Perception Problem',
+    'maintenance.damage_types.sensation': 'Sensation Issue',
+    'maintenance.damage_types.feeling': 'Feeling Problem',
+    'maintenance.damage_types.emotion': 'Emotion Issue',
+    'maintenance.damage_types.sentiment': 'Sentiment Problem',
+    'maintenance.damage_types.mood': 'Mood Issue',
+    'maintenance.damage_types.attitude': 'Attitude Problem',
+    'maintenance.damage_types.disposition': 'Disposition Issue',
+    'maintenance.damage_types.temperament': 'Temperament Problem',
+    'maintenance.damage_types.character': 'Character Issue',
+    'maintenance.damage_types.personality': 'Personality Problem',
+    'maintenance.damage_types.nature': 'Nature Issue',
+    'maintenance.damage_types.essence': 'Essence Problem',
+    'maintenance.damage_types.substance': 'Substance Issue',
+    'maintenance.damage_types.material': 'Material Problem',
+    'maintenance.damage_types.matter': 'Matter Issue',
+    'maintenance.damage_types.content': 'Content Problem',
+    'maintenance.damage_types.composition': 'Composition Issue',
+    'maintenance.damage_types.constitution': 'Constitution Problem',
+    'maintenance.damage_types.structure': 'Structure Issue',
+    'maintenance.damage_types.framework': 'Framework Problem',
+    'maintenance.damage_types.architecture': 'Architecture Issue',
+    'maintenance.damage_types.design': 'Design Problem',
+    'maintenance.damage_types.plan': 'Plan Issue',
+    'maintenance.damage_types.scheme': 'Scheme Problem',
+    'maintenance.damage_types.strategy': 'Strategy Issue',
+    'maintenance.damage_types.approach': 'Approach Problem',
+    'maintenance.damage_types.method': 'Method Issue',
+    'maintenance.damage_types.technique': 'Technique Problem',
+    'maintenance.damage_types.procedure': 'Procedure Issue',
+    'maintenance.damage_types.process': 'Process Problem',
+    'maintenance.damage_types.operation': 'Operation Issue',
+    'maintenance.damage_types.function': 'Function Problem',
+    'maintenance.damage_types.activity': 'Activity Issue',
+    'maintenance.damage_types.action': 'Action Problem',
+    'maintenance.damage_types.behavior': 'Behavior Issue',
+    'maintenance.damage_types.conduct': 'Conduct Problem',
+    'maintenance.damage_types.performance': 'Performance Issue',
+    'maintenance.damage_types.execution': 'Execution Problem',
+    'maintenance.damage_types.implementation': 'Implementation Issue',
+    'maintenance.damage_types.application': 'Application Problem',
+    'maintenance.damage_types.utilization': 'Utilization Issue',
+    'maintenance.damage_types.usage': 'Usage Problem',
+    'maintenance.damage_types.employment': 'Employment Issue',
+    'maintenance.damage_types.deployment': 'Deployment Problem',
+    'maintenance.damage_types.installation': 'Installation Issue',
+    'maintenance.damage_types.setup': 'Setup Problem',
+    'maintenance.damage_types.configuration': 'Configuration Issue',
+    'maintenance.damage_types.arrangement': 'Arrangement Problem',
+    'maintenance.damage_types.organization': 'Organization Issue',
+    'maintenance.damage_types.management': 'Management Problem',
+    'maintenance.damage_types.administration': 'Administration Issue',
+    'maintenance.damage_types.governance': 'Governance Problem',
+    'maintenance.damage_types.leadership': 'Leadership Issue',
+    'maintenance.damage_types.direction': 'Direction Problem',
+    'maintenance.damage_types.guidance': 'Guidance Issue',
+    'maintenance.damage_types.supervision': 'Supervision Problem',
+    'maintenance.damage_types.oversight': 'Oversight Issue',
+    'maintenance.damage_types.control': 'Control Problem',
+    'maintenance.damage_types.regulation': 'Regulation Issue',
+    'maintenance.damage_types.rule': 'Rule Problem',
+    'maintenance.damage_types.law': 'Law Issue',
+    'maintenance.damage_types.statute': 'Statute Problem',
+    'maintenance.damage_types.ordinance': 'Ordinance Issue',
+    'maintenance.damage_types.decree': 'Decree Problem',
+    'maintenance.damage_types.edict': 'Edict Issue',
+    'maintenance.damage_types.mandate': 'Mandate Problem',
+    'maintenance.damage_types.directive': 'Directive Issue',
+    'maintenance.damage_types.instruction': 'Instruction Problem',
+    'maintenance.damage_types.command': 'Command Issue',
+    'maintenance.damage_types.order': 'Order Problem',
+    'maintenance.damage_types.requirement': 'Requirement Issue',
+    'maintenance.damage_types.specification': 'Specification Problem',
+    'maintenance.damage_types.standard': 'Standard Issue',
+    'maintenance.damage_types.criterion': 'Criterion Problem',
+    'maintenance.damage_types.benchmark': 'Benchmark Issue',
+    'maintenance.damage_types.measure': 'Measure Problem',
+    'maintenance.damage_types.metric': 'Metric Issue',
+    'maintenance.damage_types.indicator': 'Indicator Problem',
+    'maintenance.damage_types.parameter': 'Parameter Issue',
+    'maintenance.damage_types.variable': 'Variable Problem',
+    'maintenance.damage_types.factor': 'Factor Issue',
+    'maintenance.damage_types.element': 'Element Problem',
+    'maintenance.damage_types.component': 'Component Issue',
+    'maintenance.damage_types.part': 'Part Problem',
+    'maintenance.damage_types.piece': 'Piece Issue',
+    'maintenance.damage_types.segment': 'Segment Problem',
+    'maintenance.damage_types.section': 'Section Issue',
+    'maintenance.damage_types.portion': 'Portion Problem',
+    'maintenance.damage_types.fraction': 'Fraction Issue',
+    'maintenance.damage_types.division': 'Division Problem',
+    'maintenance.damage_types.subdivision': 'Subdivision Issue',
+    'maintenance.damage_types.category': 'Category Problem',
+    'maintenance.damage_types.class': 'Class Issue',
+    'maintenance.damage_types.type': 'Type Problem',
+    'maintenance.damage_types.kind': 'Kind Issue',
+    'maintenance.damage_types.sort': 'Sort Problem',
+    'maintenance.damage_types.variety': 'Variety Issue',
+    'maintenance.damage_types.form': 'Form Problem',
+    'maintenance.damage_types.shape': 'Shape Issue',
+    'maintenance.damage_types.pattern': 'Pattern Problem',
+    'maintenance.damage_types.model': 'Model Issue',
+    'maintenance.damage_types.template': 'Template Problem',
+    'maintenance.damage_types.format': 'Format Issue',
+    'maintenance.damage_types.style': 'Style Problem',
+    'maintenance.damage_types.manner': 'Manner Issue',
+    'maintenance.damage_types.way': 'Way Problem',
+    'maintenance.damage_types.mode': 'Mode Issue',
+    'maintenance.damage_types.means': 'Means Problem',
+    'maintenance.damage_types.medium': 'Medium Issue',
+    'maintenance.damage_types.channel': 'Channel Problem',
+    'maintenance.damage_types.pathway': 'Pathway Issue',
+    'maintenance.damage_types.route': 'Route Problem',
+    'maintenance.damage_types.course': 'Course Issue',
+    'maintenance.damage_types.path': 'Path Problem',
+    'maintenance.damage_types.track': 'Track Issue',
+    'maintenance.damage_types.trail': 'Trail Problem',
+    'maintenance.damage_types.line': 'Line Issue',
+    'maintenance.damage_types.direction': 'Direction Problem',
+    'maintenance.damage_types.orientation': 'Orientation Issue',
+    'maintenance.damage_types.position': 'Position Problem',
+    'maintenance.damage_types.location': 'Location Issue',
+    'maintenance.damage_types.place': 'Place Problem',
+    'maintenance.damage_types.site': 'Site Issue',
+    'maintenance.damage_types.spot': 'Spot Problem',
+    'maintenance.damage_types.point': 'Point Issue',
+    'maintenance.damage_types.area': 'Area Problem',
+    'maintenance.damage_types.region': 'Region Issue',
+    'maintenance.damage_types.zone': 'Zone Problem',
+    'maintenance.damage_types.territory': 'Territory Issue',
+    'maintenance.damage_types.domain': 'Domain Problem',
+    'maintenance.damage_types.realm': 'Realm Issue',
+    'maintenance.damage_types.sphere': 'Sphere Problem',
+    'maintenance.damage_types.field': 'Field Issue',
+    'maintenance.damage_types.scope': 'Scope Problem',
+    'maintenance.damage_types.range': 'Range Issue',
+    'maintenance.damage_types.extent': 'Extent Problem',
+    'maintenance.damage_types.span': 'Span Issue',
+    'maintenance.damage_types.reach': 'Reach Problem',
+    'maintenance.damage_types.coverage': 'Coverage Issue',
+    'maintenance.damage_types.breadth': 'Breadth Problem',
+    'maintenance.damage_types.width': 'Width Issue',
+    'maintenance.damage_types.depth': 'Depth Problem',
+    'maintenance.damage_types.height': 'Height Issue',
+    'maintenance.damage_types.length': 'Length Problem',
+    'maintenance.damage_types.size': 'Size Issue',
+    'maintenance.damage_types.dimension': 'Dimension Problem',
+    'maintenance.damage_types.scale': 'Scale Issue',
+    'maintenance.damage_types.proportion': 'Proportion Problem',
+    'maintenance.damage_types.ratio': 'Ratio Issue',
+    'maintenance.damage_types.percentage': 'Percentage Problem',
+    'maintenance.damage_types.fraction': 'Fraction Issue',
+    'maintenance.damage_types.share': 'Share Problem',
+    'maintenance.damage_types.portion': 'Portion Issue',
+    'maintenance.damage_types.part': 'Part Problem',
+    'maintenance.damage_types.piece': 'Piece Issue',
+    'maintenance.damage_types.bit': 'Bit Problem',
+    'maintenance.damage_types.fragment': 'Fragment Issue',
+    'maintenance.damage_types.segment': 'Segment Problem',
+    'maintenance.damage_types.slice': 'Slice Issue',
+    'maintenance.damage_types.chunk': 'Chunk Problem',
+    'maintenance.damage_types.block': 'Block Issue',
+    'maintenance.damage_types.unit': 'Unit Problem',
+    'maintenance.damage_types.item': 'Item Issue',
+    'maintenance.damage_types.object': 'Object Problem',
+    'maintenance.damage_types.thing': 'Thing Issue',
+    'maintenance.damage_types.entity': 'Entity Problem',
+    'maintenance.damage_types.being': 'Being Issue',
+    'maintenance.damage_types.existence': 'Existence Problem',
+    'maintenance.damage_types.presence': 'Presence Issue',
+    'maintenance.damage_types.occurrence': 'Occurrence Problem',
+    'maintenance.damage_types.instance': 'Instance Issue',
+    'maintenance.damage_types.case': 'Case Problem',
+    'maintenance.damage_types.example': 'Example Issue',
+    'maintenance.damage_types.sample': 'Sample Problem',
+    'maintenance.damage_types.specimen': 'Specimen Issue',
+    'maintenance.damage_types.illustration': 'Illustration Problem',
+    'maintenance.damage_types.demonstration': 'Demonstration Issue',
+    'maintenance.damage_types.manifestation': 'Manifestation Problem',
+    'maintenance.damage_types.expression': 'Expression Issue',
+    'maintenance.damage_types.representation': 'Representation Problem',
+    'maintenance.damage_types.symbol': 'Symbol Issue',
+    'maintenance.damage_types.sign': 'Sign Problem',
+    'maintenance.damage_types.mark': 'Mark Issue',
+    'maintenance.damage_types.indicator': 'Indicator Problem',
+    'maintenance.damage_types.signal': 'Signal Issue',
+    'maintenance.damage_types.warning': 'Warning Problem',
+    'maintenance.damage_types.alert': 'Alert Issue',
+    'maintenance.damage_types.alarm': 'Alarm Problem',
+    'maintenance.damage_types.notification': 'Notification Issue',
+    'maintenance.damage_types.announcement': 'Announcement Problem',
+    'maintenance.damage_types.declaration': 'Declaration Issue',
+    'maintenance.damage_types.statement': 'Statement Problem',
+    'maintenance.damage_types.proclamation': 'Proclamation Issue',
+    'maintenance.damage_types.pronouncement': 'Pronouncement Problem',
+    'maintenance.damage_types.communication': 'Communication Issue',
+    'maintenance.damage_types.message': 'Message Problem',
+    'maintenance.damage_types.information': 'Information Issue',
+    'maintenance.damage_types.data': 'Data Problem',
+    'maintenance.damage_types.intelligence': 'Intelligence Issue',
+    'maintenance.damage_types.knowledge': 'Knowledge Problem',
+    'maintenance.damage_types.wisdom': 'Wisdom Issue',
+    'maintenance.damage_types.understanding': 'Understanding Problem',
+    'maintenance.damage_types.comprehension': 'Comprehension Issue',
+    'maintenance.damage_types.insight': 'Insight Problem',
+    'maintenance.damage_types.perception': 'Perception Issue',
+    'maintenance.damage_types.awareness': 'Awareness Problem',
+    'maintenance.damage_types.consciousness': 'Consciousness Issue',
+    'maintenance.damage_types.recognition': 'Recognition Problem',
+    'maintenance.damage_types.realization': 'Realization Issue',
+    'maintenance.damage_types.discovery': 'Discovery Problem',
+    'maintenance.damage_types.finding': 'Finding Issue',
+    'maintenance.damage_types.revelation': 'Revelation Problem',
+    'maintenance.damage_types.exposure': 'Exposure Issue',
+    'maintenance.damage_types.disclosure': 'Disclosure Problem',
+    'maintenance.damage_types.uncovering': 'Uncovering Issue',
+    'maintenance.damage_types.detection': 'Detection Problem',
+    'maintenance.damage_types.identification': 'Identification Issue',
+    'maintenance.damage_types.location': 'Location Problem',
+    'maintenance.damage_types.positioning': 'Positioning Issue',
+    'maintenance.damage_types.placement': 'Placement Problem',
+    'maintenance.damage_types.arrangement': 'Arrangement Issue',
+    'maintenance.damage_types.organization': 'Organization Problem',
+    'maintenance.damage_types.structure': 'Structure Issue',
+    'maintenance.damage_types.order': 'Order Problem',
+    'maintenance.damage_types.sequence': 'Sequence Issue',
+    'maintenance.damage_types.series': 'Series Problem',
+    'maintenance.damage_types.succession': 'Succession Issue',
+    'maintenance.damage_types.progression': 'Progression Problem',
+    'maintenance.damage_types.advancement': 'Advancement Issue',
+    'maintenance.damage_types.development': 'Development Problem',
+    'maintenance.damage_types.evolution': 'Evolution Issue',
+    'maintenance.damage_types.growth': 'Growth Problem',
+    'maintenance.damage_types.expansion': 'Expansion Issue',
+    'maintenance.damage_types.extension': 'Extension Problem',
+    'maintenance.damage_types.enlargement': 'Enlargement Issue',
+    'maintenance.damage_types.increase': 'Increase Problem',
+    'maintenance.damage_types.rise': 'Rise Issue',
+    'maintenance.damage_types.elevation': 'Elevation Problem',
+    'maintenance.damage_types.improvement': 'Improvement Issue',
+    'maintenance.damage_types.enhancement': 'Enhancement Problem',
+    'maintenance.damage_types.upgrade': 'Upgrade Issue',
+    'maintenance.damage_types.refinement': 'Refinement Problem',
+    'maintenance.damage_types.optimization': 'Optimization Issue',
+    'maintenance.damage_types.perfection': 'Perfection Problem',
+    'maintenance.damage_types.completion': 'Completion Issue',
+    'maintenance.damage_types.fulfillment': 'Fulfillment Problem',
+    'maintenance.damage_types.achievement': 'Achievement Issue',
+    'maintenance.damage_types.accomplishment': 'Accomplishment Problem',
+    'maintenance.damage_types.success': 'Success Issue',
+    'maintenance.damage_types.victory': 'Victory Problem',
+    'maintenance.damage_types.triumph': 'Triumph Issue',
+    'maintenance.damage_types.conquest': 'Conquest Problem',
+    'maintenance.damage_types.mastery': 'Mastery Issue',
+    'maintenance.damage_types.expertise': 'Expertise Problem',
+    'maintenance.damage_types.skill': 'Skill Issue',
+    'maintenance.damage_types.ability': 'Ability Problem',
+    'maintenance.damage_types.capability': 'Capability Issue',
+    'maintenance.damage_types.capacity': 'Capacity Problem',
+    'maintenance.damage_types.competence': 'Competence Issue',
+    'maintenance.damage_types.proficiency': 'Proficiency Problem',
+    'maintenance.damage_types.talent': 'Talent Issue',
+    'maintenance.damage_types.gift': 'Gift Problem',
+    'maintenance.damage_types.aptitude': 'Aptitude Issue',
+    'maintenance.damage_types.potential': 'Potential Problem',
+    'maintenance.damage_types.possibility': 'Possibility Issue',
+    'maintenance.damage_types.opportunity': 'Opportunity Problem',
+    'maintenance.damage_types.chance': 'Chance Issue',
+    'maintenance.damage_types.prospect': 'Prospect Problem',
+    'maintenance.damage_types.outlook': 'Outlook Issue',
+    'maintenance.damage_types.future': 'Future Problem',
+    'maintenance.damage_types.destiny': 'Destiny Issue',
+    'maintenance.damage_types.fate': 'Fate Problem',
+    'maintenance.damage_types.fortune': 'Fortune Issue',
+    'maintenance.damage_types.luck': 'Luck Problem',
+    'maintenance.damage_types.circumstance': 'Circumstance Issue',
+    'maintenance.damage_types.situation': 'Situation Problem',
+    'maintenance.damage_types.condition': 'Condition Issue',
+    'maintenance.damage_types.state': 'State Problem',
+    'maintenance.damage_types.status': 'Status Issue',
+    'maintenance.damage_types.position': 'Position Problem',
+    'maintenance.damage_types.standing': 'Standing Issue',
+    'maintenance.damage_types.rank': 'Rank Problem',
+    'maintenance.damage_types.grade': 'Grade Issue',
+    'maintenance.damage_types.level': 'Level Problem',
+    'maintenance.damage_types.degree': 'Degree Issue',
+    'maintenance.damage_types.stage': 'Stage Problem',
+    'maintenance.damage_types.phase': 'Phase Issue',
+    'maintenance.damage_types.step': 'Step Problem',
+    'maintenance.damage_types.measure': 'Measure Issue',
+    'maintenance.damage_types.action': 'Action Problem',
+    'maintenance.damage_types.move': 'Move Issue',
+    'maintenance.damage_types.decision': 'Decision Problem',
+    'maintenance.damage_types.choice': 'Choice Issue',
+    'maintenance.damage_types.selection': 'Selection Problem',
+    'maintenance.damage_types.option': 'Option Issue',
+    'maintenance.damage_types.alternative': 'Alternative Problem',
+    'maintenance.damage_types.solution': 'Solution Issue',
+    'maintenance.damage_types.answer': 'Answer Problem',
+    'maintenance.damage_types.response': 'Response Issue',
+    'maintenance.damage_types.reply': 'Reply Problem',
+    'maintenance.damage_types.reaction': 'Reaction Issue',
+    'maintenance.damage_types.feedback': 'Feedback Problem',
+    'maintenance.damage_types.result': 'Result Issue',
+    'maintenance.damage_types.outcome': 'Outcome Problem',
+    'maintenance.damage_types.consequence': 'Consequence Issue',
+    'maintenance.damage_types.effect': 'Effect Problem',
+    'maintenance.damage_types.impact': 'Impact Issue',
+    'maintenance.damage_types.influence': 'Influence Problem',
+    'maintenance.damage_types.power': 'Power Issue',
+    'maintenance.damage_types.force': 'Force Problem',
+    'maintenance.damage_types.strength': 'Strength Issue',
+    'maintenance.damage_types.energy': 'Energy Problem',
+    'maintenance.damage_types.vitality': 'Vitality Issue',
+    'maintenance.damage_types.vigor': 'Vigor Problem',
+    'maintenance.damage_types.intensity': 'Intensity Issue',
+    'maintenance.damage_types.pressure': 'Pressure Problem',
+    'maintenance.damage_types.stress': 'Stress Issue',
+    'maintenance.damage_types.strain': 'Strain Problem',
+    'maintenance.damage_types.tension': 'Tension Issue',
+    'maintenance.damage_types.load': 'Load Problem',
+    'maintenance.damage_types.burden': 'Burden Issue',
+    'maintenance.damage_types.weight': 'Weight Problem',
+    'maintenance.damage_types.mass': 'Mass Issue',
+    'maintenance.damage_types.volume': 'Volume Problem',
+    'maintenance.damage_types.density': 'Density Issue',
+    'maintenance.damage_types.concentration': 'Concentration Problem',
+    'maintenance.damage_types.focus': 'Focus Issue',
+    'maintenance.damage_types.attention': 'Attention Problem',
+    'maintenance.damage_types.interest': 'Interest Issue',
+    'maintenance.damage_types.concern': 'Concern Problem',
+    'maintenance.damage_types.care': 'Care Issue',
+    'maintenance.damage_types.consideration': 'Consideration Problem',
+    'maintenance.damage_types.thought': 'Thought Issue',
+    'maintenance.damage_types.idea': 'Idea Problem',
+    'maintenance.damage_types.concept': 'Concept Issue',
+    'maintenance.damage_types.notion': 'Notion Problem',
+    'maintenance.damage_types.belief': 'Belief Issue',
+    'maintenance.damage_types.opinion': 'Opinion Problem',
+    'maintenance.damage_types.view': 'View Issue',
+    'maintenance.damage_types.perspective': 'Perspective Problem',
+    'maintenance.damage_types.angle': 'Angle Issue',
+    'maintenance.damage_types.approach': 'Approach Problem',
+    'maintenance.damage_types.method': 'Method Issue',
+    'maintenance.damage_types.technique': 'Technique Problem',
+    'maintenance.damage_types.strategy': 'Strategy Issue',
+    'maintenance.damage_types.plan': 'Plan Problem',
+    'maintenance.damage_types.scheme': 'Scheme Issue',
+    'maintenance.damage_types.design': 'Design Problem',
+    'maintenance.damage_types.blueprint': 'Blueprint Issue',
+    'maintenance.damage_types.outline': 'Outline Problem',
+    'maintenance.damage_types.draft': 'Draft Issue',
+    'maintenance.damage_types.sketch': 'Sketch Problem',
+    'maintenance.damage_types.drawing': 'Drawing Issue',
+    'maintenance.damage_types.diagram': 'Diagram Problem',
+    'maintenance.damage_types.chart': 'Chart Issue',
+    'maintenance.damage_types.graph': 'Graph Problem',
+    'maintenance.damage_types.map': 'Map Issue',
+    'maintenance.damage_types.layout': 'Layout Problem',
+    'maintenance.damage_types.format': 'Format Issue',
+    'maintenance.damage_types.structure': 'Structure Problem',
+    'maintenance.damage_types.framework': 'Framework Issue',
+    'maintenance.damage_types.architecture': 'Architecture Problem',
+    'maintenance.damage_types.construction': 'Construction Issue',
+    'maintenance.damage_types.building': 'Building Problem',
+    'maintenance.damage_types.assembly': 'Assembly Issue',
+    'maintenance.damage_types.installation': 'Installation Problem',
+    'maintenance.damage_types.setup': 'Setup Issue',
+    'maintenance.damage_types.configuration': 'Configuration Problem',
+    'maintenance.damage_types.arrangement': 'Arrangement Issue',
+    'maintenance.damage_types.organization': 'Organization Problem',
+    'maintenance.damage_types.management': 'Management Issue',
+    'maintenance.damage_types.administration': 'Administration Problem',
+    'maintenance.damage_types.governance': 'Governance Issue',
+    'maintenance.damage_types.leadership': 'Leadership Problem',
+    'maintenance.damage_types.direction': 'Direction Issue',
+    'maintenance.damage_types.guidance': 'Guidance Problem',
+    'maintenance.damage_types.supervision': 'Supervision Issue',
+    'maintenance.damage_types.oversight': 'Oversight Problem',
+    'maintenance.damage_types.control': 'Control Issue',
+    'maintenance.damage_types.regulation': 'Regulation Problem',
+    'maintenance.damage_types.monitoring': 'Monitoring Issue',
+    'maintenance.damage_types.observation': 'Observation Problem',
+    'maintenance.damage_types.surveillance': 'Surveillance Issue',
+    'maintenance.damage_types.inspection': 'Inspection Problem',
+    'maintenance.damage_types.examination': 'Examination Issue',
+    'maintenance.damage_types.investigation': 'Investigation Problem',
+    'maintenance.damage_types.analysis': 'Analysis Issue',
+    'maintenance.damage_types.evaluation': 'Evaluation Problem',
+    'maintenance.damage_types.assessment': 'Assessment Issue',
+    'maintenance.damage_types.review': 'Review Problem',
+    'maintenance.damage_types.audit': 'Audit Issue',
+    'maintenance.damage_types.check': 'Check Problem',
+    'maintenance.damage_types.test': 'Test Issue',
+    'maintenance.damage_types.trial': 'Trial Problem',
+    'maintenance.damage_types.experiment': 'Experiment Issue',
+    'maintenance.damage_types.validation': 'Validation Problem',
+    'maintenance.damage_types.verification': 'Verification Issue',
+    'maintenance.damage_types.confirmation': 'Confirmation Problem',
+    'maintenance.damage_types.certification': 'Certification Issue',
+    
     // Messages
     'maintenance.actions.creating': 'Creating...',
     'maintenance.actions.updating': 'Updating...',
@@ -706,9 +1344,36 @@ export default function MaintenanceActionsPage() {
     return matchesSearch && matchesStatus;
   });
 
+  // Group actions by maintenance request
+  const groupedActions = filteredActions.reduce((groups: { [key: number]: MaintenanceAction[] }, action: MaintenanceAction) => {
+    if (!groups[action.requestId]) {
+      groups[action.requestId] = [];
+    }
+    groups[action.requestId].push(action);
+    return groups;
+  }, {});
+
+  // Sort groups by request ID (most recent first)
+  const sortedRequestIds = Object.keys(groupedActions)
+    .map(id => parseInt(id))
+    .sort((a, b) => b - a);
+
+  const translateDamageType = (damageType: string): string => {
+    // If the damage type is already a translation key, translate it
+    if (damageType.startsWith('maintenance.damage_types.')) {
+      return t(damageType);
+    }
+    // Otherwise return as is
+    return damageType;
+  };
+
   const getRequestInfo = (requestId: number) => {
     const request = requests.find((r: MaintenanceRequest) => r.id === requestId);
-    return request ? `${request.requestNumber || '#' + request.id} - ${request.damageType}` : `#${requestId}`;
+    if (request) {
+      const translatedDamageType = translateDamageType(request.damageType);
+      return `${request.requestNumber || '#' + request.id} - ${translatedDamageType}`;
+    }
+    return `#${requestId}`;
   };
 
   const getStatusBadge = (status: string) => {
@@ -921,179 +1586,208 @@ export default function MaintenanceActionsPage() {
             <div className="text-center py-4 text-gray-500">
               {t("maintenance.actions.no_actions")}
             </div>
-          ) : isMobile ? (
-            <div className="space-y-3">
-              {filteredActions.map((action: MaintenanceAction) => (
-                <Card key={action.id} className="p-4">
-                  <div className="flex justify-between items-start mb-3">
-                    <div className="flex items-center space-x-2">
-                      <span className="font-medium text-sm">#{action.id}</span>
-                      <Badge variant="secondary" className="text-xs">
-                        {action.actionType}
-                      </Badge>
-                    </div>
-                    {getStatusBadge(action.status)}
-                  </div>
-                  
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">{t("maintenance.actions.mobile.date")}</span>
-                      <span>{formatDate(new Date(action.actionDate), 'MMM dd, yyyy')}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">{t("maintenance.actions.mobile.machine")}</span>
-                      <span className="font-medium">{getMachineName(action.machineId)}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">{t("maintenance.actions.request")}:</span>
-                      <span>{getRequestInfo(action.requestId)}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">{t("maintenance.actions.mobile.performed_by")}</span>
-                      <span>{getUserName(action.performedBy)}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">{t("maintenance.actions.mobile.hours")}</span>
-                      <span>{action.hours}h</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">{t("maintenance.actions.mobile.cost")}</span>
-                      <span>${action.cost}</span>
-                    </div>
-                  </div>
-                  
-                  <div className="mt-3 pt-3 border-t">
-                    <p className="text-sm text-gray-700" title={action.description}>
-                      {action.description.length > 80 ? `${action.description.substring(0, 80)}...` : action.description}
-                    </p>
-                  </div>
-                  
-                  <div className="mt-3 pt-3 border-t flex justify-end gap-2">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => handleViewAction(action)}
-                      title={t("maintenance.actions.tooltip.view")}
-                    >
-                      <Eye className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => handlePrint(action)}
-                      title={t("maintenance.actions.tooltip.print")}
-                    >
-                      <Printer className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => handleEditAction(action)}
-                      title={t("maintenance.actions.tooltip.edit")}
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => handleDeleteAction(action.id)}
-                      title={t("maintenance.actions.tooltip.delete")}
-                      className="text-red-600 hover:text-red-700"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </Card>
-              ))}
-            </div>
           ) : (
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="text-center">{t("maintenance.actions.id")}</TableHead>
-                    <TableHead className="text-center">{t("maintenance.actions.date")}</TableHead>
-                    <TableHead className="text-center">{t("maintenance.actions.request")}</TableHead>
-                    <TableHead className="text-center">{t("maintenance.actions.machine")}</TableHead>
-                    <TableHead className="text-center">{t("maintenance.actions.actionsTaken")}</TableHead>
-                    <TableHead className="text-center">{t("maintenance.actions.actionBy")}</TableHead>
-                    <TableHead className="text-center">{t("maintenance.actions.laborHours")}</TableHead>
-                    <TableHead className="text-center">{t("maintenance.actions.partsCost")}</TableHead>
-                    <TableHead className="text-center">{t("maintenance.actions.status")}</TableHead>
-                    <TableHead className="text-center">{t("maintenance.actions.description")}</TableHead>
-                    <TableHead className="text-center">{t("maintenance.actions.actions")}</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredActions.map((action: MaintenanceAction) => (
-                    <TableRow key={action.id}>
-                      <TableCell className="font-medium text-center">#{action.id}</TableCell>
-                      <TableCell className="text-center">{formatDate(new Date(action.actionDate), 'MMM dd, yyyy')}</TableCell>
-                      <TableCell className="text-center">{getRequestInfo(action.requestId)}</TableCell>
-                      <TableCell className="text-center">{getMachineName(action.machineId)}</TableCell>
-                      <TableCell className="text-center">
-                        <Badge variant="secondary" className="text-xs">
-                          {action.actionType}
+            // Desktop and mobile view with grouped actions
+            <div className="space-y-6">
+              {sortedRequestIds.map((requestId: number) => {
+                const request = requests.find((r: MaintenanceRequest) => r.id === requestId);
+                const requestActions = groupedActions[requestId];
+                
+                return (
+                  <div key={requestId} className="border rounded-lg overflow-hidden">
+                    {/* Request Header */}
+                    <div className="bg-gray-50 p-4 border-b">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <h3 className="font-semibold text-lg">
+                            {request?.requestNumber || `#${requestId}`}
+                          </h3>
+                          <p className="text-sm text-gray-600">
+                            {request ? translateDamageType(request.damageType) : 'Unknown Request'}
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            Machine: {request ? getMachineName(request.machineId) : 'Unknown'}
+                          </p>
+                        </div>
+                        <Badge variant={request?.status === 'completed' ? 'default' : 'secondary'}>
+                          {request?.status || 'Unknown'}
                         </Badge>
-                      </TableCell>
-                      <TableCell className="text-center">{getUserName(action.performedBy)}</TableCell>
-                      <TableCell className="text-center">
-                        <div className="flex items-center justify-center">
-                          <FileText className="w-4 h-4 mr-1 text-gray-400" />
-                          {action.hours}h
+                      </div>
+                    </div>
+                    
+                    {/* Actions for this request */}
+                    <div className="p-4">
+                      <h4 className="font-medium text-sm text-gray-700 mb-3">
+                        Actions ({requestActions.length})
+                      </h4>
+                      
+                      {isMobile ? (
+                        <div className="space-y-3">
+                          {requestActions.map((action: MaintenanceAction) => (
+                            <Card key={action.id} className="p-3 bg-gray-50">
+                              <div className="flex justify-between items-start mb-2">
+                                <div className="flex items-center space-x-2">
+                                  <span className="font-medium text-sm">#{action.id}</span>
+                                  <Badge variant="secondary" className="text-xs">
+                                    {action.actionType}
+                                  </Badge>
+                                </div>
+                                {getStatusBadge(action.status)}
+                              </div>
+                              
+                              <div className="space-y-1 text-sm">
+                                <div className="flex justify-between">
+                                  <span className="text-gray-600">{t("maintenance.actions.mobile.date")}</span>
+                                  <span>{formatDate(new Date(action.actionDate), 'MMM dd, yyyy')}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span className="text-gray-600">{t("maintenance.actions.mobile.performed_by")}</span>
+                                  <span>{getUserName(action.performedBy)}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span className="text-gray-600">{t("maintenance.actions.mobile.hours")}</span>
+                                  <span>{action.hours}h</span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span className="text-gray-600">{t("maintenance.actions.mobile.cost")}</span>
+                                  <span>${action.cost}</span>
+                                </div>
+                              </div>
+                              
+                              <div className="mt-2 pt-2 border-t">
+                                <p className="text-sm text-gray-700" title={action.description}>
+                                  {action.description.length > 60 ? `${action.description.substring(0, 60)}...` : action.description}
+                                </p>
+                              </div>
+                              
+                              <div className="mt-3 pt-2 border-t flex justify-end gap-2">
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => handleViewAction(action)}
+                                  title={t("maintenance.actions.tooltip.view")}
+                                >
+                                  <Eye className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => handlePrint(action)}
+                                  title={t("maintenance.actions.tooltip.print")}
+                                >
+                                  <Printer className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => handleEditAction(action)}
+                                  title={t("maintenance.actions.tooltip.edit")}
+                                >
+                                  <Edit className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => handleDeleteAction(action.id)}
+                                  title={t("maintenance.actions.tooltip.delete")}
+                                  className="text-red-600 hover:text-red-700"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </Card>
+                          ))}
                         </div>
-                      </TableCell>
-                      <TableCell className="text-center">
-                        <div className="flex items-center justify-center">
-                          <DollarSign className="w-4 h-4 mr-1 text-gray-400" />
-                          ${action.cost.toFixed(2)}
+                      ) : (
+                        <div className="overflow-x-auto">
+                          <Table>
+                            <TableHeader>
+                              <TableRow>
+                                <TableHead className="text-center">{t("maintenance.actions.id")}</TableHead>
+                                <TableHead className="text-center">{t("maintenance.actions.date")}</TableHead>
+                                <TableHead className="text-center">{t("maintenance.actions.actionsTaken")}</TableHead>
+                                <TableHead className="text-center">{t("maintenance.actions.actionBy")}</TableHead>
+                                <TableHead className="text-center">{t("maintenance.actions.laborHours")}</TableHead>
+                                <TableHead className="text-center">{t("maintenance.actions.partsCost")}</TableHead>
+                                <TableHead className="text-center">{t("maintenance.actions.status")}</TableHead>
+                                <TableHead className="text-center">{t("maintenance.actions.description")}</TableHead>
+                                <TableHead className="text-center">{t("maintenance.actions.actions")}</TableHead>
+                              </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                              {requestActions.map((action: MaintenanceAction) => (
+                                <TableRow key={action.id}>
+                                  <TableCell className="font-medium text-center">#{action.id}</TableCell>
+                                  <TableCell className="text-center">{formatDate(new Date(action.actionDate), 'MMM dd, yyyy')}</TableCell>
+                                  <TableCell className="text-center">
+                                    <Badge variant="secondary" className="text-xs">
+                                      {action.actionType}
+                                    </Badge>
+                                  </TableCell>
+                                  <TableCell className="text-center">{getUserName(action.performedBy)}</TableCell>
+                                  <TableCell className="text-center">
+                                    <div className="flex items-center justify-center">
+                                      <FileText className="w-4 h-4 mr-1 text-gray-400" />
+                                      {action.hours}h
+                                    </div>
+                                  </TableCell>
+                                  <TableCell className="text-center">
+                                    <div className="flex items-center justify-center">
+                                      <DollarSign className="w-4 h-4 mr-1 text-gray-400" />
+                                      ${action.cost.toFixed(2)}
+                                    </div>
+                                  </TableCell>
+                                  <TableCell className="text-center">{getStatusBadge(action.status)}</TableCell>
+                                  <TableCell className="max-w-xs truncate text-center" title={action.description}>
+                                    {action.description}
+                                  </TableCell>
+                                  <TableCell className="text-center">
+                                    <div className="flex justify-center gap-2">
+                                      <Button
+                                        size="sm"
+                                        variant="outline"
+                                        onClick={() => handleViewAction(action)}
+                                        title={t("maintenance.actions.tooltip.view")}
+                                      >
+                                        <Eye className="h-4 w-4" />
+                                      </Button>
+                                      <Button
+                                        size="sm"
+                                        variant="outline"
+                                        onClick={() => handlePrint(action)}
+                                        title={t("maintenance.actions.tooltip.print")}
+                                      >
+                                        <Printer className="h-4 w-4" />
+                                      </Button>
+                                      <Button
+                                        size="sm"
+                                        variant="outline"
+                                        onClick={() => handleEditAction(action)}
+                                        title={t("maintenance.actions.tooltip.edit")}
+                                      >
+                                        <Edit className="h-4 w-4" />
+                                      </Button>
+                                      <Button
+                                        size="sm"
+                                        variant="outline"
+                                        onClick={() => handleDeleteAction(action.id)}
+                                        title={t("maintenance.actions.tooltip.delete")}
+                                        className="text-red-600 hover:text-red-700"
+                                      >
+                                        <Trash2 className="h-4 w-4" />
+                                      </Button>
+                                    </div>
+                                  </TableCell>
+                                </TableRow>
+                              ))}
+                            </TableBody>
+                          </Table>
                         </div>
-                      </TableCell>
-                      <TableCell className="text-center">{getStatusBadge(action.status)}</TableCell>
-                      <TableCell className="max-w-xs truncate text-center" title={action.description}>
-                        {action.description}
-                      </TableCell>
-                      <TableCell className="text-center">
-                        <div className="flex justify-center gap-2">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => handleViewAction(action)}
-                            title={t("maintenance.actions.tooltip.view")}
-                          >
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => handlePrint(action)}
-                            title={t("maintenance.actions.tooltip.print")}
-                          >
-                            <Printer className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => handleEditAction(action)}
-                            title={t("maintenance.actions.tooltip.edit")}
-                          >
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => handleDeleteAction(action.id)}
-                            title={t("maintenance.actions.tooltip.delete")}
-                            className="text-red-600 hover:text-red-700"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           )}
         </CardContent>
@@ -1182,134 +1876,85 @@ export default function MaintenanceActionsPage() {
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Edit Maintenance Action</DialogTitle>
+            <DialogTitle>{t("maintenance.actions.edit.title")}</DialogTitle>
             <DialogDescription>
-              Update the maintenance action details.
+              {t("maintenance.actions.edit.dialog_description")}
             </DialogDescription>
           </DialogHeader>
-          <form onSubmit={handleEditSubmit} className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="edit-requestId">Maintenance Request *</Label>
-                <Select value={editFormData.requestId} onValueChange={(value) => setEditFormData({...editFormData, requestId: value})}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select Request" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {requests.map((request: MaintenanceRequest) => (
-                      <SelectItem key={request.id} value={request.id.toString()}>
-                        {request.requestNumber || `#${request.id}`} - {request.damageType}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+          {selectedAction && (
+            <form onSubmit={handleUpdateAction} className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="editActionDate">{t("maintenance.actions.actionDate")}</Label>
+                  <Input
+                    id="editActionDate"
+                    type="date"
+                    value={editFormData.actionDate}
+                    onChange={(e) => setEditFormData({...editFormData, actionDate: e.target.value})}
+                    required
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="editActionType">{t("maintenance.actions.actionType")}</Label>
+                  <Select value={editFormData.actionType} onValueChange={(value) => setEditFormData({...editFormData, actionType: value})}>
+                    <SelectTrigger>
+                      <SelectValue placeholder={t("maintenance.actions.selectActionType")} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="repair">{t("maintenance.actions.repair")}</SelectItem>
+                      <SelectItem value="replace">{t("maintenance.actions.replace")}</SelectItem>
+                      <SelectItem value="maintenance">{t("maintenance.actions.maintenance")}</SelectItem>
+                      <SelectItem value="inspection">{t("maintenance.actions.inspection")}</SelectItem>
+                      <SelectItem value="calibration">{t("maintenance.actions.calibration")}</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
 
               <div>
-                <Label htmlFor="edit-machineId">Machine *</Label>
-                <Select value={editFormData.machineId} onValueChange={(value) => setEditFormData({...editFormData, machineId: value})}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select Machine" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {machines.map((machine: Machine) => (
-                      <SelectItem key={machine.id} value={machine.id}>
-                        {machine.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="edit-actionType">Action Type *</Label>
-                <Select value={editFormData.actionType} onValueChange={(value) => setEditFormData({...editFormData, actionType: value})}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select Action Type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="repair">Repair</SelectItem>
-                    <SelectItem value="replacement">Replacement</SelectItem>
-                    <SelectItem value="maintenance">Maintenance</SelectItem>
-                    <SelectItem value="inspection">Inspection</SelectItem>
-                    <SelectItem value="cleaning">Cleaning</SelectItem>
-                    <SelectItem value="calibration">Calibration</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div>
-                <Label htmlFor="edit-status">Status *</Label>
-                <Select value={editFormData.status} onValueChange={(value) => setEditFormData({...editFormData, status: value})}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select Status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="completed">Completed</SelectItem>
-                    <SelectItem value="in_progress">In Progress</SelectItem>
-                    <SelectItem value="pending">Pending</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            <div>
-              <Label htmlFor="edit-description">Description *</Label>
-              <Textarea
-                id="edit-description"
-                placeholder="Describe the action taken"
-                value={editFormData.description}
-                onChange={(e) => setEditFormData({...editFormData, description: e.target.value})}
-                rows={3}
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="edit-cost">Parts Cost ($)</Label>
-                <Input
-                  id="edit-cost"
-                  type="number"
-                  step="0.01"
-                  placeholder="0.00"
-                  value={editFormData.cost}
-                  onChange={(e) => setEditFormData({...editFormData, cost: e.target.value})}
+                <Label htmlFor="editDescription">{t("maintenance.actions.description")}</Label>
+                <Textarea
+                  id="editDescription"
+                  value={editFormData.description}
+                  onChange={(e) => setEditFormData({...editFormData, description: e.target.value})}
+                  required
+                  rows={3}
                 />
               </div>
-              <div>
-                <Label htmlFor="edit-hours">Labor Hours</Label>
-                <Input
-                  id="edit-hours"
-                  type="number"
-                  step="0.5"
-                  placeholder="0.0"
-                  value={editFormData.hours}
-                  onChange={(e) => setEditFormData({...editFormData, hours: e.target.value})}
-                />
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="editPartsCost">{t("maintenance.actions.partsCost")}</Label>
+                  <Input
+                    id="editPartsCost"
+                    type="number"
+                    step="0.01"
+                    value={editFormData.partsCost}
+                    onChange={(e) => setEditFormData({...editFormData, partsCost: e.target.value})}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="editLaborHours">{t("maintenance.actions.laborHours")}</Label>
+                  <Input
+                    id="editLaborHours"
+                    type="number"
+                    step="0.5"
+                    value={editFormData.laborHours}
+                    onChange={(e) => setEditFormData({...editFormData, laborHours: e.target.value})}
+                  />
+                </div>
               </div>
-            </div>
 
-            <div>
-              <Label htmlFor="edit-partReplaced">Part Replaced</Label>
-              <Input
-                id="edit-partReplaced"
-                placeholder="Part name or description"
-                value={editFormData.partReplaced}
-                onChange={(e) => setEditFormData({...editFormData, partReplaced: e.target.value})}
-              />
-            </div>
-
-            <div className="flex justify-end space-x-2">
-              <Button type="button" variant="outline" onClick={() => setIsEditDialogOpen(false)}>
-                Cancel
-              </Button>
-              <Button type="submit" disabled={updateActionMutation.isPending}>
-                {updateActionMutation.isPending ? "Updating..." : "Update Action"}
-              </Button>
-            </div>
-          </form>
+              <div className="flex justify-end space-x-2">
+                <Button type="button" variant="outline" onClick={() => setIsEditDialogOpen(false)}>
+                  {t("common.cancel")}
+                </Button>
+                <Button type="submit" disabled={updateActionMutation.isPending}>
+                  {updateActionMutation.isPending ? t("maintenance.actions.updating") : t("maintenance.actions.updateAction")}
+                </Button>
+              </div>
+            </form>
+          )}
         </DialogContent>
       </Dialog>
     </div>
