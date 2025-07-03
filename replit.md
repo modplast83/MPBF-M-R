@@ -103,6 +103,17 @@ This is a comprehensive production management system built with React, TypeScrip
 - Health check endpoints for monitoring
 
 ## Recent Changes
+- July 3, 2025: Enhanced Attendance system with comprehensive monthly calendar view and automatic overtime/undertime calculations:
+  - Added complete monthly calendar view showing all days with attendance status color coding
+  - Implemented automatic overtime/undertime calculations based on 8-hour standard working day
+  - Added comprehensive monthly statistics showing present/absent days, total hours, overtime, and undertime
+  - Created view mode selector to switch between daily and monthly attendance views
+  - Added month selector for easy navigation between different months
+  - Built professional summary row showing monthly totals and detailed statistics
+  - Present days marked in green, absent days in red, weekends in gray for clear visual distinction
+  - Fixed SelectItem compilation issues in maintenance actions to resolve empty string value errors
+  - Enhanced geofence validation bypass for manual check-ins with coordinates (0,0)
+  - Overtime calculated when actual hours > 8 hours per day, undertime when actual hours < 8 hours per day
 - July 2, 2025: Enhanced Customer Information form with intelligent auto-translation, email notifications, and optional field updates:
   - Implemented comprehensive Arabic ↔ English auto-translation with 60+ business terms dictionary
   - Added smart translation logic that only auto-fills empty fields to avoid overwriting user input

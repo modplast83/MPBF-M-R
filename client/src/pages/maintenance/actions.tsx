@@ -128,8 +128,8 @@ export default function MaintenanceActionsPage() {
   const isMobile = useIsMobile();
   
   const [searchTerm, setSearchTerm] = useState("");
-  const [filterStatus, setFilterStatus] = useState("");
-  const [filterActionType, setFilterActionType] = useState("");
+  const [filterStatus, setFilterStatus] = useState("all");
+  const [filterActionType, setFilterActionType] = useState("all");
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
@@ -216,8 +216,8 @@ export default function MaintenanceActionsPage() {
       action.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
       action.performedBy.toLowerCase().includes(searchTerm.toLowerCase());
     
-    const matchesStatus = !filterStatus || action.status === filterStatus;
-    const matchesActionType = !filterActionType || action.actionType === filterActionType;
+    const matchesStatus = filterStatus === "all" || action.status === filterStatus;
+    const matchesActionType = filterActionType === "all" || action.actionType === filterActionType;
     
     return matchesSearch && matchesStatus && matchesActionType;
   });
@@ -325,7 +325,7 @@ export default function MaintenanceActionsPage() {
               <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Status</SelectItem>
+              <SelectItem value="all">All Status</SelectItem>
               <SelectItem value="Completed">Completed</SelectItem>
               <SelectItem value="In Progress">In Progress</SelectItem>
               <SelectItem value="Pending">Pending</SelectItem>
@@ -337,7 +337,7 @@ export default function MaintenanceActionsPage() {
               <SelectValue placeholder="Action Type" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Types</SelectItem>
+              <SelectItem value="all">All Types</SelectItem>
               {ACTION_TYPES.map((type) => (
                 <SelectItem key={type} value={type}>{type}</SelectItem>
               ))}

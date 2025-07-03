@@ -261,7 +261,7 @@ export default function AttendancePage() {
             <Label className="text-sm font-medium">View:</Label>
             <Select value={viewMode} onValueChange={(value: 'daily' | 'monthly') => setViewMode(value)}>
               <SelectTrigger className="w-32">
-                <SelectValue />
+                <SelectValue placeholder="Select view" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="daily">Daily</SelectItem>
