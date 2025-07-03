@@ -103,6 +103,12 @@ This is a comprehensive production management system built with React, TypeScrip
 - Health check endpoints for monitoring
 
 ## Recent Changes
+- July 3, 2025: Fixed critical bugs in Production Management System:
+  - Added missing HR break-start and break-end API endpoints that were causing 404 errors in My Dashboard
+  - Fixed break management functionality for time attendance tracking with proper validation
+  - Resolved API request errors for employee break tracking system
+  - Endpoints now properly validate user state before allowing break operations
+  - Break duration is correctly calculated and stored in attendance records
 - July 3, 2025: Enhanced Attendance system with comprehensive monthly calendar view and automatic overtime/undertime calculations:
   - Added complete monthly calendar view showing all days with attendance status color coding
   - Implemented automatic overtime/undertime calculations based on 8-hour standard working day

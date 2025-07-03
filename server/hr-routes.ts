@@ -300,6 +300,84 @@ export function setupHRRoutes(app: Express) {
     }
   });
 
+  // Break start endpoint
+  app.post("/api/hr/break-start", async (req, res) => {
+    try {
+      const { userId } = req.body;
+      
+      if (!userId) {
+        return res.status(400).json({ error: "User ID is required" });
+      }
+      
+      // Get today's attendance record
+      const today = new Date();
+      const attendance = await storage.getTimeAttendanceByUserAndDate(userId, today);
+      
+      if (!attendance || !attendance.checkInTime) {
+        return res.status(400).json({ error: "No check-in record found for today" });
+      }
+      
+      if (attendance.checkOutTime) {
+        return res.status(400).json({ error: "Already checked out today" });
+      }
+      
+      if (attendance.breakStartTime && !attendance.breakEndTime) {
+        return res.status(400).json({ error: "Break already in progress" });
+      }
+      
+      const updateData = {
+        breakStartTime: new Date()
+      };
+      
+      const updatedAttendance = await storage.updateTimeAttendance(attendance.id, updateData);
+      res.json(updatedAttendance);
+    } catch (error) {
+      console.error("Error starting break:", error);
+      res.status(500).json({ error: "Failed to start break" });
+    }
+  });
+
+  // Break end endpoint
+  app.post("/api/hr/break-end", async (req, res) => {
+    try {
+      const { userId } = req.body;
+      
+      if (!userId) {
+        return res.status(400).json({ error: "User ID is required" });
+      }
+      
+      // Get today's attendance record
+      const today = new Date();
+      const attendance = await storage.getTimeAttendanceByUserAndDate(userId, today);
+      
+      if (!attendance || !attendance.checkInTime) {
+        return res.status(400).json({ error: "No check-in record found for today" });
+      }
+      
+      if (!attendance.breakStartTime) {
+        return res.status(400).json({ error: "No break in progress" });
+      }
+      
+      if (attendance.breakEndTime) {
+        return res.status(400).json({ error: "Break already ended" });
+      }
+      
+      const breakEndTime = new Date();
+      const breakDuration = (breakEndTime.getTime() - attendance.breakStartTime.getTime()) / (1000 * 60 * 60);
+      
+      const updateData = {
+        breakEndTime,
+        breakDuration
+      };
+      
+      const updatedAttendance = await storage.updateTimeAttendance(attendance.id, updateData);
+      res.json(updatedAttendance);
+    } catch (error) {
+      console.error("Error ending break:", error);
+      res.status(500).json({ error: "Failed to end break" });
+    }
+  });
+
   app.post("/api/hr/check-out", async (req, res) => {
     try {
       const { userId, latitude, longitude, isAutomatic = false } = req.body;
