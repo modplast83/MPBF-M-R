@@ -35,7 +35,47 @@ const formatDate = (date: Date | string, formatStr: string = 'dd/MM/yyyy') => {
 };
 
 // Simple translation function  
-const t = (key: string): string => key.split('.').pop() || key;
+const t = (key: string): string => {
+  // Basic English fallbacks for common terms
+  const translations: Record<string, string> = {
+    'maintenance.requests': 'Maintenance Requests',
+    'maintenance.add_request': 'Add Request',
+    'maintenance.request_number': 'Request Number',
+    'maintenance.machine': 'Machine',
+    'maintenance.description': 'Description',
+    'maintenance.priority': 'Priority',
+    'maintenance.status': 'Status',
+    'maintenance.actions': 'Actions',
+    'maintenance.pending': 'Pending',
+    'maintenance.progress': 'In Progress',
+    'maintenance.completed': 'Completed',
+    'maintenance.high': 'High',
+    'maintenance.normal': 'Normal',
+    'maintenance.low': 'Low',
+    'maintenance.requests.machine': 'Machine',
+    'maintenance.requests.damageType': 'Damage Type',
+    'maintenance.requests.severity': 'Severity',
+    'maintenance.requests.description': 'Description',
+    // Damage type translations
+    'maintenance.damage_types.motor': 'Motor Issue',
+    'maintenance.damage_types.bearing': 'Bearing Problem',
+    'maintenance.damage_types.belt': 'Belt Issue',
+    'maintenance.damage_types.electrical': 'Electrical Problem',
+    'maintenance.damage_types.hydraulic': 'Hydraulic Issue',
+    'maintenance.damage_types.mechanical': 'Mechanical Problem',
+    'maintenance.damage_types.cooling': 'Cooling System Issue',
+    'maintenance.damage_types.heating': 'Heating System Issue',
+    'maintenance.damage_types.control': 'Control System Problem',
+    'maintenance.damage_types.safety': 'Safety System Issue',
+    'maintenance.damage_types.other': 'Other Issue',
+    'common.save': 'Save',
+    'common.cancel': 'Cancel',
+    'common.edit': 'Edit',
+    'common.delete': 'Delete',
+    'common.print': 'Print'
+  };
+  return translations[key] || key.split('.').pop() || key;
+};
 import { QuickActions } from "@/components/ui/quick-actions";
 import { Plus, RefreshCw, Filter, Search, AlertTriangle, Clock, CheckCircle, X, Eye, Trash2, Wrench, Settings, Printer, Edit } from "lucide-react";
 import { useLocation } from "wouter";
@@ -752,7 +792,7 @@ export default function MaintenanceRequestsPage() {
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-600">Type:</span>
-                      <span>{request.damageType}</span>
+                      <span>{t(request.damageType)}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-600">Date:</span>
@@ -853,7 +893,7 @@ export default function MaintenanceRequestsPage() {
                       <TableCell className="font-medium">#{request.id}</TableCell>
                       <TableCell>{formatDate(new Date(request.createdAt))}</TableCell>
                       <TableCell>{getMachineName(request.machineId)}</TableCell>
-                      <TableCell>{request.damageType}</TableCell>
+                      <TableCell>{t(request.damageType)}</TableCell>
                       <TableCell>{getSeverityBadge(request.severity)}</TableCell>
                       <TableCell>{getStatusBadge(request.status)}</TableCell>
                       <TableCell>{getUserName(request.reportedBy)}</TableCell>
@@ -953,7 +993,7 @@ export default function MaintenanceRequestsPage() {
                 </div>
                 <div>
                   <Label className="font-semibold">Damage Type:</Label>
-                  <p>{selectedRequest.damageType}</p>
+                  <p>{t(selectedRequest.damageType)}</p>
                 </div>
                 <div>
                   <Label className="font-semibold">Severity:</Label>
