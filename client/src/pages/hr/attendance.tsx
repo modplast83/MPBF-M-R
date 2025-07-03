@@ -46,13 +46,18 @@ export default function AttendancePage() {
   const { isRTL } = useLanguage();
   const { toast } = useToast();
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+  const [selectedMonth, setSelectedMonth] = useState(new Date().toISOString().slice(0, 7)); // YYYY-MM format
   const [showManualEntry, setShowManualEntry] = useState(false);
+  const [viewMode, setViewMode] = useState<'daily' | 'monthly'>('monthly');
   const [manualEntry, setManualEntry] = useState({
     userId: "",
     date: new Date().toISOString().split('T')[0],
     action: "check_in", // check_in, check_out, break_start, break_end
     time: ""
   });
+
+  // Standard working hours (8 hours per day)
+  const STANDARD_WORKING_HOURS = 8;
 
   // Fetch all attendance records
   const { data: allAttendance = [], isLoading, refetch: refetchAttendance } = useQuery({
@@ -66,10 +71,68 @@ export default function AttendancePage() {
     queryFn: () => apiRequest('GET', '/api/users')
   });
 
-  // Filter attendance by selected date
+  // Helper functions for monthly calendar
+  const generateMonthlyCalendar = (yearMonth: string) => {
+    const [year, month] = yearMonth.split('-').map(Number);
+    const firstDay = new Date(year, month - 1, 1);
+    const lastDay = new Date(year, month, 0);
+    const daysInMonth = lastDay.getDate();
+    
+    const calendar = [];
+    for (let day = 1; day <= daysInMonth; day++) {
+      const date = new Date(year, month - 1, day);
+      const dateString = date.toISOString().split('T')[0];
+      calendar.push({
+        date: dateString,
+        day: day,
+        dayName: date.toLocaleDateString('en-US', { weekday: 'short' }),
+        isWeekend: date.getDay() === 0 || date.getDay() === 6
+      });
+    }
+    return calendar;
+  };
+
+  const calculateOvertimeUndertime = (workingHours: number) => {
+    const difference = workingHours - STANDARD_WORKING_HOURS;
+    return {
+      overtime: difference > 0 ? difference : 0,
+      undertime: difference < 0 ? Math.abs(difference) : 0,
+      difference
+    };
+  };
+
+  const getAttendanceForDate = (date: string) => {
+    return allAttendance.find((record: AttendanceRecord) => record.date === date);
+  };
+
+  // Generate monthly calendar
+  const monthlyCalendar = generateMonthlyCalendar(selectedMonth);
+
+  // Filter attendance by selected date for daily view
   const todayAttendance = allAttendance.filter((record: AttendanceRecord) => 
     record.date === selectedDate
   );
+
+  // Get monthly statistics
+  const monthlyStats = monthlyCalendar.reduce((stats, day) => {
+    const attendance = getAttendanceForDate(day.date);
+    if (attendance && attendance.checkInTime) {
+      stats.presentDays++;
+      stats.totalWorkingHours += attendance.workingHours;
+      const { overtime, undertime } = calculateOvertimeUndertime(attendance.workingHours);
+      stats.totalOvertime += overtime;
+      stats.totalUndertime += undertime;
+    } else if (!day.isWeekend) {
+      stats.absentDays++;
+    }
+    return stats;
+  }, {
+    presentDays: 0,
+    absentDays: 0,
+    totalWorkingHours: 0,
+    totalOvertime: 0,
+    totalUndertime: 0
+  });
 
   // Manual attendance entry mutation
   const manualAttendanceMutation = useMutation({
@@ -193,18 +256,48 @@ export default function AttendancePage() {
         </div>
         
         <div className="flex flex-col lg:flex-row gap-4 w-full lg:w-auto">
+          {/* View Mode Selector */}
           <div className="flex items-center gap-2">
-            <Label htmlFor="date-select" className="text-sm font-medium">
-              Date:
-            </Label>
-            <Input
-              id="date-select"
-              type="date"
-              value={selectedDate}
-              onChange={(e) => setSelectedDate(e.target.value)}
-              className="w-40"
-            />
+            <Label className="text-sm font-medium">View:</Label>
+            <Select value={viewMode} onValueChange={(value: 'daily' | 'monthly') => setViewMode(value)}>
+              <SelectTrigger className="w-32">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="daily">Daily</SelectItem>
+                <SelectItem value="monthly">Monthly</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
+
+          {/* Date/Month Selector */}
+          {viewMode === 'daily' ? (
+            <div className="flex items-center gap-2">
+              <Label htmlFor="date-select" className="text-sm font-medium">
+                Date:
+              </Label>
+              <Input
+                id="date-select"
+                type="date"
+                value={selectedDate}
+                onChange={(e) => setSelectedDate(e.target.value)}
+                className="w-40"
+              />
+            </div>
+          ) : (
+            <div className="flex items-center gap-2">
+              <Label htmlFor="month-select" className="text-sm font-medium">
+                Month:
+              </Label>
+              <Input
+                id="month-select"
+                type="month"
+                value={selectedMonth}
+                onChange={(e) => setSelectedMonth(e.target.value)}
+                className="w-40"
+              />
+            </div>
+          )}
           
           <Dialog open={showManualEntry} onOpenChange={setShowManualEntry}>
             <DialogTrigger asChild>
@@ -290,105 +383,283 @@ export default function AttendancePage() {
         </div>
       </div>
 
-      {/* Daily Statistics */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Employees</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{dailyStats.totalEmployees}</div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Checked In</CardTitle>
-            <UserCheck className="h-4 w-4 text-green-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-green-600">{dailyStats.checkedIn}</div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">On Break</CardTitle>
-            <Coffee className="h-4 w-4 text-yellow-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-yellow-600">{dailyStats.onBreak}</div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Checked Out</CardTitle>
-            <LogOut className="h-4 w-4 text-red-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-red-600">{dailyStats.checkedOut}</div>
-          </CardContent>
-        </Card>
-      </div>
+      {/* Statistics Cards */}
+      {viewMode === 'daily' ? (
+        /* Daily Statistics */
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Total Employees</CardTitle>
+              <Users className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{dailyStats.totalEmployees}</div>
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Checked In</CardTitle>
+              <UserCheck className="h-4 w-4 text-green-600" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-green-600">{dailyStats.checkedIn}</div>
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">On Break</CardTitle>
+              <Coffee className="h-4 w-4 text-yellow-600" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-yellow-600">{dailyStats.onBreak}</div>
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Checked Out</CardTitle>
+              <LogOut className="h-4 w-4 text-red-600" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-red-600">{dailyStats.checkedOut}</div>
+            </CardContent>
+          </Card>
+        </div>
+      ) : (
+        /* Monthly Statistics */
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Present Days</CardTitle>
+              <UserCheck className="h-4 w-4 text-green-600" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-green-600">{monthlyStats.presentDays}</div>
+              <p className="text-xs text-muted-foreground">
+                of {monthlyCalendar.filter(d => !d.isWeekend).length} working days
+              </p>
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Absent Days</CardTitle>
+              <Calendar className="h-4 w-4 text-red-600" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-red-600">{monthlyStats.absentDays}</div>
+              <p className="text-xs text-muted-foreground">
+                without attendance
+              </p>
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Total Hours</CardTitle>
+              <Clock className="h-4 w-4 text-blue-600" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-blue-600">{monthlyStats.totalWorkingHours.toFixed(1)}h</div>
+              <p className="text-xs text-muted-foreground">
+                total working time
+              </p>
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Overtime</CardTitle>
+              <Clock className="h-4 w-4 text-green-600" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-green-600">+{monthlyStats.totalOvertime.toFixed(1)}h</div>
+              <p className="text-xs text-muted-foreground">
+                extra hours worked
+              </p>
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Undertime</CardTitle>
+              <Clock className="h-4 w-4 text-orange-600" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-orange-600">-{monthlyStats.totalUndertime.toFixed(1)}h</div>
+              <p className="text-xs text-muted-foreground">
+                hours under standard
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+      )}
 
-      {/* Attendance Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Calendar className="h-5 w-5" />
-            Employee Attendance - {new Date(selectedDate).toLocaleDateString()}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Employee</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Check In</TableHead>
-                  <TableHead>Break Start</TableHead>
-                  <TableHead>Break End</TableHead>
-                  <TableHead>Check Out</TableHead>
-                  <TableHead>Working Hours</TableHead>
-                  <TableHead>Break Duration</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {users.map((user: any) => {
-                  const attendance = getUserAttendance(user.id);
-                  const status = getCurrentStatus(user.id);
+      {/* Attendance Content */}
+      {viewMode === 'daily' ? (
+        /* Daily Attendance Table */
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Calendar className="h-5 w-5" />
+              Employee Attendance - {new Date(selectedDate).toLocaleDateString()}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Employee</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Check In</TableHead>
+                    <TableHead>Break Start</TableHead>
+                    <TableHead>Break End</TableHead>
+                    <TableHead>Check Out</TableHead>
+                    <TableHead>Working Hours</TableHead>
+                    <TableHead>Break Duration</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {users.map((user: any) => {
+                    const attendance = getUserAttendance(user.id);
+                    const status = getCurrentStatus(user.id);
+                    
+                    return (
+                      <TableRow key={user.id}>
+                        <TableCell className="font-medium">
+                          {getUserName(user.id)}
+                        </TableCell>
+                        <TableCell>
+                          <Badge className={`${status.color} text-white`}>
+                            {status.status}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>{formatTime(attendance?.checkInTime)}</TableCell>
+                        <TableCell>{formatTime(attendance?.breakStartTime)}</TableCell>
+                        <TableCell>{formatTime(attendance?.breakEndTime)}</TableCell>
+                        <TableCell>{formatTime(attendance?.checkOutTime)}</TableCell>
+                        <TableCell>
+                          {attendance?.workingHours ? `${attendance.workingHours.toFixed(1)}h` : '--'}
+                        </TableCell>
+                        <TableCell>
+                          {attendance?.breakDuration ? `${attendance.breakDuration}min` : '--'}
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </div>
+          </CardContent>
+        </Card>
+      ) : (
+        /* Monthly Calendar View */
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Calendar className="h-5 w-5" />
+              Monthly Attendance Calendar - {new Date(selectedMonth + '-01').toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+            </CardTitle>
+            <p className="text-sm text-gray-600 mt-1">
+              Standard Working Hours: {STANDARD_WORKING_HOURS}h/day | Green: Present | Red: Absent | Gray: Weekend
+            </p>
+          </CardHeader>
+          <CardContent>
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-12">Date</TableHead>
+                    <TableHead className="w-12">Day</TableHead>
+                    <TableHead>Check In</TableHead>
+                    <TableHead>Check Out</TableHead>
+                    <TableHead>Working Hours</TableHead>
+                    <TableHead>Overtime</TableHead>
+                    <TableHead>Undertime</TableHead>
+                    <TableHead>Status</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {monthlyCalendar.map((day) => {
+                    const attendance = getAttendanceForDate(day.date);
+                    const { overtime, undertime } = attendance ? calculateOvertimeUndertime(attendance.workingHours) : { overtime: 0, undertime: 0 };
+                    
+                    const getRowStyle = () => {
+                      if (day.isWeekend) return 'bg-gray-50';
+                      if (attendance && attendance.checkInTime) return 'bg-green-50';
+                      return 'bg-red-50';
+                    };
+                    
+                    const getStatusBadge = () => {
+                      if (day.isWeekend) {
+                        return <Badge className="bg-gray-500 text-white">Weekend</Badge>;
+                      } else if (attendance && attendance.checkInTime) {
+                        return <Badge className="bg-green-500 text-white">Present</Badge>;
+                      } else {
+                        return <Badge className="bg-red-500 text-white">Absent</Badge>;
+                      }
+                    };
+                    
+                    return (
+                      <TableRow key={day.date} className={getRowStyle()}>
+                        <TableCell className="font-medium">{day.day}</TableCell>
+                        <TableCell className="text-sm">{day.dayName}</TableCell>
+                        <TableCell>
+                          {attendance ? formatTime(attendance.checkInTime) : '--'}
+                        </TableCell>
+                        <TableCell>
+                          {attendance ? formatTime(attendance.checkOutTime) : '--'}
+                        </TableCell>
+                        <TableCell>
+                          {attendance ? `${attendance.workingHours.toFixed(1)}h` : '--'}
+                        </TableCell>
+                        <TableCell>
+                          {overtime > 0 ? (
+                            <span className="text-green-600 font-medium">+{overtime.toFixed(1)}h</span>
+                          ) : '--'}
+                        </TableCell>
+                        <TableCell>
+                          {undertime > 0 ? (
+                            <span className="text-orange-600 font-medium">-{undertime.toFixed(1)}h</span>
+                          ) : '--'}
+                        </TableCell>
+                        <TableCell>
+                          {getStatusBadge()}
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
                   
-                  return (
-                    <TableRow key={user.id}>
-                      <TableCell className="font-medium">
-                        {getUserName(user.id)}
-                      </TableCell>
-                      <TableCell>
-                        <Badge className={`${status.color} text-white`}>
-                          {status.status}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>{formatTime(attendance?.checkInTime)}</TableCell>
-                      <TableCell>{formatTime(attendance?.breakStartTime)}</TableCell>
-                      <TableCell>{formatTime(attendance?.breakEndTime)}</TableCell>
-                      <TableCell>{formatTime(attendance?.checkOutTime)}</TableCell>
-                      <TableCell>
-                        {attendance?.workingHours ? `${attendance.workingHours.toFixed(1)}h` : '--'}
-                      </TableCell>
-                      <TableCell>
-                        {attendance?.breakDuration ? `${attendance.breakDuration}min` : '--'}
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          </div>
-        </CardContent>
-      </Card>
+                  {/* Summary Row */}
+                  <TableRow className="bg-blue-50 border-t-2 border-blue-200 font-medium">
+                    <TableCell colSpan={2} className="font-bold">TOTAL</TableCell>
+                    <TableCell>--</TableCell>
+                    <TableCell>--</TableCell>
+                    <TableCell className="font-bold text-blue-600">
+                      {monthlyStats.totalWorkingHours.toFixed(1)}h
+                    </TableCell>
+                    <TableCell className="font-bold text-green-600">
+                      +{monthlyStats.totalOvertime.toFixed(1)}h
+                    </TableCell>
+                    <TableCell className="font-bold text-orange-600">
+                      -{monthlyStats.totalUndertime.toFixed(1)}h
+                    </TableCell>
+                    <TableCell>
+                      <div className="text-sm">
+                        <div className="text-green-600">{monthlyStats.presentDays} Present</div>
+                        <div className="text-red-600">{monthlyStats.absentDays} Absent</div>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }
