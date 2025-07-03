@@ -120,24 +120,72 @@ const t = (key: string): string => {
     'maintenance.actions.button.cancel': 'Cancel',
     'maintenance.actions.button.filter': 'Filter Actions',
     'maintenance.actions.button.refresh': 'Refresh',
+    'maintenance.actions.record': 'Add Action',
+    'maintenance.actions.create': 'Add Maintenance Action',
+    'maintenance.actions.maintenanceRequest': 'Maintenance Request',
+    'maintenance.actions.selectMaintenanceRequest': 'Select Request',
+    'maintenance.actions.actionsTaken': 'Actions Taken',
+    'maintenance.actions.partsCost': 'Parts Cost',
+    'maintenance.actions.laborHours': 'Labor Hours',
+    'maintenance.actions.notes': 'Notes',
+    'maintenance.actions.readyToWork': 'Machine ready to work after repair',
+    'maintenance.actions.recording': 'Recording...',
+    'maintenance.actions.recordAction': 'Record Action',
+    'maintenance.actions.table_title': 'Maintenance Actions ({count})',
+    'maintenance.actions.table_description': 'Complete list of all maintenance actions',
     
-    // View dialog labels
-    'maintenance.actions.view.action_id': 'Action ID',
-    'maintenance.actions.view.date': 'Date',
-    'maintenance.actions.view.machine': 'Machine',
-    'maintenance.actions.view.request': 'Maintenance Request',
-    'maintenance.actions.view.type': 'Action Type',
-    'maintenance.actions.view.status': 'Status',
-    'maintenance.actions.view.performed_by': 'Performed By',
-    'maintenance.actions.view.hours': 'Labor Hours',
-    'maintenance.actions.view.cost': 'Parts Cost',
-    'maintenance.actions.view.part_replaced': 'Part Replaced',
+    // Table headers
+    'maintenance.actions.id': 'Action ID',
+    'maintenance.actions.date': 'Date',
+    'maintenance.actions.request': 'Request',
+    'maintenance.actions.machine': 'Machine',
+    'maintenance.actions.actionBy': 'Performed By',
+    'maintenance.actions.status': 'Status',
+    'maintenance.actions.description': 'Description',
+    'maintenance.actions.actions': 'Actions',
+    
+    // Button tooltips
+    'maintenance.actions.tooltip.view': 'View Action Details',
+    'maintenance.actions.tooltip.print': 'Print Action',
+    'maintenance.actions.tooltip.edit': 'Edit Action',
+    'maintenance.actions.tooltip.delete': 'Delete Action',
+    
+    // Mobile view labels
+    'maintenance.actions.mobile.machine': 'Machine:',
+    'maintenance.actions.mobile.performed_by': 'Performed By:',
+    'maintenance.actions.mobile.date': 'Date:',
+    'maintenance.actions.mobile.hours': 'Hours:',
+    'maintenance.actions.mobile.cost': 'Cost:',
+    
+    // Edit form placeholders
+    'maintenance.actions.edit.selectMachine': 'Select Machine',
+    'maintenance.actions.edit.selectActionType': 'Select Action Type',
+    'maintenance.actions.edit.selectStatus': 'Select Status',
+    
+    // Additional dialog descriptions
+    'maintenance.actions.view.dialog_description': 'View detailed information about this maintenance action.',
     
     // Messages
     'maintenance.actions.creating': 'Creating...',
     'maintenance.actions.updating': 'Updating...',
     'maintenance.actions.deleting': 'Deleting...',
+    'maintenance.actions.success.created': 'Action created successfully',
+    'maintenance.actions.success.updated': 'Action updated successfully',
+    'maintenance.actions.success.deleted': 'Action deleted successfully',
+    'maintenance.actions.error.create': 'Failed to create action',
+    'maintenance.actions.error.update': 'Failed to update action',
+    'maintenance.actions.error.delete': 'Failed to delete action',
+    'maintenance.actions.error.load': 'Failed to load actions',
+    'maintenance.actions.confirm.delete': 'Are you sure you want to delete this action?',
     'maintenance.actions.loading': 'Loading actions...',
+    
+    // Search and filters
+    'maintenance.actions.search_placeholder': 'Search actions...',
+    'maintenance.actions.filter_status': 'Filter by status',
+    'maintenance.actions.filter_all': 'All Status',
+    'maintenance.actions.filter_pending': 'Pending',
+    'maintenance.actions.filter_progress': 'In Progress',
+    'maintenance.actions.filter_completed': 'Completed',
     
     // Common
     'common.save': 'Save',
@@ -569,7 +617,7 @@ export default function MaintenanceActionsPage() {
           <div class="content">
             <div class="action-header">
               <h1 class="action-title">Maintenance Action Report</h1>
-              <p class="action-subtitle">Action ID: #${action.id} | Date: ${format(new Date(action.actionDate), 'MMM dd, yyyy HH:mm')}</p>
+              <p class="action-subtitle">Action ID: #${action.id} | Date: ${formatDate(new Date(action.actionDate), 'MMM dd, yyyy')}</p>
             </div>
 
             <div class="details-grid">
@@ -616,7 +664,7 @@ export default function MaintenanceActionsPage() {
           </div>
 
           <div class="footer">
-            <p>Generated on ${format(new Date(), 'PPpp')} | Modern Plastic Bag Factory</p>
+            <p>Generated on ${formatDate(new Date(), 'dd/MM/yyyy HH:mm')} | Modern Plastic Bag Factory</p>
           </div>
         </body>
       </html>
@@ -694,7 +742,7 @@ export default function MaintenanceActionsPage() {
           <div className="relative flex-1 max-w-sm">
             <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
             <Input
-              placeholder="Search actions..."
+              placeholder={t("maintenance.actions.search_placeholder")}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-10"
@@ -702,13 +750,13 @@ export default function MaintenanceActionsPage() {
           </div>
           <Select value={statusFilter} onValueChange={setStatusFilter}>
             <SelectTrigger className="w-40">
-              <SelectValue placeholder="Filter by status" />
+              <SelectValue placeholder={t("maintenance.actions.filter_status")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="pending">Pending</SelectItem>
-              <SelectItem value="in_progress">In Progress</SelectItem>
-              <SelectItem value="completed">Completed</SelectItem>
+              <SelectItem value="all">{t("maintenance.actions.filter_all")}</SelectItem>
+              <SelectItem value="pending">{t("maintenance.actions.filter_pending")}</SelectItem>
+              <SelectItem value="in_progress">{t("maintenance.actions.filter_progress")}</SelectItem>
+              <SelectItem value="completed">{t("maintenance.actions.filter_completed")}</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -889,27 +937,27 @@ export default function MaintenanceActionsPage() {
                   
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Date:</span>
-                      <span>{format(new Date(action.actionDate), 'MMM dd, yyyy')}</span>
+                      <span className="text-gray-600">{t("maintenance.actions.mobile.date")}</span>
+                      <span>{formatDate(new Date(action.actionDate), 'MMM dd, yyyy')}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Machine:</span>
+                      <span className="text-gray-600">{t("maintenance.actions.mobile.machine")}</span>
                       <span className="font-medium">{getMachineName(action.machineId)}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Request:</span>
+                      <span className="text-gray-600">{t("maintenance.actions.request")}:</span>
                       <span>{getRequestInfo(action.requestId)}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Performed by:</span>
+                      <span className="text-gray-600">{t("maintenance.actions.mobile.performed_by")}</span>
                       <span>{getUserName(action.performedBy)}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Hours:</span>
+                      <span className="text-gray-600">{t("maintenance.actions.mobile.hours")}</span>
                       <span>{action.hours}h</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Cost:</span>
+                      <span className="text-gray-600">{t("maintenance.actions.mobile.cost")}</span>
                       <span>${action.cost}</span>
                     </div>
                   </div>
@@ -925,7 +973,7 @@ export default function MaintenanceActionsPage() {
                       size="sm"
                       variant="outline"
                       onClick={() => handleViewAction(action)}
-                      title="View Action Details"
+                      title={t("maintenance.actions.tooltip.view")}
                     >
                       <Eye className="h-4 w-4" />
                     </Button>
@@ -933,7 +981,7 @@ export default function MaintenanceActionsPage() {
                       size="sm"
                       variant="outline"
                       onClick={() => handlePrint(action)}
-                      title="Print Action"
+                      title={t("maintenance.actions.tooltip.print")}
                     >
                       <Printer className="h-4 w-4" />
                     </Button>
@@ -941,7 +989,7 @@ export default function MaintenanceActionsPage() {
                       size="sm"
                       variant="outline"
                       onClick={() => handleEditAction(action)}
-                      title="Edit Action"
+                      title={t("maintenance.actions.tooltip.edit")}
                     >
                       <Edit className="h-4 w-4" />
                     </Button>
@@ -949,7 +997,7 @@ export default function MaintenanceActionsPage() {
                       size="sm"
                       variant="outline"
                       onClick={() => handleDeleteAction(action.id)}
-                      title="Delete Action"
+                      title={t("maintenance.actions.tooltip.delete")}
                       className="text-red-600 hover:text-red-700"
                     >
                       <Trash2 className="h-4 w-4" />
@@ -973,14 +1021,14 @@ export default function MaintenanceActionsPage() {
                     <TableHead className="text-center">{t("maintenance.actions.partsCost")}</TableHead>
                     <TableHead className="text-center">{t("maintenance.actions.status")}</TableHead>
                     <TableHead className="text-center">{t("maintenance.actions.description")}</TableHead>
-                    <TableHead className="text-center">Actions</TableHead>
+                    <TableHead className="text-center">{t("maintenance.actions.actions")}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {filteredActions.map((action: MaintenanceAction) => (
                     <TableRow key={action.id}>
                       <TableCell className="font-medium text-center">#{action.id}</TableCell>
-                      <TableCell className="text-center">{format(new Date(action.actionDate), 'MMM dd, yyyy')}</TableCell>
+                      <TableCell className="text-center">{formatDate(new Date(action.actionDate), 'MMM dd, yyyy')}</TableCell>
                       <TableCell className="text-center">{getRequestInfo(action.requestId)}</TableCell>
                       <TableCell className="text-center">{getMachineName(action.machineId)}</TableCell>
                       <TableCell className="text-center">
@@ -1011,7 +1059,7 @@ export default function MaintenanceActionsPage() {
                             size="sm"
                             variant="outline"
                             onClick={() => handleViewAction(action)}
-                            title="View Action Details"
+                            title={t("maintenance.actions.tooltip.view")}
                           >
                             <Eye className="h-4 w-4" />
                           </Button>
@@ -1019,7 +1067,7 @@ export default function MaintenanceActionsPage() {
                             size="sm"
                             variant="outline"
                             onClick={() => handlePrint(action)}
-                            title="Print Action"
+                            title={t("maintenance.actions.tooltip.print")}
                           >
                             <Printer className="h-4 w-4" />
                           </Button>
@@ -1027,7 +1075,7 @@ export default function MaintenanceActionsPage() {
                             size="sm"
                             variant="outline"
                             onClick={() => handleEditAction(action)}
-                            title="Edit Action"
+                            title={t("maintenance.actions.tooltip.edit")}
                           >
                             <Edit className="h-4 w-4" />
                           </Button>
@@ -1035,7 +1083,7 @@ export default function MaintenanceActionsPage() {
                             size="sm"
                             variant="outline"
                             onClick={() => handleDeleteAction(action.id)}
-                            title="Delete Action"
+                            title={t("maintenance.actions.tooltip.delete")}
                             className="text-red-600 hover:text-red-700"
                           >
                             <Trash2 className="h-4 w-4" />
@@ -1055,74 +1103,74 @@ export default function MaintenanceActionsPage() {
       <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Maintenance Action Details</DialogTitle>
+            <DialogTitle>{t("maintenance.actions.view.title")}</DialogTitle>
             <DialogDescription>
-              View detailed information about this maintenance action.
+              {t("maintenance.actions.view.dialog_description")}
             </DialogDescription>
           </DialogHeader>
           {selectedAction && (
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label className="text-sm font-medium text-gray-600">Action ID</Label>
+                  <Label className="text-sm font-medium text-gray-600">{t("maintenance.actions.view.action_id")}</Label>
                   <p className="text-sm font-medium">#{selectedAction.id}</p>
                 </div>
                 <div>
-                  <Label className="text-sm font-medium text-gray-600">Date</Label>
-                  <p className="text-sm">{format(new Date(selectedAction.actionDate), 'MMM dd, yyyy')}</p>
+                  <Label className="text-sm font-medium text-gray-600">{t("maintenance.actions.view.date")}</Label>
+                  <p className="text-sm">{formatDate(new Date(selectedAction.actionDate), 'MMM dd, yyyy')}</p>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label className="text-sm font-medium text-gray-600">Machine</Label>
+                  <Label className="text-sm font-medium text-gray-600">{t("maintenance.actions.view.machine")}</Label>
                   <p className="text-sm">{getMachineName(selectedAction.machineId)}</p>
                 </div>
                 <div>
-                  <Label className="text-sm font-medium text-gray-600">Maintenance Request</Label>
+                  <Label className="text-sm font-medium text-gray-600">{t("maintenance.actions.view.request")}</Label>
                   <p className="text-sm">{getRequestInfo(selectedAction.requestId)}</p>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label className="text-sm font-medium text-gray-600">Action Type</Label>
+                  <Label className="text-sm font-medium text-gray-600">{t("maintenance.actions.view.action_type")}</Label>
                   <Badge variant="secondary" className="text-xs">
                     {selectedAction.actionType}
                   </Badge>
                 </div>
                 <div>
-                  <Label className="text-sm font-medium text-gray-600">Status</Label>
+                  <Label className="text-sm font-medium text-gray-600">{t("maintenance.actions.view.status")}</Label>
                   {getStatusBadge(selectedAction.status)}
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label className="text-sm font-medium text-gray-600">Performed By</Label>
+                  <Label className="text-sm font-medium text-gray-600">{t("maintenance.actions.view.performed_by")}</Label>
                   <p className="text-sm">{getUserName(selectedAction.performedBy)}</p>
                 </div>
                 <div>
-                  <Label className="text-sm font-medium text-gray-600">Labor Hours</Label>
+                  <Label className="text-sm font-medium text-gray-600">{t("maintenance.actions.view.labor_hours")}</Label>
                   <p className="text-sm">{selectedAction.hours}h</p>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label className="text-sm font-medium text-gray-600">Parts Cost</Label>
+                  <Label className="text-sm font-medium text-gray-600">{t("maintenance.actions.view.parts_cost")}</Label>
                   <p className="text-sm">${selectedAction.cost.toFixed(2)}</p>
                 </div>
                 {selectedAction.partReplaced && (
                   <div>
-                    <Label className="text-sm font-medium text-gray-600">Part Replaced</Label>
+                    <Label className="text-sm font-medium text-gray-600">{t("maintenance.actions.view.part_replaced")}</Label>
                     <p className="text-sm">{selectedAction.partReplaced}</p>
                   </div>
                 )}
               </div>
 
               <div>
-                <Label className="text-sm font-medium text-gray-600">Description</Label>
+                <Label className="text-sm font-medium text-gray-600">{t("maintenance.actions.view.description")}</Label>
                 <p className="text-sm mt-1 p-3 bg-gray-50 rounded-md">{selectedAction.description}</p>
               </div>
             </div>
