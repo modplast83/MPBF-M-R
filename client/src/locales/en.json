@@ -1330,30 +1330,9 @@
             "quantity_error": "Quantity must be greater than 0"
         },
         "maintenance": {
-
-            "damage_types": {
-                "motor": "Motor",
-                "bearing": "Bearing",
-                "roller": "Roller",
-                "printing_roller": "Printing Roller",
-                "gear": "Gear",
-                "fan": "Fan",
-                "fuse": "Fuse",
-                "sealing": "Sealing",
-                "knife": "Knife",
-                "heater": "Heater",
-                "inverter": "Inverter",
-                "power_supply": "Power Supply",
-                "shaft": "Shaft",
-                "take_up": "Take up",
-                "short": "Short",
-                "other": "Other"
-            },
-
             "title": "Maintenance Management",
             "description": "Comprehensive maintenance management system for production equipment",
             "requests": {
-
                 "title": "Maintenance Requests",
                 "description": "Description",
                 "new": "New Request",
