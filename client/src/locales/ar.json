@@ -8,6 +8,7 @@
     },
     "common": {
       "loading": "جاري التحميل...",
+      "name": "الاسم",
       "total_records": "إجمالي السجلات:",
       "search": "بحث",
       "filters": "تصفية",
@@ -310,6 +311,7 @@
         "create_failed": "فشل في إنشاء العميل: {{error}}",
         "update_failed": "فشل في تحديث العميل: {{error}}",
         "delete_failed": "فشل في حذف العميل: {{error}}",
+        "sales_person": "مندوب المبيعات",
         "are_you_sure": "هل أنت متأكد؟",
         "delete_confirmation": "سيتم حذف هذا العميل نهائياً. لا يمكن التراجع عن هذا الإجراء."
       },
@@ -343,6 +345,7 @@
         },
         "sections":{
           "add_new": "إضافة قسم جديد",
+          "add_section": "إضافة قسم",
           "edit_section": "تعديل القسم",
           "delete_section": "حذف القسم",
           "section_name": "اسم القسم",
@@ -1102,6 +1105,7 @@
         "delete_customer": "حذف العميل",
         "customer_code": "رمز العميل",
         "customer_name": "اسم العميل",
+        "sales_person": "مندوب المبيعات",
         "arabic_name": "الاسم بالعربية",
         "phone": "الهاتف",
         "email": "البريد الإلكتروني",
@@ -1161,6 +1165,18 @@
         "create_new_user_profile": "إنشاء ملف مستخدم جديد",
         "saving": "جاري الحفظ...",
         "create_user": "إنشاء مستخدم",
+        "name": "الاسم",
+        "username": "اسم المستخدم",
+        "email": "البريد الإلكتروني",
+        "phone": "الهاتف",
+        "role": "الدور",
+        "section": "القسم",
+        "status": "الحالة",
+        "password": "كلمة المرور",
+        "confirm_password": "تأكيد كلمة المرور",
+        "created_at": "تاريخ الإنشاء",
+        "position": "المسمى الوظيفي",
+        "actions": "الإجراءات",
         "update_user": "تحديث المستخدم"
       }
     },
@@ -2591,6 +2607,7 @@
       "common": {
         "item": "الصنف",
         "employee": "الموظف",
+        "name": "الاسم",
         "date": "التاريخ",
         "time": "الوقت",
         "duration": "المدة",
