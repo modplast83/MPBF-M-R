@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, CheckCircle } from "lucide-react";
 
-import FactoryLogoHPNGW_Green from "@assets/FactoryLogoHPNGW Green.png";
+import FactoryLogoHPNGW_Green from "@assets/FactoryLogoHPNGWg_1750292727900.png";
 
 // Customer information form schema
 const customerInfoSchema = z.object({
