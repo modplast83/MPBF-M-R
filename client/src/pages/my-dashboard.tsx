@@ -88,6 +88,7 @@ export default function MyDashboard() {
   const { user } = useAuth();
   const { toast } = useToast();
   const [_, setLocation] = useLocation();
+  const { t } = useTranslation();
   
   // State management
   const [showMaintenanceDialog, setShowMaintenanceDialog] = useState(false);
@@ -175,15 +176,15 @@ export default function MyDashboard() {
     }),
     onSuccess: () => {
       toast({
-        title: "Success",
-        description: "Checked in successfully"
+        title: t('common.success'),
+        description: t('my_dashboard.checked_in_successfully')
       });
       queryClient.invalidateQueries({ queryKey: ['/api/hr/time-attendance'] });
     },
     onError: (error: any) => {
       toast({
-        title: "Error",
-        description: error.message || "Failed to check in",
+        title: t('common.error'),
+        description: error.message || t('my_dashboard.failed_to_check_in'),
         variant: "destructive"
       });
     }
@@ -199,15 +200,15 @@ export default function MyDashboard() {
     }),
     onSuccess: () => {
       toast({
-        title: "Success",
-        description: "Checked out successfully"
+        title: t('common.success'),
+        description: t('my_dashboard.checked_out_successfully')
       });
       queryClient.invalidateQueries({ queryKey: ['/api/hr/time-attendance'] });
     },
     onError: (error: any) => {
       toast({
-        title: "Error",
-        description: error.message || "Failed to check out",
+        title: t('common.error'),
+        description: error.message || t('my_dashboard.failed_to_check_out'),
         variant: "destructive"
       });
     }
@@ -220,8 +221,8 @@ export default function MyDashboard() {
     }),
     onSuccess: () => {
       toast({
-        title: "Success",
-        description: "Break started"
+        title: t('common.success'),
+        description: t('my_dashboard.break_started')
       });
       queryClient.invalidateQueries({ queryKey: ['/api/hr/time-attendance'] });
     }
@@ -234,8 +235,8 @@ export default function MyDashboard() {
     }),
     onSuccess: () => {
       toast({
-        title: "Success",
-        description: "Break ended"
+        title: t('common.success'),
+        description: t('my_dashboard.break_ended')
       });
       queryClient.invalidateQueries({ queryKey: ['/api/hr/time-attendance'] });
     }
@@ -250,8 +251,8 @@ export default function MyDashboard() {
     }),
     onSuccess: () => {
       toast({
-        title: "Success",
-        description: "Maintenance request submitted successfully"
+        title: t('common.success'),
+        description: t('my_dashboard.maintenance_request_submitted')
       });
       setShowMaintenanceDialog(false);
       setMaintenanceForm({
@@ -265,8 +266,8 @@ export default function MyDashboard() {
     },
     onError: (error: any) => {
       toast({
-        title: "Error",
-        description: error.message || "Failed to submit maintenance request",
+        title: t('common.error'),
+        description: error.message || t('my_dashboard.failed_to_submit_maintenance'),
         variant: "destructive"
       });
     }
@@ -305,22 +306,22 @@ export default function MyDashboard() {
   // Get current work status
   const getCurrentWorkStatus = () => {
     if (!todayAttendance) {
-      return { status: 'not_checked_in', message: 'Ready to check in', color: 'text-gray-500' };
+      return { status: 'not_checked_in', message: t('my_dashboard.ready_to_check_in'), color: 'text-gray-500' };
     }
 
     if (todayAttendance.checkOutTime) {
-      return { status: 'checked_out', message: 'Work day completed', color: 'text-green-600' };
+      return { status: 'checked_out', message: t('my_dashboard.work_day_completed'), color: 'text-green-600' };
     }
 
     if (todayAttendance.breakStartTime && !todayAttendance.breakEndTime) {
-      return { status: 'on_break', message: 'On break', color: 'text-orange-500' };
+      return { status: 'on_break', message: t('my_dashboard.on_break'), color: 'text-orange-500' };
     }
 
     if (todayAttendance.checkInTime) {
-      return { status: 'working', message: 'Currently working', color: 'text-blue-600' };
+      return { status: 'working', message: t('my_dashboard.currently_working'), color: 'text-blue-600' };
     }
 
-    return { status: 'unknown', message: 'Status unknown', color: 'text-gray-500' };
+    return { status: 'unknown', message: t('my_dashboard.status_unknown'), color: 'text-gray-500' };
   };
 
   const workStatus = getCurrentWorkStatus();
@@ -346,8 +347,8 @@ export default function MyDashboard() {
   if (!todayAttendance?.checkInTime) {
     quickActions.push({
       id: 'check_in',
-      title: 'Check In',
-      description: 'Start your work day',
+      title: t('my_dashboard.check_in'),
+      description: t('my_dashboard.start_work_day'),
       icon: LogIn,
       action: () => checkInMutation.mutate(),
       color: 'bg-green-500',
@@ -359,8 +360,8 @@ export default function MyDashboard() {
     if (!todayAttendance.breakStartTime || todayAttendance.breakEndTime) {
       quickActions.push({
         id: 'start_break',
-        title: 'Start Break',
-        description: 'Take a break',
+        title: t('my_dashboard.start_break'),
+        description: t('my_dashboard.take_break'),
         icon: PauseCircle,
         action: () => breakStartMutation.mutate(),
         color: 'bg-orange-500',
@@ -371,8 +372,8 @@ export default function MyDashboard() {
     if (todayAttendance.breakStartTime && !todayAttendance.breakEndTime) {
       quickActions.push({
         id: 'end_break',
-        title: 'End Break',
-        description: 'Return to work',
+        title: t('my_dashboard.end_break'),
+        description: t('my_dashboard.return_to_work'),
         icon: PlayCircle,
         action: () => breakEndMutation.mutate(),
         color: 'bg-blue-500',
@@ -382,8 +383,8 @@ export default function MyDashboard() {
 
     quickActions.push({
       id: 'check_out',
-      title: 'Check Out',
-      description: 'End your work day',
+      title: t('my_dashboard.check_out'),
+      description: t('my_dashboard.end_work_day'),
       icon: LogOut,
       action: () => checkOutMutation.mutate(),
       color: 'bg-red-500',
@@ -394,8 +395,8 @@ export default function MyDashboard() {
   // Other quick actions
   quickActions.push({
     id: 'maintenance_request',
-    title: 'Report Issue',
-    description: 'Submit maintenance request',
+    title: t('my_dashboard.report_issue'),
+    description: t('my_dashboard.submit_maintenance_request'),
     icon: Wrench,
     action: () => setShowMaintenanceDialog(true),
     color: 'bg-yellow-500',
@@ -404,8 +405,8 @@ export default function MyDashboard() {
 
   quickActions.push({
     id: 'view_schedule',
-    title: 'My Schedule',
-    description: 'View work schedule',
+    title: t('my_dashboard.my_schedule'),
+    description: t('my_dashboard.view_work_schedule'),
     icon: CalendarIcon,
     action: () => setLocation('/hr/enhanced-attendance'),
     color: 'bg-purple-500',
@@ -415,8 +416,8 @@ export default function MyDashboard() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title={`Welcome, ${user?.firstName || user?.username}`}
-        description="Your personal dashboard with attendance, tasks, and quick actions"
+        title={t('my_dashboard.page_header_title', { name: user?.firstName || user?.username })}
+        description={t('my_dashboard.page_header_description')}
       />
 
       {/* Current Status Card */}
@@ -425,7 +426,7 @@ export default function MyDashboard() {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <Clock className="h-5 w-5 text-blue-600" />
-              <CardTitle className="text-lg">Current Status</CardTitle>
+              <CardTitle className="text-lg">{t('my_dashboard.current_status')}</CardTitle>
             </div>
             <div className="text-right">
               <div className="text-sm text-gray-500">{format(currentTime, 'EEEE, MMMM d, yyyy')}</div>
@@ -439,7 +440,7 @@ export default function MyDashboard() {
               <div className={`w-3 h-3 rounded-full ${workStatus.status === 'working' ? 'bg-green-500' : workStatus.status === 'on_break' ? 'bg-orange-500' : 'bg-gray-400'}`} />
               <div>
                 <div className={`font-medium ${workStatus.color}`}>{workStatus.message}</div>
-                <div className="text-sm text-gray-500">Work Status</div>
+                <div className="text-sm text-gray-500">{t('my_dashboard.work_status')}</div>
               </div>
             </div>
             
@@ -447,15 +448,15 @@ export default function MyDashboard() {
               <Activity className="h-5 w-5 text-blue-500" />
               <div>
                 <div className="font-medium">{getCurrentWorkingTime()}</div>
-                <div className="text-sm text-gray-500">Today's Time</div>
+                <div className="text-sm text-gray-500">{t('my_dashboard.todays_time')}</div>
               </div>
             </div>
 
             <div className="flex items-center space-x-3">
               <MapPin className="h-5 w-5 text-green-500" />
               <div>
-                <div className="font-medium">{user?.sectionId || 'Not assigned'}</div>
-                <div className="text-sm text-gray-500">Section</div>
+                <div className="font-medium">{user?.sectionId || t('my_dashboard.not_assigned')}</div>
+                <div className="text-sm text-gray-500">{t('my_dashboard.section')}</div>
               </div>
             </div>
           </div>
@@ -467,7 +468,7 @@ export default function MyDashboard() {
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <Zap className="h-5 w-5" />
-            <span>Quick Actions</span>
+            <span>{t('my_dashboard.quick_actions')}</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -494,7 +495,7 @@ export default function MyDashboard() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Working Hours</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('my_dashboard.working_hours')}</CardTitle>
             <Clock className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -507,7 +508,7 @@ export default function MyDashboard() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Attendance</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('my_dashboard.attendance')}</CardTitle>
             <CheckCircle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -520,26 +521,26 @@ export default function MyDashboard() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Violations</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('my_dashboard.violations')}</CardTitle>
             <AlertTriangle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-red-600">{stats.violations}</div>
             <p className="text-xs text-muted-foreground">
-              Total violations
+              {t('my_dashboard.total_violations')}
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Trainings</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('my_dashboard.trainings')}</CardTitle>
             <GraduationCap className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-blue-600">{stats.trainings}</div>
             <p className="text-xs text-muted-foreground">
-              Training sessions
+              {t('my_dashboard.training_sessions')}
             </p>
           </CardContent>
         </Card>
@@ -548,11 +549,11 @@ export default function MyDashboard() {
       {/* Main Content Tabs */}
       <Tabs defaultValue="attendance" className="space-y-4">
         <TabsList className="grid w-full grid-cols-5">
-          <TabsTrigger value="attendance">Attendance</TabsTrigger>
-          <TabsTrigger value="violations">Violations</TabsTrigger>
-          <TabsTrigger value="trainings">Trainings</TabsTrigger>
-          <TabsTrigger value="maintenance">Maintenance</TabsTrigger>
-          <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="attendance">{t('my_dashboard.tabs.attendance')}</TabsTrigger>
+          <TabsTrigger value="violations">{t('my_dashboard.tabs.violations')}</TabsTrigger>
+          <TabsTrigger value="trainings">{t('my_dashboard.tabs.trainings')}</TabsTrigger>
+          <TabsTrigger value="maintenance">{t('my_dashboard.tabs.maintenance')}</TabsTrigger>
+          <TabsTrigger value="overview">{t('my_dashboard.tabs.overview')}</TabsTrigger>
         </TabsList>
 
         {/* Attendance History */}
