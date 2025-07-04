@@ -434,7 +434,7 @@ export default function AbaFormulas() {
                     <TableCell className="font-medium">{formula.name}</TableCell>
                     <TableCell>{formula.description || "-"}</TableCell>
                     <TableCell>
-                      <Badge variant="outline">{formula.abRatio || `${formula.aToB}:1`}</Badge>
+                      <Badge variant="outline">{formula.abRatio || `${formula.aToB?.toFixed(2)}:1.00`}</Badge>
                     </TableCell>
                     <TableCell>
                       <Badge variant="secondary" className="text-center">{formula.materials.length} materials</Badge>
@@ -704,7 +704,7 @@ export default function AbaFormulas() {
                   <Label className="text-sm font-semibold text-gray-600">A:B Ratio</Label>
                   <div>
                     <Badge variant="outline" className="text-sm">
-                      {viewingFormula.abRatio || `${viewingFormula.aToB}:1`}
+                      {viewingFormula.abRatio || `${viewingFormula.aToB?.toFixed(2)}:1.00`}
                     </Badge>
                   </div>
                 </div>
@@ -745,10 +745,10 @@ export default function AbaFormulas() {
                             {rawMaterial?.name || 'Unknown Material'}
                           </TableCell>
                           <TableCell className="text-center">
-                            <Badge variant="secondary">{material.screwAPercentage}%</Badge>
+                            <Badge variant="secondary">{material.screwAPercentage?.toFixed(2)}%</Badge>
                           </TableCell>
                           <TableCell className="text-center">
-                            <Badge variant="secondary">{material.screwBPercentage}%</Badge>
+                            <Badge variant="secondary">{material.screwBPercentage?.toFixed(2)}%</Badge>
                           </TableCell>
                         </TableRow>
                       );
@@ -764,13 +764,13 @@ export default function AbaFormulas() {
                   <div>
                     <Label className="text-sm text-gray-600">Total Screw A:</Label>
                     <p className="text-lg font-semibold">
-                      {viewingFormula.materials.reduce((sum, m) => sum + m.screwAPercentage, 0)}%
+                      {viewingFormula.materials.reduce((sum, m) => sum + m.screwAPercentage, 0).toFixed(2)}%
                     </p>
                   </div>
                   <div>
                     <Label className="text-sm text-gray-600">Total Screw B:</Label>
                     <p className="text-lg font-semibold">
-                      {viewingFormula.materials.reduce((sum, m) => sum + m.screwBPercentage, 0)}%
+                      {viewingFormula.materials.reduce((sum, m) => sum + m.screwBPercentage, 0).toFixed(2)}%
                     </p>
                   </div>
                 </div>

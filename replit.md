@@ -103,6 +103,11 @@ This is a comprehensive production management system built with React, TypeScrip
 - Health check endpoints for monitoring
 
 ## Recent Changes
+- July 3, 2025: Enhanced ABA Formulas decimal formatting and fixed critical bugs:
+  - Updated all decimal numbers in ABA Formulas to display with 2 decimal places (0.00 format)
+  - Fixed A:B ratio display to show consistent decimal formatting (e.g., 0.43:1.00)
+  - Fixed material percentage values to display with proper decimal precision
+  - Enhanced total percentage calculations in view dialogs with 2 decimal places
 - July 3, 2025: Fixed critical bugs in Production Management System:
   - Added missing HR break-start and break-end API endpoints that were causing 404 errors in My Dashboard
   - Fixed break management functionality for time attendance tracking with proper validation
