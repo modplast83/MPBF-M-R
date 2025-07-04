@@ -93,7 +93,7 @@ export default function Sections() {
   const tableActions = (
     <Button onClick={() => setFormOpen(true)}>
       <span className="material-icons text-sm mr-1">add</span>
-      Add Section
+      {t('setup.sections.add_section')}
     </Button>
   );
 

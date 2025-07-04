@@ -72,44 +72,44 @@ export default function Customers() {
 
   // Helper function to get user name from userId - using firstName instead of username
   const getUserName = (userId: string | null) => {
-    if (!userId) return "None";
+    if (!userId) return t("common.none");
     const user = users?.find(u => u.id === userId);
     if (user) {
       return user.firstName || user.username || userId;
     }
-    return userId || "Unknown";
+    return userId || t("common.unknown");
   };
 
   const columns = [
     {
-      header: "ID",
+      header: t("setup.customers.id"),
       accessorKey: "id",
     },
     {
-      header: "Code",
+      header: t("setup.customers.code"),
       accessorKey: "code",
     },
     {
-      header: "Name",
+      header: t("setup.customers.name"),
       accessorKey: "name",
     },
     {
-      header: "Arabic Name",
+      header: t("setup.customers.name_ar"),
       accessorKey: "nameAr",
       cell: (row: { nameAr: string | null }) => row.nameAr || "-",
     },
     {
-      header: "Sales Person",
+      header: t("setup.customers.sales_person"),
       accessorKey: "userId",
       cell: (row: { userId: string | null }) => getUserName(row.userId),
     },
     {
-      header: "Plate Drawer Code",
+      header: t("setup.customers.plate_drawer_code"),
       accessorKey: "plateDrawerCode",
       cell: (row: { plateDrawerCode: string | null }) => row.plateDrawerCode || "-",
     },
     {
-      header: "Actions",
+      header: t("setup.customers.actions"),
       cell: (row: Customer) => (
         <div className="flex space-x-2">
           <Button variant="ghost" size="icon" onClick={() => handleEdit(row)} className="text-primary-500 hover:text-primary-700">
@@ -126,7 +126,7 @@ export default function Customers() {
   const tableActions = (
     <Button onClick={() => setFormOpen(true)}>
       <span className="material-icons text-sm mr-1">add</span>
-      Add Customer
+      {t("setup.customers.add_customer")}
     </Button>
   );
 

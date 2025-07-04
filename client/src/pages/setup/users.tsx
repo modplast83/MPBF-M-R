@@ -256,17 +256,17 @@ export default function UsersPage() {
 
   // Helper function to get section name
   const getSectionName = (sectionId: string | null) => {
-    if (!sectionId) return "None";
-    return sections?.find(s => s.id === sectionId)?.name || "Unknown";
+    if (!sectionId) return t("setup.users.none");
+    return sections?.find(s => s.id === sectionId)?.name || t("setup.users.unknown");
   };
 
   // Function to format admin status for display
   const formatAdminStatus = (isAdmin: boolean) => {
-    return isAdmin ? "Administrator" : "User";
+    return isAdmin ? t("setup.users.administrator") : t("setup.users.user");
   };
 
   const formatWorkingDays = (days: string[]) => {
-    if (!days || days.length === 0) return "Not set";
+    if (!days || days.length === 0) return t("setup.users.not_set");
     return days.map(day => day.charAt(0).toUpperCase() + day.slice(1)).join(", ");
   };
 
@@ -279,13 +279,13 @@ export default function UsersPage() {
             <div className="flex items-center space-x-2">
               <Users className="h-6 w-6 text-blue-600" />
               <div>
-                <CardTitle className="text-2xl font-bold">User Management</CardTitle>
-                <p className="text-gray-600 mt-1">Manage user accounts and employee profiles</p>
+                <CardTitle className="text-2xl font-bold">{t("setup.users.user_management")}</CardTitle>
+                <p className="text-gray-600 mt-1">{t("setup.users.user_management_description")}</p>
               </div>
             </div>
             <Button onClick={handleNewUser} className="flex items-center space-x-2">
               <UserPlus className="h-4 w-4" />
-              <span>Add New User</span>
+              <span>{t("setup.users.add_new_user")}</span>
             </Button>
           </div>
         </CardHeader>
@@ -298,14 +298,14 @@ export default function UsersPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Username</TableHead>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Email</TableHead>
-                  <TableHead>Section</TableHead>
-                  <TableHead>Position</TableHead>
-                  <TableHead>Role</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Actions</TableHead>
+                  <TableHead>{t("setup.users.username")}</TableHead>
+                  <TableHead>{t("setup.users.name")}</TableHead>
+                  <TableHead>{t("setup.users.email")}</TableHead>
+                  <TableHead>{t("setup.users.section")}</TableHead>
+                  <TableHead>{t("setup.users.position")}</TableHead>
+                  <TableHead>{t("setup.users.role")}</TableHead>
+                  <TableHead>{t("setup.users.status")}</TableHead>
+                  <TableHead>{t("setup.users.actions")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -329,7 +329,7 @@ export default function UsersPage() {
                     </TableCell>
                     <TableCell>
                       <Badge variant={user.isActive !== false ? "default" : "destructive"}>
-                        {user.isActive !== false ? "Active" : "Inactive"}
+                        {user.isActive !== false ? t("setup.users.active") : t("setup.users.inactive")}
                       </Badge>
                     </TableCell>
                     <TableCell>
@@ -370,10 +370,10 @@ export default function UsersPage() {
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
-              {editUser ? "Edit User Profile" : "Create New User Profile"}
+              {editUser ? t("setup.users.edit_user_profile") : t("setup.users.create_new_user_profile")}
             </DialogTitle>
             <DialogDescription>
-              {editUser ? "Update user information and employee details" : "Add a new user with comprehensive profile information"}
+              {editUser ? t("setup.users.update_user_information") : t("setup.users.add_new_user")}
             </DialogDescription>
           </DialogHeader>
 
@@ -396,9 +396,9 @@ export default function UsersPage() {
                       name="username"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Username *</FormLabel>
+                          <FormLabel>{t("setup.users.username")} *</FormLabel>
                           <FormControl>
-                            <Input {...field} placeholder="Enter username" />
+                            <Input {...field} placeholder={t("setup.users.enter_username")} />
                           </FormControl>
                         </FormItem>
                       )}
@@ -408,9 +408,9 @@ export default function UsersPage() {
                       name="email"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Email</FormLabel>
+                          <FormLabel>{t("setup.users.email")}</FormLabel>
                           <FormControl>
-                            <Input {...field} type="email" placeholder="Enter email" />
+                            <Input {...field} type="email" placeholder={t("setup.users.enter_email")} />
                           </FormControl>
                         </FormItem>
                       )}
@@ -420,9 +420,9 @@ export default function UsersPage() {
                       name="firstName"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>First Name</FormLabel>
+                          <FormLabel>{t("setup.users.first_name")}</FormLabel>
                           <FormControl>
-                            <Input {...field} placeholder="Enter first name" />
+                            <Input {...field} placeholder={t("setup.users.enter_first_name")} />
                           </FormControl>
                         </FormItem>
                       )}
@@ -432,9 +432,9 @@ export default function UsersPage() {
                       name="lastName"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Last Name</FormLabel>
+                          <FormLabel>{t("setup.users.last_name")}</FormLabel>
                           <FormControl>
-                            <Input {...field} placeholder="Enter last name" />
+                            <Input {...field} placeholder={t("setup.users.enter_last_name")} />
                           </FormControl>
                         </FormItem>
                       )}
@@ -444,9 +444,9 @@ export default function UsersPage() {
                       name="phone"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Phone</FormLabel>
+                          <FormLabel>{t("setup.users.phone")}</FormLabel>
                           <FormControl>
-                            <Input {...field} placeholder="Enter phone number" />
+                            <Input {...field} placeholder={t("setup.users.enter_phone")} />
                           </FormControl>
                         </FormItem>
                       )}
@@ -811,10 +811,10 @@ export default function UsersPage() {
 
               <div className="flex justify-end space-x-2 pt-4 border-t">
                 <Button type="button" variant="outline" onClick={handleFormClose}>
-                  Cancel
+                  {t("common.cancel")}
                 </Button>
                 <Button type="submit" disabled={saveMutation.isPending}>
-                  {saveMutation.isPending ? "Saving..." : (editUser ? "Update User" : "Create User")}
+                  {saveMutation.isPending ? t("common.saving") : (editUser ? t("setup.users.update_user") : t("setup.users.create_user"))}
                 </Button>
               </div>
             </form>

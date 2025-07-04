@@ -70,19 +70,19 @@ export default function Categories() {
 
   const columns = [
     {
-      header: "ID",
+      header: t("common.id"),
       accessorKey: "id",
     },
     {
-      header: "Name",
+      header: t("common.name"),
       accessorKey: "name",
     },
     {
-      header: "Code",
+      header: t("common.code"),
       accessorKey: "code",
     },
     {
-      header: "Actions",
+      header: t("common.actions"),
       cell: (row: { id: string } & Category) => (
         <div className="flex space-x-2">
           <Button variant="ghost" size="icon" onClick={() => handleEdit(row)} className="text-primary-500 hover:text-primary-700">

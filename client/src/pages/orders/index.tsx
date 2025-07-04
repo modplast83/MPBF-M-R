@@ -247,7 +247,7 @@ export default function OrdersIndex() {
 
   // Helper functions to get customer info
   const getCustomerName = (customerId: string) => {
-    return customers?.find(c => c.id === customerId)?.name || "Unknown";
+    return customers?.find(c => c.id === customerId)?.name || t("common.unknown");
   };
   
   const getCustomerNameAr = (customerId: string) => {
@@ -321,7 +321,7 @@ export default function OrdersIndex() {
       cell: (row: { note: string | null }) => row.note || "-",
     },
     {
-      header: "Actions",
+      header: t("common.actions"),
       cell: (row: Order) => (
         <div className="flex space-x-2">
           <Link href={`/orders/${row.id}`}>
@@ -619,7 +619,7 @@ export default function OrdersIndex() {
           <div className={`flex items-center ${isMobile ? "flex-col gap-2" : "justify-between"}`}>
             <div className="flex items-center gap-3">
               <span className="text-blue-700 font-medium text-sm">
-                {selectedOrders.length} order{selectedOrders.length > 1 ? 's' : ''} selected
+                {t("orders.selected_count", { count: selectedOrders.length })}
               </span>
             </div>
             <div className={`flex items-center gap-2 ${isMobile ? "w-full" : ""}`}>
@@ -629,7 +629,7 @@ export default function OrdersIndex() {
                 onClick={() => setSelectedOrders([])}
                 className={isMobile ? "flex-1" : ""}
               >
-                {isMobile ? "Clear" : "Clear Selection"}
+                {isMobile ? t("orders.clear") : t("orders.clear_selection")}
               </Button>
               <Button
                 variant="destructive"
@@ -639,7 +639,7 @@ export default function OrdersIndex() {
                 className={isMobile ? "flex-1" : ""}
               >
                 <span className="material-icons text-sm mr-1">delete</span>
-                {isMobile ? "Delete" : "Delete Selected"}
+                {isMobile ? t("common.delete") : t("orders.delete_selected")}
               </Button>
             </div>
           </div>

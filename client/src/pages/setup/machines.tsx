@@ -83,52 +83,52 @@ export default function Machines() {
 
   const columns = [
     {
-      header: "ID",
+      header: t("common.id"),
       accessorKey: "id" as const,
     },
     {
-      header: "Name",
+      header: t("common.name"),
       accessorKey: "name" as const,
     },
     {
-      header: "S/N",
+      header: t("common.serial_number"),
       accessorKey: "serialNumber" as const,
-      cell: (row: Machine) => row.serialNumber || "N/A",
+      cell: (row: Machine) => row.serialNumber || t("common.na"),
     },
     {
-      header: "Supplier",
+      header: t("common.supplier"),
       accessorKey: "supplier" as const,
-      cell: (row: Machine) => row.supplier || "N/A",
+      cell: (row: Machine) => row.supplier || t("common.na"),
     },
     {
-      header: "Date of Manufacturing",
+      header: t("common.date_of_manufacturing"),
       accessorKey: "dateOfManufacturing" as const,
       cell: (row: Machine) => 
         row.dateOfManufacturing 
           ? new Date(row.dateOfManufacturing).toLocaleDateString()
-          : "N/A",
+          : t("common.na"),
     },
     {
-      header: "Model #",
+      header: t("common.model_number"),
       accessorKey: "modelNumber" as const,
-      cell: (row: Machine) => row.modelNumber || "N/A",
+      cell: (row: Machine) => row.modelNumber || t("common.na"),
     },
     {
-      header: "Section",
+      header: t("common.section"),
       accessorKey: "sectionId" as const,
       cell: (row: Machine) => getSectionName(row.sectionId),
     },
     {
-      header: "Status",
+      header: t("common.status"),
       accessorKey: "isActive" as const,
       cell: (row: Machine) => (
         <Badge variant={row.isActive === true ? "default" : "secondary"}>
-          {row.isActive === true ? "Active" : "Inactive"}
+          {row.isActive === true ? t("common.active") : t("common.inactive")}
         </Badge>
       ),
     },
     {
-      header: "Actions",
+      header: t("common.actions"),
       cell: (row: Machine) => (
         <div className="flex space-x-2">
           <Button variant="ghost" size="icon" onClick={() => handleEdit(row)} className="text-primary-500 hover:text-primary-700">

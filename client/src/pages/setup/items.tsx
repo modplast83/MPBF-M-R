@@ -77,24 +77,24 @@ export default function Items() {
 
   const columns = [
     {
-      header: "ID",
+      header: t("common.id"),
       accessorKey: "id",
     },
     {
-      header: "Name",
+      header: t("common.name"),
       accessorKey: "name",
     },
     {
-      header: "Full Name",
+      header: t("common.full_name"),
       accessorKey: "fullName",
     },
     {
-      header: "Category",
+      header: t("common.category"),
       accessorKey: "categoryId",
       cell: (row: { categoryId: string }) => getCategoryName(row.categoryId),
     },
     {
-      header: "Actions",
+      header: t("common.actions"),
       cell: (row: Item) => (
         <div className="flex space-x-2">
           <Button variant="ghost" size="icon" onClick={() => handleEdit(row)} className="text-primary-500 hover:text-primary-700">
@@ -111,7 +111,7 @@ export default function Items() {
   const tableActions = (
     <Button onClick={() => setFormOpen(true)}>
       <span className="material-icons text-sm mr-1">add</span>
-      Add Item
+      {t("common.add_new")}
     </Button>
   );
 
