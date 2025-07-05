@@ -95,7 +95,19 @@
             "description": "Description",
             "type": "Type",
             "affected_area": "Affected Area",
-            "notes": "Notes"
+            "notes": "Notes",
+            "name": "Name",
+            "code": "Code",
+            "full_name": "Full Name",
+            "category": "Category",
+            "select_category": "Select Category",
+            "enter_id": "Enter ID",
+            "serial_number": "Serial Number",
+            "supplier": "Supplier",
+            "date_of_manufacturing": "Date of Manufacturing",
+            "model_number": "Model Number",
+            "section": "Section",
+            "machine_operation": "Machine Operation"
         },
         "my_dashboard": {
             "title": "My Dashboard",
@@ -106,7 +118,7 @@
             "currently_working": "Currently Working",
             "work_status": "Work Status",
             "work_day_status": "Work Day Status",
-            "work_day_copleted": "Work Day Completed",
+            "work_day_completed": "Work Day Completed",
             "work_day_not_started": "Work Day Not Started",
             "work_day_in_progress": "Work Day In Progress",
             "work_day_on_break": "Work Day On Break",
@@ -289,7 +301,10 @@
                 "name_ar": "Name (Arabic)",
                 "arabic_name": "Customer (Arabic)",
                 "user_id": "Sales Representative",
-                "plate_drawer_code": "Plate Drawer Code"
+                "sales_person": "Sales Person",
+                "plate_drawer_code": "Plate Drawer Code",
+                "actions": "Actions",
+                "add_new": "Add New Customer"
             },
             "items": {
                 "title": "Items",
@@ -300,14 +315,16 @@
                 "name": "Item Name",
                 "name_placeholder": "Enter item name",
                 "full_name": "Full Name",
-                "full_name_placeholder": "Enter full item name"
+                "full_name_placeholder": "Enter full item name",
+                "add_new": "Add New Item"
             },
             "sections": {
                 "title": "Sections",
                 "page_title": "Sections",
                 "page_header": "Sections",
                 "table_header": "Sections",
-                "description": "Manage factory production sections"
+                "description": "Manage factory production sections",
+                "add_new": "Add New Section"
             },
             "machines": {
                 "title": "Machines",
@@ -665,7 +682,8 @@
                 "material_distribution": "Material Distribution",
                 "total_a": "Total A Layer",
                 "total_b": "Total B Layer",
-                "scaled_to": "Scaled to"
+                "scaled_to": "Scaled to",
+                "create_new_config_info": "Create New Configuration Information"
             },
             "roll_management": {
                 "title": "Roll Management",
@@ -851,6 +869,8 @@
             "batch_print_label": "Print Daily Labels",
             "batch_print_description": "Print labels for all job orders received on {{date}}",
             "batch_print_summary": "Summary of job orders to print:",
+            "last_updated": "Last Updated",
+            "id": "ID",
             "orders_found": "{{count}} job order(s) found",
             "total_received_kg": "Total received quantity: {{kg}} kg",
             "printing_batch_labels": "Printing Labels...",
