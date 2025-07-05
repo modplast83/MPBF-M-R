@@ -10,6 +10,8 @@
             "length": "Length",
             "total_records": "Total Records",
             "batch": "Batch",
+            "na": "N/A",
+            "active": "Active",
             "filters": "Filter",
             "selected": "Selected",
             "select": "Select",
