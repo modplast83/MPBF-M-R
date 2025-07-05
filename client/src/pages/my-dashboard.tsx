@@ -16,6 +16,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/use-auth-v2';
 import { apiRequest, queryClient } from '@/lib/queryClient';
 import { useLocation } from 'wouter';
+// @ts-ignore - Date-fns import compatibility
 import { format } from 'date-fns';
 // @ts-ignore - Type assertion for react-i18next
 import { useTranslation } from 'react-i18next';
@@ -625,11 +626,11 @@ export default function MyDashboard() {
                               ) : '-'}
                             </TableCell>
                             <TableCell>
-                              <Badge variant={
+                              <Badge variant={(
                                 attendance.status === 'present' ? 'default' :
                                 attendance.status === 'late' ? 'secondary' :
                                 attendance.status === 'absent' ? 'destructive' : 'outline'
-                              }>
+                              ) as any}>
                                 {attendance.status}
                               </Badge>
                             </TableCell>
@@ -663,13 +664,13 @@ export default function MyDashboard() {
                     <div key={violation.id} className="border rounded-lg p-4">
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center space-x-2">
-                          <Badge variant="destructive">{violation.violationNumber}</Badge>
-                          <Badge variant="outline">{violation.violationType}</Badge>
-                          <Badge variant={violation.severity === 'critical' ? 'destructive' : violation.severity === 'major' ? 'secondary' : 'outline'}>
+                          <Badge variant={"destructive" as any}>{violation.violationNumber}</Badge>
+                          <Badge variant={"outline" as any}>{violation.violationType}</Badge>
+                          <Badge variant={(violation.severity === 'critical' ? 'destructive' : violation.severity === 'major' ? 'secondary' : 'outline') as any}>
                             {violation.severity}
                           </Badge>
                         </div>
-                        <Badge variant={violation.status === 'resolved' ? 'default' : 'secondary'}>
+                        <Badge variant={(violation.status === 'resolved' ? 'default' : 'secondary') as any}>
                           {violation.status}
                         </Badge>
                       </div>
@@ -708,7 +709,7 @@ export default function MyDashboard() {
                     <div key={training.id} className="border rounded-lg p-4">
                       <div className="flex items-center justify-between mb-2">
                         <h4 className="font-medium">{training.title}</h4>
-                        <Badge variant={training.status === 'completed' ? 'default' : training.status === 'in_progress' ? 'secondary' : 'outline'}>
+                        <Badge variant={(training.status === 'completed' ? 'default' : training.status === 'in_progress' ? 'secondary' : 'outline') as any}>
                           {training.status}
                         </Badge>
                       </div>
@@ -757,13 +758,13 @@ export default function MyDashboard() {
                     <div key={request.id} className="border rounded-lg p-4">
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center space-x-2">
-                          <Badge variant="outline">#{request.id}</Badge>
+                          <Badge variant={"outline" as any}>#{request.id}</Badge>
                           <span className="font-medium">{request.machineId}</span>
                         </div>
-                        <Badge variant={
+                        <Badge variant={(
                           request.status === 'completed' ? 'default' :
                           request.status === 'in_progress' ? 'secondary' : 'outline'
-                        }>
+                        ) as any}>
                           {request.status}
                         </Badge>
                       </div>
@@ -902,7 +903,7 @@ export default function MyDashboard() {
             </div>
 
             <div className="flex justify-end space-x-2">
-              <Button variant="outline" onClick={() => setShowMaintenanceDialog(false)}>
+              <Button variant={"outline" as any} onClick={() => setShowMaintenanceDialog(false)}>
                 Cancel
               </Button>
               <Button 
