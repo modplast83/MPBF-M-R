@@ -229,6 +229,9 @@
             "description": "Manage your system configuration and settings with our comprehensive setup modules",
             "categories": {
                 "title": "Categories",
+                "page_title": "Categories",
+                "page_header": "Categories",
+                "table_header": "Categories",
                 "description": "Manage product categories for organization",
                 "id": "ID",
                 "name": "Name",
@@ -240,6 +243,11 @@
                 "no_categories": "No categories found"
             },
             "products": {
+                "title": "Products",
+                "page_title": "Products",
+                "page_header": "Products",
+                "table_header": "Products",
+                "description": "Manage customer-specific product specifications",
                 "add_customer_products": "Add Customer Products",
                 "print_a4": "Print A4",
                 "select_a_customer": "Select a customer",
@@ -267,12 +275,13 @@
                 "select_customer_to_view": "Select a customer to view products",
                 "products_for": "Products for {{customer}}",
                 "search_placeholder": "Search products...",
-                "please_select_customer": "Please select a customer to view their products",
-                "title": "Products",
-                "description": "Manage customer-specific product specifications"
+                "please_select_customer": "Please select a customer to view their products"
             },
             "customers": {
                 "title": "Customers",
+                "page_title": "Customers",
+                "page_header": "Customers",
+                "table_header": "Customers",
                 "description": "Manage customer information and relationships",
                 "id": "ID",
                 "code": "Code",
@@ -284,6 +293,9 @@
             },
             "items": {
                 "title": "Items",
+                "page_title": "Items",
+                "page_header": "Items",
+                "table_header": "Items",
                 "description": "Manage product items and details",
                 "name": "Item Name",
                 "name_placeholder": "Enter item name",
@@ -292,12 +304,18 @@
             },
             "sections": {
                 "title": "Sections",
+                "page_title": "Sections",
+                "page_header": "Sections",
+                "table_header": "Sections",
                 "description": "Manage factory production sections"
             },
             "machines": {
                 "title": "Machines",
-                "add_new": "Add New Machine",
-                "description": "Manage production machinery and equipment"
+                "page_title": "Machines",
+                "page_header": "Machines",
+                "table_header": "Machines",
+                "description": "Manage production machinery and equipment",
+                "add_new": "Add New Machine"
             },
             "users": {
                 "title": "Users",
