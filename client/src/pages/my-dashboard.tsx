@@ -590,6 +590,7 @@ export default function MyDashboard() {
                         <TableHead>Working Hours</TableHead>
                         <TableHead>Overtime</TableHead>
                         <TableHead>Status</TableHead>
+                        <TableHead>Location</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -633,6 +634,16 @@ export default function MyDashboard() {
                               ) as any}>
                                 {attendance.status}
                               </Badge>
+                            </TableCell>
+                            <TableCell>
+                              <div className="text-sm">
+                                {attendance.checkOutLocation || attendance.checkInLocation || '-'}
+                              </div>
+                              {attendance.checkOutLocation && attendance.checkInLocation && attendance.checkOutLocation !== attendance.checkInLocation && (
+                                <div className="text-xs text-gray-500">
+                                  In: {attendance.checkInLocation}
+                                </div>
+                              )}
                             </TableCell>
                           </TableRow>
                         ))}
