@@ -103,6 +103,17 @@ This is a comprehensive production management system built with React, TypeScrip
 - Health check endpoints for monitoring
 
 ## Recent Changes
+- July 5, 2025: Enhanced Order Design functionality with dynamic Live Preview and advanced Design Editor:
+  - Updated Live Preview to expand proportionally based on product dimensions (width and length)
+  - Implemented dynamic SVG scaling with proper aspect ratio calculations for all template types
+  - Added comprehensive movable and resizable text elements in Design Editor
+  - Created element selection system with visual selection handles and drag-and-drop functionality
+  - Enhanced text editing with font size controls using sliders (8px to 72px range)
+  - Added element management panel for selected items with delete and deselect options
+  - Implemented move tool for better element positioning control
+  - Added real-time font size adjustment for text elements with visual feedback
+  - Enhanced Live Preview information display with dimensions and aspect ratio details
+  - All template previews (T-shirt, D-cut, Non-cut, Sheet, Zipper-pouch) now scale dynamically
 - July 5, 2025: Implemented comprehensive Geofence Management and Attendance Process improvements:
   - Enhanced Geofence Management with interactive map component for location selection with visual radius display
   - Added comprehensive geofence validation for all attendance operations (check-in, check-out, break start, break end)  

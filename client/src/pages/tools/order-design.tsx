@@ -163,6 +163,11 @@ export default function OrderDesignPage() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [startPos, setStartPos] = useState({ x: 0, y: 0 });
+  const [selectedElement, setSelectedElement] = useState<number | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const [isResizing, setIsResizing] = useState(false);
+  const [textSize, setTextSize] = useState(16);
 
   const { toast } = useToast();
 
@@ -271,34 +276,102 @@ export default function OrderDesignPage() {
         ctx.globalAlpha = 1.0;
         
         // Redraw all canvas elements
-        canvasElements.forEach(element => {
-          drawElement(ctx, element);
+        canvasElements.forEach((element, index) => {
+          drawElement(ctx, element, index === selectedElement);
         });
       };
       img.src = designPreview;
     } else {
       // Just redraw canvas elements
-      canvasElements.forEach(element => {
-        drawElement(ctx, element);
+      canvasElements.forEach((element, index) => {
+        drawElement(ctx, element, index === selectedElement);
       });
     }
   };
 
-  const drawElement = (ctx: CanvasRenderingContext2D, element: any) => {
+  const drawElement = (ctx: CanvasRenderingContext2D, element: any, isSelected: boolean = false) => {
     ctx.strokeStyle = element.color;
     ctx.fillStyle = element.color;
     ctx.lineWidth = 2;
     
     if (element.type === "rectangle") {
       ctx.strokeRect(element.x, element.y, element.width, element.height);
+      if (isSelected) {
+        // Draw selection handles
+        ctx.fillStyle = "#0066cc";
+        ctx.fillRect(element.x - 3, element.y - 3, 6, 6);
+        ctx.fillRect(element.x + element.width - 3, element.y - 3, 6, 6);
+        ctx.fillRect(element.x - 3, element.y + element.height - 3, 6, 6);
+        ctx.fillRect(element.x + element.width - 3, element.y + element.height - 3, 6, 6);
+      }
     } else if (element.type === "circle") {
       ctx.beginPath();
       ctx.arc(element.x, element.y, element.radius, 0, 2 * Math.PI);
       ctx.stroke();
+      if (isSelected) {
+        // Draw selection handles
+        ctx.fillStyle = "#0066cc";
+        ctx.fillRect(element.x - element.radius - 3, element.y - 3, 6, 6);
+        ctx.fillRect(element.x + element.radius - 3, element.y - 3, 6, 6);
+        ctx.fillRect(element.x - 3, element.y - element.radius - 3, 6, 6);
+        ctx.fillRect(element.x - 3, element.y + element.radius - 3, 6, 6);
+      }
     } else if (element.type === "text") {
-      ctx.font = "16px Arial";
+      const fontSize = element.fontSize || 16;
+      ctx.font = `${fontSize}px Arial`;
       ctx.fillText(element.text, element.x, element.y);
+      if (isSelected) {
+        // Draw text selection box
+        const textWidth = ctx.measureText(element.text).width;
+        const textHeight = fontSize;
+        ctx.strokeStyle = "#0066cc";
+        ctx.lineWidth = 1;
+        ctx.strokeRect(element.x - 2, element.y - textHeight, textWidth + 4, textHeight + 4);
+        // Draw resize handles
+        ctx.fillStyle = "#0066cc";
+        ctx.fillRect(element.x + textWidth - 3, element.y - textHeight - 3, 6, 6);
+        ctx.fillRect(element.x + textWidth - 3, element.y - 3, 6, 6);
+      }
     }
+  };
+
+  // Helper function to check if point is inside element
+  const isPointInElement = (x: number, y: number, element: any): boolean => {
+    if (element.type === "rectangle") {
+      return x >= element.x && x <= element.x + element.width &&
+             y >= element.y && y <= element.y + element.height;
+    } else if (element.type === "circle") {
+      const distance = Math.sqrt(Math.pow(x - element.x, 2) + Math.pow(y - element.y, 2));
+      return distance <= element.radius;
+    } else if (element.type === "text") {
+      const canvas = canvasRef.current;
+      if (!canvas) return false;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return false;
+      const fontSize = element.fontSize || 16;
+      ctx.font = `${fontSize}px Arial`;
+      const textWidth = ctx.measureText(element.text).width;
+      return x >= element.x && x <= element.x + textWidth &&
+             y >= element.y - fontSize && y <= element.y;
+    }
+    return false;
+  };
+
+  // Helper function to check if point is on resize handle
+  const isPointOnResizeHandle = (x: number, y: number, element: any): boolean => {
+    if (element.type === "text") {
+      const canvas = canvasRef.current;
+      if (!canvas) return false;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return false;
+      const fontSize = element.fontSize || 16;
+      ctx.font = `${fontSize}px Arial`;
+      const textWidth = ctx.measureText(element.text).width;
+      // Check bottom-right resize handle
+      return x >= element.x + textWidth - 6 && x <= element.x + textWidth &&
+             y >= element.y - 6 && y <= element.y;
+    }
+    return false;
   };
 
   const startDrawing = (e: React.MouseEvent<HTMLCanvasElement>) => {
@@ -311,6 +384,36 @@ export default function OrderDesignPage() {
     
     setStartPos({ x, y });
     
+    // Check if clicking on an existing element for selection/dragging
+    let clickedElementIndex = -1;
+    for (let i = canvasElements.length - 1; i >= 0; i--) {
+      if (isPointInElement(x, y, canvasElements[i])) {
+        clickedElementIndex = i;
+        break;
+      }
+    }
+    
+    if (clickedElementIndex !== -1) {
+      setSelectedElement(clickedElementIndex);
+      const element = canvasElements[clickedElementIndex];
+      
+      // Check if clicking on resize handle
+      if (isPointOnResizeHandle(x, y, element)) {
+        setIsResizing(true);
+      } else {
+        // Start dragging
+        setIsDragging(true);
+        setDragOffset({
+          x: x - element.x,
+          y: y - element.y
+        });
+      }
+      redrawCanvas();
+      return;
+    } else {
+      setSelectedElement(null);
+    }
+    
     if (selectedTool === "text") {
       setShowTextDialog(true);
       return;
@@ -320,14 +423,40 @@ export default function OrderDesignPage() {
   };
 
   const draw = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    if (!isDrawing || selectedTool === "text") return;
-    
     const canvas = canvasRef.current;
     if (!canvas) return;
     
     const rect = canvas.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
+    
+    // Handle dragging existing element
+    if (isDragging && selectedElement !== null) {
+      const newElements = [...canvasElements];
+      const element = newElements[selectedElement];
+      element.x = x - dragOffset.x;
+      element.y = y - dragOffset.y;
+      setCanvasElements(newElements);
+      redrawCanvas();
+      return;
+    }
+    
+    // Handle resizing text element
+    if (isResizing && selectedElement !== null) {
+      const newElements = [...canvasElements];
+      const element = newElements[selectedElement];
+      if (element.type === "text") {
+        // Calculate new font size based on distance from original position
+        const distance = Math.sqrt(Math.pow(x - element.x, 2) + Math.pow(y - element.y, 2));
+        const newFontSize = Math.max(8, Math.min(72, distance * 0.5));
+        element.fontSize = newFontSize;
+      }
+      setCanvasElements(newElements);
+      redrawCanvas();
+      return;
+    }
+    
+    if (!isDrawing || selectedTool === "text") return;
     
     // Clear canvas and redraw all elements plus current preview
     redrawCanvas();
@@ -351,6 +480,18 @@ export default function OrderDesignPage() {
   };
 
   const stopDrawing = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    // Stop dragging or resizing
+    if (isDragging) {
+      setIsDragging(false);
+      setDragOffset({ x: 0, y: 0 });
+      return;
+    }
+    
+    if (isResizing) {
+      setIsResizing(false);
+      return;
+    }
+    
     if (!isDrawing || selectedTool === "text") return;
     
     const canvas = canvasRef.current;
@@ -407,7 +548,8 @@ export default function OrderDesignPage() {
       x: startPos.x,
       y: startPos.y,
       text: textInput,
-      color: selectedColor
+      color: selectedColor,
+      fontSize: textSize
     };
     
     setCanvasElements(prev => [...prev, newElement]);
@@ -608,26 +750,35 @@ export default function OrderDesignPage() {
     const opacity = color?.opacity || 1;
     const strokeColor = fillColor === "#ffffff" || fillColor === "#fffbeb" ? "#333" : "#000";
     
+    // Calculate proportional dimensions based on width and length
+    const aspectRatio = customization.dimensions.width / customization.dimensions.length;
+    const baseWidth = Math.min(200, Math.max(120, aspectRatio * 150));
+    const baseHeight = baseWidth / aspectRatio;
+    
+    // Scale viewBox proportionally
+    const viewBoxWidth = 100;
+    const viewBoxHeight = 100 / aspectRatio;
+    
     switch (template) {
       case "t-shirt":
         return (
-          <div className="w-32 h-40 mx-auto relative">
-            <svg viewBox="0 0 100 130" className="w-full h-full">
+          <div className="mx-auto relative" style={{ width: `${baseWidth}px`, height: `${baseHeight}px` }}>
+            <svg viewBox={`0 0 ${viewBoxWidth} ${viewBoxHeight}`} className="w-full h-full">
               <path 
-                d="M15 40 L15 15 L25 15 L25 35 L50 35 L75 35 L75 15 L85 15 L85 40 L85 120 L15 120 Z" 
+                d={`M15 ${viewBoxHeight * 0.3} L15 15 L25 15 L25 ${viewBoxHeight * 0.27} L50 ${viewBoxHeight * 0.27} L75 ${viewBoxHeight * 0.27} L75 15 L85 15 L85 ${viewBoxHeight * 0.3} L85 ${viewBoxHeight * 0.92} L15 ${viewBoxHeight * 0.92} Z`}
                 fill={fillColor}
                 fillOpacity={opacity}
                 stroke={strokeColor}
                 strokeWidth="1.5"
               />
               <path 
-                d="M25 15 C 25 22 25 30 25 35 L50 35 C 50 30 50 22 50 15" 
+                d={`M25 15 C 25 22 25 ${viewBoxHeight * 0.23} 25 ${viewBoxHeight * 0.27} L50 ${viewBoxHeight * 0.27} C 50 ${viewBoxHeight * 0.23} 50 22 50 15`}
                 fill="white" 
                 stroke={strokeColor} 
                 strokeWidth="1"
               />
               <path 
-                d="M50 15 C 50 22 50 30 50 35 L75 35 C 75 30 75 22 75 15" 
+                d={`M50 15 C 50 22 50 ${viewBoxHeight * 0.23} 50 ${viewBoxHeight * 0.27} L75 ${viewBoxHeight * 0.27} C 75 ${viewBoxHeight * 0.23} 75 22 75 15`}
                 fill="white" 
                 stroke={strokeColor} 
                 strokeWidth="1"
@@ -638,23 +789,23 @@ export default function OrderDesignPage() {
       
       case "t-shirt-hook":
         return (
-          <div className="w-32 h-40 mx-auto relative">
-            <svg viewBox="0 0 100 130" className="w-full h-full">
+          <div className="mx-auto relative" style={{ width: `${baseWidth}px`, height: `${baseHeight}px` }}>
+            <svg viewBox={`0 0 ${viewBoxWidth} ${viewBoxHeight}`} className="w-full h-full">
               <path 
-                d="M15 40 L15 15 L25 15 L25 35 L50 35 L75 35 L75 15 L85 15 L85 40 L85 120 L15 120 Z" 
+                d={`M15 ${viewBoxHeight * 0.3} L15 15 L25 15 L25 ${viewBoxHeight * 0.27} L50 ${viewBoxHeight * 0.27} L75 ${viewBoxHeight * 0.27} L75 15 L85 15 L85 ${viewBoxHeight * 0.3} L85 ${viewBoxHeight * 0.92} L15 ${viewBoxHeight * 0.92} Z`}
                 fill={fillColor}
                 fillOpacity={opacity}
                 stroke={strokeColor}
                 strokeWidth="1.5"
               />
               <path 
-                d="M25 15 C 25 22 25 30 25 35 L50 35 C 50 30 50 22 50 15" 
+                d={`M25 15 C 25 22 25 ${viewBoxHeight * 0.23} 25 ${viewBoxHeight * 0.27} L50 ${viewBoxHeight * 0.27} C 50 ${viewBoxHeight * 0.23} 50 22 50 15`}
                 fill="white" 
                 stroke={strokeColor} 
                 strokeWidth="1"
               />
               <path 
-                d="M50 15 C 50 22 50 30 50 35 L75 35 C 75 30 75 22 75 15" 
+                d={`M50 15 C 50 22 50 ${viewBoxHeight * 0.23} 50 ${viewBoxHeight * 0.27} L75 ${viewBoxHeight * 0.27} C 75 ${viewBoxHeight * 0.23} 75 22 75 15`}
                 fill="white" 
                 stroke={strokeColor} 
                 strokeWidth="1"
@@ -666,17 +817,17 @@ export default function OrderDesignPage() {
       
       case "d-cut":
         return (
-          <div className="w-32 h-40 mx-auto relative">
-            <svg viewBox="0 0 100 130" className="w-full h-full">
+          <div className="mx-auto relative" style={{ width: `${baseWidth}px`, height: `${baseHeight}px` }}>
+            <svg viewBox={`0 0 ${viewBoxWidth} ${viewBoxHeight}`} className="w-full h-full">
               <rect 
-                x="20" y="10" width="60" height="110" 
+                x="20" y={viewBoxHeight * 0.08} width="60" height={viewBoxHeight * 0.84} 
                 fill={fillColor}
                 fillOpacity={opacity}
                 stroke={strokeColor}
                 strokeWidth="1.5"
               />
               <path 
-                d="M35 15 L65 15 C 70 15 70 25 65 25 L35 25 C 30 25 30 15 35 15 Z" 
+                d={`M35 ${viewBoxHeight * 0.12} L65 ${viewBoxHeight * 0.12} C 70 ${viewBoxHeight * 0.12} 70 ${viewBoxHeight * 0.19} 65 ${viewBoxHeight * 0.19} L35 ${viewBoxHeight * 0.19} C 30 ${viewBoxHeight * 0.19} 30 ${viewBoxHeight * 0.12} 35 ${viewBoxHeight * 0.12} Z`}
                 fill="white" 
                 stroke={strokeColor} 
                 strokeWidth="1"
@@ -687,10 +838,10 @@ export default function OrderDesignPage() {
       
       case "non-cut":
         return (
-          <div className="w-32 h-40 mx-auto relative">
-            <svg viewBox="0 0 100 130" className="w-full h-full">
+          <div className="mx-auto relative" style={{ width: `${baseWidth}px`, height: `${baseHeight}px` }}>
+            <svg viewBox={`0 0 ${viewBoxWidth} ${viewBoxHeight}`} className="w-full h-full">
               <rect 
-                x="25" y="20" width="50" height="90" 
+                x="25" y={viewBoxHeight * 0.15} width="50" height={viewBoxHeight * 0.69} 
                 fill={fillColor}
                 fillOpacity={opacity}
                 stroke={strokeColor}
@@ -709,10 +860,10 @@ export default function OrderDesignPage() {
       
       case "sheet":
         return (
-          <div className="w-32 h-40 mx-auto relative">
-            <svg viewBox="0 0 100 130" className="w-full h-full">
+          <div className="mx-auto relative" style={{ width: `${baseWidth}px`, height: `${baseHeight}px` }}>
+            <svg viewBox={`0 0 ${viewBoxWidth} ${viewBoxHeight}`} className="w-full h-full">
               <rect 
-                x="15" y="25" width="70" height="80" 
+                x="15" y={viewBoxHeight * 0.19} width="70" height={viewBoxHeight * 0.61} 
                 fill={fillColor}
                 fillOpacity={opacity}
                 stroke={strokeColor}
@@ -720,18 +871,18 @@ export default function OrderDesignPage() {
                 rx="1"
               />
               <line 
-                x1="15" y1="35" x2="85" y2="35" 
+                x1="15" y1={viewBoxHeight * 0.27} x2="85" y2={viewBoxHeight * 0.27} 
                 stroke={strokeColor} 
                 strokeWidth="1.5"
               />
               <line 
-                x1="20" y1="25" x2="20" y2="105" 
+                x1="20" y1={viewBoxHeight * 0.19} x2="20" y2={viewBoxHeight * 0.81} 
                 stroke={strokeColor} 
                 strokeWidth="1" 
                 strokeDasharray="1,1"
               />
               <line 
-                x1="80" y1="25" x2="80" y2="105" 
+                x1="80" y1={viewBoxHeight * 0.19} x2="80" y2={viewBoxHeight * 0.81} 
                 stroke={strokeColor} 
                 strokeWidth="1" 
                 strokeDasharray="1,1"
@@ -742,10 +893,10 @@ export default function OrderDesignPage() {
 
       case "zipper-pouch":
         return (
-          <div className="w-32 h-40 mx-auto relative">
-            <svg viewBox="0 0 100 130" className="w-full h-full">
+          <div className="mx-auto relative" style={{ width: `${baseWidth}px`, height: `${baseHeight}px` }}>
+            <svg viewBox={`0 0 ${viewBoxWidth} ${viewBoxHeight}`} className="w-full h-full">
               <rect 
-                x="20" y="25" width="60" height="80" 
+                x="20" y={viewBoxHeight * 0.19} width="60" height={viewBoxHeight * 0.62} 
                 fill={fillColor}
                 fillOpacity={opacity}
                 stroke={strokeColor}
@@ -753,14 +904,14 @@ export default function OrderDesignPage() {
                 rx="3"
               />
               <rect 
-                x="20" y="20" width="60" height="8" 
+                x="20" y={viewBoxHeight * 0.15} width="60" height={viewBoxHeight * 0.06} 
                 fill="#666"
                 stroke={strokeColor}
                 strokeWidth="1"
                 rx="1"
               />
               <line 
-                x1="25" y1="24" x2="75" y2="24" 
+                x1="25" y1={viewBoxHeight * 0.18} x2="75" y2={viewBoxHeight * 0.18} 
                 stroke="white" 
                 strokeWidth="1"
                 strokeDasharray="2,1"
@@ -1162,27 +1313,49 @@ export default function OrderDesignPage() {
                     {/* Enhanced Tool Selection */}
                     <div className="flex space-x-3 mb-6">
                       <Button
-                        variant={selectedTool === "rectangle" ? "default" : "outline"}
+                        variant={selectedTool === "rectangle" ? "default" : "outline" as any}
                         onClick={() => setSelectedTool("rectangle")}
                         className="flex-1"
                       >
                         <Square className="h-4 w-4 mr-2" /> Rectangle
                       </Button>
                       <Button
-                        variant={selectedTool === "circle" ? "default" : "outline"}
+                        variant={selectedTool === "circle" ? "default" : "outline" as any}
                         onClick={() => setSelectedTool("circle")}
                         className="flex-1"
                       >
                         <Circle className="h-4 w-4 mr-2" /> Circle
                       </Button>
                       <Button
-                        variant={selectedTool === "text" ? "default" : "outline"}
+                        variant={selectedTool === "text" ? "default" : "outline" as any}
                         onClick={() => setSelectedTool("text")}
                         className="flex-1"
                       >
                         <Type className="h-4 w-4 mr-2" /> Text
                       </Button>
+                      <Button
+                        variant={selectedTool === "move" ? "default" : "outline" as any}
+                        onClick={() => setSelectedTool("move")}
+                        className="flex-1"
+                      >
+                        <Move className="h-4 w-4 mr-2" /> Move
+                      </Button>
                     </div>
+
+                    {/* Text Size Control */}
+                    {selectedTool === "text" && (
+                      <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+                        <Label className="text-sm font-medium mb-3 block">Text Size: {textSize}px</Label>
+                        <Slider
+                          value={[textSize]}
+                          onValueChange={(value) => setTextSize(value[0])}
+                          min={8}
+                          max={72}
+                          step={2}
+                          className="w-full"
+                        />
+                      </div>
+                    )}
 
                     {/* Enhanced Color Palette */}
                     <div className="mb-6">
@@ -1253,7 +1426,11 @@ export default function OrderDesignPage() {
                           ref={canvasRef}
                           width={500}
                           height={350}
-                          className="border-2 border-gray-200 cursor-crosshair w-full max-w-2xl mx-auto rounded-lg bg-white"
+                          className={`border-2 border-gray-200 w-full max-w-2xl mx-auto rounded-lg bg-white ${
+                            selectedTool === "move" ? "cursor-move" : 
+                            selectedTool === "text" ? "cursor-text" : 
+                            "cursor-crosshair"
+                          }`}
                           onMouseDown={startDrawing}
                           onMouseMove={draw}
                           onMouseUp={stopDrawing}
@@ -1275,6 +1452,17 @@ export default function OrderDesignPage() {
                             className="mb-4"
                             autoFocus
                           />
+                          <div className="mb-4">
+                            <Label className="text-sm font-medium mb-2 block">Font Size: {textSize}px</Label>
+                            <Slider
+                              value={[textSize]}
+                              onValueChange={(value) => setTextSize(value[0])}
+                              min={8}
+                              max={72}
+                              step={2}
+                              className="w-full"
+                            />
+                          </div>
                           <div className="flex space-x-3">
                             <Button
                               onClick={addTextElement}
@@ -1284,7 +1472,7 @@ export default function OrderDesignPage() {
                               Add Text
                             </Button>
                             <Button
-                              variant="outline"
+                              variant={"outline" as any}
                               onClick={() => {
                                 setShowTextDialog(false);
                                 setTextInput("");
@@ -1295,6 +1483,56 @@ export default function OrderDesignPage() {
                             </Button>
                           </div>
                         </div>
+                      </div>
+                    )}
+
+                    {/* Selected Element Controls */}
+                    {selectedElement !== null && canvasElements[selectedElement] && (
+                      <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                        <h4 className="text-sm font-semibold mb-3 text-blue-800">Selected Element Controls</h4>
+                        <div className="flex space-x-3">
+                          <Button
+                            onClick={() => {
+                              const newElements = canvasElements.filter((_, index) => index !== selectedElement);
+                              setCanvasElements(newElements);
+                              setSelectedElement(null);
+                              redrawCanvas();
+                            }}
+                            variant={"destructive" as any}
+                            size={"sm" as any}
+                            className="flex-1"
+                          >
+                            Delete Element
+                          </Button>
+                          <Button
+                            onClick={() => setSelectedElement(null)}
+                            variant={"outline" as any}
+                            size={"sm" as any}
+                            className="flex-1"
+                          >
+                            Deselect
+                          </Button>
+                        </div>
+                        {canvasElements[selectedElement]?.type === "text" && (
+                          <div className="mt-3">
+                            <Label className="text-sm font-medium mb-2 block">
+                              Font Size: {canvasElements[selectedElement]?.fontSize || 16}px
+                            </Label>
+                            <Slider
+                              value={[canvasElements[selectedElement]?.fontSize || 16]}
+                              onValueChange={(value) => {
+                                const newElements = [...canvasElements];
+                                newElements[selectedElement].fontSize = value[0];
+                                setCanvasElements(newElements);
+                                redrawCanvas();
+                              }}
+                              min={8}
+                              max={72}
+                              step={2}
+                              className="w-full"
+                            />
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>
@@ -1548,16 +1786,24 @@ export default function OrderDesignPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="p-6">
-              <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-6 h-64 flex items-center justify-center">
+              <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-6 min-h-64 flex items-center justify-center overflow-hidden">
                 {customization.template && customization.materialColor ? (
-                  <div className="text-center">
-                    {renderTemplatePreview(customization.template, customization.materialColor)}
-                    <p className="text-sm text-gray-600 mt-3 font-medium">
-                      {TEMPLATES.find(t => t.id === customization.template)?.name}
-                    </p>
-                    <p className="text-xs text-gray-500 mt-1">
-                      {MATERIAL_COLORS.find(c => c.id === customization.materialColor)?.name}
-                    </p>
+                  <div className="text-center w-full">
+                    <div className="mb-4">
+                      {renderTemplatePreview(customization.template, customization.materialColor)}
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-sm text-gray-600 font-medium">
+                        {TEMPLATES.find(t => t.id === customization.template)?.name}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {MATERIAL_COLORS.find(c => c.id === customization.materialColor)?.name}
+                      </p>
+                      <div className="text-xs text-gray-400 mt-2 space-y-0.5">
+                        <p>W: {customization.dimensions.width} cm × L: {customization.dimensions.length} cm</p>
+                        <p>Aspect Ratio: {(customization.dimensions.width / customization.dimensions.length).toFixed(2)}:1</p>
+                      </div>
+                    </div>
                   </div>
                 ) : (
                   <div className="text-center text-gray-500">
