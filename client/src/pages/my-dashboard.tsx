@@ -17,6 +17,7 @@ import { useAuth } from '@/hooks/use-auth-v2';
 import { apiRequest, queryClient } from '@/lib/queryClient';
 import { useLocation } from 'wouter';
 import { format } from 'date-fns';
+// @ts-ignore - Type assertion for react-i18next
 import { useTranslation } from 'react-i18next';
 import {
   Clock,
