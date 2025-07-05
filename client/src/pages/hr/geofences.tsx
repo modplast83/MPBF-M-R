@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,7 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+// @ts-ignore
 import { useTranslation } from "react-i18next";
 import { useLanguage } from "@/hooks/use-language";
 import { 
@@ -23,7 +24,8 @@ import {
   Map,
   Users,
   CheckCircle,
-  AlertCircle
+  AlertCircle,
+  MousePointer
 } from "lucide-react";
 
 const geofenceSchema = z.object({
@@ -35,6 +37,101 @@ const geofenceSchema = z.object({
 });
 
 type GeofenceForm = z.infer<typeof geofenceSchema>;
+
+// Simple interactive map component for location selection
+const InteractiveMap = ({ 
+  centerLat, 
+  centerLng, 
+  radius, 
+  onLocationSelect 
+}: { 
+  centerLat: number; 
+  centerLng: number; 
+  radius: number; 
+  onLocationSelect: (lat: number, lng: number) => void; 
+}) => {
+  const mapRef = useRef<HTMLDivElement>(null);
+  const [mapCenter, setMapCenter] = useState({ lat: centerLat, lng: centerLng });
+  const [isSelecting, setIsSelecting] = useState(false);
+
+  const handleMapClick = (e: React.MouseEvent) => {
+    if (!isSelecting || !mapRef.current) return;
+    
+    const rect = mapRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    
+    // Simple coordinate mapping (for demo - in production would use proper mapping)
+    const lat = mapCenter.lat + (y - 200) / 1000; // Approximate scaling
+    const lng = mapCenter.lng + (x - 200) / 1000;
+    
+    onLocationSelect(lat, lng);
+    setIsSelecting(false);
+  };
+
+  return (
+    <div className="border rounded-lg overflow-hidden">
+      <div className="bg-gray-50 p-3 border-b">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Map className="h-4 w-4 text-blue-600" />
+            <span className="text-sm font-medium">Interactive Map</span>
+          </div>
+          <Button
+            size={"sm" as any}
+            variant={isSelecting ? ("default" as any) : ("outline" as any)}
+            onClick={() => setIsSelecting(!isSelecting)}
+          >
+            <MousePointer className="h-3 w-3 mr-1" />
+            {isSelecting ? "Click to Select" : "Select Location"}
+          </Button>
+        </div>
+      </div>
+      <div 
+        ref={mapRef}
+        className={`h-64 bg-gradient-to-br from-green-100 to-blue-100 relative ${isSelecting ? 'cursor-crosshair' : 'cursor-default'}`}
+        onClick={handleMapClick}
+      >
+        {/* Map representation */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="text-center">
+            <div 
+              className="w-4 h-4 bg-red-500 rounded-full mx-auto mb-2"
+              style={{
+                position: 'absolute',
+                left: '50%',
+                top: '50%',
+                transform: 'translate(-50%, -50%)'
+              }}
+            />
+            <div 
+              className="border-2 border-blue-500 rounded-full opacity-30"
+              style={{
+                width: `${radius / 2}px`,
+                height: `${radius / 2}px`,
+                position: 'absolute',
+                left: '50%',
+                top: '50%',
+                transform: 'translate(-50%, -50%)'
+              }}
+            />
+          </div>
+        </div>
+        <div className="absolute bottom-2 left-2 bg-white bg-opacity-75 p-2 rounded text-xs">
+          Center: {centerLat.toFixed(6)}, {centerLng.toFixed(6)}
+        </div>
+        <div className="absolute bottom-2 right-2 bg-white bg-opacity-75 p-2 rounded text-xs">
+          Radius: {radius}m
+        </div>
+        {isSelecting && (
+          <div className="absolute top-2 left-2 right-2 bg-blue-500 text-white p-2 rounded text-sm text-center">
+            Click on the map to select a new center location
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
 
 export default function GeofenceManagement() {
   const { t } = useTranslation();
@@ -200,6 +297,24 @@ export default function GeofenceManagement() {
                   )}
                 />
 
+                {/* Interactive Map for Location Selection */}
+                <div className="space-y-4">
+                  <Label>Location Selection</Label>
+                  <InteractiveMap
+                    centerLat={form.watch('centerLatitude') || 24.7136}
+                    centerLng={form.watch('centerLongitude') || 46.6753}
+                    radius={form.watch('radius') || 100}
+                    onLocationSelect={(lat: number, lng: number) => {
+                      form.setValue('centerLatitude', lat);
+                      form.setValue('centerLongitude', lng);
+                      toast({
+                        title: "Location Updated",
+                        description: `New center: ${lat.toFixed(6)}, ${lng.toFixed(6)}`
+                      });
+                    }}
+                  />
+                </div>
+
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                   <FormField
                     control={form.control}
@@ -243,7 +358,7 @@ export default function GeofenceManagement() {
                 <div className="flex justify-center">
                   <Button 
                     type="button" 
-                    variant="outline" 
+                    variant={"outline" as any}
                     onClick={handleGetCurrentLocation}
                     className="w-full"
                   >
@@ -274,7 +389,7 @@ export default function GeofenceManagement() {
                 <div className="flex justify-end space-x-4 pt-4 border-t">
                   <Button 
                     type="button" 
-                    variant="outline" 
+                    variant={"outline" as any}
                     onClick={() => setIsDialogOpen(false)}
                   >
                     Cancel
@@ -400,8 +515,8 @@ export default function GeofenceManagement() {
                       <TableCell>
                         <div className="flex space-x-2">
                           <Button
-                            size="sm"
-                            variant="outline"
+                            size={"sm" as any}
+                            variant={"outline" as any}
                             onClick={() => handleEdit(geofence)}
                           >
                             <Edit className="h-4 w-4" />

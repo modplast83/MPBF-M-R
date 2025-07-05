@@ -50,6 +50,10 @@ interface AttendanceRecord {
   workingHours: number;
   overtimeHours: number;
   breakDuration: number;
+  checkInLocation?: string;
+  checkOutLocation?: string;
+  breakStartLocation?: string;
+  breakEndLocation?: string;
   status: string;
   isAutoCheckedOut: boolean;
 }
@@ -637,13 +641,21 @@ export default function MyDashboard() {
                             </TableCell>
                             <TableCell>
                               <div className="text-sm">
-                                {attendance.checkOutLocation || attendance.checkInLocation || '-'}
+                                {(() => {
+                                  // Show the location of the last action performed (check-out > break-end > break-start > check-in)
+                                  if (attendance.checkOutLocation) {
+                                    return `${attendance.checkOutLocation} (Check-out)`;
+                                  } else if (attendance.breakEndLocation) {
+                                    return `${attendance.breakEndLocation} (Break End)`;
+                                  } else if (attendance.breakStartLocation) {
+                                    return `${attendance.breakStartLocation} (Break Start)`;
+                                  } else if (attendance.checkInLocation) {
+                                    return `${attendance.checkInLocation} (Check-in)`;
+                                  } else {
+                                    return '-';
+                                  }
+                                })()}
                               </div>
-                              {attendance.checkOutLocation && attendance.checkInLocation && attendance.checkOutLocation !== attendance.checkInLocation && (
-                                <div className="text-xs text-gray-500">
-                                  In: {attendance.checkInLocation}
-                                </div>
-                              )}
                             </TableCell>
                           </TableRow>
                         ))}

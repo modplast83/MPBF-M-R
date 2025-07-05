@@ -303,10 +303,21 @@ export function setupHRRoutes(app: Express) {
   // Break start endpoint
   app.post("/api/hr/break-start", async (req, res) => {
     try {
-      const { userId } = req.body;
+      const { userId, latitude, longitude, manualEntry = false } = req.body;
       
       if (!userId) {
         return res.status(400).json({ error: "User ID is required" });
+      }
+      
+      // Skip geofence validation for manual entries or when coordinates are default (0,0)
+      const skipGeofenceValidation = manualEntry || (latitude === 0 && longitude === 0);
+      
+      if (!skipGeofenceValidation) {
+        // Check if user is within geofence for GPS-based break start
+        const geofences = await storage.checkUserInGeofence(latitude, longitude);
+        if (geofences.length === 0) {
+          return res.status(400).json({ error: "You must be within the factory area to start break" });
+        }
       }
       
       // Get today's attendance record
@@ -325,8 +336,14 @@ export function setupHRRoutes(app: Express) {
         return res.status(400).json({ error: "Break already in progress" });
       }
       
+      // Check if break was already taken today (only one break per day allowed)
+      if (attendance.breakStartTime && attendance.breakEndTime) {
+        return res.status(400).json({ error: "Break already taken today. Only one break per day is allowed." });
+      }
+      
       const updateData = {
-        breakStartTime: new Date()
+        breakStartTime: new Date(),
+        breakStartLocation: latitude && longitude ? `${latitude},${longitude}` : null
       };
       
       const updatedAttendance = await storage.updateTimeAttendance(attendance.id, updateData);
@@ -340,10 +357,21 @@ export function setupHRRoutes(app: Express) {
   // Break end endpoint
   app.post("/api/hr/break-end", async (req, res) => {
     try {
-      const { userId } = req.body;
+      const { userId, latitude, longitude, manualEntry = false } = req.body;
       
       if (!userId) {
         return res.status(400).json({ error: "User ID is required" });
+      }
+      
+      // Skip geofence validation for manual entries or when coordinates are default (0,0)
+      const skipGeofenceValidation = manualEntry || (latitude === 0 && longitude === 0);
+      
+      if (!skipGeofenceValidation) {
+        // Check if user is within geofence for GPS-based break end
+        const geofences = await storage.checkUserInGeofence(latitude, longitude);
+        if (geofences.length === 0) {
+          return res.status(400).json({ error: "You must be within the factory area to end break" });
+        }
       }
       
       // Get today's attendance record
@@ -367,7 +395,8 @@ export function setupHRRoutes(app: Express) {
       
       const updateData = {
         breakEndTime,
-        breakDuration
+        breakDuration,
+        breakEndLocation: latitude && longitude ? `${latitude},${longitude}` : null
       };
       
       const updatedAttendance = await storage.updateTimeAttendance(attendance.id, updateData);
@@ -380,7 +409,18 @@ export function setupHRRoutes(app: Express) {
 
   app.post("/api/hr/check-out", async (req, res) => {
     try {
-      const { userId, latitude, longitude, isAutomatic = false } = req.body;
+      const { userId, latitude, longitude, isAutomatic = false, manualEntry = false } = req.body;
+      
+      // Skip geofence validation for manual entries or when coordinates are default (0,0)
+      const skipGeofenceValidation = manualEntry || isAutomatic || (latitude === 0 && longitude === 0);
+      
+      if (!skipGeofenceValidation) {
+        // Check if user is within geofence for GPS-based check-out
+        const geofences = await storage.checkUserInGeofence(latitude, longitude);
+        if (geofences.length === 0) {
+          return res.status(400).json({ error: "You must be within the factory area to check out" });
+        }
+      }
       
       // Get today's attendance record
       const today = new Date();

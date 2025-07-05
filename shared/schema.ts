@@ -782,6 +782,8 @@ export const timeAttendance = pgTable("time_attendance", {
   breakDuration: doublePrecision("break_duration").default(0), // in hours
   checkInLocation: text("check_in_location"),
   checkOutLocation: text("check_out_location"),
+  breakStartLocation: text("break_start_location"),
+  breakEndLocation: text("break_end_location"),
   status: text("status").notNull().default("present"), // present, absent, late, early_leave, sick, vacation
   isAutoCheckedOut: boolean("is_auto_checked_out").default(false),
   autoCheckOutReason: text("auto_check_out_reason"),
