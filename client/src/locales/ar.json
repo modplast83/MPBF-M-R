@@ -1034,6 +1034,11 @@
         "edit_description": "تعديل تفاصيل المجموعة الحالية",
         "no_categories": "لم يتم العثور على مجموعة"
       },
+      "my_dashboard":{
+        "quick_actions": "الإجراءات السريعة",
+        "quick_actions_description": "اختصارات للمهام التصنيعية الشائعة",
+        "current_orders": "الطلبات الحالية",
+      }
       "products": {
         "title": "منتجات العملاء",
         "add_customer_products": "إضافة منتجات العملاء",
