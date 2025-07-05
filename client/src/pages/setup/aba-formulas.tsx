@@ -14,6 +14,78 @@ import { Separator } from "@/components/ui/separator";
 import { apiRequest } from "@/lib/queryClient";
 import { generatePrintDocument } from "@/components/common/print-header";
 
+// Helper function to format A:B ratio as integers when possible
+const formatABRatio = (formula: AbaFormula): string => {
+  if (formula.abRatio) {
+    // Parse existing ratio if it contains decimal values like "0.3333333333333333:1"
+    const parts = formula.abRatio.split(':');
+    if (parts.length === 2) {
+      const aVal = parseFloat(parts[0]);
+      const bVal = parseFloat(parts[1]);
+      
+      // Check if we have a fraction that can be converted to simple integers
+      // For 0.3333... it's 1/3, so we want 1:3
+      if (Math.abs(aVal - 1/3) < 0.001 && Math.abs(bVal - 1) < 0.001) {
+        return "1:3";
+      }
+      if (Math.abs(aVal - 2/3) < 0.001 && Math.abs(bVal - 1) < 0.001) {
+        return "2:3";
+      }
+      if (Math.abs(aVal - 1/7) < 0.001 && Math.abs(bVal - 1) < 0.001) {
+        return "1:7";
+      }
+      if (Math.abs(aVal - 7/9) < 0.001 && Math.abs(bVal - 1) < 0.001) {
+        return "7:9";
+      }
+      
+      // If both values are already integers, return as is
+      if (Number.isInteger(aVal) && Number.isInteger(bVal)) {
+        return `${aVal}:${bVal}`;
+      }
+      
+      // Try to find simple integer ratio by testing common denominators
+      for (let denom = 2; denom <= 20; denom++) {
+        const numerator = Math.round(aVal * denom);
+        if (Math.abs(aVal - numerator / denom) < 0.001) {
+          return `${numerator}:${denom}`;
+        }
+      }
+    }
+    
+    return formula.abRatio;
+  }
+  
+  if (!formula.aToB) {
+    return "1:1";
+  }
+  
+  // Calculate from aToB value
+  const aValue = formula.aToB;
+  const bValue = 1;
+  
+  // Check for common fractions
+  if (Math.abs(aValue - 1/3) < 0.001) return "1:3";
+  if (Math.abs(aValue - 2/3) < 0.001) return "2:3";
+  if (Math.abs(aValue - 1/7) < 0.001) return "1:7";
+  if (Math.abs(aValue - 7/9) < 0.001) return "7:9";
+  
+  // If it's a whole number, display as integer
+  if (Number.isInteger(aValue)) {
+    return `${aValue}:1`;
+  }
+  
+  // Try to find simple integer ratio
+  for (let denom = 2; denom <= 20; denom++) {
+    const numerator = Math.round(aValue * denom);
+    if (Math.abs(aValue - numerator / denom) < 0.001) {
+      return `${numerator}:${denom}`;
+    }
+  }
+  
+  // Otherwise display with minimal decimal places
+  return `${aValue.toFixed(2)}:1.00`;
+};
+
 interface RawMaterial {
   id: string;
   name: string;
@@ -434,7 +506,7 @@ export default function AbaFormulas() {
                     <TableCell className="font-medium">{formula.name}</TableCell>
                     <TableCell>{formula.description || "-"}</TableCell>
                     <TableCell>
-                      <Badge variant="outline">{formula.abRatio || `${formula.aToB?.toFixed(2)}:1.00`}</Badge>
+                      <Badge variant="outline">{formatABRatio(formula)}</Badge>
                     </TableCell>
                     <TableCell>
                       <Badge variant="secondary" className="text-center">{formula.materials.length} materials</Badge>
@@ -704,7 +776,7 @@ export default function AbaFormulas() {
                   <Label className="text-sm font-semibold text-gray-600">A:B Ratio</Label>
                   <div>
                     <Badge variant="outline" className="text-sm">
-                      {viewingFormula.abRatio || `${viewingFormula.aToB?.toFixed(2)}:1.00`}
+                      {formatABRatio(viewingFormula)}
                     </Badge>
                   </div>
                 </div>
