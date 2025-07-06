@@ -1,33 +1,35 @@
 #!/usr/bin/env node
 
-import { execSync } from 'child_process';
-import { writeFileSync, mkdirSync, cpSync, existsSync } from 'fs';
+import { execSync } from "child_process";
+import { writeFileSync, mkdirSync, cpSync, existsSync } from "fs";
 
 async function buildForDeployment() {
   try {
-    console.log('Building application for deployment...');
+    console.log("Building application for deployment...");
 
     // Create clean dist directory
-    if (existsSync('dist')) {
-      execSync('rm -rf dist', { stdio: 'inherit' });
+    if (existsSync("dist")) {
+      execSync("rm -rf dist", { stdio: "inherit" });
     }
-    mkdirSync('dist', { recursive: true });
+    mkdirSync("dist", { recursive: true });
 
     // Build frontend with a shorter timeout
-    console.log('Building frontend...');
+    console.log("Building frontend...");
     try {
-      execSync('timeout 120 npx vite build --mode production', { 
-        stdio: 'inherit',
-        env: { ...process.env, NODE_ENV: 'production' }
+      execSync("timeout 120 npx vite build --mode production", {
+        stdio: "inherit",
+        env: { ...process.env, NODE_ENV: "production" },
       });
-      
+
       // Copy built frontend assets to dist if they exist
-      if (existsSync('dist')) {
-        console.log('Frontend build completed successfully');
+      if (existsSync("dist")) {
+        console.log("Frontend build completed successfully");
       }
     } catch (error) {
-      console.log('Frontend build timed out or failed, using fallback approach');
-      
+      console.log(
+        "Frontend build timed out or failed, using fallback approach",
+      );
+
       // Create minimal index.html for deployment
       const fallbackHtml = `<!DOCTYPE html>
 <html lang="en">
@@ -65,26 +67,25 @@ async function buildForDeployment() {
     </div>
 </body>
 </html>`;
-      
-      writeFileSync('dist/index.html', fallbackHtml);
+
+      writeFileSync("dist/index.html", fallbackHtml);
     }
 
     // Ensure package.json exists in dist
     const packageJson = {
-      type: 'module',
-      main: 'index.js',
+      type: "module",
+      main: "index.js",
       scripts: {
-        start: 'node index.js'
-      }
+        start: "node index.js",
+      },
     };
-    writeFileSync('dist/package.json', JSON.stringify(packageJson, null, 2));
+    writeFileSync("dist/package.json", JSON.stringify(packageJson, null, 2));
 
-    console.log('Deployment build completed!');
-    console.log('Files in dist/:');
-    execSync('ls -la dist/', { stdio: 'inherit' });
-
+    console.log("Deployment build completed!");
+    console.log("Files in dist/:");
+    execSync("ls -la dist/", { stdio: "inherit" });
   } catch (error) {
-    console.error('Build failed:', error.message);
+    console.error("Build failed:", error.message);
     process.exit(1);
   }
 }

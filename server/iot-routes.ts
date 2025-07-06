@@ -1,10 +1,10 @@
 import { Express } from "express";
 import { z } from "zod";
 import { iotStorage } from "./iot-storage";
-import { 
-  insertMachineSensorSchema, 
-  insertSensorDataSchema, 
-  insertIotAlertSchema 
+import {
+  insertMachineSensorSchema,
+  insertSensorDataSchema,
+  insertIotAlertSchema,
 } from "@shared/schema";
 import { requireAuth } from "./auth-utils";
 
@@ -20,16 +20,20 @@ export function setupIotRoutes(app: Express) {
     }
   });
 
-  app.get("/api/iot/sensors/machine/:machineId", requireAuth, async (req, res) => {
-    try {
-      const { machineId } = req.params;
-      const sensors = await iotStorage.getMachineSensorsByMachine(machineId);
-      res.json(sensors);
-    } catch (error) {
-      console.error("Error getting machine sensors:", error);
-      res.status(500).json({ error: "Failed to get machine sensors" });
-    }
-  });
+  app.get(
+    "/api/iot/sensors/machine/:machineId",
+    requireAuth,
+    async (req, res) => {
+      try {
+        const { machineId } = req.params;
+        const sensors = await iotStorage.getMachineSensorsByMachine(machineId);
+        res.json(sensors);
+      } catch (error) {
+        console.error("Error getting machine sensors:", error);
+        res.status(500).json({ error: "Failed to get machine sensors" });
+      }
+    },
+  );
 
   app.get("/api/iot/sensors/:id", requireAuth, async (req, res) => {
     try {
@@ -99,15 +103,17 @@ export function setupIotRoutes(app: Express) {
     try {
       const { sensorId } = req.params;
       const { startDate, endDate } = req.query;
-      
+
       if (!startDate || !endDate) {
-        return res.status(400).json({ error: "Start date and end date are required" });
+        return res
+          .status(400)
+          .json({ error: "Start date and end date are required" });
       }
 
       const data = await iotStorage.getSensorDataByDateRange(
-        sensorId, 
-        new Date(startDate as string), 
-        new Date(endDate as string)
+        sensorId,
+        new Date(startDate as string),
+        new Date(endDate as string),
       );
       res.json(data);
     } catch (error) {
@@ -194,24 +200,31 @@ export function setupIotRoutes(app: Express) {
     }
   });
 
-  app.patch("/api/iot/alerts/:id/acknowledge", requireAuth, async (req, res) => {
-    try {
-      const { id } = req.params;
-      const userId = req.user?.id;
-      if (!userId) {
-        return res.status(401).json({ error: "User not authenticated" });
+  app.patch(
+    "/api/iot/alerts/:id/acknowledge",
+    requireAuth,
+    async (req, res) => {
+      try {
+        const { id } = req.params;
+        const userId = req.user?.id;
+        if (!userId) {
+          return res.status(401).json({ error: "User not authenticated" });
+        }
+
+        const alert = await iotStorage.acknowledgeIotAlert(
+          parseInt(id),
+          userId,
+        );
+        if (!alert) {
+          return res.status(404).json({ error: "Alert not found" });
+        }
+        res.json(alert);
+      } catch (error) {
+        console.error("Error acknowledging IoT alert:", error);
+        res.status(500).json({ error: "Failed to acknowledge IoT alert" });
       }
-      
-      const alert = await iotStorage.acknowledgeIotAlert(parseInt(id), userId);
-      if (!alert) {
-        return res.status(404).json({ error: "Alert not found" });
-      }
-      res.json(alert);
-    } catch (error) {
-      console.error("Error acknowledging IoT alert:", error);
-      res.status(500).json({ error: "Failed to acknowledge IoT alert" });
-    }
-  });
+    },
+  );
 
   app.patch("/api/iot/alerts/:id/resolve", requireAuth, async (req, res) => {
     try {
@@ -220,7 +233,7 @@ export function setupIotRoutes(app: Express) {
       if (!userId) {
         return res.status(401).json({ error: "User not authenticated" });
       }
-      
+
       const alert = await iotStorage.resolveIotAlert(parseInt(id), userId);
       if (!alert) {
         return res.status(404).json({ error: "Alert not found" });

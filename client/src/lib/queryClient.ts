@@ -23,15 +23,19 @@ async function throwIfResNotOk(res: Response) {
 export async function apiRequest(
   method: string,
   endpoint: string,
-  data?: any
+  data?: any,
 ): Promise<any> {
-  console.log(`API Request: ${method} ${endpoint}`, data ? { hasData: true } : { hasData: false });
-  
+  console.log(
+    `API Request: ${method} ${endpoint}`,
+    data ? { hasData: true } : { hasData: false },
+  );
+
   // Add timestamp to prevent caching for POST requests
-  const url = method === 'POST' ? 
-    `${endpoint}${endpoint.includes('?') ? '&' : '?'}_t=${Date.now()}` : 
-    endpoint;
-  
+  const url =
+    method === "POST"
+      ? `${endpoint}${endpoint.includes("?") ? "&" : "?"}_t=${Date.now()}`
+      : endpoint;
+
   const options: RequestInit = {
     method,
     credentials: "include",
@@ -39,10 +43,10 @@ export async function apiRequest(
       ...(data ? { "Content-Type": "application/json" } : {}),
       // Add cache control headers
       "Cache-Control": "no-cache, no-store, must-revalidate",
-      "Pragma": "no-cache",
+      Pragma: "no-cache",
     },
   };
-  
+
   if (data) {
     options.body = JSON.stringify(data);
   }
@@ -52,21 +56,21 @@ export async function apiRequest(
       method: method,
       credentials: options.credentials,
       headers: options.headers,
-      hasBody: !!options.body
+      hasBody: !!options.body,
     });
-    
+
     const res = await fetch(url, options);
     console.log(`Response status: ${res.status} ${res.statusText}`);
-    
+
     if (!res.ok) {
       await throwIfResNotOk(res);
     }
-    
+
     // For 204 No Content responses, return an empty object
     if (res.status === 204) {
       return {};
     }
-    
+
     const result = await res.json();
     console.log(`API Response data:`, result);
     return result;
@@ -91,12 +95,12 @@ export const getQueryFn: <T>(options: {
     }
 
     await throwIfResNotOk(res);
-    
+
     // For 204 No Content responses, return an empty object
     if (res.status === 204) {
       return {};
     }
-    
+
     return await res.json();
   };
 

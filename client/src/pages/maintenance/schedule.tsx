@@ -1,27 +1,76 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PageHeader } from "@/components/ui/page-header";
 import { useToast } from "@/hooks/use-toast";
 import { useTranslation } from "react-i18next";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { format, addDays, addWeeks, addMonths, addYears, isPast } from "date-fns";
-import { Plus, Calendar, AlertTriangle, CheckCircle, Clock, Search, Trophy } from "lucide-react";
+import {
+  format,
+  addDays,
+  addWeeks,
+  addMonths,
+  addYears,
+  isPast,
+} from "date-fns";
+import {
+  Plus,
+  Calendar,
+  AlertTriangle,
+  CheckCircle,
+  Clock,
+  Search,
+  Trophy,
+} from "lucide-react";
 import { API_ENDPOINTS } from "@/lib/constants";
 import { apiRequest } from "@/lib/queryClient";
-import { CelebrationScreen, useCelebration } from "@/components/maintenance/celebration-screen";
+import {
+  CelebrationScreen,
+  useCelebration,
+} from "@/components/maintenance/celebration-screen";
 import { ProgressTracker } from "@/components/maintenance/progress-tracker";
 
 const FREQUENCY_OPTIONS = ["daily", "weekly", "monthly", "quarterly", "yearly"];
-const MAINTENANCE_TYPES = ["preventive", "corrective", "predictive", "emergency"];
+const MAINTENANCE_TYPES = [
+  "preventive",
+  "corrective",
+  "predictive",
+  "emergency",
+];
 
 interface MaintenanceSchedule {
   id: number;
@@ -71,26 +120,31 @@ export default function MaintenanceSchedulePage() {
   });
 
   // Fetch maintenance schedules
-  const { data: schedules = [], isLoading: schedulesLoading, refetch: refetchSchedules } = useQuery({
+  const {
+    data: schedules = [],
+    isLoading: schedulesLoading,
+    refetch: refetchSchedules,
+  } = useQuery({
     queryKey: [API_ENDPOINTS.MAINTENANCE_SCHEDULE],
-    queryFn: () => apiRequest('GET', API_ENDPOINTS.MAINTENANCE_SCHEDULE)
+    queryFn: () => apiRequest("GET", API_ENDPOINTS.MAINTENANCE_SCHEDULE),
   });
 
   // Fetch machines
   const { data: machines = [] } = useQuery({
-    queryKey: ['/api/machines'],
-    queryFn: () => apiRequest('GET', '/api/machines')
+    queryKey: ["/api/machines"],
+    queryFn: () => apiRequest("GET", "/api/machines"),
   });
 
   // Fetch users
   const { data: users = [] } = useQuery({
-    queryKey: ['/api/users'],
-    queryFn: () => apiRequest('GET', '/api/users')
+    queryKey: ["/api/users"],
+    queryFn: () => apiRequest("GET", "/api/users"),
   });
 
   // Create schedule mutation
   const createScheduleMutation = useMutation({
-    mutationFn: (data: any) => apiRequest('POST', API_ENDPOINTS.MAINTENANCE_SCHEDULE, data),
+    mutationFn: (data: any) =>
+      apiRequest("POST", API_ENDPOINTS.MAINTENANCE_SCHEDULE, data),
     onSuccess: () => {
       toast({
         title: t("common.success"),
@@ -99,7 +153,9 @@ export default function MaintenanceSchedulePage() {
       setIsDialogOpen(false);
       resetForm();
       refetchSchedules();
-      queryClient.invalidateQueries({ queryKey: [API_ENDPOINTS.MAINTENANCE_SCHEDULE] });
+      queryClient.invalidateQueries({
+        queryKey: [API_ENDPOINTS.MAINTENANCE_SCHEDULE],
+      });
     },
     onError: (error: any) => {
       toast({
@@ -112,31 +168,41 @@ export default function MaintenanceSchedulePage() {
 
   // Generate automatic schedules mutation
   const generateSchedulesMutation = useMutation({
-    mutationFn: () => apiRequest('POST', `${API_ENDPOINTS.MAINTENANCE_SCHEDULE}/generate`, {}),
+    mutationFn: () =>
+      apiRequest("POST", `${API_ENDPOINTS.MAINTENANCE_SCHEDULE}/generate`, {}),
     onSuccess: (response: any) => {
       // Show celebration for successful schedule generation
-      showCelebration('milestone_reached', {
-        title: 'Schedules Generated!',
-        subtitle: 'Smart Automation Success',
-        description: response.message || 'Maintenance schedules created automatically for all machines',
+      showCelebration("milestone_reached", {
+        title: "Schedules Generated!",
+        subtitle: "Smart Automation Success",
+        description:
+          response.message ||
+          "Maintenance schedules created automatically for all machines",
         stats: [
-          { label: 'Schedules Created', value: response.schedules?.length || 0 },
-          { label: 'Machines Covered', value: machines?.length || 0 }
+          {
+            label: "Schedules Created",
+            value: response.schedules?.length || 0,
+          },
+          { label: "Machines Covered", value: machines?.length || 0 },
         ],
-        achievementLevel: 'gold'
+        achievementLevel: "gold",
       });
-      
+
       toast({
         title: "Success",
-        description: response.message || "Maintenance schedules generated successfully",
+        description:
+          response.message || "Maintenance schedules generated successfully",
       });
       refetchSchedules();
-      queryClient.invalidateQueries({ queryKey: [API_ENDPOINTS.MAINTENANCE_SCHEDULE] });
+      queryClient.invalidateQueries({
+        queryKey: [API_ENDPOINTS.MAINTENANCE_SCHEDULE],
+      });
     },
     onError: (error: any) => {
       toast({
         title: "Error",
-        description: error.message || "Failed to generate maintenance schedules",
+        description:
+          error.message || "Failed to generate maintenance schedules",
         variant: "destructive",
       });
     },
@@ -156,7 +222,7 @@ export default function MaintenanceSchedulePage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!formData.machineId || !formData.nextDue || !formData.description) {
       toast({
         title: t("maintenance.requests.validationError"),
@@ -168,7 +234,9 @@ export default function MaintenanceSchedulePage() {
 
     const scheduleData = {
       ...formData,
-      estimatedDuration: formData.estimatedDuration ? parseInt(formData.estimatedDuration) : null,
+      estimatedDuration: formData.estimatedDuration
+        ? parseInt(formData.estimatedDuration)
+        : null,
       isActive: true,
     };
 
@@ -177,7 +245,7 @@ export default function MaintenanceSchedulePage() {
 
   const getNextDueDate = (frequency: string, lastPerformed?: string) => {
     const baseDate = lastPerformed ? new Date(lastPerformed) : new Date();
-    
+
     switch (frequency) {
       case "daily":
         return addDays(baseDate, 1);
@@ -195,22 +263,29 @@ export default function MaintenanceSchedulePage() {
   };
 
   // Filter schedules
-  const filteredSchedules = schedules.filter((schedule: MaintenanceSchedule) => {
-    const matchesSearch = searchQuery === "" || 
-      schedule.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      schedule.machineId.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      schedule.maintenanceType.toLowerCase().includes(searchQuery.toLowerCase());
-    
-    return matchesSearch && schedule.isActive;
-  });
+  const filteredSchedules = schedules.filter(
+    (schedule: MaintenanceSchedule) => {
+      const matchesSearch =
+        searchQuery === "" ||
+        schedule.description
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase()) ||
+        schedule.machineId.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        schedule.maintenanceType
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase());
+
+      return matchesSearch && schedule.isActive;
+    },
+  );
 
   // Categorize schedules
-  const upcomingSchedules = filteredSchedules.filter((schedule: MaintenanceSchedule) => 
-    !isPast(new Date(schedule.nextDue))
+  const upcomingSchedules = filteredSchedules.filter(
+    (schedule: MaintenanceSchedule) => !isPast(new Date(schedule.nextDue)),
   );
-  
-  const overdueSchedules = filteredSchedules.filter((schedule: MaintenanceSchedule) => 
-    isPast(new Date(schedule.nextDue))
+
+  const overdueSchedules = filteredSchedules.filter(
+    (schedule: MaintenanceSchedule) => isPast(new Date(schedule.nextDue)),
   );
 
   const getMachineName = (machineId: string) => {
@@ -220,19 +295,37 @@ export default function MaintenanceSchedulePage() {
 
   const getUserName = (userId: string) => {
     const user = users.find((u: User) => u.id === userId);
-    return user ? `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.username : userId;
+    return user
+      ? `${user.firstName || ""} ${user.lastName || ""}`.trim() || user.username
+      : userId;
   };
 
   const getMaintenanceTypeBadge = (type: string) => {
     switch (type) {
       case "preventive":
-        return <Badge variant="default">{t(`maintenance.maintenanceTypes.${type}`)}</Badge>;
+        return (
+          <Badge variant="default">
+            {t(`maintenance.maintenanceTypes.${type}`)}
+          </Badge>
+        );
       case "corrective":
-        return <Badge variant="secondary">{t(`maintenance.maintenanceTypes.${type}`)}</Badge>;
+        return (
+          <Badge variant="secondary">
+            {t(`maintenance.maintenanceTypes.${type}`)}
+          </Badge>
+        );
       case "predictive":
-        return <Badge variant="outline">{t(`maintenance.maintenanceTypes.${type}`)}</Badge>;
+        return (
+          <Badge variant="outline">
+            {t(`maintenance.maintenanceTypes.${type}`)}
+          </Badge>
+        );
       case "emergency":
-        return <Badge variant="destructive">{t(`maintenance.maintenanceTypes.${type}`)}</Badge>;
+        return (
+          <Badge variant="destructive">
+            {t(`maintenance.maintenanceTypes.${type}`)}
+          </Badge>
+        );
       default:
         return <Badge variant="outline">{type}</Badge>;
     }
@@ -241,27 +334,56 @@ export default function MaintenanceSchedulePage() {
   const getStatusBadge = (nextDue: string) => {
     const dueDate = new Date(nextDue);
     const now = new Date();
-    const daysDiff = Math.ceil((dueDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+    const daysDiff = Math.ceil(
+      (dueDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24),
+    );
 
     if (daysDiff < 0) {
-      return <Badge variant="destructive"><AlertTriangle className="w-3 h-3 mr-1" />Overdue</Badge>;
+      return (
+        <Badge variant="destructive">
+          <AlertTriangle className="w-3 h-3 mr-1" />
+          Overdue
+        </Badge>
+      );
     } else if (daysDiff <= 7) {
-      return <Badge variant="secondary"><Clock className="w-3 h-3 mr-1" />Due Soon</Badge>;
+      return (
+        <Badge variant="secondary">
+          <Clock className="w-3 h-3 mr-1" />
+          Due Soon
+        </Badge>
+      );
     } else {
-      return <Badge variant="outline"><CheckCircle className="w-3 h-3 mr-1" />Scheduled</Badge>;
+      return (
+        <Badge variant="outline">
+          <CheckCircle className="w-3 h-3 mr-1" />
+          Scheduled
+        </Badge>
+      );
     }
   };
 
   // Calculate progress statistics for schedule tracking
   const scheduleProgressStats = {
-    completedToday: filteredSchedules.filter((s: MaintenanceSchedule) => s.status === 'completed' && 
-      new Date(s.lastCompleted || '').toDateString() === new Date().toDateString()).length,
+    completedToday: filteredSchedules.filter(
+      (s: MaintenanceSchedule) =>
+        s.status === "completed" &&
+        new Date(s.lastCompleted || "").toDateString() ===
+          new Date().toDateString(),
+    ).length,
     totalScheduled: filteredSchedules.length,
     streak: 7, // This would be calculated from historical completion data
-    efficiency: filteredSchedules.length > 0 ? 
-      Math.round((filteredSchedules.filter((s: MaintenanceSchedule) => s.status === 'completed').length / filteredSchedules.length) * 100) : 0,
+    efficiency:
+      filteredSchedules.length > 0
+        ? Math.round(
+            (filteredSchedules.filter(
+              (s: MaintenanceSchedule) => s.status === "completed",
+            ).length /
+              filteredSchedules.length) *
+              100,
+          )
+        : 0,
     upcomingDue: upcomingSchedules.length,
-    overdue: overdueSchedules.length
+    overdue: overdueSchedules.length,
   };
 
   const handleMilestoneReached = (milestone: string, data: any) => {
@@ -272,47 +394,48 @@ export default function MaintenanceSchedulePage() {
   const showDemoCelebration = () => {
     const celebrations = [
       {
-        type: 'task_completed' as const,
+        type: "task_completed" as const,
         data: {
-          title: 'Task Completed!',
-          subtitle: 'Excellent Work',
-          description: 'Another maintenance task successfully resolved!',
+          title: "Task Completed!",
+          subtitle: "Excellent Work",
+          description: "Another maintenance task successfully resolved!",
           stats: [
-            { label: 'Tasks Completed', value: 15 },
-            { label: 'Efficiency', value: '98%' }
+            { label: "Tasks Completed", value: 15 },
+            { label: "Efficiency", value: "98%" },
           ],
-          achievementLevel: 'gold' as const
-        }
+          achievementLevel: "gold" as const,
+        },
       },
       {
-        type: 'milestone_reached' as const,
+        type: "milestone_reached" as const,
         data: {
-          title: '10 Day Streak!',
-          subtitle: 'Consistency Champion',
-          description: 'You are building excellent maintenance habits!',
+          title: "10 Day Streak!",
+          subtitle: "Consistency Champion",
+          description: "You are building excellent maintenance habits!",
           stats: [
-            { label: 'Current Streak', value: 10 },
-            { label: 'Total Completed', value: 45 }
+            { label: "Current Streak", value: 10 },
+            { label: "Total Completed", value: 45 },
           ],
-          achievementLevel: 'silver' as const
-        }
+          achievementLevel: "silver" as const,
+        },
       },
       {
-        type: 'perfect_score' as const,
+        type: "perfect_score" as const,
         data: {
-          title: 'Perfect Score!',
-          subtitle: '100% Efficiency',
-          description: 'Outstanding performance in maintenance management!',
+          title: "Perfect Score!",
+          subtitle: "100% Efficiency",
+          description: "Outstanding performance in maintenance management!",
           stats: [
-            { label: 'Efficiency', value: '100%' },
-            { label: 'Perfect Days', value: 3 }
+            { label: "Efficiency", value: "100%" },
+            { label: "Perfect Days", value: 3 },
           ],
-          achievementLevel: 'platinum' as const
-        }
-      }
+          achievementLevel: "platinum" as const,
+        },
+      },
     ];
-    
-    const randomCelebration = celebrations[Math.floor(Math.random() * celebrations.length)];
+
+    const randomCelebration =
+      celebrations[Math.floor(Math.random() * celebrations.length)];
     showCelebration(randomCelebration.type, randomCelebration.data);
   };
 
@@ -324,8 +447,8 @@ export default function MaintenanceSchedulePage() {
       />
 
       {/* Progress Tracker */}
-      <ProgressTracker 
-        stats={scheduleProgressStats} 
+      <ProgressTracker
+        stats={scheduleProgressStats}
         onMilestoneReached={handleMilestoneReached}
       />
 
@@ -338,7 +461,9 @@ export default function MaintenanceSchedulePage() {
       />
 
       {/* Action Bar */}
-      <div className={`flex gap-4 items-start justify-between ${isMobile ? "flex-col" : "flex-col sm:flex-row sm:items-center"}`}>
+      <div
+        className={`flex gap-4 items-start justify-between ${isMobile ? "flex-col" : "flex-col sm:flex-row sm:items-center"}`}
+      >
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
           <Input
@@ -358,7 +483,7 @@ export default function MaintenanceSchedulePage() {
             <Trophy className="mr-2 h-4 w-4" />
             Demo Celebration
           </Button>
-          
+
           <Button
             onClick={() => generateSchedulesMutation.mutate()}
             disabled={generateSchedulesMutation.isPending}
@@ -366,9 +491,11 @@ export default function MaintenanceSchedulePage() {
             className="bg-blue-50 border-blue-200 text-blue-700 hover:bg-blue-100"
           >
             <Calendar className="mr-2 h-4 w-4" />
-            {generateSchedulesMutation.isPending ? "Generating..." : "Generate Auto Schedules"}
+            {generateSchedulesMutation.isPending
+              ? "Generating..."
+              : "Generate Auto Schedules"}
           </Button>
-          
+
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
               <Button>
@@ -378,127 +505,169 @@ export default function MaintenanceSchedulePage() {
             </DialogTrigger>
             <DialogContent className="max-w-md">
               <DialogHeader>
-                <DialogTitle>{t("maintenance.schedule.scheduleMaintenance")}</DialogTitle>
+                <DialogTitle>
+                  {t("maintenance.schedule.scheduleMaintenance")}
+                </DialogTitle>
                 <DialogDescription>
                   Schedule preventive maintenance for equipment
                 </DialogDescription>
               </DialogHeader>
               <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <Label htmlFor="machineId">{t("maintenance.requests.machine")} *</Label>
-                <Select 
-                  value={formData.machineId} 
-                  onValueChange={(value) => setFormData({...formData, machineId: value})}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select machine" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {machines.map((machine: Machine) => (
-                      <SelectItem key={machine.id} value={machine.id}>
-                        {machine.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+                <div>
+                  <Label htmlFor="machineId">
+                    {t("maintenance.requests.machine")} *
+                  </Label>
+                  <Select
+                    value={formData.machineId}
+                    onValueChange={(value) =>
+                      setFormData({ ...formData, machineId: value })
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select machine" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {machines.map((machine: Machine) => (
+                        <SelectItem key={machine.id} value={machine.id}>
+                          {machine.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
 
-              <div>
-                <Label htmlFor="maintenanceType">{t("maintenance.schedule.maintenanceType")}</Label>
-                <Select 
-                  value={formData.maintenanceType} 
-                  onValueChange={(value) => setFormData({...formData, maintenanceType: value})}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {MAINTENANCE_TYPES.map((type) => (
-                      <SelectItem key={type} value={type}>
-                        {t(`maintenance.maintenanceTypes.${type}`)}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+                <div>
+                  <Label htmlFor="maintenanceType">
+                    {t("maintenance.schedule.maintenanceType")}
+                  </Label>
+                  <Select
+                    value={formData.maintenanceType}
+                    onValueChange={(value) =>
+                      setFormData({ ...formData, maintenanceType: value })
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {MAINTENANCE_TYPES.map((type) => (
+                        <SelectItem key={type} value={type}>
+                          {t(`maintenance.maintenanceTypes.${type}`)}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
 
-              <div>
-                <Label htmlFor="frequency">{t("maintenance.schedule.frequency")}</Label>
-                <Select 
-                  value={formData.frequency} 
-                  onValueChange={(value) => setFormData({...formData, frequency: value})}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select frequency" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {FREQUENCY_OPTIONS.map((freq) => (
-                      <SelectItem key={freq} value={freq}>
-                        {t(`maintenance.schedule.${freq}`)}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+                <div>
+                  <Label htmlFor="frequency">
+                    {t("maintenance.schedule.frequency")}
+                  </Label>
+                  <Select
+                    value={formData.frequency}
+                    onValueChange={(value) =>
+                      setFormData({ ...formData, frequency: value })
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select frequency" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {FREQUENCY_OPTIONS.map((freq) => (
+                        <SelectItem key={freq} value={freq}>
+                          {t(`maintenance.schedule.${freq}`)}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
 
-              <div>
-                <Label htmlFor="nextDue">{t("maintenance.schedule.nextDue")} *</Label>
-                <Input
-                  id="nextDue"
-                  type="date"
-                  value={formData.nextDue}
-                  onChange={(e) => setFormData({...formData, nextDue: e.target.value})}
-                />
-              </div>
+                <div>
+                  <Label htmlFor="nextDue">
+                    {t("maintenance.schedule.nextDue")} *
+                  </Label>
+                  <Input
+                    id="nextDue"
+                    type="date"
+                    value={formData.nextDue}
+                    onChange={(e) =>
+                      setFormData({ ...formData, nextDue: e.target.value })
+                    }
+                  />
+                </div>
 
-              <div>
-                <Label htmlFor="description">{t("maintenance.requests.description")} *</Label>
-                <Input
-                  id="description"
-                  placeholder="Describe the maintenance task..."
-                  value={formData.description}
-                  onChange={(e) => setFormData({...formData, description: e.target.value})}
-                />
-              </div>
+                <div>
+                  <Label htmlFor="description">
+                    {t("maintenance.requests.description")} *
+                  </Label>
+                  <Input
+                    id="description"
+                    placeholder="Describe the maintenance task..."
+                    value={formData.description}
+                    onChange={(e) =>
+                      setFormData({ ...formData, description: e.target.value })
+                    }
+                  />
+                </div>
 
-              <div>
-                <Label htmlFor="assignedTo">{t("maintenance.requests.assignedTo")}</Label>
-                <Select 
-                  value={formData.assignedTo} 
-                  onValueChange={(value) => setFormData({...formData, assignedTo: value})}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select technician" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {users.map((user: User) => (
-                      <SelectItem key={user.id} value={user.id}>
-                        {getUserName(user.id)}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+                <div>
+                  <Label htmlFor="assignedTo">
+                    {t("maintenance.requests.assignedTo")}
+                  </Label>
+                  <Select
+                    value={formData.assignedTo}
+                    onValueChange={(value) =>
+                      setFormData({ ...formData, assignedTo: value })
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select technician" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {users.map((user: User) => (
+                        <SelectItem key={user.id} value={user.id}>
+                          {getUserName(user.id)}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
 
-              <div>
-                <Label htmlFor="estimatedDuration">Estimated Duration (hours)</Label>
-                <Input
-                  id="estimatedDuration"
-                  type="number"
-                  placeholder="Enter estimated hours"
-                  value={formData.estimatedDuration}
-                  onChange={(e) => setFormData({...formData, estimatedDuration: e.target.value})}
-                />
-              </div>
+                <div>
+                  <Label htmlFor="estimatedDuration">
+                    Estimated Duration (hours)
+                  </Label>
+                  <Input
+                    id="estimatedDuration"
+                    type="number"
+                    placeholder="Enter estimated hours"
+                    value={formData.estimatedDuration}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        estimatedDuration: e.target.value,
+                      })
+                    }
+                  />
+                </div>
 
-              <div className="flex justify-end space-x-2">
-                <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
-                  {t("common.cancel")}
-                </Button>
-                <Button type="submit" disabled={createScheduleMutation.isPending}>
-                  {createScheduleMutation.isPending ? "Scheduling..." : "Schedule"}
-                </Button>
-              </div>
+                <div className="flex justify-end space-x-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setIsDialogOpen(false)}
+                  >
+                    {t("common.cancel")}
+                  </Button>
+                  <Button
+                    type="submit"
+                    disabled={createScheduleMutation.isPending}
+                  >
+                    {createScheduleMutation.isPending
+                      ? "Scheduling..."
+                      : "Schedule"}
+                  </Button>
+                </div>
               </form>
             </DialogContent>
           </Dialog>
@@ -538,39 +707,56 @@ export default function MaintenanceSchedulePage() {
                     <Card key={schedule.id} className="p-4">
                       <div className="flex justify-between items-start mb-3">
                         <div className="flex items-center space-x-2">
-                          <span className="font-medium text-sm">{getMachineName(schedule.machineId)}</span>
+                          <span className="font-medium text-sm">
+                            {getMachineName(schedule.machineId)}
+                          </span>
                           {getMaintenanceTypeBadge(schedule.maintenanceType)}
                         </div>
                         {getStatusBadge(schedule.nextDue)}
                       </div>
-                      
+
                       <div className="space-y-2 text-sm">
                         <div className="flex justify-between">
                           <span className="text-gray-600">Due Date:</span>
-                          <span className="font-medium">{format(new Date(schedule.nextDue), 'MMM dd, yyyy')}</span>
+                          <span className="font-medium">
+                            {format(new Date(schedule.nextDue), "MMM dd, yyyy")}
+                          </span>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-gray-600">Frequency:</span>
-                          <span>{t(`maintenance.schedule.${schedule.frequency}`)}</span>
+                          <span>
+                            {t(`maintenance.schedule.${schedule.frequency}`)}
+                          </span>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-gray-600">Assigned To:</span>
-                          <span>{schedule.assignedTo ? getUserName(schedule.assignedTo) : 'Unassigned'}</span>
+                          <span>
+                            {schedule.assignedTo
+                              ? getUserName(schedule.assignedTo)
+                              : "Unassigned"}
+                          </span>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-gray-600">Last Performed:</span>
                           <span>
-                            {schedule.lastPerformed 
-                              ? format(new Date(schedule.lastPerformed), 'MMM dd, yyyy')
-                              : 'Never'
-                            }
+                            {schedule.lastPerformed
+                              ? format(
+                                  new Date(schedule.lastPerformed),
+                                  "MMM dd, yyyy",
+                                )
+                              : "Never"}
                           </span>
                         </div>
                       </div>
-                      
+
                       <div className="mt-3 pt-3 border-t">
-                        <p className="text-sm text-gray-700" title={schedule.description}>
-                          {schedule.description.length > 80 ? `${schedule.description.substring(0, 80)}...` : schedule.description}
+                        <p
+                          className="text-sm text-gray-700"
+                          title={schedule.description}
+                        >
+                          {schedule.description.length > 80
+                            ? `${schedule.description.substring(0, 80)}...`
+                            : schedule.description}
                         </p>
                       </div>
                     </Card>
@@ -591,19 +777,43 @@ export default function MaintenanceSchedulePage() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {upcomingSchedules.map((schedule: MaintenanceSchedule) => (
-                        <TableRow key={schedule.id}>
-                          <TableCell>{getMachineName(schedule.machineId)}</TableCell>
-                          <TableCell>{getMaintenanceTypeBadge(schedule.maintenanceType)}</TableCell>
-                          <TableCell className="max-w-xs truncate" title={schedule.description}>
-                            {schedule.description}
-                          </TableCell>
-                          <TableCell>{format(new Date(schedule.nextDue), 'MMM dd, yyyy')}</TableCell>
-                          <TableCell>{t(`maintenance.schedule.${schedule.frequency}`)}</TableCell>
-                          <TableCell>{schedule.assignedTo ? getUserName(schedule.assignedTo) : 'Unassigned'}</TableCell>
-                          <TableCell>{getStatusBadge(schedule.nextDue)}</TableCell>
-                        </TableRow>
-                      ))}
+                      {upcomingSchedules.map(
+                        (schedule: MaintenanceSchedule) => (
+                          <TableRow key={schedule.id}>
+                            <TableCell>
+                              {getMachineName(schedule.machineId)}
+                            </TableCell>
+                            <TableCell>
+                              {getMaintenanceTypeBadge(
+                                schedule.maintenanceType,
+                              )}
+                            </TableCell>
+                            <TableCell
+                              className="max-w-xs truncate"
+                              title={schedule.description}
+                            >
+                              {schedule.description}
+                            </TableCell>
+                            <TableCell>
+                              {format(
+                                new Date(schedule.nextDue),
+                                "MMM dd, yyyy",
+                              )}
+                            </TableCell>
+                            <TableCell>
+                              {t(`maintenance.schedule.${schedule.frequency}`)}
+                            </TableCell>
+                            <TableCell>
+                              {schedule.assignedTo
+                                ? getUserName(schedule.assignedTo)
+                                : "Unassigned"}
+                            </TableCell>
+                            <TableCell>
+                              {getStatusBadge(schedule.nextDue)}
+                            </TableCell>
+                          </TableRow>
+                        ),
+                      )}
                     </TableBody>
                   </Table>
                 </div>
@@ -642,17 +852,39 @@ export default function MaintenanceSchedulePage() {
                     <TableBody>
                       {overdueSchedules.map((schedule: MaintenanceSchedule) => (
                         <TableRow key={schedule.id}>
-                          <TableCell>{getMachineName(schedule.machineId)}</TableCell>
-                          <TableCell>{getMaintenanceTypeBadge(schedule.maintenanceType)}</TableCell>
-                          <TableCell className="max-w-xs truncate" title={schedule.description}>
+                          <TableCell>
+                            {getMachineName(schedule.machineId)}
+                          </TableCell>
+                          <TableCell>
+                            {getMaintenanceTypeBadge(schedule.maintenanceType)}
+                          </TableCell>
+                          <TableCell
+                            className="max-w-xs truncate"
+                            title={schedule.description}
+                          >
                             {schedule.description}
                           </TableCell>
-                          <TableCell>{format(new Date(schedule.nextDue), 'MMM dd, yyyy')}</TableCell>
-                          <TableCell className="text-red-600 font-semibold">
-                            {Math.abs(Math.ceil((new Date(schedule.nextDue).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)))} days
+                          <TableCell>
+                            {format(new Date(schedule.nextDue), "MMM dd, yyyy")}
                           </TableCell>
-                          <TableCell>{schedule.assignedTo ? getUserName(schedule.assignedTo) : 'Unassigned'}</TableCell>
-                          <TableCell>{getStatusBadge(schedule.nextDue)}</TableCell>
+                          <TableCell className="text-red-600 font-semibold">
+                            {Math.abs(
+                              Math.ceil(
+                                (new Date(schedule.nextDue).getTime() -
+                                  new Date().getTime()) /
+                                  (1000 * 60 * 60 * 24),
+                              ),
+                            )}{" "}
+                            days
+                          </TableCell>
+                          <TableCell>
+                            {schedule.assignedTo
+                              ? getUserName(schedule.assignedTo)
+                              : "Unassigned"}
+                          </TableCell>
+                          <TableCell>
+                            {getStatusBadge(schedule.nextDue)}
+                          </TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
@@ -692,25 +924,51 @@ export default function MaintenanceSchedulePage() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {filteredSchedules.map((schedule: MaintenanceSchedule) => (
-                        <TableRow key={schedule.id}>
-                          <TableCell>{getMachineName(schedule.machineId)}</TableCell>
-                          <TableCell>{getMaintenanceTypeBadge(schedule.maintenanceType)}</TableCell>
-                          <TableCell className="max-w-xs truncate" title={schedule.description}>
-                            {schedule.description}
-                          </TableCell>
-                          <TableCell>{format(new Date(schedule.nextDue), 'MMM dd, yyyy')}</TableCell>
-                          <TableCell>{t(`maintenance.schedule.${schedule.frequency}`)}</TableCell>
-                          <TableCell>
-                            {schedule.lastPerformed 
-                              ? format(new Date(schedule.lastPerformed), 'MMM dd, yyyy')
-                              : 'Never'
-                            }
-                          </TableCell>
-                          <TableCell>{schedule.assignedTo ? getUserName(schedule.assignedTo) : 'Unassigned'}</TableCell>
-                          <TableCell>{getStatusBadge(schedule.nextDue)}</TableCell>
-                        </TableRow>
-                      ))}
+                      {filteredSchedules.map(
+                        (schedule: MaintenanceSchedule) => (
+                          <TableRow key={schedule.id}>
+                            <TableCell>
+                              {getMachineName(schedule.machineId)}
+                            </TableCell>
+                            <TableCell>
+                              {getMaintenanceTypeBadge(
+                                schedule.maintenanceType,
+                              )}
+                            </TableCell>
+                            <TableCell
+                              className="max-w-xs truncate"
+                              title={schedule.description}
+                            >
+                              {schedule.description}
+                            </TableCell>
+                            <TableCell>
+                              {format(
+                                new Date(schedule.nextDue),
+                                "MMM dd, yyyy",
+                              )}
+                            </TableCell>
+                            <TableCell>
+                              {t(`maintenance.schedule.${schedule.frequency}`)}
+                            </TableCell>
+                            <TableCell>
+                              {schedule.lastPerformed
+                                ? format(
+                                    new Date(schedule.lastPerformed),
+                                    "MMM dd, yyyy",
+                                  )
+                                : "Never"}
+                            </TableCell>
+                            <TableCell>
+                              {schedule.assignedTo
+                                ? getUserName(schedule.assignedTo)
+                                : "Unassigned"}
+                            </TableCell>
+                            <TableCell>
+                              {getStatusBadge(schedule.nextDue)}
+                            </TableCell>
+                          </TableRow>
+                        ),
+                      )}
                     </TableBody>
                   </Table>
                 </div>

@@ -4,19 +4,32 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { 
+import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogFooter
+  DialogFooter,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { queryClient } from "@/lib/queryClient";
-import { UserPlus, RefreshCcw, Filter, Settings, Save, Plus } from "lucide-react";
+import {
+  UserPlus,
+  RefreshCcw,
+  Filter,
+  Settings,
+  Save,
+  Plus,
+} from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { apiRequest } from "@/lib/queryClient";
@@ -92,12 +105,14 @@ function apiToUiFormat(dto: PermissionDTO): Permission {
     canDelete: dto.canDelete ?? false,
     isActive: dto.isActive ?? true,
     createdAt: dto.createdAt,
-    updatedAt: dto.updatedAt
+    updatedAt: dto.updatedAt,
   };
 }
 
 // Transform UI to API format
-function uiToApiFormat(permission: Partial<Permission>): Partial<PermissionDTO> {
+function uiToApiFormat(
+  permission: Partial<Permission>,
+): Partial<PermissionDTO> {
   return {
     id: permission.id,
     sectionId: permission.sectionId,
@@ -108,7 +123,7 @@ function uiToApiFormat(permission: Partial<Permission>): Partial<PermissionDTO> 
     canDelete: permission.canDelete,
     isActive: permission.isActive,
     createdAt: permission.createdAt,
-    updatedAt: permission.updatedAt
+    updatedAt: permission.updatedAt,
   };
 }
 
@@ -117,7 +132,9 @@ export default function Permissions() {
   const [sections, setSections] = useState<Section[]>([]);
   const [modules, setModules] = useState<Module[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [editingPermission, setEditingPermission] = useState<Permission | null>(null);
+  const [editingPermission, setEditingPermission] = useState<Permission | null>(
+    null,
+  );
   const [filterSection, setFilterSection] = useState<string | null>(null);
   const [filterModule, setFilterModule] = useState<number | null>(null);
   const [showInactive, setShowInactive] = useState(true);
@@ -158,8 +175,6 @@ export default function Permissions() {
     }
   }, [modulesQuery.data]);
 
-
-
   // Handle query errors
   useEffect(() => {
     if (permissionsQuery.error) {
@@ -194,7 +209,11 @@ export default function Permissions() {
   // Create permission mutation
   const createPermissionMutation = useMutation({
     mutationFn: async (permission: Partial<Permission>) => {
-      return await apiRequest("POST", "/api/permissions", uiToApiFormat(permission));
+      return await apiRequest(
+        "POST",
+        "/api/permissions",
+        uiToApiFormat(permission),
+      );
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/permissions"] });
@@ -216,8 +235,18 @@ export default function Permissions() {
 
   // Update permission mutation
   const updatePermissionMutation = useMutation({
-    mutationFn: async ({ id, permission }: { id: number; permission: Partial<Permission> }) => {
-      return await apiRequest("PATCH", `/api/permissions/${id}`, uiToApiFormat(permission));
+    mutationFn: async ({
+      id,
+      permission,
+    }: {
+      id: number;
+      permission: Partial<Permission>;
+    }) => {
+      return await apiRequest(
+        "PATCH",
+        `/api/permissions/${id}`,
+        uiToApiFormat(permission),
+      );
     },
     onSuccess: () => {
       // Invalidate all queries to force refresh across all user sessions
@@ -260,7 +289,7 @@ export default function Permissions() {
   });
 
   // Filter permissions
-  const filteredPermissions = permissions.filter(permission => {
+  const filteredPermissions = permissions.filter((permission) => {
     if (!showInactive && !permission.isActive) return false;
     if (filterSection && permission.sectionId !== filterSection) return false;
     if (filterModule && permission.moduleId !== filterModule) return false;
@@ -269,13 +298,13 @@ export default function Permissions() {
 
   // Get section name by ID
   const getSectionName = (sectionId: string) => {
-    const section = sections.find(s => s.id === sectionId);
+    const section = sections.find((s) => s.id === sectionId);
     return section ? section.name : sectionId;
   };
 
   // Get module name by ID
   const getModuleName = (moduleId: number) => {
-    const module = modules.find(m => m.id === moduleId);
+    const module = modules.find((m) => m.id === moduleId);
     return module ? module.name : `Module ${moduleId}`;
   };
 
@@ -302,13 +331,16 @@ export default function Permissions() {
   };
 
   // Group permissions by section
-  const permissionsBySection = filteredPermissions.reduce((acc, permission) => {
-    if (!acc[permission.sectionId]) {
-      acc[permission.sectionId] = [];
-    }
-    acc[permission.sectionId].push(permission);
-    return acc;
-  }, {} as Record<string, Permission[]>);
+  const permissionsBySection = filteredPermissions.reduce(
+    (acc, permission) => {
+      if (!acc[permission.sectionId]) {
+        acc[permission.sectionId] = [];
+      }
+      acc[permission.sectionId].push(permission);
+      return acc;
+    },
+    {} as Record<string, Permission[]>,
+  );
 
   const renderSectionBasedPermissions = () => {
     if (Object.keys(permissionsBySection).length === 0) {
@@ -323,108 +355,123 @@ export default function Permissions() {
       );
     }
 
-    return Object.entries(permissionsBySection).map(([sectionId, sectionPermissions]) => (
-      <Card key={sectionId} className="mb-4">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-lg font-semibold flex items-center justify-between">
-            <span>{getSectionName(sectionId)}</span>
-            <span className="text-sm font-normal text-muted-foreground">
-              {sectionPermissions.length} permissions
-            </span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
-            {sectionPermissions.map((permission) => (
-              <div key={permission.id} className={`flex items-center justify-between p-3 border rounded-lg ${updatePermissionMutation.isPending ? 'opacity-50' : ''}`}>
-                <div className="flex-1">
-                  <div className="font-medium">{getModuleName(permission.moduleId)}</div>
-                  <div className="text-sm flex gap-4 mt-2">
-                    <div className="flex items-center space-x-2">
-                      <Checkbox
-                        checked={permission.canView}
-                        onCheckedChange={(checked) => {
-                          updatePermissionMutation.mutate({
-                            id: permission.id,
-                            permission: { ...permission, canView: !!checked }
-                          });
-                        }}
-                        disabled={updatePermissionMutation.isPending}
-                      />
-                      <Label className="text-xs">View</Label>
+    return Object.entries(permissionsBySection).map(
+      ([sectionId, sectionPermissions]) => (
+        <Card key={sectionId} className="mb-4">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-lg font-semibold flex items-center justify-between">
+              <span>{getSectionName(sectionId)}</span>
+              <span className="text-sm font-normal text-muted-foreground">
+                {sectionPermissions.length} permissions
+              </span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {sectionPermissions.map((permission) => (
+                <div
+                  key={permission.id}
+                  className={`flex items-center justify-between p-3 border rounded-lg ${updatePermissionMutation.isPending ? "opacity-50" : ""}`}
+                >
+                  <div className="flex-1">
+                    <div className="font-medium">
+                      {getModuleName(permission.moduleId)}
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <Checkbox
-                        checked={permission.canCreate}
-                        onCheckedChange={(checked) => {
-                          updatePermissionMutation.mutate({
-                            id: permission.id,
-                            permission: { ...permission, canCreate: !!checked }
-                          });
-                        }}
-                        disabled={updatePermissionMutation.isPending}
-                      />
-                      <Label className="text-xs">Create</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Checkbox
-                        checked={permission.canEdit}
-                        onCheckedChange={(checked) => {
-                          updatePermissionMutation.mutate({
-                            id: permission.id,
-                            permission: { ...permission, canEdit: !!checked }
-                          });
-                        }}
-                        disabled={updatePermissionMutation.isPending}
-                      />
-                      <Label className="text-xs">Edit</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Checkbox
-                        checked={permission.canDelete}
-                        onCheckedChange={(checked) => {
-                          updatePermissionMutation.mutate({
-                            id: permission.id,
-                            permission: { ...permission, canDelete: !!checked }
-                          });
-                        }}
-                        disabled={updatePermissionMutation.isPending}
-                      />
-                      <Label className="text-xs">Delete</Label>
+                    <div className="text-sm flex gap-4 mt-2">
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          checked={permission.canView}
+                          onCheckedChange={(checked) => {
+                            updatePermissionMutation.mutate({
+                              id: permission.id,
+                              permission: { ...permission, canView: !!checked },
+                            });
+                          }}
+                          disabled={updatePermissionMutation.isPending}
+                        />
+                        <Label className="text-xs">View</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          checked={permission.canCreate}
+                          onCheckedChange={(checked) => {
+                            updatePermissionMutation.mutate({
+                              id: permission.id,
+                              permission: {
+                                ...permission,
+                                canCreate: !!checked,
+                              },
+                            });
+                          }}
+                          disabled={updatePermissionMutation.isPending}
+                        />
+                        <Label className="text-xs">Create</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          checked={permission.canEdit}
+                          onCheckedChange={(checked) => {
+                            updatePermissionMutation.mutate({
+                              id: permission.id,
+                              permission: { ...permission, canEdit: !!checked },
+                            });
+                          }}
+                          disabled={updatePermissionMutation.isPending}
+                        />
+                        <Label className="text-xs">Edit</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          checked={permission.canDelete}
+                          onCheckedChange={(checked) => {
+                            updatePermissionMutation.mutate({
+                              id: permission.id,
+                              permission: {
+                                ...permission,
+                                canDelete: !!checked,
+                              },
+                            });
+                          }}
+                          disabled={updatePermissionMutation.isPending}
+                        />
+                        <Label className="text-xs">Delete</Label>
+                      </div>
                     </div>
                   </div>
+                  <div className="flex items-center gap-2">
+                    <Switch
+                      checked={permission.isActive}
+                      onCheckedChange={(checked) => {
+                        updatePermissionMutation.mutate({
+                          id: permission.id,
+                          permission: { ...permission, isActive: checked },
+                        });
+                      }}
+                    />
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleEdit(permission)}
+                    >
+                      <Settings className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() =>
+                        deletePermissionMutation.mutate(permission.id)
+                      }
+                    >
+                      Delete
+                    </Button>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Switch
-                    checked={permission.isActive}
-                    onCheckedChange={(checked) => {
-                      updatePermissionMutation.mutate({
-                        id: permission.id,
-                        permission: { ...permission, isActive: checked }
-                      });
-                    }}
-                  />
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleEdit(permission)}
-                  >
-                    <Settings className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => deletePermissionMutation.mutate(permission.id)}
-                  >
-                    Delete
-                  </Button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-    ));
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      ),
+    );
   };
 
   return (
@@ -456,7 +503,9 @@ export default function Permissions() {
               <Label htmlFor="section-filter">Section</Label>
               <Select
                 value={filterSection || "all"}
-                onValueChange={(value) => setFilterSection(value === "all" ? null : value)}
+                onValueChange={(value) =>
+                  setFilterSection(value === "all" ? null : value)
+                }
               >
                 <SelectTrigger>
                   <SelectValue placeholder="All sections" />
@@ -476,7 +525,9 @@ export default function Permissions() {
               <Label htmlFor="module-filter">Module</Label>
               <Select
                 value={filterModule?.toString() || "all"}
-                onValueChange={(value) => setFilterModule(value === "all" ? null : parseInt(value))}
+                onValueChange={(value) =>
+                  setFilterModule(value === "all" ? null : parseInt(value))
+                }
               >
                 <SelectTrigger>
                   <SelectValue placeholder="All modules" />
@@ -529,7 +580,10 @@ export default function Permissions() {
         sections={sections}
         modules={modules}
         onSave={handleSave}
-        isLoading={createPermissionMutation.isPending || updatePermissionMutation.isPending}
+        isLoading={
+          createPermissionMutation.isPending ||
+          updatePermissionMutation.isPending
+        }
       />
     </div>
   );
@@ -553,7 +607,7 @@ function PermissionDialog({
   sections,
   modules,
   onSave,
-  isLoading
+  isLoading,
 }: PermissionDialogProps) {
   const [formData, setFormData] = useState({
     sectionId: "",
@@ -562,7 +616,7 @@ function PermissionDialog({
     canCreate: false,
     canEdit: false,
     canDelete: false,
-    isActive: true
+    isActive: true,
   });
 
   useEffect(() => {
@@ -574,7 +628,7 @@ function PermissionDialog({
         canCreate: permission.canCreate,
         canEdit: permission.canEdit,
         canDelete: permission.canDelete,
-        isActive: permission.isActive
+        isActive: permission.isActive,
       });
     } else {
       setFormData({
@@ -584,7 +638,7 @@ function PermissionDialog({
         canCreate: false,
         canEdit: false,
         canDelete: false,
-        isActive: true
+        isActive: true,
       });
     }
   }, [permission]);
@@ -618,7 +672,9 @@ function PermissionDialog({
               <Label htmlFor="section">Section</Label>
               <Select
                 value={formData.sectionId}
-                onValueChange={(value) => setFormData({ ...formData, sectionId: value })}
+                onValueChange={(value) =>
+                  setFormData({ ...formData, sectionId: value })
+                }
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select section" />
@@ -637,7 +693,9 @@ function PermissionDialog({
               <Label htmlFor="module">Module</Label>
               <Select
                 value={formData.moduleId.toString()}
-                onValueChange={(value) => setFormData({ ...formData, moduleId: parseInt(value) })}
+                onValueChange={(value) =>
+                  setFormData({ ...formData, moduleId: parseInt(value) })
+                }
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select module" />
@@ -660,7 +718,9 @@ function PermissionDialog({
                 <Checkbox
                   id="canView"
                   checked={formData.canView}
-                  onCheckedChange={(checked) => setFormData({ ...formData, canView: !!checked })}
+                  onCheckedChange={(checked) =>
+                    setFormData({ ...formData, canView: !!checked })
+                  }
                 />
                 <Label htmlFor="canView">Can View</Label>
               </div>
@@ -669,7 +729,9 @@ function PermissionDialog({
                 <Checkbox
                   id="canCreate"
                   checked={formData.canCreate}
-                  onCheckedChange={(checked) => setFormData({ ...formData, canCreate: !!checked })}
+                  onCheckedChange={(checked) =>
+                    setFormData({ ...formData, canCreate: !!checked })
+                  }
                 />
                 <Label htmlFor="canCreate">Can Create</Label>
               </div>
@@ -678,7 +740,9 @@ function PermissionDialog({
                 <Checkbox
                   id="canEdit"
                   checked={formData.canEdit}
-                  onCheckedChange={(checked) => setFormData({ ...formData, canEdit: !!checked })}
+                  onCheckedChange={(checked) =>
+                    setFormData({ ...formData, canEdit: !!checked })
+                  }
                 />
                 <Label htmlFor="canEdit">Can Edit</Label>
               </div>
@@ -687,7 +751,9 @@ function PermissionDialog({
                 <Checkbox
                   id="canDelete"
                   checked={formData.canDelete}
-                  onCheckedChange={(checked) => setFormData({ ...formData, canDelete: !!checked })}
+                  onCheckedChange={(checked) =>
+                    setFormData({ ...formData, canDelete: !!checked })
+                  }
                 />
                 <Label htmlFor="canDelete">Can Delete</Label>
               </div>
@@ -698,7 +764,9 @@ function PermissionDialog({
             <Checkbox
               id="isActive"
               checked={formData.isActive}
-              onCheckedChange={(checked) => setFormData({ ...formData, isActive: !!checked })}
+              onCheckedChange={(checked) =>
+                setFormData({ ...formData, isActive: !!checked })
+              }
             />
             <Label htmlFor="isActive">Active</Label>
           </div>

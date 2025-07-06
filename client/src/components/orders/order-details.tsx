@@ -31,7 +31,15 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { API_ENDPOINTS } from "@/lib/constants";
 import { apiRequest } from "@/lib/queryClient";
 import { formatDateString, calculateProgress } from "@/lib/utils";
-import { Order, Customer, JobOrder, CustomerProduct, Roll, Item, MasterBatch } from "@shared/schema";
+import {
+  Order,
+  Customer,
+  JobOrder,
+  CustomerProduct,
+  Roll,
+  Item,
+  MasterBatch,
+} from "@shared/schema";
 import { toast } from "@/hooks/use-toast";
 import { JobOrderDialog } from "./job-order-dialog";
 
@@ -45,66 +53,72 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
   const [rollDialogOpen, setRollDialogOpen] = useState(false);
   const [jobOrderDialogOpen, setJobOrderDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [selectedJobOrder, setSelectedJobOrder] = useState<JobOrder | null>(null);
+  const [selectedJobOrder, setSelectedJobOrder] = useState<JobOrder | null>(
+    null,
+  );
   const [rollQuantity, setRollQuantity] = useState(0);
-  
+
   // Fetch order and related data
   const { data: order, isLoading: orderLoading } = useQuery<Order>({
     queryKey: [`${API_ENDPOINTS.ORDERS}/${orderId}`],
   });
-  
+
   const { data: customer } = useQuery<Customer>({
     queryKey: [`${API_ENDPOINTS.CUSTOMERS}/${order?.customerId}`],
     enabled: !!order?.customerId,
   });
-  
+
   const { data: jobOrders } = useQuery<JobOrder[]>({
     queryKey: [`${API_ENDPOINTS.ORDERS}/${orderId}/job-orders`],
     enabled: !!orderId,
   });
-  
+
   const { data: customerProducts } = useQuery<CustomerProduct[]>({
     queryKey: [API_ENDPOINTS.CUSTOMER_PRODUCTS],
   });
-  
+
   const { data: rolls } = useQuery<Roll[]>({
     queryKey: [API_ENDPOINTS.ROLLS],
   });
-  
+
   // Fetch items to get their names
   const { data: items } = useQuery<Item[]>({
     queryKey: [API_ENDPOINTS.ITEMS],
   });
-  
+
   // Fetch master batches to get their names
   const { data: masterBatches } = useQuery<MasterBatch[]>({
     queryKey: [API_ENDPOINTS.MASTER_BATCHES],
   });
-  
+
   // Mutation to update order status
   const updateOrderMutation = useMutation({
     mutationFn: async (status: string) => {
-      await apiRequest("PUT", `${API_ENDPOINTS.ORDERS}/${orderId}`, { 
-        status 
+      await apiRequest("PUT", `${API_ENDPOINTS.ORDERS}/${orderId}`, {
+        status,
       });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [API_ENDPOINTS.ORDERS] });
-      queryClient.invalidateQueries({ queryKey: [`${API_ENDPOINTS.ORDERS}/${orderId}`] });
+      queryClient.invalidateQueries({
+        queryKey: [`${API_ENDPOINTS.ORDERS}/${orderId}`],
+      });
       toast({
         title: "Order Updated",
         description: "Order status has been updated successfully.",
       });
     },
   });
-  
+
   // Mutation to create a new job order
   const createJobOrderMutation = useMutation({
     mutationFn: async (data: any) => {
       await apiRequest("POST", API_ENDPOINTS.JOB_ORDERS, data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [`${API_ENDPOINTS.ORDERS}/${orderId}/job-orders`] });
+      queryClient.invalidateQueries({
+        queryKey: [`${API_ENDPOINTS.ORDERS}/${orderId}/job-orders`],
+      });
       setJobOrderDialogOpen(false);
       setSelectedJobOrder(null);
       toast({
@@ -113,15 +127,21 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
       });
     },
   });
-  
+
   // Mutation to update a job order
   const updateJobOrderMutation = useMutation({
     mutationFn: async (data: any) => {
       if (!selectedJobOrder) return;
-      await apiRequest("PUT", `${API_ENDPOINTS.JOB_ORDERS}/${selectedJobOrder.id}`, data);
+      await apiRequest(
+        "PUT",
+        `${API_ENDPOINTS.JOB_ORDERS}/${selectedJobOrder.id}`,
+        data,
+      );
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [`${API_ENDPOINTS.ORDERS}/${orderId}/job-orders`] });
+      queryClient.invalidateQueries({
+        queryKey: [`${API_ENDPOINTS.ORDERS}/${orderId}/job-orders`],
+      });
       setJobOrderDialogOpen(false);
       setSelectedJobOrder(null);
       toast({
@@ -130,15 +150,20 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
       });
     },
   });
-  
+
   // Mutation to delete a job order
   const deleteJobOrderMutation = useMutation({
     mutationFn: async () => {
       if (!selectedJobOrder) return;
-      await apiRequest("DELETE", `${API_ENDPOINTS.JOB_ORDERS}/${selectedJobOrder.id}`);
+      await apiRequest(
+        "DELETE",
+        `${API_ENDPOINTS.JOB_ORDERS}/${selectedJobOrder.id}`,
+      );
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [`${API_ENDPOINTS.ORDERS}/${orderId}/job-orders`] });
+      queryClient.invalidateQueries({
+        queryKey: [`${API_ENDPOINTS.ORDERS}/${orderId}/job-orders`],
+      });
       setDeleteDialogOpen(false);
       setSelectedJobOrder(null);
       toast({
@@ -147,12 +172,12 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
       });
     },
   });
-  
+
   // Mutation to create a new roll
   const createRollMutation = useMutation({
     mutationFn: async () => {
       if (!selectedJobOrder) return;
-      
+
       // Send only the necessary data - id and serialNumber will be generated on server
       await apiRequest("POST", API_ENDPOINTS.ROLLS, {
         jobOrderId: selectedJobOrder.id,
@@ -173,7 +198,7 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
       });
     },
   });
-  
+
   if (orderLoading) {
     return (
       <Card className="animate-pulse">
@@ -187,12 +212,14 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
       </Card>
     );
   }
-  
+
   if (!order) {
     return (
       <Card>
         <CardContent className="py-10 text-center">
-          <h3 className="text-xl font-medium text-secondary-800 mb-2">Order Not Found</h3>
+          <h3 className="text-xl font-medium text-secondary-800 mb-2">
+            Order Not Found
+          </h3>
           <p className="text-secondary-600 mb-6">
             The order you're looking for does not exist or has been deleted.
           </p>
@@ -203,70 +230,81 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
       </Card>
     );
   }
-  
+
   // Find customer product for a job order
   const getCustomerProduct = (jobOrder: JobOrder) => {
-    return customerProducts?.find(cp => cp.id === jobOrder.customerProductId);
+    return customerProducts?.find((cp) => cp.id === jobOrder.customerProductId);
   };
-  
+
   // Calculate production progress
   const calculateOrderProgress = (stage: string) => {
-    if (!jobOrders || jobOrders.length === 0) return { current: 0, total: 0, percentage: 0 };
-    
+    if (!jobOrders || jobOrders.length === 0)
+      return { current: 0, total: 0, percentage: 0 };
+
     let currentQuantity = 0;
     let totalQuantity = 0;
-    
-    jobOrders.forEach(jobOrder => {
+
+    jobOrders.forEach((jobOrder) => {
       // Get rolls for this job order
-      const jobOrderRolls = rolls?.filter(roll => roll.jobOrderId === jobOrder.id) || [];
-      
+      const jobOrderRolls =
+        rolls?.filter((roll) => roll.jobOrderId === jobOrder.id) || [];
+
       // Add to total quantity
       totalQuantity += jobOrder.quantity;
-      
+
       // Add to current quantity based on stage
       if (stage === "extrusion") {
-        currentQuantity += jobOrderRolls.reduce((sum, roll) => sum + (roll.extrudingQty || 0), 0);
+        currentQuantity += jobOrderRolls.reduce(
+          (sum, roll) => sum + (roll.extrudingQty || 0),
+          0,
+        );
       } else if (stage === "printing") {
-        currentQuantity += jobOrderRolls.reduce((sum, roll) => sum + (roll.printingQty || 0), 0);
+        currentQuantity += jobOrderRolls.reduce(
+          (sum, roll) => sum + (roll.printingQty || 0),
+          0,
+        );
       } else if (stage === "cutting") {
-        currentQuantity += jobOrderRolls.reduce((sum, roll) => sum + (roll.cuttingQty || 0), 0);
+        currentQuantity += jobOrderRolls.reduce(
+          (sum, roll) => sum + (roll.cuttingQty || 0),
+          0,
+        );
       }
     });
-    
+
     const percentage = calculateProgress(currentQuantity, totalQuantity);
-    
+
     return { current: currentQuantity, total: totalQuantity, percentage };
   };
-  
+
   // Get rolls for this order
   const getOrderRolls = () => {
     if (!jobOrders || !rolls) return [];
-    
-    const orderJobOrderIds = jobOrders.map(jo => jo.id);
-    return rolls.filter(roll => orderJobOrderIds.includes(roll.jobOrderId));
+
+    const orderJobOrderIds = jobOrders.map((jo) => jo.id);
+    return rolls.filter((roll) => orderJobOrderIds.includes(roll.jobOrderId));
   };
-  
+
   const extrusionProgress = calculateOrderProgress("extrusion");
   const printingProgress = calculateOrderProgress("printing");
   const cuttingProgress = calculateOrderProgress("cutting");
   const orderRolls = getOrderRolls();
-  
+
   // Job Order handlers
   const handleAddJobOrder = () => {
     setSelectedJobOrder(null);
     setJobOrderDialogOpen(true);
   };
-  
+
   const handleEditJobOrder = (jobOrder: JobOrder) => {
     setSelectedJobOrder(jobOrder);
     setJobOrderDialogOpen(true);
   };
-  
+
   const handleDeleteJobOrder = (jobOrder: JobOrder) => {
     setSelectedJobOrder(jobOrder);
     setDeleteDialogOpen(true);
   };
-  
+
   const handleJobOrderSubmit = (data: any) => {
     if (selectedJobOrder) {
       // Edit mode
@@ -276,17 +314,17 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
       createJobOrderMutation.mutate(data);
     }
   };
-  
+
   const confirmDelete = () => {
     deleteJobOrderMutation.mutate();
   };
-  
+
   // Roll handlers
   const handleOpenRollDialog = (jobOrder: JobOrder) => {
     setSelectedJobOrder(jobOrder);
     setRollDialogOpen(true);
   };
-  
+
   const handleCreateRoll = () => {
     if (rollQuantity <= 0) {
       toast({
@@ -296,36 +334,45 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
       });
       return;
     }
-    
+
     createRollMutation.mutate();
   };
-  
+
   // Handle print order functionality
   const handlePrintOrder = () => {
     // Create a new window for printing
-    const printWindow = window.open('', '_blank');
+    const printWindow = window.open("", "_blank");
     if (!printWindow) {
       toast({
         title: "Print Error",
-        description: "Unable to open print window. Please check your browser settings.",
+        description:
+          "Unable to open print window. Please check your browser settings.",
         variant: "destructive",
       });
       return;
     }
-    
+
     // Format job orders and products for printing
-    const jobOrderRows = jobOrders?.map((jobOrder, index) => {
-      const product = getCustomerProduct(jobOrder);
-      // Convert yes/no/checked to Y/N for printed
-      const printedValue = product?.printed ? (product.printed === "yes" || product.printed === "checked" ? "Y" : "N") : "N";
-      
-      // Get item name
-      const item = items?.find(i => i.id === product?.itemId);
-      
-      // Get master batch name
-      const masterBatch = masterBatches?.find(mb => mb.id === product?.masterBatchId);
-      
-      return `
+    const jobOrderRows =
+      jobOrders
+        ?.map((jobOrder, index) => {
+          const product = getCustomerProduct(jobOrder);
+          // Convert yes/no/checked to Y/N for printed
+          const printedValue = product?.printed
+            ? product.printed === "yes" || product.printed === "checked"
+              ? "Y"
+              : "N"
+            : "N";
+
+          // Get item name
+          const item = items?.find((i) => i.id === product?.itemId);
+
+          // Get master batch name
+          const masterBatch = masterBatches?.find(
+            (mb) => mb.id === product?.masterBatchId,
+          );
+
+          return `
         <tr>
           <td>${index + 1}</td>
           <td>${item?.name || "N/A"}</td>
@@ -344,15 +391,17 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
           <td>${product?.cover || "-"}</td>
         </tr>
       `;
-    }).join('') || '';
-    
+        })
+        .join("") || "";
+
     // Format rolls for printing
-    const rollRows = orderRolls.map(roll => {
-      const jobOrder = jobOrders?.find(jo => jo.id === roll.jobOrderId);
-      const product = jobOrder ? getCustomerProduct(jobOrder) : null;
-      const item = items?.find(i => i.id === product?.itemId);
-      
-      return `
+    const rollRows = orderRolls
+      .map((roll) => {
+        const jobOrder = jobOrders?.find((jo) => jo.id === roll.jobOrderId);
+        const product = jobOrder ? getCustomerProduct(jobOrder) : null;
+        const item = items?.find((i) => i.id === product?.itemId);
+
+        return `
         <tr>
           <td>${roll.id}</td>
           <td>${item?.name || "N/A"}</td>
@@ -363,8 +412,9 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
           <td>${roll.status}</td>
         </tr>
       `;
-    }).join('');
-    
+      })
+      .join("");
+
     // Create the print document HTML
     const printContent = `
       <!DOCTYPE html>
@@ -489,11 +539,15 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
             <div class="info-label">Customer:</div>
             <div>${customer?.name}</div>
           </div>
-          ${customer?.nameAr ? `
+          ${
+            customer?.nameAr
+              ? `
           <div class="info-row">
             <div class="info-label">Customer Ar:</div>
             <div>${customer.nameAr}</div>
-          </div>` : ''}
+          </div>`
+              : ""
+          }
           <div class="info-row">
             <div class="info-label">Date:</div>
             <div>${formatDateString(order.date)}</div>
@@ -556,18 +610,18 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
       </body>
       </html>
     `;
-    
+
     // Write to the print window and trigger print
     printWindow.document.open();
     printWindow.document.write(printContent);
     printWindow.document.close();
-    
+
     toast({
       title: "Print Ready",
       description: "Order print view has been prepared.",
     });
   };
-  
+
   return (
     <>
       <Card>
@@ -581,7 +635,9 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
           {/* Order Information */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="bg-secondary-50 p-4 rounded">
-              <h4 className="font-medium text-secondary-700 mb-2">Order Information</h4>
+              <h4 className="font-medium text-secondary-700 mb-2">
+                Order Information
+              </h4>
               <div className="text-sm">
                 <p className="flex justify-between py-1.5 border-b border-secondary-100">
                   <span className="text-secondary-500">Order ID:</span>
@@ -592,18 +648,22 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
                   <span className="font-medium">{customer?.name}</span>
                 </p>
                 {customer?.nameAr && (
-                <p className="flex justify-between py-1.5 border-b border-secondary-100">
-                  <span className="text-secondary-500">Customer Ar:</span>
-                  <span className="font-medium">{customer.nameAr}</span>
-                </p>
+                  <p className="flex justify-between py-1.5 border-b border-secondary-100">
+                    <span className="text-secondary-500">Customer Ar:</span>
+                    <span className="font-medium">{customer.nameAr}</span>
+                  </p>
                 )}
                 <p className="flex justify-between py-1.5 border-b border-secondary-100">
                   <span className="text-secondary-500">Date:</span>
-                  <span className="font-medium">{formatDateString(order.date)}</span>
+                  <span className="font-medium">
+                    {formatDateString(order.date)}
+                  </span>
                 </p>
                 <p className="flex justify-between py-1.5 border-b border-secondary-100">
                   <span className="text-secondary-500">Plate Drawer Code:</span>
-                  <span className="font-medium">{customer?.plateDrawerCode || "N/A"}</span>
+                  <span className="font-medium">
+                    {customer?.plateDrawerCode || "N/A"}
+                  </span>
                 </p>
                 <p className="flex justify-between py-1.5">
                   <span className="text-secondary-500">Status:</span>
@@ -611,9 +671,11 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
                 </p>
               </div>
             </div>
-            
+
             <div className="md:col-span-2 bg-secondary-50 p-4 rounded">
-              <h4 className="font-medium text-secondary-700 mb-2">Production Progress</h4>
+              <h4 className="font-medium text-secondary-700 mb-2">
+                Production Progress
+              </h4>
               <div className="space-y-4">
                 <div>
                   <div className="flex justify-between mb-1 text-sm">
@@ -623,13 +685,13 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
                     </span>
                   </div>
                   <div className="w-full bg-secondary-200 rounded-full h-2.5">
-                    <div 
-                      className="bg-primary-500 h-2.5 rounded-full" 
+                    <div
+                      className="bg-primary-500 h-2.5 rounded-full"
                       style={{ width: `${extrusionProgress.percentage}%` }}
                     ></div>
                   </div>
                 </div>
-                
+
                 <div>
                   <div className="flex justify-between mb-1 text-sm">
                     <span>Printing: {printingProgress.percentage}%</span>
@@ -638,13 +700,13 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
                     </span>
                   </div>
                   <div className="w-full bg-secondary-200 rounded-full h-2.5">
-                    <div 
-                      className="bg-primary-500 h-2.5 rounded-full" 
+                    <div
+                      className="bg-primary-500 h-2.5 rounded-full"
                       style={{ width: `${printingProgress.percentage}%` }}
                     ></div>
                   </div>
                 </div>
-                
+
                 <div>
                   <div className="flex justify-between mb-1 text-sm">
                     <span>Cutting: {cuttingProgress.percentage}%</span>
@@ -653,8 +715,8 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
                     </span>
                   </div>
                   <div className="w-full bg-secondary-200 rounded-full h-2.5">
-                    <div 
-                      className="bg-primary-500 h-2.5 rounded-full" 
+                    <div
+                      className="bg-primary-500 h-2.5 rounded-full"
                       style={{ width: `${cuttingProgress.percentage}%` }}
                     ></div>
                   </div>
@@ -662,41 +724,44 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
               </div>
             </div>
           </div>
-          
+
           {/* SMS Messages */}
           {customer && order && (
             <div className="mt-8 mb-8">
               {/* SMS Management has been moved to the System Settings page */}
             </div>
           )}
-          
+
           {/* Order Products */}
           <div>
             <div className="flex justify-between items-center mb-4">
               <h4 className="font-medium text-lg">Order Products</h4>
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={handleAddJobOrder}
-              >
+              <Button variant="outline" size="sm" onClick={handleAddJobOrder}>
                 <span className="material-icons text-sm mr-1">add</span>
                 Add Job Order
               </Button>
             </div>
-            
+
             {isMobile ? (
               // Mobile view - card layout
               <div className="space-y-4">
                 {jobOrders && jobOrders.length > 0 ? (
-                  jobOrders.map(jobOrder => {
+                  jobOrders.map((jobOrder) => {
                     const product = getCustomerProduct(jobOrder);
-                    const item = items?.find(i => i.id === product?.itemId);
-                    const masterBatch = masterBatches?.find(mb => mb.id === product?.masterBatchId);
-                    
+                    const item = items?.find((i) => i.id === product?.itemId);
+                    const masterBatch = masterBatches?.find(
+                      (mb) => mb.id === product?.masterBatchId,
+                    );
+
                     return (
-                      <div key={jobOrder.id} className="bg-white border rounded-lg shadow-sm p-4">
+                      <div
+                        key={jobOrder.id}
+                        className="bg-white border rounded-lg shadow-sm p-4"
+                      >
                         <div className="flex justify-between items-start mb-3">
-                          <h4 className="font-semibold">{item?.name || "Unknown Item"}</h4>
+                          <h4 className="font-semibold">
+                            {item?.name || "Unknown Item"}
+                          </h4>
                           <div className="flex space-x-2">
                             <Button
                               size="sm"
@@ -704,7 +769,9 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
                               className="h-8 w-8 p-0 rounded-full"
                               onClick={() => handleOpenRollDialog(jobOrder)}
                             >
-                              <span className="material-icons text-sm">add</span>
+                              <span className="material-icons text-sm">
+                                add
+                              </span>
                             </Button>
                             <Button
                               size="sm"
@@ -712,7 +779,9 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
                               className="h-8 w-8 p-0 rounded-full"
                               onClick={() => handleEditJobOrder(jobOrder)}
                             >
-                              <span className="material-icons text-sm">edit</span>
+                              <span className="material-icons text-sm">
+                                edit
+                              </span>
                             </Button>
                             <Button
                               size="sm"
@@ -720,15 +789,19 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
                               className="h-8 w-8 p-0 rounded-full text-red-500"
                               onClick={() => handleDeleteJobOrder(jobOrder)}
                             >
-                              <span className="material-icons text-sm">delete</span>
+                              <span className="material-icons text-sm">
+                                delete
+                              </span>
                             </Button>
                           </div>
                         </div>
-                        
+
                         <div className="grid grid-cols-2 gap-2 text-sm">
                           <div>
                             <p className="text-secondary-500">Size:</p>
-                            <p className="font-medium">{product?.sizeCaption || "N/A"}</p>
+                            <p className="font-medium">
+                              {product?.sizeCaption || "N/A"}
+                            </p>
                           </div>
                           <div>
                             <p className="text-secondary-500">Qty (Kg):</p>
@@ -736,23 +809,35 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
                           </div>
                           <div>
                             <p className="text-secondary-500">Thickness:</p>
-                            <p className="font-medium">{product?.thickness || "N/A"}</p>
+                            <p className="font-medium">
+                              {product?.thickness || "N/A"}
+                            </p>
                           </div>
                           <div>
                             <p className="text-secondary-500">Material:</p>
-                            <p className="font-medium">{product?.rawMaterial || "N/A"}</p>
+                            <p className="font-medium">
+                              {product?.rawMaterial || "N/A"}
+                            </p>
                           </div>
                           <div>
                             <p className="text-secondary-500">Batch:</p>
-                            <p className="font-medium">{masterBatch?.name || "N/A"}</p>
+                            <p className="font-medium">
+                              {masterBatch?.name || "N/A"}
+                            </p>
                           </div>
                           <div>
                             <p className="text-secondary-500">Printed:</p>
-                            <p className="font-medium">{product?.printed || "N/A"}</p>
+                            <p className="font-medium">
+                              {product?.printed || "N/A"}
+                            </p>
                           </div>
                           <div>
-                            <p className="text-secondary-500">Cylinder (Inch):</p>
-                            <p className="font-medium">{product?.printingCylinder || "0"}</p>
+                            <p className="text-secondary-500">
+                              Cylinder (Inch):
+                            </p>
+                            <p className="font-medium">
+                              {product?.printingCylinder || "0"}
+                            </p>
                           </div>
                         </div>
                       </div>
@@ -760,7 +845,8 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
                   })
                 ) : (
                   <div className="bg-white border rounded-lg p-6 text-center text-secondary-500">
-                    No job orders found for this order. Click "Add Job Order" to create one.
+                    No job orders found for this order. Click "Add Job Order" to
+                    create one.
                   </div>
                 )}
               </div>
@@ -782,37 +868,60 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
                     </tr>
                   </thead>
                   <tbody className="text-secondary-800">
-                    {jobOrders?.map(jobOrder => {
+                    {jobOrders?.map((jobOrder) => {
                       const product = getCustomerProduct(jobOrder);
                       // Get item name
-                      const item = items?.find(i => i.id === product?.itemId);
+                      const item = items?.find((i) => i.id === product?.itemId);
                       // Get master batch name
-                      const masterBatch = masterBatches?.find(mb => mb.id === product?.masterBatchId);
-                      
+                      const masterBatch = masterBatches?.find(
+                        (mb) => mb.id === product?.masterBatchId,
+                      );
+
                       return (
-                        <tr key={jobOrder.id} className="border-b border-secondary-100">
+                        <tr
+                          key={jobOrder.id}
+                          className="border-b border-secondary-100"
+                        >
                           <td className="py-3 px-4">{item?.name || "N/A"}</td>
-                          <td className="py-3 px-4">{product?.sizeCaption || "N/A"}</td>
-                          <td className="py-3 px-4">{product?.thickness || "N/A"}</td>
-                          <td className="py-3 px-4">{product?.rawMaterial || "N/A"}</td>
-                          <td className="py-3 px-4">{masterBatch?.name || "N/A"}</td>
-                          <td className="py-3 px-4">{Math.round(jobOrder.quantity)}</td>
-                          <td className="py-3 px-4">{product?.printed || "N/A"}</td>
-                          <td className="py-3 px-4">{product?.printingCylinder || "0"}</td>
+                          <td className="py-3 px-4">
+                            {product?.sizeCaption || "N/A"}
+                          </td>
+                          <td className="py-3 px-4">
+                            {product?.thickness || "N/A"}
+                          </td>
+                          <td className="py-3 px-4">
+                            {product?.rawMaterial || "N/A"}
+                          </td>
+                          <td className="py-3 px-4">
+                            {masterBatch?.name || "N/A"}
+                          </td>
+                          <td className="py-3 px-4">
+                            {Math.round(jobOrder.quantity)}
+                          </td>
+                          <td className="py-3 px-4">
+                            {product?.printed || "N/A"}
+                          </td>
+                          <td className="py-3 px-4">
+                            {product?.printingCylinder || "0"}
+                          </td>
                           <td className="py-3 px-4 flex space-x-2">
                             <Button
                               size="sm"
                               variant="outline"
                               onClick={() => handleOpenRollDialog(jobOrder)}
                             >
-                              <span className="material-icons text-sm">add</span>
+                              <span className="material-icons text-sm">
+                                add
+                              </span>
                             </Button>
                             <Button
                               size="sm"
                               variant="outline"
                               onClick={() => handleEditJobOrder(jobOrder)}
                             >
-                              <span className="material-icons text-sm">edit</span>
+                              <span className="material-icons text-sm">
+                                edit
+                              </span>
                             </Button>
                             <Button
                               size="sm"
@@ -820,7 +929,9 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
                               className="text-red-500 hover:text-red-700"
                               onClick={() => handleDeleteJobOrder(jobOrder)}
                             >
-                              <span className="material-icons text-sm">delete</span>
+                              <span className="material-icons text-sm">
+                                delete
+                              </span>
                             </Button>
                           </td>
                         </tr>
@@ -828,8 +939,12 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
                     })}
                     {(!jobOrders || jobOrders.length === 0) && (
                       <tr>
-                        <td colSpan={9} className="py-4 text-center text-secondary-500">
-                          No job orders found for this order. Click "Add Job Order" to create one.
+                        <td
+                          colSpan={9}
+                          className="py-4 text-center text-secondary-500"
+                        >
+                          No job orders found for this order. Click "Add Job
+                          Order" to create one.
                         </td>
                       </tr>
                     )}
@@ -838,29 +953,36 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
               </div>
             )}
           </div>
-          
+
           {/* Rolls */}
           <div>
             <h4 className="font-medium text-lg mb-4">Roll Status</h4>
-            
+
             {isMobile ? (
               // Mobile view - card layout
               <div className="space-y-4">
                 {orderRolls.length > 0 ? (
-                  orderRolls.map(roll => {
-                    const jobOrder = jobOrders?.find(jo => jo.id === roll.jobOrderId);
-                    const product = jobOrder ? getCustomerProduct(jobOrder) : null;
-                    const item = items?.find(i => i.id === product?.itemId);
-                    
+                  orderRolls.map((roll) => {
+                    const jobOrder = jobOrders?.find(
+                      (jo) => jo.id === roll.jobOrderId,
+                    );
+                    const product = jobOrder
+                      ? getCustomerProduct(jobOrder)
+                      : null;
+                    const item = items?.find((i) => i.id === product?.itemId);
+
                     return (
-                      <div key={roll.id} className="bg-white border rounded-lg shadow-sm p-4">
+                      <div
+                        key={roll.id}
+                        className="bg-white border rounded-lg shadow-sm p-4"
+                      >
                         <div className="flex justify-between items-start mb-3">
                           <h4 className="font-semibold">{roll.id}</h4>
                           <div className="flex items-center space-x-2">
                             <StatusBadge status={roll.status} />
                           </div>
                         </div>
-                        
+
                         <div className="grid grid-cols-2 gap-2 text-sm">
                           <div>
                             <p className="text-secondary-500">Product:</p>
@@ -872,15 +994,21 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
                           </div>
                           <div>
                             <p className="text-secondary-500">Extrusion Qty:</p>
-                            <p className="font-medium">{roll.extrudingQty || 0}</p>
+                            <p className="font-medium">
+                              {roll.extrudingQty || 0}
+                            </p>
                           </div>
                           <div>
                             <p className="text-secondary-500">Printing Qty:</p>
-                            <p className="font-medium">{roll.printingQty || 0}</p>
+                            <p className="font-medium">
+                              {roll.printingQty || 0}
+                            </p>
                           </div>
                           <div>
                             <p className="text-secondary-500">Cutting Qty:</p>
-                            <p className="font-medium">{roll.cuttingQty || 0}</p>
+                            <p className="font-medium">
+                              {roll.cuttingQty || 0}
+                            </p>
                           </div>
                         </div>
                       </div>
@@ -909,21 +1037,34 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
                   </thead>
                   <tbody className="text-secondary-800">
                     {orderRolls.length > 0 ? (
-                      orderRolls.map(roll => {
-                        const jobOrder = jobOrders?.find(jo => jo.id === roll.jobOrderId);
-                        const product = jobOrder 
+                      orderRolls.map((roll) => {
+                        const jobOrder = jobOrders?.find(
+                          (jo) => jo.id === roll.jobOrderId,
+                        );
+                        const product = jobOrder
                           ? getCustomerProduct(jobOrder)
                           : null;
                         // Get item name
-                        const item = items?.find(i => i.id === product?.itemId);
-                        
+                        const item = items?.find(
+                          (i) => i.id === product?.itemId,
+                        );
+
                         return (
-                          <tr key={roll.id} className="border-b border-secondary-100">
+                          <tr
+                            key={roll.id}
+                            className="border-b border-secondary-100"
+                          >
                             <td className="py-3 px-4">{roll.id}</td>
                             <td className="py-3 px-4">{item?.name || "N/A"}</td>
-                            <td className="py-3 px-4">{roll.extrudingQty || 0}</td>
-                            <td className="py-3 px-4">{roll.printingQty || 0}</td>
-                            <td className="py-3 px-4">{roll.cuttingQty || 0}</td>
+                            <td className="py-3 px-4">
+                              {roll.extrudingQty || 0}
+                            </td>
+                            <td className="py-3 px-4">
+                              {roll.printingQty || 0}
+                            </td>
+                            <td className="py-3 px-4">
+                              {roll.cuttingQty || 0}
+                            </td>
                             <td className="py-3 px-4">
                               <StatusBadge status={roll.currentStage} />
                             </td>
@@ -935,7 +1076,10 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
                       })
                     ) : (
                       <tr>
-                        <td colSpan={7} className="py-6 text-center text-secondary-500">
+                        <td
+                          colSpan={7}
+                          className="py-6 text-center text-secondary-500"
+                        >
                           No rolls created for this order yet
                         </td>
                       </tr>
@@ -946,11 +1090,13 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
             )}
           </div>
         </CardContent>
-        
-        <CardFooter className={`${isMobile ? 'flex-col space-y-3' : 'flex justify-end space-x-3'}`}>
+
+        <CardFooter
+          className={`${isMobile ? "flex-col space-y-3" : "flex justify-end space-x-3"}`}
+        >
           {isMobile ? (
             <>
-              <Button 
+              <Button
                 variant="outline"
                 className="w-full justify-center"
                 onClick={() => handlePrintOrder()}
@@ -962,44 +1108,47 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
                 variant="outline"
                 className="w-full justify-center"
                 onClick={() => updateOrderMutation.mutate("completed")}
-                disabled={updateOrderMutation.isPending || order.status === "completed"}
+                disabled={
+                  updateOrderMutation.isPending || order.status === "completed"
+                }
               >
-                <span className="material-icons text-sm mr-1">check_circle</span>
+                <span className="material-icons text-sm mr-1">
+                  check_circle
+                </span>
                 Mark as Completed
               </Button>
               <Link href="/orders" className="w-full">
                 <Button variant="outline" className="w-full justify-center">
-                  <span className="material-icons text-sm mr-1">arrow_back</span>
+                  <span className="material-icons text-sm mr-1">
+                    arrow_back
+                  </span>
                   Back to Orders
                 </Button>
               </Link>
             </>
           ) : (
             <>
-              <Button 
-                variant="outline"
-                onClick={() => handlePrintOrder()}
-              >
+              <Button variant="outline" onClick={() => handlePrintOrder()}>
                 <span className="material-icons text-sm mr-1">print</span>
                 Print Order
               </Button>
               <Button
                 variant="outline"
                 onClick={() => updateOrderMutation.mutate("completed")}
-                disabled={updateOrderMutation.isPending || order.status === "completed"}
+                disabled={
+                  updateOrderMutation.isPending || order.status === "completed"
+                }
               >
                 Mark as Completed
               </Button>
               <Link href="/orders">
-                <Button variant="outline">
-                  Back to Orders
-                </Button>
+                <Button variant="outline">Back to Orders</Button>
               </Link>
             </>
           )}
         </CardFooter>
       </Card>
-      
+
       {/* Add/Edit Job Order Dialog */}
       <JobOrderDialog
         open={jobOrderDialogOpen}
@@ -1008,20 +1157,20 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
         jobOrder={selectedJobOrder}
         orderId={orderId}
       />
-      
+
       {/* Delete Job Order Confirmation Dialog */}
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Job Order</AlertDialogTitle>
             <AlertDialogDescription>
-              This will permanently delete the job order and all its associated rolls.
-              This action cannot be undone.
+              This will permanently delete the job order and all its associated
+              rolls. This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction 
+            <AlertDialogAction
               onClick={confirmDelete}
               className="bg-red-500 hover:bg-red-600"
             >
@@ -1030,38 +1179,38 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-      
+
       {/* Add Roll Dialog */}
       <Dialog open={rollDialogOpen} onOpenChange={setRollDialogOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Create New Roll</DialogTitle>
           </DialogHeader>
-          
+
           <div className="space-y-4 py-4">
             <p className="text-sm text-secondary-500 mb-4">
-              Roll serial number will be automatically generated in sequence for this job order.
-              Printing quantity will be automatically set to equal extrusion quantity.
+              Roll serial number will be automatically generated in sequence for
+              this job order. Printing quantity will be automatically set to
+              equal extrusion quantity.
             </p>
-            
+
             <div className="space-y-2">
               <label className="text-sm font-medium">Quantity (Kg)</label>
               <input
                 type="number"
                 step="1"
                 value={Math.round(rollQuantity)}
-                onChange={(e) => setRollQuantity(Math.round(parseFloat(e.target.value)))}
+                onChange={(e) =>
+                  setRollQuantity(Math.round(parseFloat(e.target.value)))
+                }
                 placeholder="Enter quantity"
                 className="w-full p-2 border rounded"
               />
             </div>
           </div>
-          
+
           <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setRollDialogOpen(false)}
-            >
+            <Button variant="outline" onClick={() => setRollDialogOpen(false)}>
               Cancel
             </Button>
             <Button

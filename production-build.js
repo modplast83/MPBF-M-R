@@ -1,25 +1,25 @@
 #!/usr/bin/env node
 
-import { execSync } from 'child_process';
-import { writeFileSync, mkdirSync, readFileSync } from 'fs';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
+import { execSync } from "child_process";
+import { writeFileSync, mkdirSync, readFileSync } from "fs";
+import { fileURLToPath } from "url";
+import { dirname, join } from "path";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 async function buildProduction() {
   try {
-    console.log('Creating production build...');
+    console.log("Creating production build...");
 
     // Create dist directory
-    mkdirSync('dist', { recursive: true });
+    mkdirSync("dist", { recursive: true });
 
     // Build frontend assets first
-    console.log('Building frontend assets...');
-    execSync('npx vite build --mode production', { 
-      stdio: 'inherit',
-      timeout: 60000 
+    console.log("Building frontend assets...");
+    execSync("npx vite build --mode production", {
+      stdio: "inherit",
+      timeout: 60000,
     });
 
     // Create a simplified production server
@@ -83,27 +83,29 @@ app.listen(port, "0.0.0.0", () => {
 `;
 
     // Write the production server
-    writeFileSync(join('dist', 'server.js'), productionServer);
+    writeFileSync(join("dist", "server.js"), productionServer);
 
     // Create the main entry point
     const entryPoint = `#!/usr/bin/env node
 import './server.js';
 `;
-    writeFileSync(join('dist', 'index.js'), entryPoint);
+    writeFileSync(join("dist", "index.js"), entryPoint);
 
     // Create package.json for ES modules
     const packageJson = {
-      type: 'module',
-      main: 'index.js'
+      type: "module",
+      main: "index.js",
     };
-    writeFileSync(join('dist', 'package.json'), JSON.stringify(packageJson, null, 2));
+    writeFileSync(
+      join("dist", "package.json"),
+      JSON.stringify(packageJson, null, 2),
+    );
 
-    console.log('Production build completed successfully!');
-    console.log('Files created in dist/:');
-    execSync('ls -la dist/', { stdio: 'inherit' });
-
+    console.log("Production build completed successfully!");
+    console.log("Files created in dist/:");
+    execSync("ls -la dist/", { stdio: "inherit" });
   } catch (error) {
-    console.error('Production build failed:', error);
+    console.error("Production build failed:", error);
     process.exit(1);
   }
 }

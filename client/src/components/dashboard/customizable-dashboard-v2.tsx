@@ -1,17 +1,28 @@
-import { useState, useEffect } from 'react';
-import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { useAuth } from '@/hooks/use-auth-v2';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { 
-  Settings, 
-  Plus, 
-  Eye, 
-  EyeOff, 
-  Move, 
+import { useState, useEffect } from "react";
+import {
+  DragDropContext,
+  Droppable,
+  Draggable,
+  DropResult,
+} from "react-beautiful-dnd";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import { useAuth } from "@/hooks/use-auth-v2";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  Settings,
+  Plus,
+  Eye,
+  EyeOff,
+  Move,
   Trash2,
   LayoutGrid,
   Save,
@@ -25,16 +36,16 @@ import {
   Target,
   PieChart,
   FileText,
-  Calendar
-} from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
+  Calendar,
+} from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 // Import existing dashboard components
-import { ActiveOrdersTable } from './active-orders-table';
-import { QualityMetricsWidget } from './quality-metrics-widget';
-import { ProductionChart } from './production-chart';
-import { RecentOrders } from './recent-orders';
-import { QuickActions } from './quick-actions';
+import { ActiveOrdersTable } from "./active-orders-table";
+import { QualityMetricsWidget } from "./quality-metrics-widget";
+import { ProductionChart } from "./production-chart";
+import { RecentOrders } from "./recent-orders";
+import { QuickActions } from "./quick-actions";
 
 interface WidgetItem {
   id: string;
@@ -57,59 +68,59 @@ interface WidgetTemplate {
 
 const WIDGET_TEMPLATES: WidgetTemplate[] = [
   {
-    id: 'stats-overview',
-    type: 'stats-overview',
-    name: 'Statistics Overview',
-    description: 'Key performance metrics and statistics',
+    id: "stats-overview",
+    type: "stats-overview",
+    name: "Statistics Overview",
+    description: "Key performance metrics and statistics",
     icon: <BarChart3 className="h-5 w-5" />,
-    category: 'analytics',
-    component: StatsOverviewWidget
+    category: "analytics",
+    component: StatsOverviewWidget,
   },
   {
-    id: 'recent-orders',
-    type: 'recent-orders', 
-    name: 'Recent Orders',
-    description: 'Latest customer orders and status',
+    id: "recent-orders",
+    type: "recent-orders",
+    name: "Recent Orders",
+    description: "Latest customer orders and status",
     icon: <Package className="h-5 w-5" />,
-    category: 'orders',
-    component: RecentOrdersWidget
+    category: "orders",
+    component: RecentOrdersWidget,
   },
   {
-    id: 'quality-metrics',
-    type: 'quality-metrics',
-    name: 'Quality Metrics',
-    description: 'Quality control statistics and trends',
+    id: "quality-metrics",
+    type: "quality-metrics",
+    name: "Quality Metrics",
+    description: "Quality control statistics and trends",
     icon: <PieChart className="h-5 w-5" />,
-    category: 'quality',
-    component: QualityMetricsWidget
+    category: "quality",
+    component: QualityMetricsWidget,
   },
   {
-    id: 'production-chart',
-    type: 'production-chart',
-    name: 'Production Chart',
-    description: 'Visual representation of production data',
+    id: "production-chart",
+    type: "production-chart",
+    name: "Production Chart",
+    description: "Visual representation of production data",
     icon: <TrendingUp className="h-5 w-5" />,
-    category: 'production',
-    component: ProductionChartWidget
+    category: "production",
+    component: ProductionChartWidget,
   },
   {
-    id: 'quick-actions',
-    type: 'quick-actions',
-    name: 'Quick Actions',
-    description: 'Frequently used actions and shortcuts',
+    id: "quick-actions",
+    type: "quick-actions",
+    name: "Quick Actions",
+    description: "Frequently used actions and shortcuts",
     icon: <Settings className="h-5 w-5" />,
-    category: 'system',
-    component: QuickActions
+    category: "system",
+    component: QuickActions,
   },
   {
-    id: 'notifications',
-    type: 'notifications',
-    name: 'Notifications',
-    description: 'System notifications and alerts',
+    id: "notifications",
+    type: "notifications",
+    name: "Notifications",
+    description: "System notifications and alerts",
     icon: <FileText className="h-5 w-5" />,
-    category: 'system',
-    component: NotificationsWidget
-  }
+    category: "system",
+    component: NotificationsWidget,
+  },
 ];
 
 // Widget Components
@@ -121,9 +132,13 @@ interface DashboardStats {
 }
 
 function StatsOverviewWidget() {
-  const { data: stats, isLoading, error } = useQuery<DashboardStats>({
-    queryKey: ['/api/dashboard-stats'],
-    staleTime: 30000
+  const {
+    data: stats,
+    isLoading,
+    error,
+  } = useQuery<DashboardStats>({
+    queryKey: ["/api/dashboard-stats"],
+    staleTime: 30000,
   });
 
   if (isLoading) {
@@ -159,7 +174,7 @@ function StatsOverviewWidget() {
     totalOrders: Number(stats?.totalOrders) || 0,
     completedOrders: Number(stats?.completedOrders) || 0,
     pendingOrders: Number(stats?.pendingOrders) || 0,
-    qualityIssues: Number(stats?.qualityIssues) || 0
+    qualityIssues: Number(stats?.qualityIssues) || 0,
   };
 
   return (
@@ -168,22 +183,30 @@ function StatsOverviewWidget() {
       <div className="grid grid-cols-2 gap-3">
         <div className="text-center p-2 bg-blue-50 rounded">
           <Package className="h-4 w-4 text-blue-600 mx-auto mb-1" />
-          <div className="text-xl font-bold text-blue-600">{safeStats.totalOrders}</div>
+          <div className="text-xl font-bold text-blue-600">
+            {safeStats.totalOrders}
+          </div>
           <div className="text-xs text-blue-600">Total Orders</div>
         </div>
         <div className="text-center p-2 bg-green-50 rounded">
           <TrendingUp className="h-4 w-4 text-green-600 mx-auto mb-1" />
-          <div className="text-xl font-bold text-green-600">{safeStats.completedOrders}</div>
+          <div className="text-xl font-bold text-green-600">
+            {safeStats.completedOrders}
+          </div>
           <div className="text-xs text-green-600">Completed</div>
         </div>
         <div className="text-center p-2 bg-yellow-50 rounded">
           <Clock className="h-4 w-4 text-yellow-600 mx-auto mb-1" />
-          <div className="text-xl font-bold text-yellow-600">{safeStats.pendingOrders}</div>
+          <div className="text-xl font-bold text-yellow-600">
+            {safeStats.pendingOrders}
+          </div>
           <div className="text-xs text-yellow-600">Pending</div>
         </div>
         <div className="text-center p-2 bg-red-50 rounded">
           <AlertTriangle className="h-4 w-4 text-red-600 mx-auto mb-1" />
-          <div className="text-xl font-bold text-red-600">{safeStats.qualityIssues}</div>
+          <div className="text-xl font-bold text-red-600">
+            {safeStats.qualityIssues}
+          </div>
           <div className="text-xs text-red-600">Quality Issues</div>
         </div>
       </div>
@@ -211,27 +234,35 @@ function ProductionChartWidget() {
 
 function NotificationsWidget() {
   const { data: notifications } = useQuery({
-    queryKey: ['/api/notifications'],
-    staleTime: 60000
+    queryKey: ["/api/notifications"],
+    staleTime: 60000,
   });
 
   return (
     <div>
       <h3 className="font-semibold mb-3">Notifications</h3>
-      {notifications && Array.isArray(notifications) && notifications.length > 0 ? (
+      {notifications &&
+      Array.isArray(notifications) &&
+      notifications.length > 0 ? (
         <div className="space-y-2">
           {notifications.slice(0, 5).map((notification: any, index: number) => (
             <div key={index} className="p-2 bg-gray-50 rounded">
-              <div className="text-sm">{notification.message || 'System notification'}</div>
+              <div className="text-sm">
+                {notification.message || "System notification"}
+              </div>
               <div className="text-xs text-muted-foreground">
-                {notification.createdAt ? new Date(notification.createdAt).toLocaleDateString() : 'Recent'}
+                {notification.createdAt
+                  ? new Date(notification.createdAt).toLocaleDateString()
+                  : "Recent"}
               </div>
             </div>
           ))}
         </div>
       ) : (
         <div className="text-center py-4">
-          <div className="text-sm text-muted-foreground">No new notifications</div>
+          <div className="text-sm text-muted-foreground">
+            No new notifications
+          </div>
         </div>
       )}
     </div>
@@ -258,7 +289,7 @@ export function CustomizableDashboardV2() {
     // Update positions
     const updatedWidgets = items.map((widget, index) => ({
       ...widget,
-      position: index
+      position: index,
     }));
 
     setWidgets(updatedWidgets);
@@ -272,7 +303,7 @@ export function CustomizableDashboardV2() {
       try {
         setWidgets(JSON.parse(savedLayout));
       } catch (error) {
-        console.error('Error loading saved layout:', error);
+        console.error("Error loading saved layout:", error);
         setWidgets(getDefaultWidgets());
       }
     } else {
@@ -283,15 +314,18 @@ export function CustomizableDashboardV2() {
   // Save layout to localStorage
   const saveLayout = () => {
     if (user?.id) {
-      localStorage.setItem(`dashboard-layout-${user.id}`, JSON.stringify(widgets));
+      localStorage.setItem(
+        `dashboard-layout-${user.id}`,
+        JSON.stringify(widgets),
+      );
       setHasUnsavedChanges(false);
-      toast({ title: 'Dashboard layout saved successfully' });
+      toast({ title: "Dashboard layout saved successfully" });
     }
   };
 
   // Add widget
   const addWidget = (templateId: string) => {
-    const template = WIDGET_TEMPLATES.find(t => t.id === templateId);
+    const template = WIDGET_TEMPLATES.find((t) => t.id === templateId);
     if (!template) return;
 
     const newWidget: WidgetItem = {
@@ -300,7 +334,7 @@ export function CustomizableDashboardV2() {
       title: template.name,
       visible: true,
       position: widgets.length,
-      config: {}
+      config: {},
     };
 
     setWidgets([...widgets, newWidget]);
@@ -310,15 +344,17 @@ export function CustomizableDashboardV2() {
 
   // Remove widget
   const removeWidget = (widgetId: string) => {
-    setWidgets(widgets.filter(w => w.id !== widgetId));
+    setWidgets(widgets.filter((w) => w.id !== widgetId));
     setHasUnsavedChanges(true);
   };
 
   // Toggle widget visibility
   const toggleWidgetVisibility = (widgetId: string) => {
-    setWidgets(widgets.map(w => 
-      w.id === widgetId ? { ...w, visible: !w.visible } : w
-    ));
+    setWidgets(
+      widgets.map((w) =>
+        w.id === widgetId ? { ...w, visible: !w.visible } : w,
+      ),
+    );
     setHasUnsavedChanges(true);
   };
 
@@ -330,14 +366,14 @@ export function CustomizableDashboardV2() {
 
   // Render widget component
   const renderWidget = (widget: WidgetItem) => {
-    const template = WIDGET_TEMPLATES.find(t => t.type === widget.type);
+    const template = WIDGET_TEMPLATES.find((t) => t.type === widget.type);
     if (!template) return <div>Unknown widget type: {widget.type}</div>;
-    
+
     const WidgetComponent = template.component;
     return <WidgetComponent {...widget.config} />;
   };
 
-  const visibleWidgets = widgets.filter(w => w.visible || isEditMode);
+  const visibleWidgets = widgets.filter((w) => w.visible || isEditMode);
 
   return (
     <div className="space-y-4">
@@ -350,7 +386,7 @@ export function CustomizableDashboardV2() {
             <Badge variant="secondary">Unsaved changes</Badge>
           )}
         </div>
-        
+
         <div className="flex items-center gap-2">
           {isEditMode && (
             <>
@@ -362,35 +398,28 @@ export function CustomizableDashboardV2() {
                 <Plus className="h-4 w-4 mr-1" />
                 Add Widget
               </Button>
-              
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={resetToDefault}
-              >
+
+              <Button variant="outline" size="sm" onClick={resetToDefault}>
                 <RotateCcw className="h-4 w-4 mr-1" />
                 Reset
               </Button>
-              
+
               {hasUnsavedChanges && (
-                <Button
-                  size="sm"
-                  onClick={saveLayout}
-                >
+                <Button size="sm" onClick={saveLayout}>
                   <Save className="h-4 w-4 mr-1" />
                   Save
                 </Button>
               )}
             </>
           )}
-          
+
           <Button
             variant={isEditMode ? "default" : "outline"}
             size="sm"
             onClick={() => setIsEditMode(!isEditMode)}
           >
             <Settings className="h-4 w-4 mr-1" />
-            {isEditMode ? 'Done' : 'Customize'}
+            {isEditMode ? "Done" : "Customize"}
           </Button>
         </div>
       </div>
@@ -398,17 +427,17 @@ export function CustomizableDashboardV2() {
       {/* Dashboard Grid */}
       <DragDropContext onDragEnd={handleDragEnd}>
         <Droppable droppableId="dashboard-widgets" direction="vertical">
-            {(provided, snapshot) => (
-              <div
-                {...provided.droppableProps}
-                ref={provided.innerRef}
-                className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 min-h-[400px] p-4 rounded-lg border-2 border-dashed transition-colors ${
-                  snapshot.isDraggingOver 
-                    ? 'border-primary bg-primary/5' 
-                    : isEditMode 
-                      ? 'border-muted-foreground/30 bg-muted/20' 
-                      : 'border-transparent'
-                }`}
+          {(provided, snapshot) => (
+            <div
+              {...provided.droppableProps}
+              ref={provided.innerRef}
+              className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 min-h-[400px] p-4 rounded-lg border-2 border-dashed transition-colors ${
+                snapshot.isDraggingOver
+                  ? "border-primary bg-primary/5"
+                  : isEditMode
+                    ? "border-muted-foreground/30 bg-muted/20"
+                    : "border-transparent"
+              }`}
             >
               {visibleWidgets.map((widget, index) => (
                 <Draggable
@@ -422,12 +451,14 @@ export function CustomizableDashboardV2() {
                       ref={provided.innerRef}
                       {...provided.draggableProps}
                       className={`${
-                        snapshot.isDragging ? 'rotate-2 scale-105' : ''
+                        snapshot.isDragging ? "rotate-2 scale-105" : ""
                       } transition-transform`}
                     >
-                      <Card className={`relative ${
-                        isEditMode ? 'ring-2 ring-primary/20' : ''
-                      } ${!widget.visible ? 'opacity-50' : ''}`}>
+                      <Card
+                        className={`relative ${
+                          isEditMode ? "ring-2 ring-primary/20" : ""
+                        } ${!widget.visible ? "opacity-50" : ""}`}
+                      >
                         {isEditMode && (
                           <div className="absolute top-2 right-2 z-10 flex gap-1">
                             <Button
@@ -442,7 +473,7 @@ export function CustomizableDashboardV2() {
                                 <EyeOff className="h-3 w-3" />
                               )}
                             </Button>
-                            
+
                             <Button
                               variant="ghost"
                               size="sm"
@@ -451,7 +482,7 @@ export function CustomizableDashboardV2() {
                             >
                               <Trash2 className="h-3 w-3" />
                             </Button>
-                            
+
                             <div
                               {...provided.dragHandleProps}
                               className="flex items-center justify-center h-6 w-6 cursor-move hover:bg-muted rounded"
@@ -460,7 +491,7 @@ export function CustomizableDashboardV2() {
                             </div>
                           </div>
                         )}
-                        
+
                         <CardContent className="p-4">
                           {renderWidget(widget)}
                         </CardContent>
@@ -470,7 +501,7 @@ export function CustomizableDashboardV2() {
                 </Draggable>
               ))}
               {provided.placeholder}
-              
+
               {/* Empty state */}
               {isEditMode && visibleWidgets.length === 0 && (
                 <div className="col-span-full flex flex-col items-center justify-center py-12 text-center">
@@ -503,16 +534,16 @@ export function CustomizableDashboardV2() {
 }
 
 // Widget Library Modal
-function WidgetLibraryModal({ 
-  onAddWidget, 
-  onClose, 
-  existingWidgets 
-}: { 
+function WidgetLibraryModal({
+  onAddWidget,
+  onClose,
+  existingWidgets,
+}: {
   onAddWidget: (templateId: string) => void;
   onClose: () => void;
   existingWidgets: WidgetItem[];
 }) {
-  const categories = ['analytics', 'production', 'quality', 'orders', 'system'];
+  const categories = ["analytics", "production", "quality", "orders", "system"];
 
   return (
     <Dialog open onOpenChange={onClose}>
@@ -525,14 +556,16 @@ function WidgetLibraryModal({
         </DialogHeader>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 overflow-y-auto max-h-[60vh] p-2">
-          {WIDGET_TEMPLATES.map(template => {
-            const isAdded = existingWidgets.some(w => w.type === template.type);
-            
+          {WIDGET_TEMPLATES.map((template) => {
+            const isAdded = existingWidgets.some(
+              (w) => w.type === template.type,
+            );
+
             return (
               <Card
                 key={template.id}
                 className={`cursor-pointer transition-all hover:shadow-md ${
-                  isAdded ? 'opacity-50' : ''
+                  isAdded ? "opacity-50" : ""
                 }`}
                 onClick={() => !isAdded && onAddWidget(template.id)}
               >
@@ -568,28 +601,28 @@ function WidgetLibraryModal({
 function getDefaultWidgets(): WidgetItem[] {
   return [
     {
-      id: 'stats-overview-default',
-      type: 'stats-overview',
-      title: 'Statistics Overview',
+      id: "stats-overview-default",
+      type: "stats-overview",
+      title: "Statistics Overview",
       visible: true,
       position: 0,
-      config: {}
+      config: {},
     },
     {
-      id: 'recent-orders-default',
-      type: 'recent-orders',
-      title: 'Recent Orders',
+      id: "recent-orders-default",
+      type: "recent-orders",
+      title: "Recent Orders",
       visible: true,
       position: 1,
-      config: {}
+      config: {},
     },
     {
-      id: 'quality-metrics-default',
-      type: 'quality-metrics',
-      title: 'Quality Metrics',
+      id: "quality-metrics-default",
+      type: "quality-metrics",
+      title: "Quality Metrics",
       visible: true,
       position: 2,
-      config: {}
-    }
+      config: {},
+    },
   ];
 }

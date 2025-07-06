@@ -89,22 +89,22 @@ export default {
     },
   },
   plugins: [
-    tailwindcssAnimate, 
+    tailwindcssAnimate,
     tailwindcssTypography,
-    function({ addUtilities }) {
+    function ({ addUtilities }) {
       const newUtilities = {
-        '.scrollbar-hide': {
+        ".scrollbar-hide": {
           /* IE and Edge */
-          '-ms-overflow-style': 'none',
+          "-ms-overflow-style": "none",
           /* Firefox */
-          'scrollbar-width': 'none',
+          "scrollbar-width": "none",
           /* Safari and Chrome */
-          '&::-webkit-scrollbar': {
-            display: 'none'
-          }
-        }
-      }
-      addUtilities(newUtilities)
-    }
+          "&::-webkit-scrollbar": {
+            display: "none",
+          },
+        },
+      };
+      addUtilities(newUtilities);
+    },
   ],
 } satisfies Config;

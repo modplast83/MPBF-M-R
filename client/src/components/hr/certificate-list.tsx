@@ -3,10 +3,38 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Award, Download, Eye, MoreHorizontal, Trash2, Calendar, User, Building, FileText } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Award,
+  Download,
+  Eye,
+  MoreHorizontal,
+  Trash2,
+  Calendar,
+  User,
+  Building,
+  FileText,
+} from "lucide-react";
 import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
 import CertificateGenerator from "./certificate-generator";
@@ -46,58 +74,71 @@ interface CertificateListProps {
 
 export default function CertificateList({ trainingId }: CertificateListProps) {
   const [showGenerator, setShowGenerator] = useState(false);
-  const [selectedCertificate, setSelectedCertificate] = useState<TrainingCertificate | null>(null);
+  const [selectedCertificate, setSelectedCertificate] =
+    useState<TrainingCertificate | null>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const { data: certificates = [], isLoading } = useQuery<TrainingCertificate[]>({
-    queryKey: trainingId ? [`/api/trainings/${trainingId}/certificates`] : ["/api/training-certificates"]
+  const { data: certificates = [], isLoading } = useQuery<
+    TrainingCertificate[]
+  >({
+    queryKey: trainingId
+      ? [`/api/trainings/${trainingId}/certificates`]
+      : ["/api/training-certificates"],
   });
 
   const { data: trainings } = useQuery<Training[]>({
-    queryKey: ["/api/trainings"]
+    queryKey: ["/api/trainings"],
   });
 
   const deleteCertificateMutation = useMutation({
     mutationFn: async (id: number) => {
       const response = await fetch(`/api/training-certificates/${id}`, {
         method: "DELETE",
-        credentials: "include"
+        credentials: "include",
       });
       if (!response.ok) throw new Error("Failed to delete certificate");
       return response.json();
     },
     onSuccess: () => {
       toast({ title: "Certificate deleted successfully" });
-      queryClient.invalidateQueries({ queryKey: ["/api/training-certificates"] });
+      queryClient.invalidateQueries({
+        queryKey: ["/api/training-certificates"],
+      });
       if (trainingId) {
-        queryClient.invalidateQueries({ queryKey: [`/api/trainings/${trainingId}/certificates`] });
+        queryClient.invalidateQueries({
+          queryKey: [`/api/trainings/${trainingId}/certificates`],
+        });
       }
     },
     onError: () => {
       toast({ title: "Failed to delete certificate", variant: "destructive" });
-    }
+    },
   });
 
   const revokeCertificateMutation = useMutation({
     mutationFn: async (id: number) => {
       const response = await fetch(`/api/training-certificates/${id}/revoke`, {
         method: "POST",
-        credentials: "include"
+        credentials: "include",
       });
       if (!response.ok) throw new Error("Failed to revoke certificate");
       return response.json();
     },
     onSuccess: () => {
       toast({ title: "Certificate revoked successfully" });
-      queryClient.invalidateQueries({ queryKey: ["/api/training-certificates"] });
+      queryClient.invalidateQueries({
+        queryKey: ["/api/training-certificates"],
+      });
       if (trainingId) {
-        queryClient.invalidateQueries({ queryKey: [`/api/trainings/${trainingId}/certificates`] });
+        queryClient.invalidateQueries({
+          queryKey: [`/api/trainings/${trainingId}/certificates`],
+        });
       }
     },
     onError: () => {
       toast({ title: "Failed to revoke certificate", variant: "destructive" });
-    }
+    },
   });
 
   const getStatusBadge = (status: string) => {
@@ -115,13 +156,17 @@ export default function CertificateList({ trainingId }: CertificateListProps) {
 
   const getTrainingInfo = (trainingId: number) => {
     const training = trainings?.find((t: any) => t.id === trainingId);
-    return training ? `Training #${training.id} - ${training.trainingSection || ""}` : `Training #${trainingId}`;
+    return training
+      ? `Training #${training.id} - ${training.trainingSection || ""}`
+      : `Training #${trainingId}`;
   };
 
   const downloadCertificate = (certificate: TrainingCertificate) => {
     // This would trigger a download of the certificate PDF
     // For now, we'll show a placeholder action
-    toast({ title: `Downloading certificate ${certificate.certificateNumber}` });
+    toast({
+      title: `Downloading certificate ${certificate.certificateNumber}`,
+    });
   };
 
   if (isLoading) {
@@ -140,7 +185,10 @@ export default function CertificateList({ trainingId }: CertificateListProps) {
           <Award className="h-5 w-5 text-blue-500" />
           <h3 className="text-lg font-semibold">Training Certificates</h3>
         </div>
-        <Button onClick={() => setShowGenerator(true)} className="bg-blue-600 hover:bg-blue-700">
+        <Button
+          onClick={() => setShowGenerator(true)}
+          className="bg-blue-600 hover:bg-blue-700"
+        >
           <Award className="h-4 w-4 mr-2" />
           Generate Certificate
         </Button>
@@ -150,12 +198,13 @@ export default function CertificateList({ trainingId }: CertificateListProps) {
         <Card>
           <CardContent className="text-center py-12">
             <Award className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-gray-600 mb-2">No Certificates Found</h3>
+            <h3 className="text-lg font-semibold text-gray-600 mb-2">
+              No Certificates Found
+            </h3>
             <p className="text-gray-500 mb-4">
-              {trainingId 
-                ? "No certificates have been generated for this training session." 
-                : "No training certificates have been created yet."
-              }
+              {trainingId
+                ? "No certificates have been generated for this training session."
+                : "No training certificates have been created yet."}
             </p>
             <Button onClick={() => setShowGenerator(true)} variant="outline">
               <Award className="h-4 w-4 mr-2" />
@@ -194,19 +243,27 @@ export default function CertificateList({ trainingId }: CertificateListProps) {
                       </div>
                     </TableCell>
                     {!trainingId && (
-                      <TableCell>{getTrainingInfo(certificate.trainingId)}</TableCell>
+                      <TableCell>
+                        {getTrainingInfo(certificate.trainingId)}
+                      </TableCell>
                     )}
                     <TableCell>
                       <div className="flex items-center gap-1">
                         <Calendar className="h-3 w-3 text-gray-400" />
-                        {format(new Date(certificate.issuedDate), "MMM dd, yyyy")}
+                        {format(
+                          new Date(certificate.issuedDate),
+                          "MMM dd, yyyy",
+                        )}
                       </div>
                     </TableCell>
                     <TableCell>
                       {certificate.validUntil ? (
                         <div className="flex items-center gap-1">
                           <Calendar className="h-3 w-3 text-gray-400" />
-                          {format(new Date(certificate.validUntil), "MMM dd, yyyy")}
+                          {format(
+                            new Date(certificate.validUntil),
+                            "MMM dd, yyyy",
+                          )}
                         </div>
                       ) : (
                         <span className="text-gray-400">No expiration</span>
@@ -216,8 +273,12 @@ export default function CertificateList({ trainingId }: CertificateListProps) {
                       <div className="flex items-center gap-1">
                         <User className="h-3 w-3 text-gray-400" />
                         <div>
-                          <div className="font-medium text-sm">{certificate.issuerName}</div>
-                          <div className="text-xs text-gray-500">{certificate.issuerTitle}</div>
+                          <div className="font-medium text-sm">
+                            {certificate.issuerName}
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            {certificate.issuerTitle}
+                          </div>
                         </div>
                       </div>
                     </TableCell>
@@ -230,25 +291,33 @@ export default function CertificateList({ trainingId }: CertificateListProps) {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => setSelectedCertificate(certificate)}>
+                          <DropdownMenuItem
+                            onClick={() => setSelectedCertificate(certificate)}
+                          >
                             <Eye className="h-4 w-4 mr-2" />
                             View Certificate
                           </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => downloadCertificate(certificate)}>
+                          <DropdownMenuItem
+                            onClick={() => downloadCertificate(certificate)}
+                          >
                             <Download className="h-4 w-4 mr-2" />
                             Download PDF
                           </DropdownMenuItem>
                           {certificate.status === "active" && (
-                            <DropdownMenuItem 
-                              onClick={() => revokeCertificateMutation.mutate(certificate.id)}
+                            <DropdownMenuItem
+                              onClick={() =>
+                                revokeCertificateMutation.mutate(certificate.id)
+                              }
                               className="text-orange-600"
                             >
                               <Award className="h-4 w-4 mr-2" />
                               Revoke Certificate
                             </DropdownMenuItem>
                           )}
-                          <DropdownMenuItem 
-                            onClick={() => deleteCertificateMutation.mutate(certificate.id)}
+                          <DropdownMenuItem
+                            onClick={() =>
+                              deleteCertificateMutation.mutate(certificate.id)
+                            }
                             className="text-red-600"
                           >
                             <Trash2 className="h-4 w-4 mr-2" />
@@ -282,7 +351,10 @@ export default function CertificateList({ trainingId }: CertificateListProps) {
       </Dialog>
 
       {/* Certificate Viewer Dialog */}
-      <Dialog open={!!selectedCertificate} onOpenChange={() => setSelectedCertificate(null)}>
+      <Dialog
+        open={!!selectedCertificate}
+        onOpenChange={() => setSelectedCertificate(null)}
+      >
         <DialogContent className="max-w-4xl max-h-[95vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
@@ -297,37 +369,72 @@ export default function CertificateList({ trainingId }: CertificateListProps) {
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm font-medium text-gray-600">Certificate Number</label>
-                  <p className="text-lg font-semibold">{selectedCertificate.certificateNumber}</p>
+                  <label className="text-sm font-medium text-gray-600">
+                    Certificate Number
+                  </label>
+                  <p className="text-lg font-semibold">
+                    {selectedCertificate.certificateNumber}
+                  </p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-gray-600">Status</label>
-                  <div className="mt-1">{getStatusBadge(selectedCertificate.status)}</div>
+                  <label className="text-sm font-medium text-gray-600">
+                    Status
+                  </label>
+                  <div className="mt-1">
+                    {getStatusBadge(selectedCertificate.status)}
+                  </div>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-gray-600">Issued Date</label>
-                  <p>{format(new Date(selectedCertificate.issuedDate), "MMM dd, yyyy")}</p>
+                  <label className="text-sm font-medium text-gray-600">
+                    Issued Date
+                  </label>
+                  <p>
+                    {format(
+                      new Date(selectedCertificate.issuedDate),
+                      "MMM dd, yyyy",
+                    )}
+                  </p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-gray-600">Valid Until</label>
-                  <p>{selectedCertificate.validUntil ? format(new Date(selectedCertificate.validUntil), "MMM dd, yyyy") : "No expiration"}</p>
+                  <label className="text-sm font-medium text-gray-600">
+                    Valid Until
+                  </label>
+                  <p>
+                    {selectedCertificate.validUntil
+                      ? format(
+                          new Date(selectedCertificate.validUntil),
+                          "MMM dd, yyyy",
+                        )
+                      : "No expiration"}
+                  </p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-gray-600">Issuer</label>
+                  <label className="text-sm font-medium text-gray-600">
+                    Issuer
+                  </label>
                   <p>{selectedCertificate.issuerName}</p>
-                  <p className="text-sm text-gray-500">{selectedCertificate.issuerTitle}</p>
+                  <p className="text-sm text-gray-500">
+                    {selectedCertificate.issuerTitle}
+                  </p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-gray-600">Company</label>
+                  <label className="text-sm font-medium text-gray-600">
+                    Company
+                  </label>
                   <p>{selectedCertificate.companyName}</p>
                 </div>
               </div>
               <div className="flex gap-2 mt-6">
-                <Button onClick={() => downloadCertificate(selectedCertificate)}>
+                <Button
+                  onClick={() => downloadCertificate(selectedCertificate)}
+                >
                   <Download className="h-4 w-4 mr-2" />
                   Download PDF
                 </Button>
-                <Button variant="outline" onClick={() => setSelectedCertificate(null)}>
+                <Button
+                  variant="outline"
+                  onClick={() => setSelectedCertificate(null)}
+                >
                   Close
                 </Button>
               </div>

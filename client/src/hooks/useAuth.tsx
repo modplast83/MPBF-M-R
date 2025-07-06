@@ -1,4 +1,10 @@
-import { createContext, ReactNode, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { User as SelectUser } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
@@ -24,7 +30,11 @@ type RegisterFormData = {
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
-export function AuthProvider({ children }: { children: (user: SelectUser | null) => ReactNode }) {
+export function AuthProvider({
+  children,
+}: {
+  children: (user: SelectUser | null) => ReactNode;
+}) {
   const { toast } = useToast();
   const [, navigate] = useLocation();
   const queryClient = useQueryClient();
@@ -35,7 +45,7 @@ export function AuthProvider({ children }: { children: (user: SelectUser | null)
     data: user,
     isLoading,
     error,
-    refetch
+    refetch,
   } = useQuery<SelectUser | null>({
     queryKey: ["/api/user"],
     queryFn: async () => {
@@ -46,18 +56,18 @@ export function AuthProvider({ children }: { children: (user: SelectUser | null)
           headers: {
             "Content-Type": "application/json",
             "Cache-Control": "no-cache, no-store, must-revalidate",
-            "Pragma": "no-cache"
-          }
+            Pragma: "no-cache",
+          },
         });
-        
+
         if (response.status === 401) {
           return null;
         }
-        
+
         if (!response.ok) {
           throw new Error("Failed to fetch user data");
         }
-        
+
         return await response.json();
       } catch (error) {
         console.error("Error fetching user:", error);
@@ -66,7 +76,7 @@ export function AuthProvider({ children }: { children: (user: SelectUser | null)
     },
     staleTime: 60000, // Consider data fresh for 1 minute
     retry: false,
-    refetchOnWindowFocus: false
+    refetchOnWindowFocus: false,
   });
 
   // Update isAuthenticated state when user data changes
@@ -76,34 +86,42 @@ export function AuthProvider({ children }: { children: (user: SelectUser | null)
 
   // Login mutation
   const loginMutation = useMutation({
-    mutationFn: async ({ username, password }: { username: string; password: string }) => {
+    mutationFn: async ({
+      username,
+      password,
+    }: {
+      username: string;
+      password: string;
+    }) => {
       const response = await fetch("/api/login", {
         method: "POST",
         credentials: "include",
         headers: {
           "Content-Type": "application/json",
           "Cache-Control": "no-cache, no-store, must-revalidate",
-          "Pragma": "no-cache"
+          Pragma: "no-cache",
         },
-        body: JSON.stringify({ username, password })
+        body: JSON.stringify({ username, password }),
       });
-      
+
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ message: "Login failed" }));
+        const errorData = await response
+          .json()
+          .catch(() => ({ message: "Login failed" }));
         throw new Error(errorData.message || "Login failed");
       }
-      
+
       return await response.json();
     },
     onSuccess: (userData: SelectUser) => {
       // Update the cache
       queryClient.setQueryData(["/api/user"], userData);
-      
+
       toast({
         title: "Login successful",
         description: `Welcome back, ${userData.username}!`,
       });
-      
+
       // Force a hard redirect to dashboard
       window.location.href = "/";
     },
@@ -113,7 +131,7 @@ export function AuthProvider({ children }: { children: (user: SelectUser | null)
         description: error.message || "Invalid username or password",
         variant: "destructive",
       });
-    }
+    },
   });
 
   // Logout mutation
@@ -123,26 +141,26 @@ export function AuthProvider({ children }: { children: (user: SelectUser | null)
         method: "POST",
         credentials: "include",
         headers: {
-          "Content-Type": "application/json"
-        }
+          "Content-Type": "application/json",
+        },
       });
-      
+
       if (!response.ok) {
         throw new Error("Logout failed");
       }
-      
+
       return await response.json();
     },
     onSuccess: () => {
       // Clear the cache
       queryClient.setQueryData(["/api/user"], null);
       queryClient.invalidateQueries({ queryKey: ["/api/user"] });
-      
+
       toast({
         title: "Logged out",
         description: "You have been successfully logged out",
       });
-      
+
       // Hard redirect to auth page
       window.location.href = "/auth";
     },
@@ -152,7 +170,7 @@ export function AuthProvider({ children }: { children: (user: SelectUser | null)
         description: error.message,
         variant: "destructive",
       });
-    }
+    },
   });
 
   // Register mutation
@@ -162,27 +180,29 @@ export function AuthProvider({ children }: { children: (user: SelectUser | null)
         method: "POST",
         credentials: "include",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(userData)
+        body: JSON.stringify(userData),
       });
-      
+
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ message: "Registration failed" }));
+        const errorData = await response
+          .json()
+          .catch(() => ({ message: "Registration failed" }));
         throw new Error(errorData.message || "Registration failed");
       }
-      
+
       return await response.json();
     },
     onSuccess: (userData: SelectUser) => {
       // Update the cache
       queryClient.setQueryData(["/api/user"], userData);
-      
+
       toast({
         title: "Registration successful",
         description: `Welcome, ${userData.username}!`,
       });
-      
+
       // Force a hard redirect to dashboard
       window.location.href = "/";
     },
@@ -192,7 +212,7 @@ export function AuthProvider({ children }: { children: (user: SelectUser | null)
         description: error.message || "Could not create account",
         variant: "destructive",
       });
-    }
+    },
   });
 
   // Login function
@@ -219,7 +239,7 @@ export function AuthProvider({ children }: { children: (user: SelectUser | null)
         isAuthenticated,
         login,
         logout,
-        register
+        register,
       }}
     >
       {children(user || null)}
@@ -229,10 +249,10 @@ export function AuthProvider({ children }: { children: (user: SelectUser | null)
 
 export function useAuth() {
   const context = useContext(AuthContext);
-  
+
   if (!context) {
     throw new Error("useAuth must be used within an AuthProvider");
   }
-  
+
   return context;
 }

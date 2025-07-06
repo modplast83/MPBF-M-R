@@ -1,21 +1,21 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { useQuery } from '@tanstack/react-query';
-import { 
-  BarChart3, 
-  TrendingUp, 
-  Package, 
-  AlertTriangle, 
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { useQuery } from "@tanstack/react-query";
+import {
+  BarChart3,
+  TrendingUp,
+  Package,
+  AlertTriangle,
   Clock,
   Activity,
   Users,
-  Target
-} from 'lucide-react';
-import { ActiveOrdersTable } from './active-orders-table';
-import { QualityMetricsWidget } from './quality-metrics-widget';
-import { ProductionChart } from './production-chart';
-import { RecentOrders } from './recent-orders';
-import { QuickActions } from './quick-actions';
+  Target,
+} from "lucide-react";
+import { ActiveOrdersTable } from "./active-orders-table";
+import { QualityMetricsWidget } from "./quality-metrics-widget";
+import { ProductionChart } from "./production-chart";
+import { RecentOrders } from "./recent-orders";
+import { QuickActions } from "./quick-actions";
 
 interface WidgetRendererProps {
   widgetType: string;
@@ -23,35 +23,39 @@ interface WidgetRendererProps {
   isEditMode?: boolean;
 }
 
-export function WidgetRenderer({ widgetType, config, isEditMode }: WidgetRendererProps) {
+export function WidgetRenderer({
+  widgetType,
+  config,
+  isEditMode,
+}: WidgetRendererProps) {
   switch (widgetType) {
-    case 'stats-overview':
+    case "stats-overview":
       return <StatsOverviewWidget config={config} />;
-    case 'recent-orders':
+    case "recent-orders":
       return <RecentOrdersWidget config={config} />;
-    case 'quality-metrics':
+    case "quality-metrics":
       return <QualityMetricsWidget />;
-    case 'production-chart':
+    case "production-chart":
       return <ProductionChartWidget config={config} />;
-    case 'active-machines':
+    case "active-machines":
       return <ActiveMachinesWidget config={config} />;
-    case 'production-targets':
+    case "production-targets":
       return <ProductionTargetsWidget config={config} />;
-    case 'bottleneck-monitor':
+    case "bottleneck-monitor":
       return <BottleneckMonitorWidget config={config} />;
-    case 'quality-violations':
+    case "quality-violations":
       return <QualityViolationsWidget config={config} />;
-    case 'order-summary':
+    case "order-summary":
       return <OrderSummaryWidget config={config} />;
-    case 'pending-orders':
+    case "pending-orders":
       return <PendingOrdersWidget config={config} />;
-    case 'quick-actions':
+    case "quick-actions":
       return <QuickActions />;
-    case 'notifications':
+    case "notifications":
       return <NotificationsWidget config={config} />;
-    case 'calendar':
+    case "calendar":
       return <CalendarWidget config={config} />;
-    case 'performance-metrics':
+    case "performance-metrics":
       return <PerformanceMetricsWidget config={config} />;
     default:
       return <DefaultWidget widgetType={widgetType} config={config} />;
@@ -60,14 +64,20 @@ export function WidgetRenderer({ widgetType, config, isEditMode }: WidgetRendere
 
 // Stats Overview Widget
 function StatsOverviewWidget({ config }: { config: any }) {
-  const { data: stats, isLoading, error } = useQuery({
-    queryKey: ['/api/dashboard-stats'],
+  const {
+    data: stats,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["/api/dashboard-stats"],
   });
 
   if (isLoading) {
     return (
       <div>
-        <h3 className="font-semibold mb-3">{config?.title || 'Statistics Overview'}</h3>
+        <h3 className="font-semibold mb-3">
+          {config?.title || "Statistics Overview"}
+        </h3>
         <div className="grid grid-cols-2 gap-3">
           {[...Array(4)].map((_, i) => (
             <div key={i} className="text-center p-2 bg-gray-50 rounded">
@@ -84,7 +94,9 @@ function StatsOverviewWidget({ config }: { config: any }) {
   if (error) {
     return (
       <div>
-        <h3 className="font-semibold mb-3">{config?.title || 'Statistics Overview'}</h3>
+        <h3 className="font-semibold mb-3">
+          {config?.title || "Statistics Overview"}
+        </h3>
         <div className="text-center py-4 text-muted-foreground">
           Unable to load statistics
         </div>
@@ -97,12 +109,14 @@ function StatsOverviewWidget({ config }: { config: any }) {
     totalOrders: Number(stats?.totalOrders) || 0,
     completedOrders: Number(stats?.completedOrders) || 0,
     pendingOrders: Number(stats?.pendingOrders) || 0,
-    qualityIssues: Number(stats?.qualityIssues) || 0
+    qualityIssues: Number(stats?.qualityIssues) || 0,
   };
 
   return (
     <div>
-      <h3 className="font-semibold mb-3">{config?.title || 'Statistics Overview'}</h3>
+      <h3 className="font-semibold mb-3">
+        {config?.title || "Statistics Overview"}
+      </h3>
       <div className="grid grid-cols-2 gap-3">
         <div className="text-center p-2 bg-blue-50 rounded">
           <div className="flex items-center justify-center mb-1">
@@ -149,7 +163,7 @@ function StatsOverviewWidget({ config }: { config: any }) {
 function RecentOrdersWidget({ config }: { config: any }) {
   return (
     <div>
-      <h3 className="font-semibold mb-3">{config.title || 'Recent Orders'}</h3>
+      <h3 className="font-semibold mb-3">{config.title || "Recent Orders"}</h3>
       <RecentOrders limit={config.limit || 5} />
     </div>
   );
@@ -159,7 +173,9 @@ function RecentOrdersWidget({ config }: { config: any }) {
 function ProductionChartWidget({ config }: { config: any }) {
   return (
     <div>
-      <h3 className="font-semibold mb-3">{config.title || 'Production Chart'}</h3>
+      <h3 className="font-semibold mb-3">
+        {config.title || "Production Chart"}
+      </h3>
       <ProductionChart />
     </div>
   );
@@ -168,21 +184,28 @@ function ProductionChartWidget({ config }: { config: any }) {
 // Active Machines Widget
 function ActiveMachinesWidget({ config }: { config: any }) {
   const { data: machines } = useQuery({
-    queryKey: ['/api/machines/status'],
+    queryKey: ["/api/machines/status"],
   });
 
   return (
     <div>
-      <h3 className="font-semibold mb-3">{config.title || 'Machine Status'}</h3>
+      <h3 className="font-semibold mb-3">{config.title || "Machine Status"}</h3>
       <div className="space-y-2">
         {machines?.slice(0, 4).map((machine: any, index: number) => (
-          <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded">
+          <div
+            key={index}
+            className="flex items-center justify-between p-2 bg-gray-50 rounded"
+          >
             <div className="flex items-center gap-2">
               <Activity className="h-4 w-4" />
-              <span className="text-sm font-medium">{machine.name || `Machine ${index + 1}`}</span>
+              <span className="text-sm font-medium">
+                {machine.name || `Machine ${index + 1}`}
+              </span>
             </div>
-            <Badge variant={machine.status === 'active' ? 'default' : 'secondary'}>
-              {machine.status || 'Active'}
+            <Badge
+              variant={machine.status === "active" ? "default" : "secondary"}
+            >
+              {machine.status || "Active"}
             </Badge>
           </div>
         )) || (
@@ -199,26 +222,37 @@ function ActiveMachinesWidget({ config }: { config: any }) {
 // Production Targets Widget
 function ProductionTargetsWidget({ config }: { config: any }) {
   const { data: targets } = useQuery({
-    queryKey: ['/api/production/targets'],
+    queryKey: ["/api/production/targets"],
   });
 
   return (
     <div>
-      <h3 className="font-semibold mb-3">{config.title || 'Production Targets'}</h3>
+      <h3 className="font-semibold mb-3">
+        {config.title || "Production Targets"}
+      </h3>
       <div className="space-y-3">
         <div className="flex justify-between items-center">
           <span className="text-sm">Daily Target</span>
           <div className="text-right">
-            <div className="text-sm font-medium">{targets?.daily?.current || 0} / {targets?.daily?.target || 1000}</div>
+            <div className="text-sm font-medium">
+              {targets?.daily?.current || 0} / {targets?.daily?.target || 1000}
+            </div>
             <div className="text-xs text-muted-foreground">
-              {Math.round((targets?.daily?.current || 0) / (targets?.daily?.target || 1000) * 100)}%
+              {Math.round(
+                ((targets?.daily?.current || 0) /
+                  (targets?.daily?.target || 1000)) *
+                  100,
+              )}
+              %
             </div>
           </div>
         </div>
         <div className="w-full bg-gray-200 rounded-full h-2">
-          <div 
-            className="bg-blue-600 h-2 rounded-full" 
-            style={{ width: `${Math.min(100, (targets?.daily?.current || 0) / (targets?.daily?.target || 1000) * 100)}%` }}
+          <div
+            className="bg-blue-600 h-2 rounded-full"
+            style={{
+              width: `${Math.min(100, ((targets?.daily?.current || 0) / (targets?.daily?.target || 1000)) * 100)}%`,
+            }}
           ></div>
         </div>
       </div>
@@ -229,20 +263,29 @@ function ProductionTargetsWidget({ config }: { config: any }) {
 // Bottleneck Monitor Widget
 function BottleneckMonitorWidget({ config }: { config: any }) {
   const { data: bottlenecks } = useQuery({
-    queryKey: ['/api/production/bottlenecks'],
+    queryKey: ["/api/production/bottlenecks"],
   });
 
   return (
     <div>
-      <h3 className="font-semibold mb-3">{config.title || 'Bottleneck Monitor'}</h3>
+      <h3 className="font-semibold mb-3">
+        {config.title || "Bottleneck Monitor"}
+      </h3>
       {bottlenecks?.length > 0 ? (
         <div className="space-y-2">
           {bottlenecks.slice(0, 3).map((bottleneck: any, index: number) => (
-            <div key={index} className="flex items-center gap-2 p-2 bg-red-50 rounded">
+            <div
+              key={index}
+              className="flex items-center gap-2 p-2 bg-red-50 rounded"
+            >
               <AlertTriangle className="h-4 w-4 text-red-600" />
               <div className="flex-1">
-                <div className="text-sm font-medium">{bottleneck.section || 'Production Line'}</div>
-                <div className="text-xs text-muted-foreground">{bottleneck.issue || 'Performance below threshold'}</div>
+                <div className="text-sm font-medium">
+                  {bottleneck.section || "Production Line"}
+                </div>
+                <div className="text-xs text-muted-foreground">
+                  {bottleneck.issue || "Performance below threshold"}
+                </div>
               </div>
             </div>
           ))}
@@ -260,22 +303,29 @@ function BottleneckMonitorWidget({ config }: { config: any }) {
 // Quality Violations Widget
 function QualityViolationsWidget({ config }: { config: any }) {
   const { data: violations } = useQuery({
-    queryKey: ['/api/quality/violations/recent'],
+    queryKey: ["/api/quality/violations/recent"],
   });
 
   return (
     <div>
-      <h3 className="font-semibold mb-3">{config.title || 'Quality Violations'}</h3>
+      <h3 className="font-semibold mb-3">
+        {config.title || "Quality Violations"}
+      </h3>
       {violations?.length > 0 ? (
         <div className="space-y-2">
-          {violations.slice(0, config.limit || 5).map((violation: any, index: number) => (
-            <div key={index} className="p-2 bg-yellow-50 rounded">
-              <div className="text-sm font-medium">{violation.type || 'Quality Issue'}</div>
-              <div className="text-xs text-muted-foreground">
-                {violation.section || 'Unknown Section'} • {violation.date || 'Recent'}
+          {violations
+            .slice(0, config.limit || 5)
+            .map((violation: any, index: number) => (
+              <div key={index} className="p-2 bg-yellow-50 rounded">
+                <div className="text-sm font-medium">
+                  {violation.type || "Quality Issue"}
+                </div>
+                <div className="text-xs text-muted-foreground">
+                  {violation.section || "Unknown Section"} •{" "}
+                  {violation.date || "Recent"}
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
         </div>
       ) : (
         <div className="text-center py-4">
@@ -290,19 +340,23 @@ function QualityViolationsWidget({ config }: { config: any }) {
 // Order Summary Widget
 function OrderSummaryWidget({ config }: { config: any }) {
   const { data: summary } = useQuery({
-    queryKey: ['/api/orders/summary', config.period],
+    queryKey: ["/api/orders/summary", config.period],
   });
 
   return (
     <div>
-      <h3 className="font-semibold mb-3">{config.title || 'Order Summary'}</h3>
+      <h3 className="font-semibold mb-3">{config.title || "Order Summary"}</h3>
       <div className="grid grid-cols-2 gap-2 text-center">
         <div className="p-2 bg-blue-50 rounded">
-          <div className="text-lg font-bold text-blue-600">{summary?.new || 0}</div>
+          <div className="text-lg font-bold text-blue-600">
+            {summary?.new || 0}
+          </div>
           <div className="text-xs text-blue-600">New Orders</div>
         </div>
         <div className="p-2 bg-green-50 rounded">
-          <div className="text-lg font-bold text-green-600">{summary?.completed || 0}</div>
+          <div className="text-lg font-bold text-green-600">
+            {summary?.completed || 0}
+          </div>
           <div className="text-xs text-green-600">Completed</div>
         </div>
       </div>
@@ -313,19 +367,24 @@ function OrderSummaryWidget({ config }: { config: any }) {
 // Pending Orders Widget
 function PendingOrdersWidget({ config }: { config: any }) {
   const { data: pendingOrders } = useQuery({
-    queryKey: ['/api/orders/pending'],
+    queryKey: ["/api/orders/pending"],
   });
 
   return (
     <div>
-      <h3 className="font-semibold mb-3">{config.title || 'Pending Orders'}</h3>
+      <h3 className="font-semibold mb-3">{config.title || "Pending Orders"}</h3>
       {pendingOrders?.length > 0 ? (
         <div className="space-y-2">
           {pendingOrders.slice(0, 3).map((order: any, index: number) => (
-            <div key={index} className="flex justify-between items-center p-2 bg-gray-50 rounded">
+            <div
+              key={index}
+              className="flex justify-between items-center p-2 bg-gray-50 rounded"
+            >
               <div>
                 <div className="text-sm font-medium">Order #{order.id}</div>
-                <div className="text-xs text-muted-foreground">{order.customer}</div>
+                <div className="text-xs text-muted-foreground">
+                  {order.customer}
+                </div>
               </div>
               <Badge variant="secondary">{order.status}</Badge>
             </div>
@@ -344,24 +403,30 @@ function PendingOrdersWidget({ config }: { config: any }) {
 // Notifications Widget
 function NotificationsWidget({ config }: { config: any }) {
   const { data: notifications } = useQuery({
-    queryKey: ['/api/notifications'],
+    queryKey: ["/api/notifications"],
   });
 
   return (
     <div>
-      <h3 className="font-semibold mb-3">{config.title || 'Notifications'}</h3>
+      <h3 className="font-semibold mb-3">{config.title || "Notifications"}</h3>
       {notifications?.length > 0 ? (
         <div className="space-y-2">
-          {notifications.slice(0, config.limit || 5).map((notification: any, index: number) => (
-            <div key={index} className="p-2 bg-gray-50 rounded">
-              <div className="text-sm">{notification.message}</div>
-              <div className="text-xs text-muted-foreground">{notification.time}</div>
-            </div>
-          ))}
+          {notifications
+            .slice(0, config.limit || 5)
+            .map((notification: any, index: number) => (
+              <div key={index} className="p-2 bg-gray-50 rounded">
+                <div className="text-sm">{notification.message}</div>
+                <div className="text-xs text-muted-foreground">
+                  {notification.time}
+                </div>
+              </div>
+            ))}
         </div>
       ) : (
         <div className="text-center py-4">
-          <div className="text-sm text-muted-foreground">No new notifications</div>
+          <div className="text-sm text-muted-foreground">
+            No new notifications
+          </div>
         </div>
       )}
     </div>
@@ -372,11 +437,14 @@ function NotificationsWidget({ config }: { config: any }) {
 function CalendarWidget({ config }: { config: any }) {
   return (
     <div>
-      <h3 className="font-semibold mb-3">{config.title || 'Calendar'}</h3>
+      <h3 className="font-semibold mb-3">{config.title || "Calendar"}</h3>
       <div className="text-center py-4">
         <div className="text-2xl font-bold">{new Date().getDate()}</div>
         <div className="text-sm text-muted-foreground">
-          {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+          {new Date().toLocaleDateString("en-US", {
+            month: "long",
+            year: "numeric",
+          })}
         </div>
       </div>
     </div>
@@ -386,24 +454,32 @@ function CalendarWidget({ config }: { config: any }) {
 // Performance Metrics Widget
 function PerformanceMetricsWidget({ config }: { config: any }) {
   const { data: metrics } = useQuery({
-    queryKey: ['/api/performance/metrics'],
+    queryKey: ["/api/performance/metrics"],
   });
 
   return (
     <div>
-      <h3 className="font-semibold mb-3">{config.title || 'Performance Metrics'}</h3>
+      <h3 className="font-semibold mb-3">
+        {config.title || "Performance Metrics"}
+      </h3>
       <div className="space-y-2">
         <div className="flex justify-between">
           <span className="text-sm">Overall Efficiency</span>
-          <span className="text-sm font-medium">{metrics?.efficiency || 85}%</span>
+          <span className="text-sm font-medium">
+            {metrics?.efficiency || 85}%
+          </span>
         </div>
         <div className="flex justify-between">
           <span className="text-sm">Output Rate</span>
-          <span className="text-sm font-medium">{metrics?.outputRate || 92}%</span>
+          <span className="text-sm font-medium">
+            {metrics?.outputRate || 92}%
+          </span>
         </div>
         <div className="flex justify-between">
           <span className="text-sm">Quality Score</span>
-          <span className="text-sm font-medium">{metrics?.qualityScore || 96}%</span>
+          <span className="text-sm font-medium">
+            {metrics?.qualityScore || 96}%
+          </span>
         </div>
       </div>
     </div>
@@ -411,11 +487,19 @@ function PerformanceMetricsWidget({ config }: { config: any }) {
 }
 
 // Default Widget for unknown types
-function DefaultWidget({ widgetType, config }: { widgetType: string; config: any }) {
+function DefaultWidget({
+  widgetType,
+  config,
+}: {
+  widgetType: string;
+  config: any;
+}) {
   return (
     <div className="text-center py-4">
       <div className="text-sm font-medium">{config.title || widgetType}</div>
-      <div className="text-xs text-muted-foreground mt-1">Widget content loading...</div>
+      <div className="text-xs text-muted-foreground mt-1">
+        Widget content loading...
+      </div>
     </div>
   );
 }

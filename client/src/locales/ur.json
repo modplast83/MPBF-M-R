@@ -586,7 +586,7 @@
       "production_yield": "پروڈکشن ییلڈ",
       "production_workflow": "پروڈکشن ورک فلو",
       "workflow": "ورک فلو",
-      
+
       "orders": {
         "title": "آرڈرز",
         "description": "پروڈکشن آرڈرز اور کام کی شیڈولنگ کا انتظام",
@@ -670,7 +670,7 @@
         "medium": "درمیانہ",
         "low": "کم",
         "created_date": "بنانے کی تاریخ",
-        
+
         "stage": "مرحلہ",
         "operator": "آپریٹر",
         "machine": "مشین",

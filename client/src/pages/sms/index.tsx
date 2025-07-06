@@ -4,13 +4,43 @@ import { API_ENDPOINTS } from "@/lib/constants";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { PageHeader } from "@/components/ui/page-header";
 import { Button } from "@/components/ui/button";
-import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
+import {
+  Table,
+  TableHeader,
+  TableRow,
+  TableHead,
+  TableBody,
+  TableCell,
+} from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from "@/components/ui/dialog";
-import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
-import { Loader2, MessageSquare, RefreshCw, Plus, Send, Search, Filter, X } from "lucide-react";
+import {
+  Loader2,
+  MessageSquare,
+  RefreshCw,
+  Plus,
+  Send,
+  Search,
+  Filter,
+  X,
+} from "lucide-react";
 import { format } from "date-fns";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -66,7 +96,11 @@ export default function SmsManagementPage() {
   });
 
   // Get all SMS messages
-  const { data: smsMessages, isLoading, refetch } = useQuery<SmsMessage[]>({
+  const {
+    data: smsMessages,
+    isLoading,
+    refetch,
+  } = useQuery<SmsMessage[]>({
     queryKey: [API_ENDPOINTS.SMS_MESSAGES],
     queryFn: getQueryFn,
   });
@@ -83,7 +117,11 @@ export default function SmsManagementPage() {
   // Send new SMS mutation
   const sendSmsMutation = useMutation({
     mutationFn: async (data: SendSmsFormValues) => {
-      const response = await apiRequest("POST", API_ENDPOINTS.SMS_MESSAGES, data);
+      const response = await apiRequest(
+        "POST",
+        API_ENDPOINTS.SMS_MESSAGES,
+        data,
+      );
       return response.json();
     },
     onSuccess: () => {
@@ -110,11 +148,12 @@ export default function SmsManagementPage() {
   }
 
   // Filter SMS messages based on search query and status filter
-  const filteredSmsMessages = smsMessages?.filter(sms => {
+  const filteredSmsMessages = smsMessages?.filter((sms) => {
     const matchesSearch = searchQuery
       ? sms.message.toLowerCase().includes(searchQuery.toLowerCase()) ||
         sms.recipientPhone.includes(searchQuery) ||
-        (sms.recipientName && sms.recipientName.toLowerCase().includes(searchQuery.toLowerCase()))
+        (sms.recipientName &&
+          sms.recipientName.toLowerCase().includes(searchQuery.toLowerCase()))
       : true;
 
     const matchesStatus = statusFilter ? sms.status === statusFilter : true;
@@ -124,7 +163,7 @@ export default function SmsManagementPage() {
 
   // Get unique status values for filter
   const statusOptions = smsMessages
-    ? Array.from(new Set(smsMessages.map(sms => sms.status)))
+    ? Array.from(new Set(smsMessages.map((sms) => sms.status)))
     : [];
 
   return (
@@ -145,7 +184,7 @@ export default function SmsManagementPage() {
               placeholder="Search SMS messages..."
               className="pl-8"
               value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
             {searchQuery && (
               <button
@@ -160,7 +199,11 @@ export default function SmsManagementPage() {
           <div className="relative">
             <Dialog>
               <DialogTrigger asChild>
-                <Button variant="outline" size="sm" className="w-full sm:w-auto">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full sm:w-auto"
+                >
                   <Filter className="h-4 w-4 mr-2" />
                   Filter
                   {isFiltered && (
@@ -179,7 +222,9 @@ export default function SmsManagementPage() {
                     <FormLabel>Status</FormLabel>
                     <div className="flex flex-wrap gap-2">
                       <Button
-                        variant={statusFilter === null ? "secondary" : "outline"}
+                        variant={
+                          statusFilter === null ? "secondary" : "outline"
+                        }
                         size="sm"
                         onClick={() => {
                           setStatusFilter(null);
@@ -188,10 +233,12 @@ export default function SmsManagementPage() {
                       >
                         All
                       </Button>
-                      {statusOptions.map(status => (
+                      {statusOptions.map((status) => (
                         <Button
                           key={status}
-                          variant={statusFilter === status ? "secondary" : "outline"}
+                          variant={
+                            statusFilter === status ? "secondary" : "outline"
+                          }
                           size="sm"
                           onClick={() => {
                             setStatusFilter(status);
@@ -237,7 +284,10 @@ export default function SmsManagementPage() {
                 <DialogTitle>Send New SMS Message</DialogTitle>
               </DialogHeader>
               <Form {...sendSmsForm}>
-                <form onSubmit={sendSmsForm.handleSubmit(onSubmitSendSms)} className="space-y-4">
+                <form
+                  onSubmit={sendSmsForm.handleSubmit(onSubmitSendSms)}
+                  className="space-y-4"
+                >
                   <FormField
                     control={sendSmsForm.control}
                     name="recipientPhone"
@@ -258,7 +308,11 @@ export default function SmsManagementPage() {
                       <FormItem>
                         <FormLabel>Recipient Name (optional)</FormLabel>
                         <FormControl>
-                          <Input placeholder="John Doe" {...field} value={field.value || ""} />
+                          <Input
+                            placeholder="John Doe"
+                            {...field}
+                            value={field.value || ""}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -328,7 +382,9 @@ export default function SmsManagementPage() {
               <TableRow>
                 <TableCell colSpan={6} className="h-24 text-center">
                   <Loader2 className="h-6 w-6 animate-spin mx-auto" />
-                  <p className="mt-2 text-sm text-gray-500">Loading SMS messages...</p>
+                  <p className="mt-2 text-sm text-gray-500">
+                    Loading SMS messages...
+                  </p>
                 </TableCell>
               </TableRow>
             ) : filteredSmsMessages?.length === 0 ? (
@@ -338,12 +394,14 @@ export default function SmsManagementPage() {
                 </TableCell>
               </TableRow>
             ) : (
-              filteredSmsMessages?.map(sms => (
+              filteredSmsMessages?.map((sms) => (
                 <TableRow key={sms.id}>
                   <TableCell>
                     <div className="font-medium">{sms.recipientPhone}</div>
                     {sms.recipientName && (
-                      <div className="text-sm text-gray-500">{sms.recipientName}</div>
+                      <div className="text-sm text-gray-500">
+                        {sms.recipientName}
+                      </div>
                     )}
                   </TableCell>
                   <TableCell className="max-w-md">
@@ -355,10 +413,10 @@ export default function SmsManagementPage() {
                         sms.status === "delivered"
                           ? "default"
                           : sms.status === "failed"
-                          ? "destructive"
-                          : sms.status === "sent"
-                          ? "outline"
-                          : "secondary"
+                            ? "destructive"
+                            : sms.status === "sent"
+                              ? "outline"
+                              : "secondary"
                       }
                     >
                       {sms.status}
@@ -366,10 +424,14 @@ export default function SmsManagementPage() {
                   </TableCell>
                   <TableCell>{sms.messageType}</TableCell>
                   <TableCell>
-                    {sms.sentAt ? format(new Date(sms.sentAt), "MMM dd, yyyy HH:mm") : "-"}
+                    {sms.sentAt
+                      ? format(new Date(sms.sentAt), "MMM dd, yyyy HH:mm")
+                      : "-"}
                   </TableCell>
                   <TableCell>
-                    {sms.deliveredAt ? format(new Date(sms.deliveredAt), "MMM dd, yyyy HH:mm") : "-"}
+                    {sms.deliveredAt
+                      ? format(new Date(sms.deliveredAt), "MMM dd, yyyy HH:mm")
+                      : "-"}
                   </TableCell>
                 </TableRow>
               ))

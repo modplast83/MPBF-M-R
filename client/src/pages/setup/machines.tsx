@@ -3,8 +3,22 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { MachineForm } from "@/components/setup/machine-form";
 import { API_ENDPOINTS } from "@/lib/constants";
 import { apiRequest } from "@/lib/queryClient";
@@ -27,7 +41,9 @@ export default function Machines() {
   });
 
   // Sort machines by ID
-  const machines = machinesData ? [...machinesData].sort((a, b) => a.id.localeCompare(b.id)) : [];
+  const machines = machinesData
+    ? [...machinesData].sort((a, b) => a.id.localeCompare(b.id))
+    : [];
 
   const { data: sections } = useQuery<Section[]>({
     queryKey: [API_ENDPOINTS.SECTIONS],
@@ -78,7 +94,7 @@ export default function Machines() {
   // Helper function to get section name
   const getSectionName = (sectionId: string | null) => {
     if (!sectionId) return "None";
-    return sections?.find(s => s.id === sectionId)?.name || "Unknown";
+    return sections?.find((s) => s.id === sectionId)?.name || "Unknown";
   };
 
   const columns = [
@@ -103,8 +119,8 @@ export default function Machines() {
     {
       header: t("common.date_of_manufacturing"),
       accessorKey: "dateOfManufacturing" as const,
-      cell: (row: Machine) => 
-        row.dateOfManufacturing 
+      cell: (row: Machine) =>
+        row.dateOfManufacturing
           ? new Date(row.dateOfManufacturing).toLocaleDateString()
           : t("common.na"),
     },
@@ -131,10 +147,20 @@ export default function Machines() {
       header: t("common.actions"),
       cell: (row: Machine) => (
         <div className="flex space-x-2">
-          <Button variant="ghost" size="icon" onClick={() => handleEdit(row)} className="text-primary-500 hover:text-primary-700">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => handleEdit(row)}
+            className="text-primary-500 hover:text-primary-700"
+          >
             <span className="material-icons text-sm">edit</span>
           </Button>
-          <Button variant="ghost" size="icon" onClick={() => handleDelete(row)} className="text-red-500 hover:text-red-700">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => handleDelete(row)}
+            className="text-red-500 hover:text-red-700"
+          >
             <span className="material-icons text-sm">delete</span>
           </Button>
         </div>
@@ -145,24 +171,26 @@ export default function Machines() {
   const tableActions = (
     <Button onClick={() => setFormOpen(true)}>
       <span className="material-icons text-sm mr-1">add</span>
-      {t('setup.machines.add_new')}
+      {t("setup.machines.add_new")}
     </Button>
   );
 
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-secondary-900">{t('setup.machines.title')}</h1>
+        <h1 className="text-2xl font-bold text-secondary-900">
+          {t("setup.machines.title")}
+        </h1>
       </div>
 
       <Card>
         <CardHeader>
           <CardTitle className="flex justify-between items-center">
-            <span>{t('setup.machines.description')}</span>
+            <span>{t("setup.machines.description")}</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <DataTable 
+          <DataTable
             data={machines || []}
             columns={columns}
             isLoading={isLoading}
@@ -176,10 +204,12 @@ export default function Machines() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {editMachine ? t('setup.machines.edit_machine') : t('setup.machines.add_new')}
+              {editMachine
+                ? t("setup.machines.edit_machine")
+                : t("setup.machines.add_new")}
             </DialogTitle>
           </DialogHeader>
-          <MachineForm 
+          <MachineForm
             machine={editMachine || undefined}
             onSuccess={handleFormClose}
           />
@@ -187,21 +217,28 @@ export default function Machines() {
       </Dialog>
 
       {/* Delete Confirmation Dialog */}
-      <AlertDialog open={!!deletingMachine} onOpenChange={(open) => !open && setDeletingMachine(null)}>
+      <AlertDialog
+        open={!!deletingMachine}
+        onOpenChange={(open) => !open && setDeletingMachine(null)}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>{t('setup.machines.are_you_sure')}</AlertDialogTitle>
+            <AlertDialogTitle>
+              {t("setup.machines.are_you_sure")}
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              {t('setup.machines.delete_confirmation', { name: deletingMachine?.name || '' })}
+              {t("setup.machines.delete_confirmation", {
+                name: deletingMachine?.name || "",
+              })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>{t('setup.machines.cancel')}</AlertDialogCancel>
-            <AlertDialogAction 
+            <AlertDialogCancel>{t("setup.machines.cancel")}</AlertDialogCancel>
+            <AlertDialogAction
               onClick={confirmDelete}
               className="bg-red-500 hover:bg-red-600"
             >
-              {t('setup.machines.delete')}
+              {t("setup.machines.delete")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

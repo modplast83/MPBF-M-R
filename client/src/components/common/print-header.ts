@@ -30,7 +30,11 @@ export const generatePrintHeader = () => {
 };
 
 // Generate complete print document with header
-export const generatePrintDocument = (title: string, content: string, additionalStyles: string = '') => {
+export const generatePrintDocument = (
+  title: string,
+  content: string,
+  additionalStyles: string = "",
+) => {
   return `
     <!DOCTYPE html>
     <html>

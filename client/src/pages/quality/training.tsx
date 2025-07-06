@@ -5,22 +5,28 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { format } from "date-fns";
-import { 
-  BookOpen, 
-  Calendar, 
-  User, 
-  Clock, 
-  Users, 
-  Award, 
-  AlertTriangle, 
+import {
+  BookOpen,
+  Calendar,
+  User,
+  Clock,
+  Users,
+  Award,
+  AlertTriangle,
   CheckCircle,
   Plus,
   Search,
   Filter,
   Download,
-  Eye
+  Eye,
 } from "lucide-react";
 import { useLanguage } from "@/hooks/use-language";
 import { useTranslation } from "react-i18next";
@@ -59,25 +65,30 @@ export default function QualityTrainingPage() {
 
   // Fetch trainings with quality focus
   const { data: trainings = [], isLoading } = useQuery({
-    queryKey: ['/api/trainings'],
+    queryKey: ["/api/trainings"],
   });
 
   // Filter trainings to show quality-related ones
-  const qualityTrainings = trainings.filter((training: Training) => 
-    training.type === "quality" || 
-    training.category?.includes("quality") ||
-    training.qualityCheckTypes?.length > 0
+  const qualityTrainings = trainings.filter(
+    (training: Training) =>
+      training.type === "quality" ||
+      training.category?.includes("quality") ||
+      training.qualityCheckTypes?.length > 0,
   );
 
   const filteredTrainings = qualityTrainings.filter((training: Training) => {
-    const matchesSearch = training.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         training.instructor.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         training.description.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesStatus = statusFilter === "all" || training.status === statusFilter;
-    const matchesCategory = categoryFilter === "all" || training.category === categoryFilter;
-    const matchesPriority = priorityFilter === "all" || training.priority === priorityFilter;
-    
+    const matchesSearch =
+      training.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      training.instructor.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      training.description.toLowerCase().includes(searchTerm.toLowerCase());
+
+    const matchesStatus =
+      statusFilter === "all" || training.status === statusFilter;
+    const matchesCategory =
+      categoryFilter === "all" || training.category === categoryFilter;
+    const matchesPriority =
+      priorityFilter === "all" || training.priority === priorityFilter;
+
     return matchesSearch && matchesStatus && matchesCategory && matchesPriority;
   });
 
@@ -93,39 +104,56 @@ export default function QualityTrainingPage() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "scheduled": return "bg-blue-100 text-blue-800";
-      case "in_progress": return "bg-yellow-100 text-yellow-800";
-      case "completed": return "bg-green-100 text-green-800";
-      case "cancelled": return "bg-red-100 text-red-800";
-      default: return "bg-gray-100 text-gray-800";
+      case "scheduled":
+        return "bg-blue-100 text-blue-800";
+      case "in_progress":
+        return "bg-yellow-100 text-yellow-800";
+      case "completed":
+        return "bg-green-100 text-green-800";
+      case "cancelled":
+        return "bg-red-100 text-red-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case "low": return "bg-green-100 text-green-800";
-      case "medium": return "bg-yellow-100 text-yellow-800";
-      case "high": return "bg-orange-100 text-orange-800";
-      case "critical": return "bg-red-100 text-red-800";
-      default: return "bg-gray-100 text-gray-800";
+      case "low":
+        return "bg-green-100 text-green-800";
+      case "medium":
+        return "bg-yellow-100 text-yellow-800";
+      case "high":
+        return "bg-orange-100 text-orange-800";
+      case "critical":
+        return "bg-red-100 text-red-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
   const getCategoryIcon = (category: string) => {
     switch (category) {
-      case "quality_control": return CheckCircle;
-      case "equipment_operation": return User;
-      case "safety_procedures": return AlertTriangle;
-      case "process_improvement": return Award;
-      case "documentation": return BookOpen;
-      case "calibration": return Clock;
-      default: return BookOpen;
+      case "quality_control":
+        return CheckCircle;
+      case "equipment_operation":
+        return User;
+      case "safety_procedures":
+        return AlertTriangle;
+      case "process_improvement":
+        return Award;
+      case "documentation":
+        return BookOpen;
+      case "calibration":
+        return Clock;
+      default:
+        return BookOpen;
     }
   };
 
   const TrainingCard = ({ training }: { training: Training }) => {
     const CategoryIcon = getCategoryIcon(training.category);
-    
+
     return (
       <Card className="hover:shadow-md transition-shadow">
         <CardHeader className="pb-3">
@@ -134,7 +162,9 @@ export default function QualityTrainingPage() {
               <CategoryIcon className="h-5 w-5 text-muted-foreground" />
               <div>
                 <CardTitle className="text-lg">{training.title}</CardTitle>
-                <p className="text-sm text-muted-foreground">{training.trainingId}</p>
+                <p className="text-sm text-muted-foreground">
+                  {training.trainingId}
+                </p>
               </div>
             </div>
             <div className="flex items-center gap-2">
@@ -151,7 +181,7 @@ export default function QualityTrainingPage() {
           <p className="text-sm text-muted-foreground line-clamp-2">
             {training.description}
           </p>
-          
+
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div className="flex items-center gap-2">
               <User className="h-4 w-4 text-muted-foreground" />
@@ -159,7 +189,9 @@ export default function QualityTrainingPage() {
             </div>
             <div className="flex items-center gap-2">
               <Calendar className="h-4 w-4 text-muted-foreground" />
-              <span>{format(new Date(training.scheduledDate), "MMM dd, yyyy")}</span>
+              <span>
+                {format(new Date(training.scheduledDate), "MMM dd, yyyy")}
+              </span>
             </div>
             <div className="flex items-center gap-2">
               <Clock className="h-4 w-4 text-muted-foreground" />
@@ -178,28 +210,33 @@ export default function QualityTrainingPage() {
             </div>
           )}
 
-          {training.qualityCheckTypes && training.qualityCheckTypes.length > 0 && (
-            <div className="space-y-1">
-              <p className="text-xs font-medium text-muted-foreground">Related Quality Checks:</p>
-              <div className="flex flex-wrap gap-1">
-                {training.qualityCheckTypes.slice(0, 3).map((checkType, index) => (
-                  <Badge key={index} variant="outline" className="text-xs">
-                    {checkType}
-                  </Badge>
-                ))}
-                {training.qualityCheckTypes.length > 3 && (
-                  <Badge variant="outline" className="text-xs">
-                    +{training.qualityCheckTypes.length - 3} more
-                  </Badge>
-                )}
+          {training.qualityCheckTypes &&
+            training.qualityCheckTypes.length > 0 && (
+              <div className="space-y-1">
+                <p className="text-xs font-medium text-muted-foreground">
+                  Related Quality Checks:
+                </p>
+                <div className="flex flex-wrap gap-1">
+                  {training.qualityCheckTypes
+                    .slice(0, 3)
+                    .map((checkType, index) => (
+                      <Badge key={index} variant="outline" className="text-xs">
+                        {checkType}
+                      </Badge>
+                    ))}
+                  {training.qualityCheckTypes.length > 3 && (
+                    <Badge variant="outline" className="text-xs">
+                      +{training.qualityCheckTypes.length - 3} more
+                    </Badge>
+                  )}
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
           <div className="flex justify-between items-center pt-2">
             <div className="flex gap-2">
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 size="sm"
                 onClick={() => handleEditTraining(training)}
               >
@@ -207,8 +244,8 @@ export default function QualityTrainingPage() {
                 View
               </Button>
             </div>
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               size="sm"
               onClick={() => handleEditTraining(training)}
             >
@@ -221,7 +258,7 @@ export default function QualityTrainingPage() {
   };
 
   return (
-    <div className={`container mx-auto p-6 space-y-6 ${isRTL ? 'rtl' : ''}`}>
+    <div className={`container mx-auto p-6 space-y-6 ${isRTL ? "rtl" : ""}`}>
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Quality Training Management</h1>
@@ -255,7 +292,10 @@ export default function QualityTrainingPage() {
               <div>
                 <p className="text-sm text-muted-foreground">Scheduled</p>
                 <p className="text-2xl font-bold">
-                  {qualityTrainings.filter(t => t.status === 'scheduled').length}
+                  {
+                    qualityTrainings.filter((t) => t.status === "scheduled")
+                      .length
+                  }
                 </p>
               </div>
             </div>
@@ -268,7 +308,10 @@ export default function QualityTrainingPage() {
               <div>
                 <p className="text-sm text-muted-foreground">Completed</p>
                 <p className="text-2xl font-bold">
-                  {qualityTrainings.filter(t => t.status === 'completed').length}
+                  {
+                    qualityTrainings.filter((t) => t.status === "completed")
+                      .length
+                  }
                 </p>
               </div>
             </div>
@@ -281,7 +324,10 @@ export default function QualityTrainingPage() {
               <div>
                 <p className="text-sm text-muted-foreground">Certifications</p>
                 <p className="text-2xl font-bold">
-                  {qualityTrainings.filter(t => t.certificationRequired).length}
+                  {
+                    qualityTrainings.filter((t) => t.certificationRequired)
+                      .length
+                  }
                 </p>
               </div>
             </div>
@@ -323,9 +369,15 @@ export default function QualityTrainingPage() {
               <SelectContent>
                 <SelectItem value="all">All Categories</SelectItem>
                 <SelectItem value="quality_control">Quality Control</SelectItem>
-                <SelectItem value="equipment_operation">Equipment Operation</SelectItem>
-                <SelectItem value="safety_procedures">Safety Procedures</SelectItem>
-                <SelectItem value="process_improvement">Process Improvement</SelectItem>
+                <SelectItem value="equipment_operation">
+                  Equipment Operation
+                </SelectItem>
+                <SelectItem value="safety_procedures">
+                  Safety Procedures
+                </SelectItem>
+                <SelectItem value="process_improvement">
+                  Process Improvement
+                </SelectItem>
                 <SelectItem value="documentation">Documentation</SelectItem>
                 <SelectItem value="calibration">Calibration</SelectItem>
               </SelectContent>
@@ -352,7 +404,7 @@ export default function QualityTrainingPage() {
           <TabsTrigger value="grid">Grid View</TabsTrigger>
           <TabsTrigger value="list">List View</TabsTrigger>
         </TabsList>
-        
+
         <TabsContent value="grid">
           {isLoading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -372,9 +424,14 @@ export default function QualityTrainingPage() {
             <Card>
               <CardContent className="p-8 text-center">
                 <BookOpen className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-semibold mb-2">No Quality Trainings Found</h3>
+                <h3 className="text-lg font-semibold mb-2">
+                  No Quality Trainings Found
+                </h3>
                 <p className="text-muted-foreground mb-4">
-                  {searchTerm || statusFilter !== "all" || categoryFilter !== "all" || priorityFilter !== "all"
+                  {searchTerm ||
+                  statusFilter !== "all" ||
+                  categoryFilter !== "all" ||
+                  priorityFilter !== "all"
                     ? "No trainings match your current filters."
                     : "Get started by creating your first quality training session."}
                 </p>
@@ -392,7 +449,7 @@ export default function QualityTrainingPage() {
             </div>
           )}
         </TabsContent>
-        
+
         <TabsContent value="list">
           <Card>
             <CardContent className="p-0">
@@ -411,20 +468,30 @@ export default function QualityTrainingPage() {
                   </thead>
                   <tbody>
                     {filteredTrainings.map((training) => (
-                      <tr key={training.id} className="border-b hover:bg-muted/50">
+                      <tr
+                        key={training.id}
+                        className="border-b hover:bg-muted/50"
+                      >
                         <td className="p-4">
                           <div>
                             <p className="font-medium">{training.title}</p>
-                            <p className="text-sm text-muted-foreground">{training.trainingId}</p>
+                            <p className="text-sm text-muted-foreground">
+                              {training.trainingId}
+                            </p>
                           </div>
                         </td>
                         <td className="p-4">{training.instructor}</td>
                         <td className="p-4">
-                          {format(new Date(training.scheduledDate), "MMM dd, yyyy")}
+                          {format(
+                            new Date(training.scheduledDate),
+                            "MMM dd, yyyy",
+                          )}
                         </td>
                         <td className="p-4">{training.duration}h</td>
                         <td className="p-4">
-                          <Badge className={getPriorityColor(training.priority)}>
+                          <Badge
+                            className={getPriorityColor(training.priority)}
+                          >
                             {training.priority}
                           </Badge>
                         </td>
@@ -434,8 +501,8 @@ export default function QualityTrainingPage() {
                           </Badge>
                         </td>
                         <td className="p-4">
-                          <Button 
-                            variant="outline" 
+                          <Button
+                            variant="outline"
                             size="sm"
                             onClick={() => handleEditTraining(training)}
                           >

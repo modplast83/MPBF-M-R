@@ -9,10 +9,10 @@ type ProtectedRouteProps = {
   module?: string; // Optional module name for permissions
 };
 
-export function ProtectedRoute({ 
-  path, 
+export function ProtectedRoute({
+  path,
   component: Component,
-  module 
+  module,
 }: ProtectedRouteProps) {
   const { user, isLoading, isAuthenticated } = useAuth();
   const [location, setLocation] = useLocation();
@@ -21,7 +21,9 @@ export function ProtectedRoute({
     // If authentication check is complete and user is not authenticated,
     // redirect to the auth page
     if (!isLoading && !isAuthenticated) {
-      console.log(`User not authenticated on protected route: ${path}, redirecting to auth page`);
+      console.log(
+        `User not authenticated on protected route: ${path}, redirecting to auth page`,
+      );
       window.location.href = "/auth";
     }
   }, [isLoading, isAuthenticated, path]);

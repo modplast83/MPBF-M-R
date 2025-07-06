@@ -1,14 +1,35 @@
-import { Card, CardContent, CardHeader, CardTitle, CardFooter, CardDescription } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardFooter,
+  CardDescription,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { toast } from "@/hooks/use-toast";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { API_ENDPOINTS } from "@/lib/constants";
 import { formatDistanceToNow } from "date-fns";
 import { Loader2 } from "lucide-react";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 // Define backup file type
@@ -33,7 +54,7 @@ export default function Database() {
     size: "0 KB",
     records: 0,
     lastBackup: "Never",
-    status: "Healthy"
+    status: "Healthy",
   });
 
   // Fetch available backups
@@ -51,9 +72,11 @@ export default function Database() {
         // Update last backup info if there's at least one backup
         if (data && data.length > 0) {
           const mostRecentBackup = new Date(data[0].createdAt);
-          setDbInfo(prev => ({
+          setDbInfo((prev) => ({
             ...prev,
-            lastBackup: formatDistanceToNow(mostRecentBackup, { addSuffix: true })
+            lastBackup: formatDistanceToNow(mostRecentBackup, {
+              addSuffix: true,
+            }),
           }));
         }
       } catch (error) {
@@ -82,7 +105,7 @@ export default function Database() {
     }
 
     setBackupInProgress(true);
-    
+
     try {
       const response = await fetch(API_ENDPOINTS.DATABASE_BACKUP, {
         method: "POST",
@@ -98,7 +121,7 @@ export default function Database() {
       }
 
       const result = await response.json();
-      
+
       setBackupInProgress(false);
       setBackupDialogOpen(false);
       toast({
@@ -106,19 +129,21 @@ export default function Database() {
         description: `Database backup "${backupName}" has been created successfully.`,
       });
       setBackupName("");
-      
+
       // Refresh the backup list
       const backupsResponse = await fetch(API_ENDPOINTS.DATABASE_BACKUPS);
       if (backupsResponse.ok) {
         const backupsData = await backupsResponse.json();
         setBackupFiles(backupsData || []);
-        
+
         // Update last backup info
         if (backupsData && backupsData.length > 0) {
           const mostRecentBackup = new Date(backupsData[0].createdAt);
-          setDbInfo(prev => ({
+          setDbInfo((prev) => ({
             ...prev,
-            lastBackup: formatDistanceToNow(mostRecentBackup, { addSuffix: true })
+            lastBackup: formatDistanceToNow(mostRecentBackup, {
+              addSuffix: true,
+            }),
           }));
         }
       }
@@ -145,7 +170,7 @@ export default function Database() {
     }
 
     setRestoreInProgress(true);
-    
+
     try {
       const response = await fetch(API_ENDPOINTS.DATABASE_RESTORE, {
         method: "POST",
@@ -161,7 +186,7 @@ export default function Database() {
       }
 
       const result = await response.json();
-      
+
       setRestoreInProgress(false);
       setRestoreDialogOpen(false);
       toast({
@@ -184,7 +209,9 @@ export default function Database() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-secondary-900">Database Management</h1>
+        <h1 className="text-2xl font-bold text-secondary-900">
+          Database Management
+        </h1>
       </div>
 
       <Card>
@@ -199,12 +226,13 @@ export default function Database() {
               </CardHeader>
               <CardContent>
                 <p className="text-secondary-600">
-                  Create a backup of your current database state. Backups can be used to restore
-                  your data in case of emergencies or when migrating to a new server.
+                  Create a backup of your current database state. Backups can be
+                  used to restore your data in case of emergencies or when
+                  migrating to a new server.
                 </p>
               </CardContent>
               <CardFooter>
-                <Button 
+                <Button
                   onClick={() => setBackupDialogOpen(true)}
                   className="w-full"
                 >
@@ -221,11 +249,12 @@ export default function Database() {
               <CardContent>
                 <p className="text-secondary-600">
                   Restore your database from a previously created backup.
-                  Warning: This will replace all current data with the backup data.
+                  Warning: This will replace all current data with the backup
+                  data.
                 </p>
               </CardContent>
               <CardFooter>
-                <Button 
+                <Button
                   onClick={() => setRestoreDialogOpen(true)}
                   className="w-full"
                   variant="outline"
@@ -254,8 +283,12 @@ export default function Database() {
                 </div>
               ) : backupFiles.length === 0 ? (
                 <div className="text-center py-8 bg-gray-50 rounded-md">
-                  <span className="material-icons text-gray-300 text-3xl mb-2">storage</span>
-                  <p className="text-gray-500">No backup files found. Create your first backup.</p>
+                  <span className="material-icons text-gray-300 text-3xl mb-2">
+                    storage
+                  </span>
+                  <p className="text-gray-500">
+                    No backup files found. Create your first backup.
+                  </p>
                 </div>
               ) : (
                 <ScrollArea className="h-[300px]">
@@ -270,7 +303,9 @@ export default function Database() {
                     <TableBody>
                       {backupFiles.map((backup) => (
                         <TableRow key={backup.fileName}>
-                          <TableCell className="font-medium">{backup.name}</TableCell>
+                          <TableCell className="font-medium">
+                            {backup.name}
+                          </TableCell>
                           <TableCell>{backup.size} KB</TableCell>
                           <TableCell>
                             {new Date(backup.createdAt).toLocaleString()}
@@ -321,7 +356,8 @@ export default function Database() {
           <DialogHeader>
             <DialogTitle>Create Database Backup</DialogTitle>
             <DialogDescription>
-              Create a backup of your current database state for data protection and recovery purposes.
+              Create a backup of your current database state for data protection
+              and recovery purposes.
             </DialogDescription>
           </DialogHeader>
           <div className="py-4">
@@ -345,10 +381,7 @@ export default function Database() {
             >
               Cancel
             </Button>
-            <Button
-              onClick={handleBackup}
-              disabled={backupInProgress}
-            >
+            <Button onClick={handleBackup} disabled={backupInProgress}>
               {backupInProgress ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin mr-2" />
@@ -368,7 +401,8 @@ export default function Database() {
           <DialogHeader>
             <DialogTitle>Restore Database</DialogTitle>
             <DialogDescription>
-              Restore your database from a backup file. This will replace all current data.
+              Restore your database from a backup file. This will replace all
+              current data.
             </DialogDescription>
           </DialogHeader>
           <div className="py-4">
@@ -377,8 +411,9 @@ export default function Database() {
               Warning: This action will replace all current data
             </p>
             <p className="text-secondary-600">
-              Restoring from a backup will replace all your current data with the data from the backup.
-              This action cannot be undone. Make sure you have a backup of your current data if needed.
+              Restoring from a backup will replace all your current data with
+              the data from the backup. This action cannot be undone. Make sure
+              you have a backup of your current data if needed.
             </p>
 
             <div className="mt-4">
@@ -390,32 +425,41 @@ export default function Database() {
               ) : backupFiles.length === 0 ? (
                 <div className="bg-secondary-50 rounded-md p-3">
                   <p className="text-sm font-medium">Available Backups</p>
-                  <p className="text-xs text-secondary-500 mt-1">No backups available</p>
+                  <p className="text-xs text-secondary-500 mt-1">
+                    No backups available
+                  </p>
                 </div>
               ) : (
                 <div>
-                  <Label htmlFor="backupSelect">Select a backup to restore</Label>
+                  <Label htmlFor="backupSelect">
+                    Select a backup to restore
+                  </Label>
                   <ScrollArea className="h-[200px] border rounded-md mt-2 p-2">
                     <div className="space-y-2">
                       {backupFiles.map((backup) => (
-                        <div 
+                        <div
                           key={backup.fileName}
                           className={`p-3 rounded-md border cursor-pointer transition-colors ${
-                            selectedBackup === backup.fileName 
-                              ? 'bg-primary-50 border-primary-200' 
-                              : 'hover:bg-gray-50'
+                            selectedBackup === backup.fileName
+                              ? "bg-primary-50 border-primary-200"
+                              : "hover:bg-gray-50"
                           }`}
                           onClick={() => setSelectedBackup(backup.fileName)}
                         >
                           <div className="flex justify-between items-center">
                             <div>
-                              <p className="font-medium text-sm">{backup.name}</p>
+                              <p className="font-medium text-sm">
+                                {backup.name}
+                              </p>
                               <p className="text-xs text-gray-500">
-                                {new Date(backup.createdAt).toLocaleString()} • {backup.size} KB
+                                {new Date(backup.createdAt).toLocaleString()} •{" "}
+                                {backup.size} KB
                               </p>
                             </div>
                             {selectedBackup === backup.fileName && (
-                              <span className="material-icons text-primary-500">check_circle</span>
+                              <span className="material-icons text-primary-500">
+                                check_circle
+                              </span>
                             )}
                           </div>
                         </div>

@@ -3,18 +3,24 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Slider } from "@/components/ui/slider";
 import { useToast } from "@/hooks/use-toast";
-import { 
-  ChevronLeft, 
-  ChevronRight, 
-  Upload, 
-  Palette, 
-  Ruler, 
-  Package, 
+import {
+  ChevronLeft,
+  ChevronRight,
+  Upload,
+  Palette,
+  Ruler,
+  Package,
   Eye,
   Download,
   RotateCcw,
@@ -22,7 +28,7 @@ import {
   Square,
   Circle,
   Type,
-  Move
+  Move,
 } from "lucide-react";
 
 interface CustomizationState {
@@ -45,15 +51,40 @@ const PRODUCT_TYPES = [
   { id: "shopping-bag", name: "Shopping Bag", icon: "🛍️" },
   { id: "table-cover", name: "Table Cover", icon: "🪑" },
   { id: "packing-bags", name: "Packing Bags", icon: "📦" },
-  { id: "garbage-bags", name: "Garbage Bags", icon: "🗑️" }
+  { id: "garbage-bags", name: "Garbage Bags", icon: "🗑️" },
 ];
 
 const TEMPLATES = [
-  { id: "t-shirt", name: "T-Shirt Template", description: "Classic t-shirt bag design", productTypes: ["shopping-bag"] },
-  { id: "t-shirt-hook", name: "T-Shirt with Hook", description: "T-shirt bag with hanging hook", productTypes: ["shopping-bag"] },
-  { id: "d-cut", name: "D-Cut Template", description: "D-shaped handle design", productTypes: ["shopping-bag"] },
-  { id: "non-cut", name: "Non-Cut Template", description: "No handle cuts", productTypes: ["packing-bags", "garbage-bags"] },
-  { id: "sheet", name: "Sheet Template", description: "Flat sheet design", productTypes: ["table-cover"] }
+  {
+    id: "t-shirt",
+    name: "T-Shirt Template",
+    description: "Classic t-shirt bag design",
+    productTypes: ["shopping-bag"],
+  },
+  {
+    id: "t-shirt-hook",
+    name: "T-Shirt with Hook",
+    description: "T-shirt bag with hanging hook",
+    productTypes: ["shopping-bag"],
+  },
+  {
+    id: "d-cut",
+    name: "D-Cut Template",
+    description: "D-shaped handle design",
+    productTypes: ["shopping-bag"],
+  },
+  {
+    id: "non-cut",
+    name: "Non-Cut Template",
+    description: "No handle cuts",
+    productTypes: ["packing-bags", "garbage-bags"],
+  },
+  {
+    id: "sheet",
+    name: "Sheet Template",
+    description: "Flat sheet design",
+    productTypes: ["table-cover"],
+  },
 ];
 
 const MATERIAL_COLORS = [
@@ -72,12 +103,20 @@ const MATERIAL_COLORS = [
   { id: "orange", name: "Orange", hex: "#f97316" },
   { id: "light-blue", name: "Light Blue", hex: "#38bdf8" },
   { id: "ivory", name: "Ivory", hex: "#fffbeb" },
-  { id: "yellow", name: "Yellow", hex: "#eab308" }
+  { id: "yellow", name: "Yellow", hex: "#eab308" },
 ];
 
 const DESIGN_COLORS = [
-  "#000000", "#ef4444", "#22c55e", "#3b82f6", "#fbbf24", 
-  "#ec4899", "#8b5cf6", "#f97316", "#6b7280", "#ffffff"
+  "#000000",
+  "#ef4444",
+  "#22c55e",
+  "#3b82f6",
+  "#fbbf24",
+  "#ec4899",
+  "#8b5cf6",
+  "#f97316",
+  "#6b7280",
+  "#ffffff",
 ];
 
 export default function ProfessionalCustomizationWizard() {
@@ -90,7 +129,7 @@ export default function ProfessionalCustomizationWizard() {
     uploadedDesign: null,
     designColors: [],
     canvasDesign: null,
-    finalPreview: false
+    finalPreview: false,
   });
 
   const [designPreview, setDesignPreview] = useState<string | null>(null);
@@ -105,10 +144,10 @@ export default function ProfessionalCustomizationWizard() {
   const steps = [
     "Product & Template",
     "Dimensions",
-    "Material Color", 
+    "Material Color",
     "Design Upload",
     "Design Tools",
-    "Final Preview"
+    "Final Preview",
   ];
 
   // Canvas drawing functions
@@ -116,11 +155,11 @@ export default function ProfessionalCustomizationWizard() {
     setIsDrawing(true);
     const canvas = canvasRef.current;
     if (!canvas) return;
-    
+
     const rect = canvas.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
-    
+
     const ctx = canvas.getContext("2d");
     if (ctx) {
       ctx.beginPath();
@@ -130,14 +169,14 @@ export default function ProfessionalCustomizationWizard() {
 
   const draw = (e: React.MouseEvent<HTMLCanvasElement>) => {
     if (!isDrawing) return;
-    
+
     const canvas = canvasRef.current;
     if (!canvas) return;
-    
+
     const rect = canvas.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
-    
+
     const ctx = canvas.getContext("2d");
     if (ctx) {
       ctx.lineWidth = brushSize;
@@ -157,7 +196,7 @@ export default function ProfessionalCustomizationWizard() {
   const clearCanvas = () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    
+
     const ctx = canvas.getContext("2d");
     if (ctx) {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -169,7 +208,13 @@ export default function ProfessionalCustomizationWizard() {
     if (!file) return;
 
     // Validate file type
-    const validTypes = ["image/png", "image/jpeg", "image/jpg", "application/pdf", "image/svg+xml"];
+    const validTypes = [
+      "image/png",
+      "image/jpeg",
+      "image/jpg",
+      "application/pdf",
+      "image/svg+xml",
+    ];
     if (!validTypes.includes(file.type)) {
       toast({
         title: "Invalid file type",
@@ -189,10 +234,10 @@ export default function ProfessionalCustomizationWizard() {
       return;
     }
 
-    setCustomization(prev => ({ ...prev, uploadedDesign: file }));
+    setCustomization((prev) => ({ ...prev, uploadedDesign: file }));
 
     // Create preview for image files
-    if (file.type.startsWith('image/')) {
+    if (file.type.startsWith("image/")) {
       const reader = new FileReader();
       reader.onload = (e) => {
         setDesignPreview(e.target?.result as string);
@@ -215,19 +260,19 @@ export default function ProfessionalCustomizationWizard() {
       });
       return;
     }
-    
+
     if (!customization.designColors.includes(color)) {
-      setCustomization(prev => ({
+      setCustomization((prev) => ({
         ...prev,
-        designColors: [...prev.designColors, color]
+        designColors: [...prev.designColors, color],
       }));
     }
   };
 
   const removeDesignColor = (color: string) => {
-    setCustomization(prev => ({
+    setCustomization((prev) => ({
       ...prev,
-      designColors: prev.designColors.filter(c => c !== color)
+      designColors: prev.designColors.filter((c) => c !== color),
     }));
   };
 
@@ -245,20 +290,29 @@ export default function ProfessionalCustomizationWizard() {
 
   const canProceed = () => {
     switch (currentStep) {
-      case 0: return customization.productType && customization.template;
-      case 1: return true; // Dimensions have defaults
-      case 2: return customization.materialColor;
-      case 3: return true; // Design upload is optional
-      case 4: return true; // Design tools are optional
-      case 5: return true; // Final preview
-      default: return false;
+      case 0:
+        return customization.productType && customization.template;
+      case 1:
+        return true; // Dimensions have defaults
+      case 2:
+        return customization.materialColor;
+      case 3:
+        return true; // Design upload is optional
+      case 4:
+        return true; // Design tools are optional
+      case 5:
+        return true; // Final preview
+      default:
+        return false;
     }
   };
 
   const renderTemplatePreview = (template: string, materialColor: string) => {
-    const color = MATERIAL_COLORS.find(c => c.id === materialColor)?.hex || "#ffffff";
-    const strokeColor = color === "#ffffff" || color === "#fffbeb" ? "#333" : "#000";
-    
+    const color =
+      MATERIAL_COLORS.find((c) => c.id === materialColor)?.hex || "#ffffff";
+    const strokeColor =
+      color === "#ffffff" || color === "#fffbeb" ? "#333" : "#000";
+
     switch (template) {
       case "t-shirt":
         // T-shirt bag - exactly like your blue sample
@@ -266,7 +320,7 @@ export default function ProfessionalCustomizationWizard() {
           <div className="w-32 h-40 mx-auto relative">
             <svg viewBox="0 0 100 130" className="w-full h-full">
               {/* Single path outlining the entire T-shirt bag shape */}
-              <path 
+              <path
                 d="M15 40 
                    L15 15 
                    L25 15 
@@ -278,42 +332,42 @@ export default function ProfessionalCustomizationWizard() {
                    L85 40 
                    L85 120 
                    L15 120 
-                   Z" 
+                   Z"
                 fill={color}
                 stroke={strokeColor}
                 strokeWidth="1.5"
               />
               {/* Left handle cutout - much larger */}
-              <path 
+              <path
                 d="M25 15 
                    C 25 22 25 30 25 35 
                    L50 35 
-                   C 50 30 50 22 50 15" 
-                fill="white" 
-                stroke={strokeColor} 
+                   C 50 30 50 22 50 15"
+                fill="white"
+                stroke={strokeColor}
                 strokeWidth="1"
               />
               {/* Right handle cutout - much larger */}
-              <path 
+              <path
                 d="M50 15 
                    C 50 22 50 30 50 35 
                    L75 35 
-                   C 75 30 75 22 75 15" 
-                fill="white" 
-                stroke={strokeColor} 
+                   C 75 30 75 22 75 15"
+                fill="white"
+                stroke={strokeColor}
                 strokeWidth="1"
               />
             </svg>
           </div>
         );
-      
+
       case "t-shirt-hook":
         // T-shirt bag with hook - same clean design with hook
         return (
           <div className="w-32 h-40 mx-auto relative">
             <svg viewBox="0 0 100 130" className="w-full h-full">
               {/* Single path outlining the entire T-shirt bag shape */}
-              <path 
+              <path
                 d="M15 40 
                    L15 15 
                    L25 15 
@@ -325,120 +379,149 @@ export default function ProfessionalCustomizationWizard() {
                    L85 40 
                    L85 120 
                    L15 120 
-                   Z" 
+                   Z"
                 fill={color}
                 stroke={strokeColor}
                 strokeWidth="1.5"
               />
               {/* Left handle cutout - much larger */}
-              <path 
+              <path
                 d="M25 15 
                    C 25 22 25 30 25 35 
                    L50 35 
-                   C 50 30 50 22 50 15" 
-                fill="white" 
-                stroke={strokeColor} 
+                   C 50 30 50 22 50 15"
+                fill="white"
+                stroke={strokeColor}
                 strokeWidth="1"
               />
               {/* Right handle cutout - much larger */}
-              <path 
+              <path
                 d="M50 15 
                    C 50 22 50 30 50 35 
                    L75 35 
-                   C 75 30 75 22 75 15" 
-                fill="white" 
-                stroke={strokeColor} 
+                   C 75 30 75 22 75 15"
+                fill="white"
+                stroke={strokeColor}
                 strokeWidth="1"
               />
               {/* Hook cutout at top center */}
-              <ellipse cx="50" cy="10" rx="3" ry="2" fill="white" stroke={strokeColor} strokeWidth="1"/>
+              <ellipse
+                cx="50"
+                cy="10"
+                rx="3"
+                ry="2"
+                fill="white"
+                stroke={strokeColor}
+                strokeWidth="1"
+              />
             </svg>
           </div>
         );
-      
+
       case "d-cut":
         // D-Cut bag - rectangular with D-shaped handle
         return (
           <div className="w-32 h-40 mx-auto relative">
             <svg viewBox="0 0 100 130" className="w-full h-full">
               {/* Main bag body */}
-              <rect 
-                x="20" y="10" width="60" height="110" 
+              <rect
+                x="20"
+                y="10"
+                width="60"
+                height="110"
                 fill={color}
                 stroke={strokeColor}
                 strokeWidth="1.5"
               />
               {/* D-shaped handle cutout */}
-              <path 
-                d="M35 15 L65 15 C 70 15 70 25 65 25 L35 25 C 30 25 30 15 35 15 Z" 
-                fill="white" 
-                stroke={strokeColor} 
+              <path
+                d="M35 15 L65 15 C 70 15 70 25 65 25 L35 25 C 30 25 30 15 35 15 Z"
+                fill="white"
+                stroke={strokeColor}
                 strokeWidth="1"
               />
             </svg>
           </div>
         );
-      
+
       case "non-cut":
         // Non-cut bag - simple rectangular bag without handles
         return (
           <div className="w-32 h-40 mx-auto relative">
             <svg viewBox="0 0 100 130" className="w-full h-full">
               {/* Simple rectangular bag */}
-              <rect 
-                x="25" y="20" width="50" height="90" 
+              <rect
+                x="25"
+                y="20"
+                width="50"
+                height="90"
                 fill={color}
                 stroke={strokeColor}
                 strokeWidth="1.5"
                 rx="2"
               />
               {/* Optional top seal */}
-              <line 
-                x1="25" y1="30" x2="75" y2="30" 
-                stroke={strokeColor} 
-                strokeWidth="1" 
+              <line
+                x1="25"
+                y1="30"
+                x2="75"
+                y2="30"
+                stroke={strokeColor}
+                strokeWidth="1"
                 strokeDasharray="2,2"
               />
             </svg>
           </div>
         );
-      
+
       case "sheet":
         // Sheet template - flat packaging style
         return (
           <div className="w-32 h-40 mx-auto relative">
             <svg viewBox="0 0 100 130" className="w-full h-full">
               {/* Flat sheet/pouch */}
-              <rect 
-                x="15" y="25" width="70" height="80" 
+              <rect
+                x="15"
+                y="25"
+                width="70"
+                height="80"
                 fill={color}
                 stroke={strokeColor}
                 strokeWidth="1.5"
                 rx="1"
               />
               {/* Top seal line */}
-              <line 
-                x1="15" y1="35" x2="85" y2="35" 
-                stroke={strokeColor} 
+              <line
+                x1="15"
+                y1="35"
+                x2="85"
+                y2="35"
+                stroke={strokeColor}
                 strokeWidth="1.5"
               />
               {/* Side seals */}
-              <line 
-                x1="20" y1="25" x2="20" y2="105" 
-                stroke={strokeColor} 
-                strokeWidth="1" 
+              <line
+                x1="20"
+                y1="25"
+                x2="20"
+                y2="105"
+                stroke={strokeColor}
+                strokeWidth="1"
                 strokeDasharray="1,1"
               />
-              <line 
-                x1="80" y1="25" x2="80" y2="105" 
-                stroke={strokeColor} 
-                strokeWidth="1" 
+              <line
+                x1="80"
+                y1="25"
+                x2="80"
+                y2="105"
+                stroke={strokeColor}
+                strokeWidth="1"
                 strokeDasharray="1,1"
               />
             </svg>
           </div>
         );
-      
+
       default:
         return (
           <div className="w-32 h-40 mx-auto bg-gray-200 rounded flex items-center justify-center">
@@ -451,17 +534,21 @@ export default function ProfessionalCustomizationWizard() {
   return (
     <div className="max-w-6xl mx-auto p-6">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-center mb-4">Professional Product Customization</h1>
-        
+        <h1 className="text-3xl font-bold text-center mb-4">
+          Professional Product Customization
+        </h1>
+
         {/* Progress Steps */}
         <div className="flex justify-between items-center mb-8">
           {steps.map((step, index) => (
             <div key={index} className="flex flex-col items-center">
-              <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium ${
-                index <= currentStep 
-                  ? "bg-blue-600 text-white" 
-                  : "bg-gray-200 text-gray-500"
-              }`}>
+              <div
+                className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium ${
+                  index <= currentStep
+                    ? "bg-blue-600 text-white"
+                    : "bg-gray-200 text-gray-500"
+                }`}
+              >
                 {index + 1}
               </div>
               <span className="text-xs mt-2 text-center max-w-20">{step}</span>
@@ -482,12 +569,19 @@ export default function ProfessionalCustomizationWizard() {
               {currentStep === 0 && (
                 <div className="space-y-6">
                   <div>
-                    <Label className="text-base font-medium mb-4 block">Select Product Type</Label>
+                    <Label className="text-base font-medium mb-4 block">
+                      Select Product Type
+                    </Label>
                     <div className="grid grid-cols-2 gap-4">
                       {PRODUCT_TYPES.map((product) => (
                         <div
                           key={product.id}
-                          onClick={() => setCustomization(prev => ({ ...prev, productType: product.id }))}
+                          onClick={() =>
+                            setCustomization((prev) => ({
+                              ...prev,
+                              productType: product.id,
+                            }))
+                          }
                           className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${
                             customization.productType === product.id
                               ? "border-blue-500 bg-blue-50"
@@ -503,14 +597,23 @@ export default function ProfessionalCustomizationWizard() {
 
                   {customization.productType && (
                     <div>
-                      <Label className="text-base font-medium mb-4 block">Select Template</Label>
+                      <Label className="text-base font-medium mb-4 block">
+                        Select Template
+                      </Label>
                       <div className="space-y-3">
-                        {TEMPLATES.filter(template => 
-                          template.productTypes.includes(customization.productType)
+                        {TEMPLATES.filter((template) =>
+                          template.productTypes.includes(
+                            customization.productType,
+                          ),
                         ).map((template) => (
                           <div
                             key={template.id}
-                            onClick={() => setCustomization(prev => ({ ...prev, template: template.id }))}
+                            onClick={() =>
+                              setCustomization((prev) => ({
+                                ...prev,
+                                template: template.id,
+                              }))
+                            }
                             className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${
                               customization.template === template.id
                                 ? "border-blue-500 bg-blue-50"
@@ -518,7 +621,9 @@ export default function ProfessionalCustomizationWizard() {
                             }`}
                           >
                             <div className="font-medium">{template.name}</div>
-                            <div className="text-sm text-gray-600">{template.description}</div>
+                            <div className="text-sm text-gray-600">
+                              {template.description}
+                            </div>
                           </div>
                         ))}
                       </div>
@@ -537,10 +642,15 @@ export default function ProfessionalCustomizationWizard() {
                         id="width"
                         type="number"
                         value={customization.dimensions.width}
-                        onChange={(e) => setCustomization(prev => ({
-                          ...prev,
-                          dimensions: { ...prev.dimensions, width: Number(e.target.value) }
-                        }))}
+                        onChange={(e) =>
+                          setCustomization((prev) => ({
+                            ...prev,
+                            dimensions: {
+                              ...prev.dimensions,
+                              width: Number(e.target.value),
+                            },
+                          }))
+                        }
                         min="10"
                         max="100"
                       />
@@ -551,10 +661,15 @@ export default function ProfessionalCustomizationWizard() {
                         id="length"
                         type="number"
                         value={customization.dimensions.length}
-                        onChange={(e) => setCustomization(prev => ({
-                          ...prev,
-                          dimensions: { ...prev.dimensions, length: Number(e.target.value) }
-                        }))}
+                        onChange={(e) =>
+                          setCustomization((prev) => ({
+                            ...prev,
+                            dimensions: {
+                              ...prev.dimensions,
+                              length: Number(e.target.value),
+                            },
+                          }))
+                        }
                         min="10"
                         max="150"
                       />
@@ -565,10 +680,15 @@ export default function ProfessionalCustomizationWizard() {
                         id="gusset"
                         type="number"
                         value={customization.dimensions.gusset}
-                        onChange={(e) => setCustomization(prev => ({
-                          ...prev,
-                          dimensions: { ...prev.dimensions, gusset: Number(e.target.value) }
-                        }))}
+                        onChange={(e) =>
+                          setCustomization((prev) => ({
+                            ...prev,
+                            dimensions: {
+                              ...prev.dimensions,
+                              gusset: Number(e.target.value),
+                            },
+                          }))
+                        }
                         min="0"
                         max="30"
                       />
@@ -580,21 +700,30 @@ export default function ProfessionalCustomizationWizard() {
                         type="number"
                         step="0.01"
                         value={customization.dimensions.thickness}
-                        onChange={(e) => setCustomization(prev => ({
-                          ...prev,
-                          dimensions: { ...prev.dimensions, thickness: Number(e.target.value) }
-                        }))}
+                        onChange={(e) =>
+                          setCustomization((prev) => ({
+                            ...prev,
+                            dimensions: {
+                              ...prev.dimensions,
+                              thickness: Number(e.target.value),
+                            },
+                          }))
+                        }
                         min="0.01"
                         max="0.20"
                       />
                     </div>
                   </div>
-                  
+
                   <div className="bg-blue-50 p-4 rounded-lg">
                     <h4 className="font-medium mb-2">Size Optimization</h4>
                     <p className="text-sm text-gray-600">
-                      Dimensions are automatically optimized for screen display and printing efficiency.
-                      Current ratio: {(customization.dimensions.width / customization.dimensions.length).toFixed(2)}
+                      Dimensions are automatically optimized for screen display
+                      and printing efficiency. Current ratio:{" "}
+                      {(
+                        customization.dimensions.width /
+                        customization.dimensions.length
+                      ).toFixed(2)}
                     </p>
                   </div>
                 </div>
@@ -603,23 +732,32 @@ export default function ProfessionalCustomizationWizard() {
               {/* Step 2: Material Color */}
               {currentStep === 2 && (
                 <div className="space-y-4">
-                  <Label className="text-base font-medium">Select Material Color</Label>
+                  <Label className="text-base font-medium">
+                    Select Material Color
+                  </Label>
                   <div className="grid grid-cols-4 gap-3">
                     {MATERIAL_COLORS.map((color) => (
                       <div
                         key={color.id}
-                        onClick={() => setCustomization(prev => ({ ...prev, materialColor: color.id }))}
+                        onClick={() =>
+                          setCustomization((prev) => ({
+                            ...prev,
+                            materialColor: color.id,
+                          }))
+                        }
                         className={`p-3 border-2 rounded-lg cursor-pointer transition-all ${
                           customization.materialColor === color.id
                             ? "border-blue-500 ring-2 ring-blue-200"
                             : "border-gray-200 hover:border-gray-300"
                         }`}
                       >
-                        <div 
+                        <div
                           className={`w-full h-8 rounded mb-2 ${color.border ? "border border-gray-300" : ""}`}
                           style={{ backgroundColor: color.hex }}
                         ></div>
-                        <div className="text-xs text-center font-medium">{color.name}</div>
+                        <div className="text-xs text-center font-medium">
+                          {color.name}
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -630,11 +768,15 @@ export default function ProfessionalCustomizationWizard() {
               {currentStep === 3 && (
                 <div className="space-y-6">
                   <div>
-                    <Label className="text-base font-medium mb-4 block">Upload Logo or Design</Label>
+                    <Label className="text-base font-medium mb-4 block">
+                      Upload Logo or Design
+                    </Label>
                     <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
                       <Upload className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                       <div className="space-y-2">
-                        <p className="text-lg font-medium">Upload your design file</p>
+                        <p className="text-lg font-medium">
+                          Upload your design file
+                        </p>
                         <p className="text-sm text-gray-600">
                           Supports: AI, EPS, PDF, PNG, JPG (Max 10MB)
                         </p>
@@ -646,14 +788,16 @@ export default function ProfessionalCustomizationWizard() {
                           id="design-upload"
                         />
                         <Button
-                          onClick={() => document.getElementById('design-upload')?.click()}
+                          onClick={() =>
+                            document.getElementById("design-upload")?.click()
+                          }
                           variant="outline"
                         >
                           Choose File
                         </Button>
                       </div>
                     </div>
-                    
+
                     {customization.uploadedDesign && (
                       <div className="mt-4 p-4 bg-green-50 rounded-lg">
                         <div className="flex items-center space-x-2">
@@ -663,7 +807,8 @@ export default function ProfessionalCustomizationWizard() {
                           </span>
                         </div>
                         <p className="text-sm text-green-600 mt-1">
-                          Design uploaded successfully and will be vectorized to black color
+                          Design uploaded successfully and will be vectorized to
+                          black color
                         </p>
                       </div>
                     )}
@@ -672,9 +817,9 @@ export default function ProfessionalCustomizationWizard() {
                       <div className="mt-4">
                         <Label className="text-sm font-medium">Preview</Label>
                         <div className="mt-2 border rounded-lg p-4 bg-white">
-                          <img 
-                            src={designPreview} 
-                            alt="Design preview" 
+                          <img
+                            src={designPreview}
+                            alt="Design preview"
                             className="max-w-full max-h-64 mx-auto object-contain"
                           />
                         </div>
@@ -688,33 +833,43 @@ export default function ProfessionalCustomizationWizard() {
               {currentStep === 4 && (
                 <div className="space-y-6">
                   <div>
-                    <Label className="text-base font-medium mb-4 block">Draw and Paint Tools</Label>
-                    
+                    <Label className="text-base font-medium mb-4 block">
+                      Draw and Paint Tools
+                    </Label>
+
                     {/* Tool Selection */}
                     <div className="flex space-x-2 mb-4">
                       <Button
-                        variant={selectedTool === "brush" ? "default" : "outline"}
+                        variant={
+                          selectedTool === "brush" ? "default" : "outline"
+                        }
                         size="sm"
                         onClick={() => setSelectedTool("brush")}
                       >
                         <Brush className="h-4 w-4 mr-1" /> Brush
                       </Button>
                       <Button
-                        variant={selectedTool === "rectangle" ? "default" : "outline"}
+                        variant={
+                          selectedTool === "rectangle" ? "default" : "outline"
+                        }
                         size="sm"
                         onClick={() => setSelectedTool("rectangle")}
                       >
                         <Square className="h-4 w-4 mr-1" /> Rectangle
                       </Button>
                       <Button
-                        variant={selectedTool === "circle" ? "default" : "outline"}
+                        variant={
+                          selectedTool === "circle" ? "default" : "outline"
+                        }
                         size="sm"
                         onClick={() => setSelectedTool("circle")}
                       >
                         <Circle className="h-4 w-4 mr-1" /> Circle
                       </Button>
                       <Button
-                        variant={selectedTool === "text" ? "default" : "outline"}
+                        variant={
+                          selectedTool === "text" ? "default" : "outline"
+                        }
                         size="sm"
                         onClick={() => setSelectedTool("text")}
                       >
@@ -724,7 +879,9 @@ export default function ProfessionalCustomizationWizard() {
 
                     {/* Color Palette */}
                     <div className="mb-4">
-                      <Label className="text-sm font-medium mb-2 block">Design Colors (Max 4)</Label>
+                      <Label className="text-sm font-medium mb-2 block">
+                        Design Colors (Max 4)
+                      </Label>
                       <div className="flex space-x-2 mb-2">
                         {DESIGN_COLORS.map((color) => (
                           <button
@@ -734,23 +891,27 @@ export default function ProfessionalCustomizationWizard() {
                               addDesignColor(color);
                             }}
                             className={`w-8 h-8 rounded border-2 ${
-                              selectedColor === color ? "border-blue-500" : "border-gray-300"
+                              selectedColor === color
+                                ? "border-blue-500"
+                                : "border-gray-300"
                             }`}
                             style={{ backgroundColor: color }}
                           />
                         ))}
                       </div>
-                      
+
                       {/* Selected Colors */}
                       <div className="flex space-x-2 items-center">
-                        <span className="text-sm text-gray-600">Selected colors:</span>
+                        <span className="text-sm text-gray-600">
+                          Selected colors:
+                        </span>
                         {customization.designColors.map((color) => (
                           <Badge
                             key={color}
                             variant="secondary"
                             className="flex items-center space-x-1"
                           >
-                            <div 
+                            <div
                               className="w-3 h-3 rounded"
                               style={{ backgroundColor: color }}
                             ></div>
@@ -788,7 +949,9 @@ export default function ProfessionalCustomizationWizard() {
                     {/* Drawing Canvas */}
                     <div className="border rounded-lg p-4 bg-white">
                       <div className="flex justify-between items-center mb-2">
-                        <Label className="text-sm font-medium">Design Canvas</Label>
+                        <Label className="text-sm font-medium">
+                          Design Canvas
+                        </Label>
                         <Button
                           variant="outline"
                           size="sm"
@@ -816,19 +979,39 @@ export default function ProfessionalCustomizationWizard() {
               {currentStep === 5 && (
                 <div className="space-y-6">
                   <div className="text-center">
-                    <h3 className="text-xl font-bold mb-4">Final Product Preview</h3>
-                    
+                    <h3 className="text-xl font-bold mb-4">
+                      Final Product Preview
+                    </h3>
+
                     {/* Product Template with Design */}
                     <div className="bg-gray-50 p-8 rounded-lg">
-                      {renderTemplatePreview(customization.template, customization.materialColor)}
-                      
+                      {renderTemplatePreview(
+                        customization.template,
+                        customization.materialColor,
+                      )}
+
                       <div className="mt-6 grid grid-cols-2 gap-4 text-sm">
                         <div className="text-left">
-                          <strong>Product:</strong> {PRODUCT_TYPES.find(p => p.id === customization.productType)?.name}
+                          <strong>Product:</strong>{" "}
+                          {
+                            PRODUCT_TYPES.find(
+                              (p) => p.id === customization.productType,
+                            )?.name
+                          }
                           <br />
-                          <strong>Template:</strong> {TEMPLATES.find(t => t.id === customization.template)?.name}
+                          <strong>Template:</strong>{" "}
+                          {
+                            TEMPLATES.find(
+                              (t) => t.id === customization.template,
+                            )?.name
+                          }
                           <br />
-                          <strong>Material:</strong> {MATERIAL_COLORS.find(c => c.id === customization.materialColor)?.name}
+                          <strong>Material:</strong>{" "}
+                          {
+                            MATERIAL_COLORS.find(
+                              (c) => c.id === customization.materialColor,
+                            )?.name
+                          }
                         </div>
                         <div className="text-left">
                           <strong>Dimensions:</strong>
@@ -860,32 +1043,47 @@ export default function ProfessionalCustomizationWizard() {
                     </div>
 
                     <div className="mt-6 flex justify-center space-x-4">
-                      <Button variant="outline" onClick={() => {
-                        const specData = {
-                          product: PRODUCT_TYPES.find(p => p.id === customization.productType)?.name,
-                          template: TEMPLATES.find(t => t.id === customization.template)?.name,
-                          dimensions: customization.dimensions,
-                          material: MATERIAL_COLORS.find(c => c.id === customization.materialColor)?.name,
-                          colors: customization.designColors.length,
-                          timestamp: new Date().toISOString()
-                        };
-                        const blob = new Blob([JSON.stringify(specData, null, 2)], { type: 'application/json' });
-                        const url = URL.createObjectURL(blob);
-                        const a = document.createElement('a');
-                        a.href = url;
-                        a.download = `product-specifications-${Date.now()}.json`;
-                        a.click();
-                        URL.revokeObjectURL(url);
-                      }}>
+                      <Button
+                        variant="outline"
+                        onClick={() => {
+                          const specData = {
+                            product: PRODUCT_TYPES.find(
+                              (p) => p.id === customization.productType,
+                            )?.name,
+                            template: TEMPLATES.find(
+                              (t) => t.id === customization.template,
+                            )?.name,
+                            dimensions: customization.dimensions,
+                            material: MATERIAL_COLORS.find(
+                              (c) => c.id === customization.materialColor,
+                            )?.name,
+                            colors: customization.designColors.length,
+                            timestamp: new Date().toISOString(),
+                          };
+                          const blob = new Blob(
+                            [JSON.stringify(specData, null, 2)],
+                            { type: "application/json" },
+                          );
+                          const url = URL.createObjectURL(blob);
+                          const a = document.createElement("a");
+                          a.href = url;
+                          a.download = `product-specifications-${Date.now()}.json`;
+                          a.click();
+                          URL.revokeObjectURL(url);
+                        }}
+                      >
                         <Download className="h-4 w-4 mr-2" />
                         Download Specifications
                       </Button>
-                      <Button onClick={() => {
-                        toast({
-                          title: "Quote Request Sent",
-                          description: "We'll send you a detailed quote within 24 hours.",
-                        });
-                      }}>
+                      <Button
+                        onClick={() => {
+                          toast({
+                            title: "Quote Request Sent",
+                            description:
+                              "We'll send you a detailed quote within 24 hours.",
+                          });
+                        }}
+                      >
                         Request Quote
                       </Button>
                     </div>
@@ -909,15 +1107,23 @@ export default function ProfessionalCustomizationWizard() {
               <div className="bg-gray-50 rounded-lg p-4 h-64 flex items-center justify-center">
                 {customization.template && customization.materialColor ? (
                   <div className="text-center">
-                    {renderTemplatePreview(customization.template, customization.materialColor)}
+                    {renderTemplatePreview(
+                      customization.template,
+                      customization.materialColor,
+                    )}
                     <p className="text-xs text-gray-600 mt-2">
-                      {TEMPLATES.find(t => t.id === customization.template)?.name}
+                      {
+                        TEMPLATES.find((t) => t.id === customization.template)
+                          ?.name
+                      }
                     </p>
                   </div>
                 ) : (
                   <div className="text-center text-gray-500">
                     <Package className="h-16 w-16 mx-auto mb-2 opacity-50" />
-                    <p className="text-sm">Select product and template to see preview</p>
+                    <p className="text-sm">
+                      Select product and template to see preview
+                    </p>
                   </div>
                 )}
               </div>
@@ -948,7 +1154,13 @@ export default function ProfessionalCustomizationWizard() {
               {customization.materialColor && (
                 <div className="flex justify-between">
                   <span>Material:</span>
-                  <span>{MATERIAL_COLORS.find(c => c.id === customization.materialColor)?.name}</span>
+                  <span>
+                    {
+                      MATERIAL_COLORS.find(
+                        (c) => c.id === customization.materialColor,
+                      )?.name
+                    }
+                  </span>
                 </div>
               )}
               {customization.designColors.length > 0 && (
@@ -972,13 +1184,15 @@ export default function ProfessionalCustomizationWizard() {
           <ChevronLeft className="h-4 w-4 mr-2" />
           Previous
         </Button>
-        
+
         <Button
           onClick={nextStep}
           disabled={currentStep === steps.length - 1 || !canProceed()}
         >
           {currentStep === steps.length - 1 ? "Complete" : "Next"}
-          {currentStep < steps.length - 1 && <ChevronRight className="h-4 w-4 ml-2" />}
+          {currentStep < steps.length - 1 && (
+            <ChevronRight className="h-4 w-4 ml-2" />
+          )}
         </Button>
       </div>
     </div>

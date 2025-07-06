@@ -1,15 +1,15 @@
 import { useTranslation } from "react-i18next";
 import { useLanguage } from "@/hooks/use-language";
 import { ModuleCard } from "@/components/ui/module-card";
-import { 
-  Database, 
-  Shield, 
-  FileText, 
+import {
+  Database,
+  Shield,
+  FileText,
   MessageSquare,
   Server,
   Settings,
   Lock,
-  HardDrive
+  HardDrive,
 } from "lucide-react";
 
 export default function SystemIndex() {
@@ -19,7 +19,8 @@ export default function SystemIndex() {
   const systemModules = [
     {
       title: "Quality Check Types",
-      description: "Define and manage quality check templates for different stages",
+      description:
+        "Define and manage quality check templates for different stages",
       icon: Settings,
       path: "/quality/check-types",
       color: "bg-gradient-to-br from-indigo-500 to-indigo-600",
@@ -58,13 +59,15 @@ export default function SystemIndex() {
       icon: Server,
       path: "/system/server",
       color: "bg-gradient-to-br from-orange-500 to-orange-600",
-    }
+    },
   ];
 
   return (
-    <div className={`min-h-full ${isRTL ? 'rtl' : 'ltr'}`}>
+    <div className={`min-h-full ${isRTL ? "rtl" : "ltr"}`}>
       {/* Header Section */}
-      <div className={`mb-12 text-center ${isRTL ? 'text-right' : 'text-left'}`}>
+      <div
+        className={`mb-12 text-center ${isRTL ? "text-right" : "text-left"}`}
+      >
         <div className="flex items-center justify-center mb-6">
           <div className="bg-gradient-to-br from-slate-800 to-slate-900 p-4 rounded-2xl shadow-lg">
             <Settings className="h-12 w-12 text-white" />
@@ -74,10 +77,11 @@ export default function SystemIndex() {
           System Management
         </h1>
         <p className="text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
-          Configure and maintain system settings, security, and administrative functions
+          Configure and maintain system settings, security, and administrative
+          functions
         </p>
       </div>
-      
+
       {/* Modules Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 lg:gap-8">
         {systemModules.map((module) => (
@@ -92,13 +96,15 @@ export default function SystemIndex() {
           />
         ))}
       </div>
-      
+
       {/* System Stats */}
       <div className="mt-16 grid grid-cols-1 md:grid-cols-4 gap-6">
         <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-6 border border-slate-200/50 text-center">
           <Lock className="h-8 w-8 text-red-500 mx-auto mb-3" />
           <h3 className="text-lg font-bold text-slate-800 mb-2">Security</h3>
-          <p className="text-slate-600 text-sm">Access control and permissions</p>
+          <p className="text-slate-600 text-sm">
+            Access control and permissions
+          </p>
         </div>
         <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-6 border border-slate-200/50 text-center">
           <HardDrive className="h-8 w-8 text-blue-500 mx-auto mb-3" />
@@ -107,13 +113,17 @@ export default function SystemIndex() {
         </div>
         <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-6 border border-slate-200/50 text-center">
           <MessageSquare className="h-8 w-8 text-green-500 mx-auto mb-3" />
-          <h3 className="text-lg font-bold text-slate-800 mb-2">Communication</h3>
+          <h3 className="text-lg font-bold text-slate-800 mb-2">
+            Communication
+          </h3>
           <p className="text-slate-600 text-sm">SMS and notification systems</p>
         </div>
         <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-6 border border-slate-200/50 text-center">
           <Server className="h-8 w-8 text-purple-500 mx-auto mb-3" />
           <h3 className="text-lg font-bold text-slate-800 mb-2">Performance</h3>
-          <p className="text-slate-600 text-sm">System monitoring and optimization</p>
+          <p className="text-slate-600 text-sm">
+            System monitoring and optimization
+          </p>
         </div>
       </div>
     </div>

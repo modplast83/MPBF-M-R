@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 
 /**
@@ -8,17 +8,17 @@ import { Button } from "@/components/ui/button";
 export const AnimatedButton = (props: React.ComponentProps<typeof Button>) => {
   const { children, onClick, className = "", ...rest } = props;
   const [isPulsing, setIsPulsing] = useState(false);
-  
+
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     setIsPulsing(true);
     if (onClick) {
       onClick(e);
     }
-    
+
     // Reset pulsing state after animation completes
     setTimeout(() => setIsPulsing(false), 300);
   };
-  
+
   return (
     <div className="relative inline-block">
       {isPulsing && (
@@ -29,11 +29,7 @@ export const AnimatedButton = (props: React.ComponentProps<typeof Button>) => {
           transition={{ duration: 0.3 }}
         />
       )}
-      <Button
-        className={className}
-        onClick={handleClick}
-        {...rest}
-      >
+      <Button className={className} onClick={handleClick} {...rest}>
         {children}
       </Button>
     </div>
@@ -45,7 +41,7 @@ export const AnimatedButton = (props: React.ComponentProps<typeof Button>) => {
  */
 export const SuccessCheck = ({ className = "" }: { className?: string }) => {
   return (
-    <motion.div 
+    <motion.div
       className={`inline-flex items-center justify-center ${className}`}
       initial={{ scale: 0 }}
       animate={{ scale: 1 }}
@@ -81,12 +77,12 @@ export const SuccessCheck = ({ className = "" }: { className?: string }) => {
 /**
  * FadeInContent - Simple fade-in animation for elements
  */
-export const FadeInContent = ({ 
-  children, 
-  delay = 0, 
+export const FadeInContent = ({
+  children,
+  delay = 0,
   duration = 0.3,
-  className = "" 
-}: { 
+  className = "",
+}: {
   children: React.ReactNode;
   delay?: number;
   duration?: number;
@@ -110,7 +106,7 @@ export const FadeInContent = ({
 export const HoverScale = ({
   children,
   className = "",
-  scale = 1.05
+  scale = 1.05,
 }: {
   children: React.ReactNode;
   className?: string;

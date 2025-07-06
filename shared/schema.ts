@@ -10,7 +10,7 @@ import {
   unique,
   varchar,
   jsonb,
-  index
+  index,
 } from "drizzle-orm/pg-core";
 import { sql, relations } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
@@ -32,7 +32,9 @@ export type Category = typeof categories.$inferSelect;
 // Items table
 export const items = pgTable("items", {
   id: text("id").primaryKey(), // ItemID
-  categoryId: text("category_id").notNull().references(() => categories.id), // CategoriesID
+  categoryId: text("category_id")
+    .notNull()
+    .references(() => categories.id), // CategoriesID
   name: text("name").notNull(), // Items Name
   fullName: text("full_name").notNull(), // Item Full Name
 });
@@ -86,7 +88,7 @@ export const users = pgTable("users", {
   phone: text("phone"),
   isActive: boolean("is_active").default(true),
   sectionId: text("section_id").references(() => sections.id), // UserSection
-  
+
   // Employee profile fields (moved from employee_profiles table)
   position: text("position"), // Job position
   hireDate: timestamp("hire_date"), // Hire date
@@ -95,15 +97,23 @@ export const users = pgTable("users", {
   emergencyContact: jsonb("emergency_contact"), // Emergency contact information
   bankDetails: jsonb("bank_details"), // Banking information
   allowances: jsonb("allowances"), // transport, housing, etc.
-  
+
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
 export const upsertUserSchema = createInsertSchema(users);
-export const insertUserSchema = createInsertSchema(users).omit({ id: true }).extend({
-  hireDate: z.union([z.date(), z.string().transform(str => str ? new Date(str) : null), z.null()]).optional()
-});
+export const insertUserSchema = createInsertSchema(users)
+  .omit({ id: true })
+  .extend({
+    hireDate: z
+      .union([
+        z.date(),
+        z.string().transform((str) => (str ? new Date(str) : null)),
+        z.null(),
+      ])
+      .optional(),
+  });
 export type UpsertUser = typeof users.$inferInsert;
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
@@ -123,53 +133,125 @@ export type InsertCustomer = z.infer<typeof insertCustomerSchema>;
 export type Customer = typeof customers.$inferSelect;
 
 // Customer Products table
-export const customerProducts = pgTable("customer_products", {
-  id: serial("id").primaryKey(), // CPID
-  customerId: text("customer_id").notNull().references(() => customers.id), // Customer ID
-  categoryId: text("category_id").notNull().references(() => categories.id), // CategoryID
-  itemId: text("item_id").notNull().references(() => items.id), // ItemID
-  sizeCaption: text("size_caption"), // Size Caption
-  width: doublePrecision("width"), // Width
-  leftF: doublePrecision("left_f"), // Left F
-  rightF: doublePrecision("right_f"), // Right F
-  thickness: doublePrecision("thickness"), // Thickness
-  thicknessOne: doublePrecision("thickness_one"), // Thickness One
-  printingCylinder: doublePrecision("printing_cylinder"), // Printing Cylinder (Inch)
-  lengthCm: doublePrecision("length_cm"), // Length (Cm)
-  cuttingLength: doublePrecision("cutting_length_cm"), // Cutting Length (CM)
-  rawMaterial: text("raw_material"), // Raw Material
-  masterBatchId: text("master_batch_id").references(() => masterBatches.id), // Master Batch ID
-  printed: text("printed"), // Printed
-  cuttingUnit: text("cutting_unit"), // Cutting Unit
-  unitWeight: doublePrecision("unit_weight_kg"), // Unit Weight (Kg)
-  unitQty: doublePrecision("unit_qty"), // Unit Qty
-  packageKg: doublePrecision("package_kg"), // Package Kg (auto-calculated)
-  packing: text("packing"), // Packing
-  punching: text("punching"), // Punching
-  cover: text("cover"), // Cover
-  volum: text("volum"), // Volum
-  knife: text("knife"), // Knife
-  notes: text("notes"), // Notes
-}, (table) => {
-  return {
-    customerProductUnique: unique().on(table.customerId, table.itemId),
-  };
-});
+export const customerProducts = pgTable(
+  "customer_products",
+  {
+    id: serial("id").primaryKey(), // CPID
+    customerId: text("customer_id")
+      .notNull()
+      .references(() => customers.id), // Customer ID
+    categoryId: text("category_id")
+      .notNull()
+      .references(() => categories.id), // CategoryID
+    itemId: text("item_id")
+      .notNull()
+      .references(() => items.id), // ItemID
+    sizeCaption: text("size_caption"), // Size Caption
+    width: doublePrecision("width"), // Width
+    leftF: doublePrecision("left_f"), // Left F
+    rightF: doublePrecision("right_f"), // Right F
+    thickness: doublePrecision("thickness"), // Thickness
+    thicknessOne: doublePrecision("thickness_one"), // Thickness One
+    printingCylinder: doublePrecision("printing_cylinder"), // Printing Cylinder (Inch)
+    lengthCm: doublePrecision("length_cm"), // Length (Cm)
+    cuttingLength: doublePrecision("cutting_length_cm"), // Cutting Length (CM)
+    rawMaterial: text("raw_material"), // Raw Material
+    masterBatchId: text("master_batch_id").references(() => masterBatches.id), // Master Batch ID
+    printed: text("printed"), // Printed
+    cuttingUnit: text("cutting_unit"), // Cutting Unit
+    unitWeight: doublePrecision("unit_weight_kg"), // Unit Weight (Kg)
+    unitQty: doublePrecision("unit_qty"), // Unit Qty
+    packageKg: doublePrecision("package_kg"), // Package Kg (auto-calculated)
+    packing: text("packing"), // Packing
+    punching: text("punching"), // Punching
+    cover: text("cover"), // Cover
+    volum: text("volum"), // Volum
+    knife: text("knife"), // Knife
+    notes: text("notes"), // Notes
+  },
+  (table) => {
+    return {
+      customerProductUnique: unique().on(table.customerId, table.itemId),
+    };
+  },
+);
 
-export const insertCustomerProductSchema = createInsertSchema(customerProducts).omit({ id: true }).extend({
-  width: z.union([z.number(), z.string()]).transform(val => val === "" || val === null || val === undefined ? null : Number(val)).nullable(),
-  leftF: z.union([z.number(), z.string()]).transform(val => val === "" || val === null || val === undefined ? null : Number(val)).nullable(),
-  rightF: z.union([z.number(), z.string()]).transform(val => val === "" || val === null || val === undefined ? null : Number(val)).nullable(),
-  thickness: z.union([z.number(), z.string()]).transform(val => val === "" || val === null || val === undefined ? null : Number(val)).nullable(),
-  thicknessOne: z.union([z.number(), z.string()]).transform(val => val === "" || val === null || val === undefined ? null : Number(val)).nullable(),
-  printingCylinder: z.union([z.number(), z.string()]).transform(val => val === "" || val === null || val === undefined ? null : Number(val)).nullable(),
-  lengthCm: z.union([z.number(), z.string()]).transform(val => val === "" || val === null || val === undefined ? null : Number(val)).nullable(),
-  cuttingLength: z.union([z.number(), z.string()]).transform(val => val === "" || val === null || val === undefined ? null : Number(val)).nullable(),
-  unitWeight: z.union([z.number(), z.string()]).transform(val => val === "" || val === null || val === undefined ? null : Number(val)).nullable(),
-  unitQty: z.union([z.number(), z.string()]).transform(val => val === "" || val === null || val === undefined ? null : Number(val)).nullable(),
-  packageKg: z.union([z.number(), z.string()]).transform(val => val === "" || val === null || val === undefined ? null : Number(val)).nullable(),
-  volum: z.union([z.number(), z.string()]).transform(val => val === "" || val === null || val === undefined ? null : Number(val)).nullable(),
-});
+export const insertCustomerProductSchema = createInsertSchema(customerProducts)
+  .omit({ id: true })
+  .extend({
+    width: z
+      .union([z.number(), z.string()])
+      .transform((val) =>
+        val === "" || val === null || val === undefined ? null : Number(val),
+      )
+      .nullable(),
+    leftF: z
+      .union([z.number(), z.string()])
+      .transform((val) =>
+        val === "" || val === null || val === undefined ? null : Number(val),
+      )
+      .nullable(),
+    rightF: z
+      .union([z.number(), z.string()])
+      .transform((val) =>
+        val === "" || val === null || val === undefined ? null : Number(val),
+      )
+      .nullable(),
+    thickness: z
+      .union([z.number(), z.string()])
+      .transform((val) =>
+        val === "" || val === null || val === undefined ? null : Number(val),
+      )
+      .nullable(),
+    thicknessOne: z
+      .union([z.number(), z.string()])
+      .transform((val) =>
+        val === "" || val === null || val === undefined ? null : Number(val),
+      )
+      .nullable(),
+    printingCylinder: z
+      .union([z.number(), z.string()])
+      .transform((val) =>
+        val === "" || val === null || val === undefined ? null : Number(val),
+      )
+      .nullable(),
+    lengthCm: z
+      .union([z.number(), z.string()])
+      .transform((val) =>
+        val === "" || val === null || val === undefined ? null : Number(val),
+      )
+      .nullable(),
+    cuttingLength: z
+      .union([z.number(), z.string()])
+      .transform((val) =>
+        val === "" || val === null || val === undefined ? null : Number(val),
+      )
+      .nullable(),
+    unitWeight: z
+      .union([z.number(), z.string()])
+      .transform((val) =>
+        val === "" || val === null || val === undefined ? null : Number(val),
+      )
+      .nullable(),
+    unitQty: z
+      .union([z.number(), z.string()])
+      .transform((val) =>
+        val === "" || val === null || val === undefined ? null : Number(val),
+      )
+      .nullable(),
+    packageKg: z
+      .union([z.number(), z.string()])
+      .transform((val) =>
+        val === "" || val === null || val === undefined ? null : Number(val),
+      )
+      .nullable(),
+    volum: z
+      .union([z.number(), z.string()])
+      .transform((val) =>
+        val === "" || val === null || val === undefined ? null : Number(val),
+      )
+      .nullable(),
+  });
 export type InsertCustomerProduct = z.infer<typeof insertCustomerProductSchema>;
 export type CustomerProduct = typeof customerProducts.$inferSelect;
 
@@ -177,42 +259,61 @@ export type CustomerProduct = typeof customerProducts.$inferSelect;
 export const orders = pgTable("orders", {
   id: serial("id").primaryKey(), // ID
   date: timestamp("date").defaultNow().notNull(), // Order Date
-  customerId: text("customer_id").notNull().references(() => customers.id), // Customer ID
+  customerId: text("customer_id")
+    .notNull()
+    .references(() => customers.id), // Customer ID
   note: text("note"), // Order Note
   status: text("status").notNull().default("pending"), // Status (pending, processing, completed)
   userId: text("user_id").references(() => users.id), // Created by
 });
 
-export const insertOrderSchema = createInsertSchema(orders).omit({ id: true, date: true, status: true, userId: true });
+export const insertOrderSchema = createInsertSchema(orders).omit({
+  id: true,
+  date: true,
+  status: true,
+  userId: true,
+});
 export type InsertOrder = z.infer<typeof insertOrderSchema>;
 export type Order = typeof orders.$inferSelect;
 
 // Job Orders table
-export const jobOrders = pgTable("job_orders", {
-  id: serial("id").primaryKey(), // ID
-  orderId: integer("order_id").notNull().references(() => orders.id), // Order ID
-  customerProductId: integer("customer_product_id").notNull().references(() => customerProducts.id), // Customer Product No
-  quantity: doublePrecision("quantity").notNull(), // Qty Kg
-  finishedQty: doublePrecision("finished_qty").default(0).notNull(), // Finished quantity (kg)
-  receivedQty: doublePrecision("received_qty").default(0).notNull(), // Received quantity (kg)
-  status: text("status").default("pending").notNull(), // Status (pending, in_progress, extrusion_completed, completed, cancelled, received, partially_received)
-  customerId: text("customer_id").references(() => customers.id), // Customer ID
-  receiveDate: timestamp("receive_date"), // Date when received in warehouse
-  receivedBy: text("received_by").references(() => users.id), // User who received the job order
-}, (table) => {
-  return {
-    jobOrderUnique: unique().on(table.orderId, table.customerProductId),
-  };
-});
+export const jobOrders = pgTable(
+  "job_orders",
+  {
+    id: serial("id").primaryKey(), // ID
+    orderId: integer("order_id")
+      .notNull()
+      .references(() => orders.id), // Order ID
+    customerProductId: integer("customer_product_id")
+      .notNull()
+      .references(() => customerProducts.id), // Customer Product No
+    quantity: doublePrecision("quantity").notNull(), // Qty Kg
+    finishedQty: doublePrecision("finished_qty").default(0).notNull(), // Finished quantity (kg)
+    receivedQty: doublePrecision("received_qty").default(0).notNull(), // Received quantity (kg)
+    status: text("status").default("pending").notNull(), // Status (pending, in_progress, extrusion_completed, completed, cancelled, received, partially_received)
+    customerId: text("customer_id").references(() => customers.id), // Customer ID
+    receiveDate: timestamp("receive_date"), // Date when received in warehouse
+    receivedBy: text("received_by").references(() => users.id), // User who received the job order
+  },
+  (table) => {
+    return {
+      jobOrderUnique: unique().on(table.orderId, table.customerProductId),
+    };
+  },
+);
 
-export const insertJobOrderSchema = createInsertSchema(jobOrders).omit({ id: true });
+export const insertJobOrderSchema = createInsertSchema(jobOrders).omit({
+  id: true,
+});
 export type InsertJobOrder = z.infer<typeof insertJobOrderSchema>;
 export type JobOrder = typeof jobOrders.$inferSelect;
 
 // Rolls table
 export const rolls = pgTable("rolls", {
   id: text("id").primaryKey(), // ID
-  jobOrderId: integer("job_order_id").notNull().references(() => jobOrders.id), // Job Order ID
+  jobOrderId: integer("job_order_id")
+    .notNull()
+    .references(() => jobOrders.id), // Job Order ID
   serialNumber: text("roll_serial").notNull(), // Roll Serial
   extrudingQty: doublePrecision("extruding_qty").default(0), // Extruding Qty
   printingQty: doublePrecision("printing_qty").default(0), // Printing Qty
@@ -233,9 +334,9 @@ export const insertRollSchema = createInsertSchema(rolls);
 
 // Create a custom schema for roll creation API that makes id and serialNumber optional
 // since they'll be auto-generated on the server
-export const createRollSchema = insertRollSchema.omit({ 
-  id: true, 
-  serialNumber: true 
+export const createRollSchema = insertRollSchema.omit({
+  id: true,
+  serialNumber: true,
 });
 
 export type InsertRoll = z.infer<typeof insertRollSchema>;
@@ -256,34 +357,42 @@ export const modules = pgTable("modules", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
-export const insertModuleSchema = createInsertSchema(modules).omit({ 
-  id: true, 
-  createdAt: true, 
-  updatedAt: true 
+export const insertModuleSchema = createInsertSchema(modules).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
 });
 export type InsertModule = z.infer<typeof insertModuleSchema>;
 export type Module = typeof modules.$inferSelect;
 
 // Section-based permissions table
-export const permissions = pgTable("permissions", {
-  id: serial("id").primaryKey(),
-  sectionId: text("section_id").notNull().references(() => sections.id),
-  moduleId: integer("module_id").notNull().references(() => modules.id),
-  canView: boolean("can_view").default(false),
-  canCreate: boolean("can_create").default(false),
-  canEdit: boolean("can_edit").default(false),
-  canDelete: boolean("can_delete").default(false),
-  isActive: boolean("is_active").default(true),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
-}, (table) => ({
-  uniqueIndex: unique().on(table.sectionId, table.moduleId),
-}));
+export const permissions = pgTable(
+  "permissions",
+  {
+    id: serial("id").primaryKey(),
+    sectionId: text("section_id")
+      .notNull()
+      .references(() => sections.id),
+    moduleId: integer("module_id")
+      .notNull()
+      .references(() => modules.id),
+    canView: boolean("can_view").default(false),
+    canCreate: boolean("can_create").default(false),
+    canEdit: boolean("can_edit").default(false),
+    canDelete: boolean("can_delete").default(false),
+    isActive: boolean("is_active").default(true),
+    createdAt: timestamp("created_at").defaultNow(),
+    updatedAt: timestamp("updated_at").defaultNow(),
+  },
+  (table) => ({
+    uniqueIndex: unique().on(table.sectionId, table.moduleId),
+  }),
+);
 
-export const insertPermissionSchema = createInsertSchema(permissions).omit({ 
-  id: true, 
-  createdAt: true, 
-  updatedAt: true 
+export const insertPermissionSchema = createInsertSchema(permissions).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
 });
 export type InsertPermission = z.infer<typeof insertPermissionSchema>;
 export type Permission = typeof permissions.$inferSelect;
@@ -314,24 +423,28 @@ export const rawMaterials = pgTable("raw_materials", {
   lastUpdated: timestamp("last_updated").defaultNow(),
 });
 
-export const insertRawMaterialSchema = createInsertSchema(rawMaterials).omit({ id: true, lastUpdated: true });
+export const insertRawMaterialSchema = createInsertSchema(rawMaterials).omit({
+  id: true,
+  lastUpdated: true,
+});
 export type InsertRawMaterial = z.infer<typeof insertRawMaterialSchema>;
 export type RawMaterial = typeof rawMaterials.$inferSelect;
-
-
-
-
 
 // Final Products table
 export const finalProducts = pgTable("final_products", {
   id: serial("id").primaryKey(),
-  jobOrderId: integer("job_order_id").notNull().references(() => jobOrders.id),
+  jobOrderId: integer("job_order_id")
+    .notNull()
+    .references(() => jobOrders.id),
   quantity: doublePrecision("quantity").notNull(),
   completedDate: timestamp("completed_date").defaultNow(),
   status: text("status").notNull().default("in-stock"),
 });
 
-export const insertFinalProductSchema = createInsertSchema(finalProducts).omit({ id: true, completedDate: true });
+export const insertFinalProductSchema = createInsertSchema(finalProducts).omit({
+  id: true,
+  completedDate: true,
+});
 export type InsertFinalProduct = z.infer<typeof insertFinalProductSchema>;
 export type FinalProduct = typeof finalProducts.$inferSelect;
 
@@ -346,14 +459,19 @@ export const qualityCheckTypes = pgTable("quality_check_types", {
   isActive: boolean("is_active").default(true),
 });
 
-export const insertQualityCheckTypeSchema = createInsertSchema(qualityCheckTypes);
-export type InsertQualityCheckType = z.infer<typeof insertQualityCheckTypeSchema>;
+export const insertQualityCheckTypeSchema =
+  createInsertSchema(qualityCheckTypes);
+export type InsertQualityCheckType = z.infer<
+  typeof insertQualityCheckTypeSchema
+>;
 export type QualityCheckType = typeof qualityCheckTypes.$inferSelect;
 
 // Quality Checks
 export const qualityChecks = pgTable("quality_checks", {
-  id: serial("id").primaryKey(), 
-  checkTypeId: text("check_type_id").notNull().references(() => qualityCheckTypes.id),
+  id: serial("id").primaryKey(),
+  checkTypeId: text("check_type_id")
+    .notNull()
+    .references(() => qualityCheckTypes.id),
   rollId: text("roll_id").references(() => rolls.id),
   jobOrderId: integer("job_order_id").references(() => jobOrders.id),
   performedBy: text("performed_by").references(() => users.id),
@@ -366,14 +484,19 @@ export const qualityChecks = pgTable("quality_checks", {
   imageUrls: text("image_urls").array(),
 });
 
-export const insertQualityCheckSchema = createInsertSchema(qualityChecks).omit({ id: true, timestamp: true });
+export const insertQualityCheckSchema = createInsertSchema(qualityChecks).omit({
+  id: true,
+  timestamp: true,
+});
 export type InsertQualityCheck = z.infer<typeof insertQualityCheckSchema>;
 export type QualityCheck = typeof qualityChecks.$inferSelect;
 
 // Corrective Actions
 export const correctiveActions = pgTable("corrective_actions", {
   id: serial("id").primaryKey(),
-  qualityCheckId: integer("quality_check_id").notNull().references(() => qualityChecks.id),
+  qualityCheckId: integer("quality_check_id")
+    .notNull()
+    .references(() => qualityChecks.id),
   createdAt: timestamp("created_at"),
   completedAt: timestamp("completed_at"),
   assignedTo: text("assigned_to").references(() => users.id),
@@ -382,11 +505,13 @@ export const correctiveActions = pgTable("corrective_actions", {
   status: text("status").notNull().default("open"), // open, in-progress, completed, verified
 });
 
-export const insertCorrectiveActionSchema = createInsertSchema(correctiveActions).omit({ id: true });
-export type InsertCorrectiveAction = z.infer<typeof insertCorrectiveActionSchema>;
+export const insertCorrectiveActionSchema = createInsertSchema(
+  correctiveActions,
+).omit({ id: true });
+export type InsertCorrectiveAction = z.infer<
+  typeof insertCorrectiveActionSchema
+>;
 export type CorrectiveAction = typeof correctiveActions.$inferSelect;
-
-
 
 // SMS Messages with Professional Notifications
 export const smsMessages = pgTable("sms_messages", {
@@ -414,14 +539,16 @@ export const smsMessages = pgTable("sms_messages", {
   metadata: jsonb("metadata"), // Additional data like order details, alert info, etc.
 });
 
-export const insertSmsMessageSchema = createInsertSchema(smsMessages).omit({ 
-  id: true, 
-  sentAt: true, 
-  lastRetryAt: true
-}).extend({
-  twilioMessageId: z.string().nullable().optional(),
-  deliveredAt: z.date().nullable().optional()
-});
+export const insertSmsMessageSchema = createInsertSchema(smsMessages)
+  .omit({
+    id: true,
+    sentAt: true,
+    lastRetryAt: true,
+  })
+  .extend({
+    twilioMessageId: z.string().nullable().optional(),
+    deliveredAt: z.date().nullable().optional(),
+  });
 export type InsertSmsMessage = z.infer<typeof insertSmsMessageSchema>;
 export type SmsMessage = typeof smsMessages.$inferSelect;
 
@@ -460,8 +587,12 @@ export const smsNotificationRules = pgTable("sms_notification_rules", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
-export const insertSmsNotificationRuleSchema = createInsertSchema(smsNotificationRules).omit({ id: true });
-export type InsertSmsNotificationRule = z.infer<typeof insertSmsNotificationRuleSchema>;
+export const insertSmsNotificationRuleSchema = createInsertSchema(
+  smsNotificationRules,
+).omit({ id: true });
+export type InsertSmsNotificationRule = z.infer<
+  typeof insertSmsNotificationRuleSchema
+>;
 export type SmsNotificationRule = typeof smsNotificationRules.$inferSelect;
 
 // Notification Center with Priority Management
@@ -489,12 +620,14 @@ export const notificationCenter = pgTable("notification_center", {
   metadata: jsonb("metadata"), // Additional context data
 });
 
-export const insertNotificationSchema = createInsertSchema(notificationCenter).omit({ 
+export const insertNotificationSchema = createInsertSchema(
+  notificationCenter,
+).omit({
   id: true,
   createdAt: true,
   updatedAt: true,
   readAt: true,
-  dismissedAt: true
+  dismissedAt: true,
 });
 export type InsertNotification = z.infer<typeof insertNotificationSchema>;
 export type Notification = typeof notificationCenter.$inferSelect;
@@ -502,7 +635,9 @@ export type Notification = typeof notificationCenter.$inferSelect;
 // Notification Preferences for Users
 export const notificationPreferences = pgTable("notification_preferences", {
   id: serial("id").primaryKey(),
-  userId: text("user_id").notNull().references(() => users.id),
+  userId: text("user_id")
+    .notNull()
+    .references(() => users.id),
   category: text("category").notNull(), // production, quality, maintenance, hr, system
   enabled: boolean("enabled").default(true),
   priority: text("priority").notNull().default("medium"), // minimum priority to receive
@@ -515,13 +650,18 @@ export const notificationPreferences = pgTable("notification_preferences", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
-export const insertNotificationPreferenceSchema = createInsertSchema(notificationPreferences).omit({ 
+export const insertNotificationPreferenceSchema = createInsertSchema(
+  notificationPreferences,
+).omit({
   id: true,
   createdAt: true,
-  updatedAt: true
+  updatedAt: true,
 });
-export type InsertNotificationPreference = z.infer<typeof insertNotificationPreferenceSchema>;
-export type NotificationPreference = typeof notificationPreferences.$inferSelect;
+export type InsertNotificationPreference = z.infer<
+  typeof insertNotificationPreferenceSchema
+>;
+export type NotificationPreference =
+  typeof notificationPreferences.$inferSelect;
 
 // Notification Templates for Auto-Generation
 export const notificationTemplates = pgTable("notification_templates", {
@@ -542,19 +682,25 @@ export const notificationTemplates = pgTable("notification_templates", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
-export const insertNotificationTemplateSchema = createInsertSchema(notificationTemplates).omit({ 
+export const insertNotificationTemplateSchema = createInsertSchema(
+  notificationTemplates,
+).omit({
   id: true,
   createdAt: true,
-  updatedAt: true
+  updatedAt: true,
 });
-export type InsertNotificationTemplate = z.infer<typeof insertNotificationTemplateSchema>;
+export type InsertNotificationTemplate = z.infer<
+  typeof insertNotificationTemplateSchema
+>;
 export type NotificationTemplate = typeof notificationTemplates.$inferSelect;
 
 // Mix Materials table
 export const mixMaterials = pgTable("mix_materials", {
   id: serial("id").primaryKey(),
   mixDate: timestamp("mix_date").defaultNow().notNull(),
-  mixPerson: text("mix_person").notNull().references(() => users.id),
+  mixPerson: text("mix_person")
+    .notNull()
+    .references(() => users.id),
   orderId: integer("order_id").references(() => orders.id),
   totalQuantity: doublePrecision("total_quantity").default(0),
   mixScrew: text("mix_screw"), // A or B for the screw type
@@ -562,21 +708,29 @@ export const mixMaterials = pgTable("mix_materials", {
 });
 
 // Mix Machines junction table
-export const mixMachines = pgTable("mix_machines", {
-  id: serial("id").primaryKey(),
-  mixId: integer("mix_id").notNull().references(() => mixMaterials.id, { onDelete: "cascade" }),
-  machineId: text("machine_id").notNull().references(() => machines.id),
-}, (table) => ({
-  uniqueIndex: unique().on(table.mixId, table.machineId),
-}));
+export const mixMachines = pgTable(
+  "mix_machines",
+  {
+    id: serial("id").primaryKey(),
+    mixId: integer("mix_id")
+      .notNull()
+      .references(() => mixMaterials.id, { onDelete: "cascade" }),
+    machineId: text("machine_id")
+      .notNull()
+      .references(() => machines.id),
+  },
+  (table) => ({
+    uniqueIndex: unique().on(table.mixId, table.machineId),
+  }),
+);
 
-export const insertMixMaterialSchema = createInsertSchema(mixMaterials).omit({ 
-  id: true, 
-  createdAt: true 
+export const insertMixMaterialSchema = createInsertSchema(mixMaterials).omit({
+  id: true,
+  createdAt: true,
 });
 
 export const insertMixMachineSchema = createInsertSchema(mixMachines).omit({
-  id: true
+  id: true,
 });
 
 export type InsertMixMaterial = z.infer<typeof insertMixMaterialSchema>;
@@ -587,15 +741,19 @@ export type MixMachine = typeof mixMachines.$inferSelect;
 // Mix Items table
 export const mixItems = pgTable("mix_items", {
   id: serial("id").primaryKey(),
-  mixId: integer("mix_id").notNull().references(() => mixMaterials.id, { onDelete: "cascade" }),
-  rawMaterialId: integer("raw_material_id").notNull().references(() => rawMaterials.id),
+  mixId: integer("mix_id")
+    .notNull()
+    .references(() => mixMaterials.id, { onDelete: "cascade" }),
+  rawMaterialId: integer("raw_material_id")
+    .notNull()
+    .references(() => rawMaterials.id),
   quantity: doublePrecision("quantity").notNull(),
   percentage: doublePrecision("percentage").default(0),
 });
 
-export const insertMixItemSchema = createInsertSchema(mixItems).omit({ 
+export const insertMixItemSchema = createInsertSchema(mixItems).omit({
   id: true,
-  percentage: true 
+  percentage: true,
 });
 export type InsertMixItem = z.infer<typeof insertMixItemSchema>;
 export type MixItem = typeof mixItems.$inferSelect;
@@ -604,13 +762,17 @@ export type MixItem = typeof mixItems.$inferSelect;
 export const materialInputs = pgTable("material_inputs", {
   id: serial("id").primaryKey(),
   date: timestamp("date").defaultNow().notNull(),
-  userId: text("user_id").notNull().references(() => users.id), // User who performed the input
+  userId: text("user_id")
+    .notNull()
+    .references(() => users.id), // User who performed the input
   notes: text("notes"),
 });
 
-export const insertMaterialInputSchema = createInsertSchema(materialInputs).omit({ 
-  id: true, 
-  date: true 
+export const insertMaterialInputSchema = createInsertSchema(
+  materialInputs,
+).omit({
+  id: true,
+  date: true,
 });
 export type InsertMaterialInput = z.infer<typeof insertMaterialInputSchema>;
 export type MaterialInput = typeof materialInputs.$inferSelect;
@@ -618,15 +780,23 @@ export type MaterialInput = typeof materialInputs.$inferSelect;
 // Material Input Items table
 export const materialInputItems = pgTable("material_input_items", {
   id: serial("id").primaryKey(),
-  inputId: integer("input_id").notNull().references(() => materialInputs.id, { onDelete: "cascade" }),
-  rawMaterialId: integer("raw_material_id").notNull().references(() => rawMaterials.id),
+  inputId: integer("input_id")
+    .notNull()
+    .references(() => materialInputs.id, { onDelete: "cascade" }),
+  rawMaterialId: integer("raw_material_id")
+    .notNull()
+    .references(() => rawMaterials.id),
   quantity: doublePrecision("quantity").notNull(),
 });
 
-export const insertMaterialInputItemSchema = createInsertSchema(materialInputItems).omit({ 
-  id: true
+export const insertMaterialInputItemSchema = createInsertSchema(
+  materialInputItems,
+).omit({
+  id: true,
 });
-export type InsertMaterialInputItem = z.infer<typeof insertMaterialInputItemSchema>;
+export type InsertMaterialInputItem = z.infer<
+  typeof insertMaterialInputItemSchema
+>;
 export type MaterialInputItem = typeof materialInputItems.$inferSelect;
 
 // Cliché (Plate) Pricing Parameters
@@ -640,8 +810,12 @@ export const platePricingParameters = pgTable("plate_pricing_parameters", {
   lastUpdated: timestamp("last_updated").defaultNow(),
 });
 
-export const insertPlatePricingParameterSchema = createInsertSchema(platePricingParameters).omit({ id: true, lastUpdated: true });
-export type InsertPlatePricingParameter = z.infer<typeof insertPlatePricingParameterSchema>;
+export const insertPlatePricingParameterSchema = createInsertSchema(
+  platePricingParameters,
+).omit({ id: true, lastUpdated: true });
+export type InsertPlatePricingParameter = z.infer<
+  typeof insertPlatePricingParameterSchema
+>;
 export type PlatePricingParameter = typeof platePricingParameters.$inferSelect;
 
 // Plate Calculations
@@ -664,8 +838,12 @@ export const plateCalculations = pgTable("plate_calculations", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
-export const insertPlateCalculationSchema = createInsertSchema(plateCalculations).omit({ id: true, area: true, calculatedPrice: true, createdAt: true });
-export type InsertPlateCalculation = z.infer<typeof insertPlateCalculationSchema>;
+export const insertPlateCalculationSchema = createInsertSchema(
+  plateCalculations,
+).omit({ id: true, area: true, calculatedPrice: true, createdAt: true });
+export type InsertPlateCalculation = z.infer<
+  typeof insertPlateCalculationSchema
+>;
 export type PlateCalculation = typeof plateCalculations.$inferSelect;
 
 // Cliché Calculation Request Schema (for the frontend)
@@ -673,19 +851,27 @@ export const plateCalculationRequestSchema = z.object({
   customerId: z.string().optional(),
   width: z.number().positive("Width must be positive"),
   height: z.number().positive("Height must be positive"),
-  colors: z.number().int().positive("Number of colors must be positive").default(1),
+  colors: z
+    .number()
+    .int()
+    .positive("Number of colors must be positive")
+    .default(1),
   plateType: z.string(),
   thickness: z.number().optional(),
   customerDiscount: z.number().optional(),
   notes: z.string().optional(),
 });
 
-export type PlateCalculationRequest = z.infer<typeof plateCalculationRequestSchema>;
+export type PlateCalculationRequest = z.infer<
+  typeof plateCalculationRequestSchema
+>;
 
 // IoT Integration Module - Machine Sensors
 export const machineSensors = pgTable("machine_sensors", {
   id: text("id").primaryKey(),
-  machineId: text("machine_id").notNull().references(() => machines.id),
+  machineId: text("machine_id")
+    .notNull()
+    .references(() => machines.id),
   sensorType: text("sensor_type").notNull(), // temperature, pressure, speed, vibration, energy, status
   name: text("name").notNull(),
   unit: text("unit"), // °C, bar, rpm, Hz, kW, boolean
@@ -705,21 +891,28 @@ export type MachineSensor = typeof machineSensors.$inferSelect;
 // IoT Sensor Data
 export const sensorData = pgTable("sensor_data", {
   id: serial("id").primaryKey(),
-  sensorId: text("sensor_id").notNull().references(() => machineSensors.id),
+  sensorId: text("sensor_id")
+    .notNull()
+    .references(() => machineSensors.id),
   value: doublePrecision("value").notNull(),
   timestamp: timestamp("timestamp").defaultNow().notNull(),
   status: text("status").notNull().default("normal"), // normal, warning, critical
   metadata: jsonb("metadata"), // Additional sensor-specific data
 });
 
-export const insertSensorDataSchema = createInsertSchema(sensorData).omit({ id: true, timestamp: true });
+export const insertSensorDataSchema = createInsertSchema(sensorData).omit({
+  id: true,
+  timestamp: true,
+});
 export type InsertSensorData = z.infer<typeof insertSensorDataSchema>;
 export type SensorData = typeof sensorData.$inferSelect;
 
 // IoT Alerts
 export const iotAlerts = pgTable("iot_alerts", {
   id: serial("id").primaryKey(),
-  sensorId: text("sensor_id").notNull().references(() => machineSensors.id),
+  sensorId: text("sensor_id")
+    .notNull()
+    .references(() => machineSensors.id),
   alertType: text("alert_type").notNull(), // threshold_exceeded, sensor_offline, anomaly_detected
   severity: text("severity").notNull(), // warning, critical, emergency
   message: text("message").notNull(),
@@ -733,17 +926,14 @@ export const iotAlerts = pgTable("iot_alerts", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
-export const insertIotAlertSchema = createInsertSchema(iotAlerts).omit({ id: true, createdAt: true });
+export const insertIotAlertSchema = createInsertSchema(iotAlerts).omit({
+  id: true,
+  createdAt: true,
+});
 export type InsertIotAlert = z.infer<typeof insertIotAlertSchema>;
 export type IotAlert = typeof iotAlerts.$inferSelect;
 
-
-
-
-
 // HR Module Tables
-
-
 
 // Employee profile data is now part of the users table (removed separate employee_profiles table)
 
@@ -755,21 +945,28 @@ export const geofences = pgTable("geofences", {
   centerLongitude: doublePrecision("center_longitude").notNull(),
   radius: doublePrecision("radius").notNull(), // in meters
   isActive: boolean("is_active").default(true),
-  sectionIds: text("section_ids").array().default(sql`'{}'`), // which sections this geofence applies to
+  sectionIds: text("section_ids")
+    .array()
+    .default(sql`'{}'`), // which sections this geofence applies to
   geofenceType: text("geofence_type").default("factory"),
   description: text("description"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
-export const insertGeofenceSchema = createInsertSchema(geofences).omit({ id: true, createdAt: true });
+export const insertGeofenceSchema = createInsertSchema(geofences).omit({
+  id: true,
+  createdAt: true,
+});
 export type InsertGeofence = z.infer<typeof insertGeofenceSchema>;
 export type Geofence = typeof geofences.$inferSelect;
 
 // Time Attendance with enhanced tracking
 export const timeAttendance = pgTable("time_attendance", {
   id: serial("id").primaryKey(),
-  userId: text("user_id").notNull().references(() => users.id),
+  userId: text("user_id")
+    .notNull()
+    .references(() => users.id),
   date: timestamp("date").notNull(),
   checkInTime: timestamp("check_in_time"),
   checkOutTime: timestamp("check_out_time"),
@@ -793,14 +990,18 @@ export const timeAttendance = pgTable("time_attendance", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
-export const insertTimeAttendanceSchema = createInsertSchema(timeAttendance).omit({ id: true, createdAt: true });
+export const insertTimeAttendanceSchema = createInsertSchema(
+  timeAttendance,
+).omit({ id: true, createdAt: true });
 export type InsertTimeAttendance = z.infer<typeof insertTimeAttendanceSchema>;
 export type TimeAttendance = typeof timeAttendance.$inferSelect;
 
 // Leave Management
 export const leaveRequests = pgTable("leave_requests", {
   id: serial("id").primaryKey(),
-  userId: text("user_id").notNull().references(() => users.id),
+  userId: text("user_id")
+    .notNull()
+    .references(() => users.id),
   leaveType: text("leave_type").notNull(), // sick, vacation, personal, emergency, maternity, paternity
   startDate: timestamp("start_date").notNull(),
   endDate: timestamp("end_date").notNull(),
@@ -815,14 +1016,20 @@ export const leaveRequests = pgTable("leave_requests", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
-export const insertLeaveRequestSchema = createInsertSchema(leaveRequests).omit({ id: true, createdAt: true, requestedAt: true });
+export const insertLeaveRequestSchema = createInsertSchema(leaveRequests).omit({
+  id: true,
+  createdAt: true,
+  requestedAt: true,
+});
 export type InsertLeaveRequest = z.infer<typeof insertLeaveRequestSchema>;
 export type LeaveRequest = typeof leaveRequests.$inferSelect;
 
 // Overtime Requests
 export const overtimeRequests = pgTable("overtime_requests", {
   id: serial("id").primaryKey(),
-  userId: text("user_id").notNull().references(() => users.id),
+  userId: text("user_id")
+    .notNull()
+    .references(() => users.id),
   date: timestamp("date").notNull(),
   requestedHours: doublePrecision("requested_hours").notNull(),
   reason: text("reason").notNull(),
@@ -836,14 +1043,18 @@ export const overtimeRequests = pgTable("overtime_requests", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
-export const insertOvertimeRequestSchema = createInsertSchema(overtimeRequests).omit({ id: true, createdAt: true, requestedAt: true });
+export const insertOvertimeRequestSchema = createInsertSchema(
+  overtimeRequests,
+).omit({ id: true, createdAt: true, requestedAt: true });
 export type InsertOvertimeRequest = z.infer<typeof insertOvertimeRequestSchema>;
 export type OvertimeRequest = typeof overtimeRequests.$inferSelect;
 
 // Payroll Records
 export const payrollRecords = pgTable("payroll_records", {
   id: serial("id").primaryKey(),
-  userId: text("user_id").notNull().references(() => users.id),
+  userId: text("user_id")
+    .notNull()
+    .references(() => users.id),
   payPeriodStart: timestamp("pay_period_start").notNull(),
   payPeriodEnd: timestamp("pay_period_end").notNull(),
   baseSalary: doublePrecision("base_salary").notNull(),
@@ -863,15 +1074,21 @@ export const payrollRecords = pgTable("payroll_records", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
-export const insertPayrollRecordSchema = createInsertSchema(payrollRecords).omit({ id: true, createdAt: true });
+export const insertPayrollRecordSchema = createInsertSchema(
+  payrollRecords,
+).omit({ id: true, createdAt: true });
 export type InsertPayrollRecord = z.infer<typeof insertPayrollRecordSchema>;
 export type PayrollRecord = typeof payrollRecords.$inferSelect;
 
 // Employee Performance Reviews
 export const performanceReviews = pgTable("performance_reviews", {
   id: serial("id").primaryKey(),
-  userId: text("user_id").notNull().references(() => users.id),
-  reviewerId: text("reviewer_id").notNull().references(() => users.id),
+  userId: text("user_id")
+    .notNull()
+    .references(() => users.id),
+  reviewerId: text("reviewer_id")
+    .notNull()
+    .references(() => users.id),
   reviewPeriodStart: timestamp("review_period_start").notNull(),
   reviewPeriodEnd: timestamp("review_period_end").notNull(),
   attendanceScore: doublePrecision("attendance_score").default(0),
@@ -887,31 +1104,43 @@ export const performanceReviews = pgTable("performance_reviews", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
-export const insertPerformanceReviewSchema = createInsertSchema(performanceReviews).omit({ id: true, createdAt: true });
-export type InsertPerformanceReview = z.infer<typeof insertPerformanceReviewSchema>;
+export const insertPerformanceReviewSchema = createInsertSchema(
+  performanceReviews,
+).omit({ id: true, createdAt: true });
+export type InsertPerformanceReview = z.infer<
+  typeof insertPerformanceReviewSchema
+>;
 export type PerformanceReview = typeof performanceReviews.$inferSelect;
 
 // Employee of the Month
-export const employeeOfMonth = pgTable("employee_of_month", {
-  id: serial("id").primaryKey(),
-  userId: text("user_id").notNull().references(() => users.id),
-  month: integer("month").notNull(), // 1-12
-  year: integer("year").notNull(),
-  obligationPoints: integer("obligation_points").notNull().default(0),
-  qualityScore: doublePrecision("quality_score").default(0),
-  attendanceScore: doublePrecision("attendance_score").default(0),
-  productivityScore: doublePrecision("productivity_score").default(0),
-  totalScore: doublePrecision("total_score").default(0),
-  rank: integer("rank"),
-  reward: text("reward"),
-  rewardAmount: doublePrecision("reward_amount"),
-  notes: text("notes"),
-  createdAt: timestamp("created_at").defaultNow(),
-}, (table) => ({
-  uniqueUserMonth: unique().on(table.userId, table.month, table.year),
-}));
+export const employeeOfMonth = pgTable(
+  "employee_of_month",
+  {
+    id: serial("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id),
+    month: integer("month").notNull(), // 1-12
+    year: integer("year").notNull(),
+    obligationPoints: integer("obligation_points").notNull().default(0),
+    qualityScore: doublePrecision("quality_score").default(0),
+    attendanceScore: doublePrecision("attendance_score").default(0),
+    productivityScore: doublePrecision("productivity_score").default(0),
+    totalScore: doublePrecision("total_score").default(0),
+    rank: integer("rank"),
+    reward: text("reward"),
+    rewardAmount: doublePrecision("reward_amount"),
+    notes: text("notes"),
+    createdAt: timestamp("created_at").defaultNow(),
+  },
+  (table) => ({
+    uniqueUserMonth: unique().on(table.userId, table.month, table.year),
+  }),
+);
 
-export const insertEmployeeOfMonthSchema = createInsertSchema(employeeOfMonth).omit({ id: true, createdAt: true });
+export const insertEmployeeOfMonthSchema = createInsertSchema(
+  employeeOfMonth,
+).omit({ id: true, createdAt: true });
 export type InsertEmployeeOfMonth = z.infer<typeof insertEmployeeOfMonthSchema>;
 export type EmployeeOfMonth = typeof employeeOfMonth.$inferSelect;
 
@@ -919,46 +1148,54 @@ export type EmployeeOfMonth = typeof employeeOfMonth.$inferSelect;
 export const hrViolations = pgTable("hr_violations", {
   id: serial("id").primaryKey(),
   violationNumber: text("violation_number").notNull().unique(), // Auto-generated: VIO-YYYY-NNNN
-  userId: text("user_id").notNull().references(() => users.id), // Employee involved
-  reportedBy: text("reported_by").notNull().references(() => users.id), // Who reported it
-  
+  userId: text("user_id")
+    .notNull()
+    .references(() => users.id), // Employee involved
+  reportedBy: text("reported_by")
+    .notNull()
+    .references(() => users.id), // Who reported it
+
   // Comprehensive violation types
   violationType: text("violation_type").notNull(), // "attendance", "production", "conduct", "safety", "policy", "damage"
   violationSubtype: text("violation_subtype").notNull(), // Specific subtypes based on main type
-  
+
   severity: text("severity").notNull(), // "minor", "major", "critical"
   title: text("title").notNull(),
   description: text("description").notNull(),
-  
+
   // Repeat offense tracking
   previousViolationCount: integer("previous_violation_count").default(0),
   isRepeatOffense: boolean("is_repeat_offense").default(false),
-  relatedViolationIds: text("related_violation_ids").array().default(sql`'{}'`),
-  
+  relatedViolationIds: text("related_violation_ids")
+    .array()
+    .default(sql`'{}'`),
+
   // Action taken details
   actionTaken: text("action_taken").notNull(), // "warning", "written_warning", "suspension", "termination", "training", "counseling"
   actionDetails: text("action_details"),
   disciplinaryPoints: integer("disciplinary_points").default(0),
-  
+
   // Financial impact (for damage violations)
   estimatedCost: doublePrecision("estimated_cost").default(0),
   actualCost: doublePrecision("actual_cost").default(0),
   costRecovered: boolean("cost_recovered").default(false),
-  
+
   // Status and resolution
   status: text("status").notNull().default("open"), // "open", "investigating", "resolved", "appealed", "dismissed"
   resolutionDate: timestamp("resolution_date"),
   resolutionNotes: text("resolution_notes"),
-  
+
   // Evidence and documentation
   evidenceFiles: jsonb("evidence_files"), // File attachments
-  witnessIds: text("witness_ids").array().default(sql`'{}'`), // Other employees who witnessed
-  
+  witnessIds: text("witness_ids")
+    .array()
+    .default(sql`'{}'`), // Other employees who witnessed
+
   // Follow-up tracking
   followUpRequired: boolean("follow_up_required").default(false),
   followUpDate: timestamp("follow_up_date"),
   followUpNotes: text("follow_up_notes"),
-  
+
   // Timestamps
   incidentDate: timestamp("incident_date").notNull(),
   reportDate: timestamp("report_date").defaultNow(),
@@ -966,13 +1203,13 @@ export const hrViolations = pgTable("hr_violations", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
-export const insertHrViolationSchema = createInsertSchema(hrViolations).omit({ 
-  id: true, 
-  violationNumber: true, 
+export const insertHrViolationSchema = createInsertSchema(hrViolations).omit({
+  id: true,
+  violationNumber: true,
   previousViolationCount: true,
   isRepeatOffense: true,
-  createdAt: true, 
-  updatedAt: true 
+  createdAt: true,
+  updatedAt: true,
 });
 export type InsertHrViolation = z.infer<typeof insertHrViolationSchema>;
 export type HrViolation = typeof hrViolations.$inferSelect;
@@ -980,7 +1217,9 @@ export type HrViolation = typeof hrViolations.$inferSelect;
 // HR Complaints
 export const hrComplaints = pgTable("hr_complaints", {
   id: serial("id").primaryKey(),
-  complainantId: text("complainant_id").notNull().references(() => users.id), // Who filed the complaint
+  complainantId: text("complainant_id")
+    .notNull()
+    .references(() => users.id), // Who filed the complaint
   againstUserId: text("against_user_id").references(() => users.id), // Who the complaint is against (can be null for general complaints)
   complaintType: text("complaint_type").notNull(), // "harassment", "discrimination", "work_environment", "management", "safety", "other"
   priority: text("priority").notNull().default("medium"), // "low", "medium", "high", "urgent"
@@ -995,7 +1234,11 @@ export const hrComplaints = pgTable("hr_complaints", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
-export const insertHrComplaintSchema = createInsertSchema(hrComplaints).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertHrComplaintSchema = createInsertSchema(hrComplaints).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
 export type InsertHrComplaint = z.infer<typeof insertHrComplaintSchema>;
 export type HrComplaint = typeof hrComplaints.$inferSelect;
 
@@ -1013,14 +1256,24 @@ export const trainings = pgTable("trainings", {
   category: text("category"), // Training category
   priority: text("priority").default("medium"), // Priority level
   certificationRequired: boolean("certification_required").default(false),
-  qualityCheckTypes: text("quality_check_types").array().default(sql`'{}'`), // Related quality check types
-  equipmentIds: text("equipment_ids").array().default(sql`'{}'`), // Related equipment
-  prerequisites: text("prerequisites").array().default(sql`'{}'`), // Prerequisites
-  learningObjectives: text("learning_objectives").array().default(sql`'{}'`), // Learning objectives
+  qualityCheckTypes: text("quality_check_types")
+    .array()
+    .default(sql`'{}'`), // Related quality check types
+  equipmentIds: text("equipment_ids")
+    .array()
+    .default(sql`'{}'`), // Related equipment
+  prerequisites: text("prerequisites")
+    .array()
+    .default(sql`'{}'`), // Prerequisites
+  learningObjectives: text("learning_objectives")
+    .array()
+    .default(sql`'{}'`), // Learning objectives
   type: text("type").default("general"), // "general" or "quality"
   // General Training fields
   trainingCategory: text("training_category"), // "Extrusion", "Printing", "Cutting", "Maintenance", "Warehouse", "Safety"
-  trainingFields: text("training_fields").array().default(sql`'{}'`), // Array of specific training fields
+  trainingFields: text("training_fields")
+    .array()
+    .default(sql`'{}'`), // Array of specific training fields
   notes: text("notes"), // Training notes
   // Legacy fields for backward compatibility
   date: timestamp("date"),
@@ -1035,16 +1288,24 @@ export const trainings = pgTable("trainings", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
-export const insertTrainingSchema = createInsertSchema(trainings).omit({ id: true, createdAt: true, updatedAt: true }).extend({
-  date: z.union([z.string(), z.date()]).transform((val) => typeof val === 'string' ? new Date(val) : val).optional(),
-  scheduledDate: z.union([z.string(), z.date()]).transform((val) => typeof val === 'string' ? new Date(val) : val).optional(),
-  traineeId: z.string().optional(),
-  trainingSection: z.string().optional(),
-  trainingCategory: z.string().optional(),
-  trainingFields: z.array(z.string()).optional(),
-  numberOfDays: z.number().optional(),
-  supervisorId: z.string().optional(),
-});
+export const insertTrainingSchema = createInsertSchema(trainings)
+  .omit({ id: true, createdAt: true, updatedAt: true })
+  .extend({
+    date: z
+      .union([z.string(), z.date()])
+      .transform((val) => (typeof val === "string" ? new Date(val) : val))
+      .optional(),
+    scheduledDate: z
+      .union([z.string(), z.date()])
+      .transform((val) => (typeof val === "string" ? new Date(val) : val))
+      .optional(),
+    traineeId: z.string().optional(),
+    trainingSection: z.string().optional(),
+    trainingCategory: z.string().optional(),
+    trainingFields: z.array(z.string()).optional(),
+    numberOfDays: z.number().optional(),
+    supervisorId: z.string().optional(),
+  });
 export type InsertTraining = z.infer<typeof insertTrainingSchema>;
 export type Training = typeof trainings.$inferSelect;
 
@@ -1057,50 +1318,77 @@ export const trainingPoints = pgTable("training_points", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
-export const insertTrainingPointSchema = createInsertSchema(trainingPoints).omit({ id: true, createdAt: true });
+export const insertTrainingPointSchema = createInsertSchema(
+  trainingPoints,
+).omit({ id: true, createdAt: true });
 export type InsertTrainingPoint = z.infer<typeof insertTrainingPointSchema>;
 export type TrainingPoint = typeof trainingPoints.$inferSelect;
 
 // Training Field Evaluations (for general training system)
-export const trainingFieldEvaluations = pgTable("training_field_evaluations", {
-  id: serial("id").primaryKey(),
-  trainingId: integer("training_id").notNull().references(() => trainings.id, { onDelete: "cascade" }),
-  trainingField: text("training_field").notNull(), // Specific training field being evaluated
-  status: text("status").notNull(), // "Pass", "Not Pass", "Not Evaluated"
-  notes: text("notes"),
-  evaluatedAt: timestamp("evaluated_at"),
-  evaluatedBy: text("evaluated_by").references(() => users.id),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-}, (table) => ({
-  uniqueTrainingField: unique().on(table.trainingId, table.trainingField),
-}));
+export const trainingFieldEvaluations = pgTable(
+  "training_field_evaluations",
+  {
+    id: serial("id").primaryKey(),
+    trainingId: integer("training_id")
+      .notNull()
+      .references(() => trainings.id, { onDelete: "cascade" }),
+    trainingField: text("training_field").notNull(), // Specific training field being evaluated
+    status: text("status").notNull(), // "Pass", "Not Pass", "Not Evaluated"
+    notes: text("notes"),
+    evaluatedAt: timestamp("evaluated_at"),
+    evaluatedBy: text("evaluated_by").references(() => users.id),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => ({
+    uniqueTrainingField: unique().on(table.trainingId, table.trainingField),
+  }),
+);
 
-export const insertTrainingFieldEvaluationSchema = createInsertSchema(trainingFieldEvaluations).omit({ id: true, createdAt: true });
-export type InsertTrainingFieldEvaluation = z.infer<typeof insertTrainingFieldEvaluationSchema>;
-export type TrainingFieldEvaluation = typeof trainingFieldEvaluations.$inferSelect;
+export const insertTrainingFieldEvaluationSchema = createInsertSchema(
+  trainingFieldEvaluations,
+).omit({ id: true, createdAt: true });
+export type InsertTrainingFieldEvaluation = z.infer<
+  typeof insertTrainingFieldEvaluationSchema
+>;
+export type TrainingFieldEvaluation =
+  typeof trainingFieldEvaluations.$inferSelect;
 
 // Training Evaluations (linking trainings to training points with evaluations) - Legacy support
-export const trainingEvaluations = pgTable("training_evaluations", {
-  id: serial("id").primaryKey(),
-  trainingId: integer("training_id").notNull().references(() => trainings.id, { onDelete: "cascade" }),
-  trainingPointId: integer("training_point_id").notNull().references(() => trainingPoints.id),
-  status: text("status").notNull(), // "pass", "not_pass", "pending"
-  notes: text("notes"),
-  evaluatedAt: timestamp("evaluated_at"),
-  evaluatedBy: text("evaluated_by").references(() => users.id),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-}, (table) => ({
-  uniqueTrainingPoint: unique().on(table.trainingId, table.trainingPointId),
-}));
+export const trainingEvaluations = pgTable(
+  "training_evaluations",
+  {
+    id: serial("id").primaryKey(),
+    trainingId: integer("training_id")
+      .notNull()
+      .references(() => trainings.id, { onDelete: "cascade" }),
+    trainingPointId: integer("training_point_id")
+      .notNull()
+      .references(() => trainingPoints.id),
+    status: text("status").notNull(), // "pass", "not_pass", "pending"
+    notes: text("notes"),
+    evaluatedAt: timestamp("evaluated_at"),
+    evaluatedBy: text("evaluated_by").references(() => users.id),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => ({
+    uniqueTrainingPoint: unique().on(table.trainingId, table.trainingPointId),
+  }),
+);
 
-export const insertTrainingEvaluationSchema = createInsertSchema(trainingEvaluations).omit({ id: true, createdAt: true });
-export type InsertTrainingEvaluation = z.infer<typeof insertTrainingEvaluationSchema>;
+export const insertTrainingEvaluationSchema = createInsertSchema(
+  trainingEvaluations,
+).omit({ id: true, createdAt: true });
+export type InsertTrainingEvaluation = z.infer<
+  typeof insertTrainingEvaluationSchema
+>;
 export type TrainingEvaluation = typeof trainingEvaluations.$inferSelect;
 
 // Training Certificates
 export const trainingCertificates = pgTable("training_certificates", {
   id: serial("id").primaryKey(),
-  trainingId: integer("training_id").notNull().references(() => trainings.id, { onDelete: "cascade" }),
+  trainingId: integer("training_id")
+    .notNull()
+    .references(() => trainings.id, { onDelete: "cascade" }),
   certificateNumber: text("certificate_number").notNull().unique(),
   templateId: text("template_id").notNull().default("default"),
   customDesign: jsonb("custom_design"), // Stores design configuration
@@ -1108,20 +1396,26 @@ export const trainingCertificates = pgTable("training_certificates", {
   validUntil: timestamp("valid_until"), // Optional expiration date
   issuerName: text("issuer_name").notNull(),
   issuerTitle: text("issuer_title").notNull(),
-  companyName: text("company_name").notNull().default("Production Management Factory"),
+  companyName: text("company_name")
+    .notNull()
+    .default("Production Management Factory"),
   logoUrl: text("logo_url"), // Optional company logo
   status: text("status").notNull().default("active"), // "active", "revoked", "expired"
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
-export const insertCertificateSchema = createInsertSchema(trainingCertificates).omit({ id: true, createdAt: true });
+export const insertCertificateSchema = createInsertSchema(
+  trainingCertificates,
+).omit({ id: true, createdAt: true });
 export type InsertCertificate = z.infer<typeof insertCertificateSchema>;
 export type TrainingCertificate = typeof trainingCertificates.$inferSelect;
 
 // Production Bottleneck Detection System
 export const productionMetrics = pgTable("production_metrics", {
   id: serial("id").primaryKey(),
-  sectionId: text("section_id").notNull().references(() => sections.id),
+  sectionId: text("section_id")
+    .notNull()
+    .references(() => sections.id),
   machineId: text("machine_id").references(() => machines.id),
   jobOrderId: integer("job_order_id").references(() => jobOrders.id),
   stage: text("stage").notNull(), // "extruding", "printing", "cutting", "mixing"
@@ -1135,8 +1429,12 @@ export const productionMetrics = pgTable("production_metrics", {
   notes: text("notes"),
 });
 
-export const insertProductionMetricsSchema = createInsertSchema(productionMetrics).omit({ id: true, timestamp: true });
-export type InsertProductionMetrics = z.infer<typeof insertProductionMetricsSchema>;
+export const insertProductionMetricsSchema = createInsertSchema(
+  productionMetrics,
+).omit({ id: true, timestamp: true });
+export type InsertProductionMetrics = z.infer<
+  typeof insertProductionMetricsSchema
+>;
 export type ProductionMetrics = typeof productionMetrics.$inferSelect;
 
 // Bottleneck Alerts
@@ -1144,7 +1442,9 @@ export const bottleneckAlerts = pgTable("bottleneck_alerts", {
   id: serial("id").primaryKey(),
   alertType: text("alert_type").notNull(), // "efficiency_drop", "downtime_exceeded", "rate_below_target", "queue_buildup"
   severity: text("severity").notNull().default("medium"), // "low", "medium", "high", "critical"
-  sectionId: text("section_id").notNull().references(() => sections.id),
+  sectionId: text("section_id")
+    .notNull()
+    .references(() => sections.id),
   machineId: text("machine_id").references(() => machines.id),
   title: text("title").notNull(),
   description: text("description").notNull(),
@@ -1160,14 +1460,18 @@ export const bottleneckAlerts = pgTable("bottleneck_alerts", {
   resolutionNotes: text("resolution_notes"),
 });
 
-export const insertBottleneckAlertSchema = createInsertSchema(bottleneckAlerts).omit({ id: true, detectedAt: true });
+export const insertBottleneckAlertSchema = createInsertSchema(
+  bottleneckAlerts,
+).omit({ id: true, detectedAt: true });
 export type InsertBottleneckAlert = z.infer<typeof insertBottleneckAlertSchema>;
 export type BottleneckAlert = typeof bottleneckAlerts.$inferSelect;
 
 // Notification Settings
 export const notificationSettings = pgTable("notification_settings", {
   id: serial("id").primaryKey(),
-  userId: text("user_id").notNull().references(() => users.id),
+  userId: text("user_id")
+    .notNull()
+    .references(() => users.id),
   alertType: text("alert_type").notNull(), // "efficiency_drop", "downtime_exceeded", etc.
   enabled: boolean("enabled").default(true),
   minSeverity: text("min_severity").notNull().default("medium"), // Minimum severity to notify
@@ -1177,14 +1481,20 @@ export const notificationSettings = pgTable("notification_settings", {
   machines: text("machines").array(), // If empty, all machines
 });
 
-export const insertNotificationSettingsSchema = createInsertSchema(notificationSettings).omit({ id: true });
-export type InsertNotificationSettings = z.infer<typeof insertNotificationSettingsSchema>;
+export const insertNotificationSettingsSchema = createInsertSchema(
+  notificationSettings,
+).omit({ id: true });
+export type InsertNotificationSettings = z.infer<
+  typeof insertNotificationSettingsSchema
+>;
 export type NotificationSettings = typeof notificationSettings.$inferSelect;
 
 // Production Targets
 export const productionTargets = pgTable("production_targets", {
   id: serial("id").primaryKey(),
-  sectionId: text("section_id").notNull().references(() => sections.id),
+  sectionId: text("section_id")
+    .notNull()
+    .references(() => sections.id),
   machineId: text("machine_id").references(() => machines.id),
   stage: text("stage").notNull(),
   targetRate: doublePrecision("target_rate").notNull(), // Units per hour
@@ -1194,7 +1504,9 @@ export const productionTargets = pgTable("production_targets", {
   effectiveFrom: timestamp("effective_from").defaultNow().notNull(),
   effectiveTo: timestamp("effective_to"),
   isActive: boolean("is_active").default(true),
-  createdBy: text("created_by").notNull().references(() => users.id),
+  createdBy: text("created_by")
+    .notNull()
+    .references(() => users.id),
 });
 
 // Maintenance Module Tables
@@ -1203,7 +1515,9 @@ export const productionTargets = pgTable("production_targets", {
 export const maintenanceRequests = pgTable("maintenance_requests", {
   id: serial("id").primaryKey(),
   requestNumber: text("request_number"),
-  machineId: text("machine_id").notNull().references(() => machines.id),
+  machineId: text("machine_id")
+    .notNull()
+    .references(() => machines.id),
   damageType: text("damage_type").notNull(),
   severity: text("severity").notNull().default("Normal"), // High, Normal, Low
   description: text("description").notNull(),
@@ -1211,7 +1525,9 @@ export const maintenanceRequests = pgTable("maintenance_requests", {
   priority: integer("priority").default(2), // 1=High, 2=Normal, 3=Low
   estimatedRepairTime: integer("estimated_repair_time"), // in hours
   actualRepairTime: integer("actual_repair_time"), // in hours
-  requestedBy: text("requested_by").notNull().references(() => users.id),
+  requestedBy: text("requested_by")
+    .notNull()
+    .references(() => users.id),
   reportedBy: text("reported_by").references(() => users.id),
   createdAt: timestamp("created_at").defaultNow(),
   assignedTo: text("assigned_to").references(() => users.id),
@@ -1219,34 +1535,50 @@ export const maintenanceRequests = pgTable("maintenance_requests", {
   notes: text("notes"),
 });
 
-export const insertMaintenanceRequestSchema = createInsertSchema(maintenanceRequests).omit({ id: true, createdAt: true });
-export type InsertMaintenanceRequest = z.infer<typeof insertMaintenanceRequestSchema>;
+export const insertMaintenanceRequestSchema = createInsertSchema(
+  maintenanceRequests,
+).omit({ id: true, createdAt: true });
+export type InsertMaintenanceRequest = z.infer<
+  typeof insertMaintenanceRequestSchema
+>;
 export type MaintenanceRequest = typeof maintenanceRequests.$inferSelect;
 
 // Maintenance Actions
 export const maintenanceActions = pgTable("maintenance_actions", {
   id: serial("id").primaryKey(),
-  requestId: integer("request_id").notNull().references(() => maintenanceRequests.id, { onDelete: "cascade" }),
-  machineId: text("machine_id").notNull().references(() => machines.id),
+  requestId: integer("request_id")
+    .notNull()
+    .references(() => maintenanceRequests.id, { onDelete: "cascade" }),
+  machineId: text("machine_id")
+    .notNull()
+    .references(() => machines.id),
   actionDate: timestamp("action_date").defaultNow().notNull(),
   actionType: text("action_type").notNull(),
   partReplaced: text("part_replaced"),
   partId: integer("part_id"),
   description: text("description").notNull(),
-  performedBy: text("performed_by").notNull().references(() => users.id),
+  performedBy: text("performed_by")
+    .notNull()
+    .references(() => users.id),
   hours: doublePrecision("hours").default(0),
   cost: doublePrecision("cost").default(0),
   status: text("status").notNull().default("completed"), // pending, in_progress, completed
 });
 
-export const insertMaintenanceActionSchema = createInsertSchema(maintenanceActions).omit({ id: true, actionDate: true });
-export type InsertMaintenanceAction = z.infer<typeof insertMaintenanceActionSchema>;
+export const insertMaintenanceActionSchema = createInsertSchema(
+  maintenanceActions,
+).omit({ id: true, actionDate: true });
+export type InsertMaintenanceAction = z.infer<
+  typeof insertMaintenanceActionSchema
+>;
 export type MaintenanceAction = typeof maintenanceActions.$inferSelect;
 
 // Maintenance Schedule (for preventive maintenance)
 export const maintenanceSchedule = pgTable("maintenance_schedule", {
   id: serial("id").primaryKey(),
-  machineId: text("machine_id").notNull().references(() => machines.id),
+  machineId: text("machine_id")
+    .notNull()
+    .references(() => machines.id),
   taskName: text("task_name").notNull(),
   maintenanceType: text("maintenance_type"),
   description: text("description"),
@@ -1258,54 +1590,74 @@ export const maintenanceSchedule = pgTable("maintenance_schedule", {
   estimatedHours: doublePrecision("estimated_hours").default(1),
   instructions: text("instructions"),
   status: text("status").default("active"), // active, inactive, completed
-  createdBy: text("created_by").notNull().references(() => users.id),
+  createdBy: text("created_by")
+    .notNull()
+    .references(() => users.id),
 });
 
-export const insertMaintenanceScheduleSchema = createInsertSchema(maintenanceSchedule).omit({ id: true });
-export type InsertMaintenanceSchedule = z.infer<typeof insertMaintenanceScheduleSchema>;
+export const insertMaintenanceScheduleSchema = createInsertSchema(
+  maintenanceSchedule,
+).omit({ id: true });
+export type InsertMaintenanceSchedule = z.infer<
+  typeof insertMaintenanceScheduleSchema
+>;
 export type MaintenanceSchedule = typeof maintenanceSchedule.$inferSelect;
 
-export const insertProductionTargetsSchema = createInsertSchema(productionTargets).omit({ id: true, effectiveFrom: true });
-export type InsertProductionTargets = z.infer<typeof insertProductionTargetsSchema>;
+export const insertProductionTargetsSchema = createInsertSchema(
+  productionTargets,
+).omit({ id: true, effectiveFrom: true });
+export type InsertProductionTargets = z.infer<
+  typeof insertProductionTargetsSchema
+>;
 export type ProductionTargets = typeof productionTargets.$inferSelect;
 
 // SMS Provider Settings for fallback configuration
-export const smsProviderSettings = pgTable('sms_provider_settings', {
-  id: serial('id').primaryKey(),
-  primaryProvider: text('primary_provider').notNull().default('taqnyat'),
-  fallbackProvider: text('fallback_provider').notNull().default('twilio'),
-  retryAttempts: integer('retry_attempts').notNull().default(3),
-  retryDelay: integer('retry_delay').notNull().default(5000), // milliseconds
-  isActive: boolean('is_active').notNull().default(true),
-  lastUpdated: timestamp('last_updated').notNull().defaultNow(),
-  updatedBy: text('updated_by')
+export const smsProviderSettings = pgTable("sms_provider_settings", {
+  id: serial("id").primaryKey(),
+  primaryProvider: text("primary_provider").notNull().default("taqnyat"),
+  fallbackProvider: text("fallback_provider").notNull().default("twilio"),
+  retryAttempts: integer("retry_attempts").notNull().default(3),
+  retryDelay: integer("retry_delay").notNull().default(5000), // milliseconds
+  isActive: boolean("is_active").notNull().default(true),
+  lastUpdated: timestamp("last_updated").notNull().defaultNow(),
+  updatedBy: text("updated_by"),
 });
 
 // SMS Provider Health Status for monitoring
-export const smsProviderHealth = pgTable('sms_provider_health', {
-  id: serial('id').primaryKey(),
-  provider: text('provider').notNull(), // 'taqnyat' or 'twilio'
-  status: text('status').notNull().default('healthy'), // 'healthy', 'degraded', 'down'
-  lastSuccessfulSend: timestamp('last_successful_send'),
-  lastFailedSend: timestamp('last_failed_send'),
-  successCount: integer('success_count').notNull().default(0),
-  failureCount: integer('failure_count').notNull().default(0),
-  lastError: text('last_error'),
-  checkedAt: timestamp('checked_at').notNull().defaultNow()
+export const smsProviderHealth = pgTable("sms_provider_health", {
+  id: serial("id").primaryKey(),
+  provider: text("provider").notNull(), // 'taqnyat' or 'twilio'
+  status: text("status").notNull().default("healthy"), // 'healthy', 'degraded', 'down'
+  lastSuccessfulSend: timestamp("last_successful_send"),
+  lastFailedSend: timestamp("last_failed_send"),
+  successCount: integer("success_count").notNull().default(0),
+  failureCount: integer("failure_count").notNull().default(0),
+  lastError: text("last_error"),
+  checkedAt: timestamp("checked_at").notNull().defaultNow(),
 });
 
-export const insertSmsProviderSettingsSchema = createInsertSchema(smsProviderSettings).omit({ id: true, lastUpdated: true });
-export type InsertSmsProviderSettings = z.infer<typeof insertSmsProviderSettingsSchema>;
+export const insertSmsProviderSettingsSchema = createInsertSchema(
+  smsProviderSettings,
+).omit({ id: true, lastUpdated: true });
+export type InsertSmsProviderSettings = z.infer<
+  typeof insertSmsProviderSettingsSchema
+>;
 export type SmsProviderSettings = typeof smsProviderSettings.$inferSelect;
 
-export const insertSmsProviderHealthSchema = createInsertSchema(smsProviderHealth).omit({ id: true, checkedAt: true });
-export type InsertSmsProviderHealth = z.infer<typeof insertSmsProviderHealthSchema>;
+export const insertSmsProviderHealthSchema = createInsertSchema(
+  smsProviderHealth,
+).omit({ id: true, checkedAt: true });
+export type InsertSmsProviderHealth = z.infer<
+  typeof insertSmsProviderHealthSchema
+>;
 export type SmsProviderHealth = typeof smsProviderHealth.$inferSelect;
 
 // Dashboard Widgets and Layouts
 export const dashboardWidgets = pgTable("dashboard_widgets", {
   id: serial("id").primaryKey(),
-  userId: text("user_id").references(() => users.id, { onDelete: "cascade" }).notNull(),
+  userId: text("user_id")
+    .references(() => users.id, { onDelete: "cascade" })
+    .notNull(),
   widgetType: text("widget_type").notNull(),
   widgetConfig: jsonb("widget_config").notNull(),
   position: jsonb("position").notNull(), // { x: number, y: number, w: number, h: number }
@@ -1317,7 +1669,9 @@ export const dashboardWidgets = pgTable("dashboard_widgets", {
 
 export const dashboardLayouts = pgTable("dashboard_layouts", {
   id: serial("id").primaryKey(),
-  userId: text("user_id").references(() => users.id, { onDelete: "cascade" }).notNull(),
+  userId: text("user_id")
+    .references(() => users.id, { onDelete: "cascade" })
+    .notNull(),
   layoutName: text("layout_name").notNull(),
   layoutConfig: jsonb("layout_config").notNull(),
   isDefault: boolean("is_default").default(false),
@@ -1325,33 +1679,43 @@ export const dashboardLayouts = pgTable("dashboard_layouts", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
-export const insertDashboardWidgetSchema = createInsertSchema(dashboardWidgets).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertDashboardWidgetSchema = createInsertSchema(
+  dashboardWidgets,
+).omit({ id: true, createdAt: true, updatedAt: true });
 export type InsertDashboardWidget = z.infer<typeof insertDashboardWidgetSchema>;
 export type DashboardWidget = typeof dashboardWidgets.$inferSelect;
 
-export const insertDashboardLayoutSchema = createInsertSchema(dashboardLayouts).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertDashboardLayoutSchema = createInsertSchema(
+  dashboardLayouts,
+).omit({ id: true, createdAt: true, updatedAt: true });
 export type InsertDashboardLayout = z.infer<typeof insertDashboardLayoutSchema>;
 export type DashboardLayout = typeof dashboardLayouts.$inferSelect;
 
 // ABA Formulas Schema
-export const abaFormulas = pgTable('aba_formulas', {
-  id: serial('id').primaryKey(),
-  name: text('name').notNull(),
-  description: text('description'),
-  abRatio: text('ab_ratio').notNull(),
-  isActive: boolean('is_active').default(true),
-  createdAt: timestamp('created_at').defaultNow(),
-  updatedAt: timestamp('updated_at').defaultNow(),
-  createdBy: text('created_by').notNull().references(() => users.id),
+export const abaFormulas = pgTable("aba_formulas", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  description: text("description"),
+  abRatio: text("ab_ratio").notNull(),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+  createdBy: text("created_by")
+    .notNull()
+    .references(() => users.id),
 });
 
-export const abaFormulaMaterials = pgTable('aba_formula_materials', {
-  id: serial('id').primaryKey(),
-  formulaId: integer('formula_id').notNull().references(() => abaFormulas.id, { onDelete: "cascade" }),
-  materialId: integer('material_id').notNull().references(() => rawMaterials.id),
-  screwAPercentage: doublePrecision('screw_a_percentage').notNull().default(0),
-  screwBPercentage: doublePrecision('screw_b_percentage').notNull().default(0),
-  createdAt: timestamp('created_at').defaultNow(),
+export const abaFormulaMaterials = pgTable("aba_formula_materials", {
+  id: serial("id").primaryKey(),
+  formulaId: integer("formula_id")
+    .notNull()
+    .references(() => abaFormulas.id, { onDelete: "cascade" }),
+  materialId: integer("material_id")
+    .notNull()
+    .references(() => rawMaterials.id),
+  screwAPercentage: doublePrecision("screw_a_percentage").notNull().default(0),
+  screwBPercentage: doublePrecision("screw_b_percentage").notNull().default(0),
+  createdAt: timestamp("created_at").defaultNow(),
 });
 
 export const abaFormulasRelations = relations(abaFormulas, ({ many, one }) => ({
@@ -1362,66 +1726,98 @@ export const abaFormulasRelations = relations(abaFormulas, ({ many, one }) => ({
   }),
 }));
 
-export const abaFormulaMaterialsRelations = relations(abaFormulaMaterials, ({ one }) => ({
-  formula: one(abaFormulas, {
-    fields: [abaFormulaMaterials.formulaId],
-    references: [abaFormulas.id],
+export const abaFormulaMaterialsRelations = relations(
+  abaFormulaMaterials,
+  ({ one }) => ({
+    formula: one(abaFormulas, {
+      fields: [abaFormulaMaterials.formulaId],
+      references: [abaFormulas.id],
+    }),
+    material: one(rawMaterials, {
+      fields: [abaFormulaMaterials.materialId],
+      references: [rawMaterials.id],
+    }),
   }),
-  material: one(rawMaterials, {
-    fields: [abaFormulaMaterials.materialId],
-    references: [rawMaterials.id],
-  }),
-}));
+);
 
-export const insertAbaFormulaSchema = createInsertSchema(abaFormulas).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertAbaFormulaSchema = createInsertSchema(abaFormulas).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
 export type InsertAbaFormula = z.infer<typeof insertAbaFormulaSchema>;
 export type AbaFormula = typeof abaFormulas.$inferSelect;
 
-export const insertAbaFormulaMaterialSchema = createInsertSchema(abaFormulaMaterials).omit({ id: true, createdAt: true });
-export type InsertAbaFormulaMaterial = z.infer<typeof insertAbaFormulaMaterialSchema>;
+export const insertAbaFormulaMaterialSchema = createInsertSchema(
+  abaFormulaMaterials,
+).omit({ id: true, createdAt: true });
+export type InsertAbaFormulaMaterial = z.infer<
+  typeof insertAbaFormulaMaterialSchema
+>;
 export type AbaFormulaMaterial = typeof abaFormulaMaterials.$inferSelect;
 
 // JO Mix table - for tracking mixing sessions
 export const joMixes = pgTable("jo_mixes", {
   id: serial("id").primaryKey(),
-  abaFormulaId: integer("aba_formula_id").notNull().references(() => abaFormulas.id),
+  abaFormulaId: integer("aba_formula_id")
+    .notNull()
+    .references(() => abaFormulas.id),
   mixNumber: text("mix_number").notNull().unique(), // Auto-generated mix number
   totalQuantity: doublePrecision("total_quantity").notNull(), // Total quantity of this mix
   screwType: text("screw_type").notNull(), // 'A' or 'B'
   status: text("status").default("pending").notNull(), // pending, in_progress, completed
-  createdBy: text("created_by").notNull().references(() => users.id),
+  createdBy: text("created_by")
+    .notNull()
+    .references(() => users.id),
   createdAt: timestamp("created_at").defaultNow(),
   completedAt: timestamp("completed_at"),
 });
 
-export const insertJoMixSchema = createInsertSchema(joMixes).omit({ id: true, createdAt: true, completedAt: true });
+export const insertJoMixSchema = createInsertSchema(joMixes).omit({
+  id: true,
+  createdAt: true,
+  completedAt: true,
+});
 export type InsertJoMix = z.infer<typeof insertJoMixSchema>;
 export type JoMix = typeof joMixes.$inferSelect;
 
 // JO Mix Items table - for tracking which job orders are included in each mix
 export const joMixItems = pgTable("jo_mix_items", {
   id: serial("id").primaryKey(),
-  joMixId: integer("jo_mix_id").notNull().references(() => joMixes.id, { onDelete: "cascade" }),
-  jobOrderId: integer("job_order_id").notNull().references(() => jobOrders.id),
+  joMixId: integer("jo_mix_id")
+    .notNull()
+    .references(() => joMixes.id, { onDelete: "cascade" }),
+  jobOrderId: integer("job_order_id")
+    .notNull()
+    .references(() => jobOrders.id),
   quantity: doublePrecision("quantity").notNull(), // Quantity from this job order used in the mix
   createdAt: timestamp("created_at").defaultNow(),
 });
 
-export const insertJoMixItemSchema = createInsertSchema(joMixItems).omit({ id: true, createdAt: true });
+export const insertJoMixItemSchema = createInsertSchema(joMixItems).omit({
+  id: true,
+  createdAt: true,
+});
 export type InsertJoMixItem = z.infer<typeof insertJoMixItemSchema>;
 export type JoMixItem = typeof joMixItems.$inferSelect;
 
 // JO Mix Materials table - for tracking actual material quantities in each mix
 export const joMixMaterials = pgTable("jo_mix_materials", {
   id: serial("id").primaryKey(),
-  joMixId: integer("jo_mix_id").notNull().references(() => joMixes.id, { onDelete: "cascade" }),
-  materialId: integer("material_id").notNull().references(() => rawMaterials.id),
+  joMixId: integer("jo_mix_id")
+    .notNull()
+    .references(() => joMixes.id, { onDelete: "cascade" }),
+  materialId: integer("material_id")
+    .notNull()
+    .references(() => rawMaterials.id),
   quantity: doublePrecision("quantity").notNull(), // Calculated quantity for this material
   percentage: doublePrecision("percentage").notNull(), // Percentage of this material in the mix
   createdAt: timestamp("created_at").defaultNow(),
 });
 
-export const insertJoMixMaterialSchema = createInsertSchema(joMixMaterials).omit({ id: true, createdAt: true });
+export const insertJoMixMaterialSchema = createInsertSchema(
+  joMixMaterials,
+).omit({ id: true, createdAt: true });
 export type InsertJoMixMaterial = z.infer<typeof insertJoMixMaterialSchema>;
 export type JoMixMaterial = typeof joMixMaterials.$inferSelect;
 
@@ -1430,7 +1826,9 @@ export const customerInformation = pgTable("customer_information", {
   id: serial("id").primaryKey(),
   commercialNameAr: text("commercial_name_ar"),
   commercialNameEn: text("commercial_name_en"),
-  commercialRegistrationNo: varchar("commercial_registration_no", { length: 10 }),
+  commercialRegistrationNo: varchar("commercial_registration_no", {
+    length: 10,
+  }),
   unifiedNo: varchar("unified_no", { length: 10 }),
   vatNo: varchar("vat_no", { length: 14 }),
   province: text("province").notNull(),
@@ -1444,14 +1842,23 @@ export const customerInformation = pgTable("customer_information", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
-export const insertCustomerInformationSchema = createInsertSchema(customerInformation, {
-  commercialRegistrationNo: z.string().length(10, "Commercial Registration No must be exactly 10 digits"),
-  unifiedNo: z.string().length(10, "Unified No must be exactly 10 digits"),
-  vatNo: z.string().length(14, "VAT No must be exactly 14 digits"),
-  buildingNo: z.string().length(4, "Building No must be exactly 4 digits"),
-  additionalNo: z.string().length(4, "Additional No must be exactly 4 digits"),
-  postalCode: z.string().length(5, "Postal Code must be exactly 5 digits"),
-}).omit({ id: true, createdAt: true });
+export const insertCustomerInformationSchema = createInsertSchema(
+  customerInformation,
+  {
+    commercialRegistrationNo: z
+      .string()
+      .length(10, "Commercial Registration No must be exactly 10 digits"),
+    unifiedNo: z.string().length(10, "Unified No must be exactly 10 digits"),
+    vatNo: z.string().length(14, "VAT No must be exactly 14 digits"),
+    buildingNo: z.string().length(4, "Building No must be exactly 4 digits"),
+    additionalNo: z
+      .string()
+      .length(4, "Additional No must be exactly 4 digits"),
+    postalCode: z.string().length(5, "Postal Code must be exactly 5 digits"),
+  },
+).omit({ id: true, createdAt: true });
 
-export type InsertCustomerInformation = z.infer<typeof insertCustomerInformationSchema>;
+export type InsertCustomerInformation = z.infer<
+  typeof insertCustomerInformationSchema
+>;
 export type CustomerInformation = typeof customerInformation.$inferSelect;

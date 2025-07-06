@@ -7,31 +7,57 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, CheckCircle } from "lucide-react";
 
 import FactoryLogoHPNGW_Green from "@assets/FactoryLogoHPNGWg_1750292727900.png";
 
 // Customer information form schema
-const customerInfoSchema = z.object({
-  commercialNameAr: z.string().optional(),
-  commercialNameEn: z.string().optional(),
-  commercialRegistrationNo: z.string().length(10, "Commercial Registration No must be exactly 10 digits").regex(/^\d+$/, "Must contain only digits"),
-  unifiedNo: z.string().length(10, "Unified No must be exactly 10 digits").regex(/^\d+$/, "Must contain only digits"),
-  vatNo: z.string().length(14, "VAT No must be exactly 14 digits").regex(/^\d+$/, "Must contain only digits"),
-  province: z.string().min(1, "Province is required"),
-  city: z.string().optional(),
-  neighborName: z.string().optional(),
-  buildingNo: z.string().length(4, "Building No must be exactly 4 digits").regex(/^\d+$/, "Must contain only digits"),
-  additionalNo: z.string().length(4, "Additional No must be exactly 4 digits").regex(/^\d+$/, "Must contain only digits"),
-  postalCode: z.string().length(5, "Postal Code must be exactly 5 digits").regex(/^\d+$/, "Must contain only digits"),
-  responseName: z.string().optional(),
-  responseNo: z.string().optional(),
-}).refine((data) => data.commercialNameAr || data.commercialNameEn, {
-  message: "At least one commercial name (Arabic or English) is required",
-  path: ["commercialNameAr"],
-});
+const customerInfoSchema = z
+  .object({
+    commercialNameAr: z.string().optional(),
+    commercialNameEn: z.string().optional(),
+    commercialRegistrationNo: z
+      .string()
+      .length(10, "Commercial Registration No must be exactly 10 digits")
+      .regex(/^\d+$/, "Must contain only digits"),
+    unifiedNo: z
+      .string()
+      .length(10, "Unified No must be exactly 10 digits")
+      .regex(/^\d+$/, "Must contain only digits"),
+    vatNo: z
+      .string()
+      .length(14, "VAT No must be exactly 14 digits")
+      .regex(/^\d+$/, "Must contain only digits"),
+    province: z.string().min(1, "Province is required"),
+    city: z.string().optional(),
+    neighborName: z.string().optional(),
+    buildingNo: z
+      .string()
+      .length(4, "Building No must be exactly 4 digits")
+      .regex(/^\d+$/, "Must contain only digits"),
+    additionalNo: z
+      .string()
+      .length(4, "Additional No must be exactly 4 digits")
+      .regex(/^\d+$/, "Must contain only digits"),
+    postalCode: z
+      .string()
+      .length(5, "Postal Code must be exactly 5 digits")
+      .regex(/^\d+$/, "Must contain only digits"),
+    responseName: z.string().optional(),
+    responseNo: z.string().optional(),
+  })
+  .refine((data) => data.commercialNameAr || data.commercialNameEn, {
+    message: "At least one commercial name (Arabic or English) is required",
+    path: ["commercialNameAr"],
+  });
 
 type CustomerInfoForm = z.infer<typeof customerInfoSchema>;
 
@@ -39,29 +65,52 @@ type CustomerInfoForm = z.infer<typeof customerInfoSchema>;
 const saudiProvinces = [
   { value: "riyadh", label: "Riyadh الرياض", labelAr: "الرياض" },
   { value: "makkah", label: "Makkah مكة المكرمة", labelAr: "مكة المكرمة" },
-  { value: "eastern", label: "Eastern Province المنطقة الشرقية", labelAr: "المنطقة الشرقية" },
+  {
+    value: "eastern",
+    label: "Eastern Province المنطقة الشرقية",
+    labelAr: "المنطقة الشرقية",
+  },
   { value: "asir", label: "Asir عسير", labelAr: "عسير" },
-  { value: "madinah", label: "Madinah المدينة المنورة", labelAr: "المدينة المنورة" },
+  {
+    value: "madinah",
+    label: "Madinah المدينة المنورة",
+    labelAr: "المدينة المنورة",
+  },
   { value: "qassim", label: "Qassim القصيم", labelAr: "القصيم" },
   { value: "hail", label: "Hail حائل", labelAr: "حائل" },
   { value: "tabuk", label: "Tabuk تبوك", labelAr: "تبوك" },
-  { value: "northern", label: "Northern Borders الحدود الشمالية", labelAr: "الحدود الشمالية" },
+  {
+    value: "northern",
+    label: "Northern Borders الحدود الشمالية",
+    labelAr: "الحدود الشمالية",
+  },
   { value: "jazan", label: "Jazan جازان", labelAr: "جازان" },
   { value: "najran", label: "Najran نجران", labelAr: "نجران" },
   { value: "albaha", label: "Al Bahah الباحة", labelAr: "الباحة" },
   { value: "jouf", label: "Al Jouf الجوف", labelAr: "الجوف" },
 ];
 
-const citiesByProvince: Record<string, Array<{ value: string; label: string; labelAr: string }>> = {
+const citiesByProvince: Record<
+  string,
+  Array<{ value: string; label: string; labelAr: string }>
+> = {
   riyadh: [
     { value: "riyadh_city", label: "Riyadh الرياض", labelAr: "الرياض" },
     { value: "alkharj", label: "Al Kharj الخرج", labelAr: "الخرج" },
     { value: "alduwadimi", label: "Al Duwadimi الدوادمي", labelAr: "الدوادمي" },
     { value: "almajmaah", label: "Al Majma'ah المجمعة", labelAr: "المجمعة" },
-    { value: "alquwayiyah", label: "Al Quwayiyah القويعية", labelAr: "القويعية" },
+    {
+      value: "alquwayiyah",
+      label: "Al Quwayiyah القويعية",
+      labelAr: "القويعية",
+    },
   ],
   makkah: [
-    { value: "makkah_city", label: "Makkah مكة المكرمة", labelAr: "مكة المكرمة" },
+    {
+      value: "makkah_city",
+      label: "Makkah مكة المكرمة",
+      labelAr: "مكة المكرمة",
+    },
     { value: "jeddah", label: "Jeddah جدة", labelAr: "جدة" },
     { value: "taif", label: "Taif الطائف", labelAr: "الطائف" },
     { value: "rabigh", label: "Rabigh رابغ", labelAr: "رابغ" },
@@ -77,22 +126,22 @@ const citiesByProvince: Record<string, Array<{ value: string; label: string; lab
   // Add more cities for other provinces as needed
 };
 
-const neighborhoodsByCity: Record<string, Array<{ value: string; label: string; labelAr: string }>> = {
-  riyadh_city: [
-    { value: "other", label: "Other أخرى", labelAr: "أخرى" },
-  ],
-  jeddah: [
-    { value: "other", label: "Other أخرى", labelAr: "أخرى" },
-  ],
-  dammam: [
-    { value: "other", label: "Other أخرى", labelAr: "أخرى" },
-
-  ],
+const neighborhoodsByCity: Record<
+  string,
+  Array<{ value: string; label: string; labelAr: string }>
+> = {
+  riyadh_city: [{ value: "other", label: "Other أخرى", labelAr: "أخرى" }],
+  jeddah: [{ value: "other", label: "Other أخرى", labelAr: "أخرى" }],
+  dammam: [{ value: "other", label: "Other أخرى", labelAr: "أخرى" }],
   // Add more neighborhoods for other cities as needed
 };
 
 // Simple translation service (for demonstration)
-const translateText = async (text: string, fromLang: string, toLang: string): Promise<string> => {
+const translateText = async (
+  text: string,
+  fromLang: string,
+  toLang: string,
+): Promise<string> => {
   // In a real application, you would use a translation service like Google Translate API
   // For now, return the original text as a placeholder
   return text;
@@ -118,127 +167,140 @@ export default function CustomerInfoPage() {
   const watchedCommercialNameEn = watch("commercialNameEn");
 
   // Enhanced auto-translation with comprehensive business terms
-  const handleNameChange = (field: "commercialNameAr" | "commercialNameEn", value: string) => {
+  const handleNameChange = (
+    field: "commercialNameAr" | "commercialNameEn",
+    value: string,
+  ) => {
     setValue(field, value);
-    
+
     // Comprehensive translation mapping for business terms
     const arabicToEnglish: Record<string, string> = {
-      "مصنع": "Factory",
-      "شركة": "Company", 
-      "مؤسسة": "Establishment",
-      "تجارة": "Trading",
-      "صناعة": "Manufacturing",
-      "أكياس": "Bags",
-      "بلاستيك": "Plastic",
-      "بلاستيكية": "Plastic",
-      "الحديث": "Modern",
-      "الحديثة": "Modern",
-      "للتجارة": "Trading",
-      "التجارية": "Commercial",
-      "الصناعية": "Industrial",
-      "المحدودة": "Limited",
+      مصنع: "Factory",
+      شركة: "Company",
+      مؤسسة: "Establishment",
+      تجارة: "Trading",
+      صناعة: "Manufacturing",
+      أكياس: "Bags",
+      بلاستيك: "Plastic",
+      بلاستيكية: "Plastic",
+      الحديث: "Modern",
+      الحديثة: "Modern",
+      للتجارة: "Trading",
+      التجارية: "Commercial",
+      الصناعية: "Industrial",
+      المحدودة: "Limited",
       "ذات مسؤولية محدودة": "LLC",
-      "المساهمة": "Corporation",
-      "التقنية": "Technology",
-      "الخدمات": "Services",
-      "الاستشارية": "Consulting",
-      "للاستثمار": "Investment",
-      "الغذائية": "Food",
-      "الطبية": "Medical",
-      "الهندسية": "Engineering",
-      "العامة": "General",
-      "الدولية": "International",
-      "العربية": "Arab",
-      "السعودية": "Saudi",
-      "الرياض": "Riyadh",
-      "جدة": "Jeddah",
-      "الدمام": "Dammam",
-      "مكة": "Makkah",
-      "المدينة": "Madinah",
-      "متقدمة": "Advanced",
-      "جديدة": "New",
-      "كبيرة": "Large",
-      "صغيرة": "Small",
-      "متوسطة": "Medium",
-      "عالية": "High",
-      "جودة": "Quality"
+      المساهمة: "Corporation",
+      التقنية: "Technology",
+      الخدمات: "Services",
+      الاستشارية: "Consulting",
+      للاستثمار: "Investment",
+      الغذائية: "Food",
+      الطبية: "Medical",
+      الهندسية: "Engineering",
+      العامة: "General",
+      الدولية: "International",
+      العربية: "Arab",
+      السعودية: "Saudi",
+      الرياض: "Riyadh",
+      جدة: "Jeddah",
+      الدمام: "Dammam",
+      مكة: "Makkah",
+      المدينة: "Madinah",
+      متقدمة: "Advanced",
+      جديدة: "New",
+      كبيرة: "Large",
+      صغيرة: "Small",
+      متوسطة: "Medium",
+      عالية: "High",
+      جودة: "Quality",
     };
 
     const englishToArabic: Record<string, string> = {
-      "Factory": "مصنع",
-      "Company": "شركة",
-      "Corporation": "شركة",
-      "Establishment": "مؤسسة",
-      "Trading": "للتجارة",
-      "Manufacturing": "صناعة",
-      "Bags": "أكياس",
-      "Plastic": "بلاستيك",
-      "Modern": "الحديث",
-      "Commercial": "التجارية",
-      "Industrial": "الصناعية",
-      "Limited": "المحدودة",
-      "LLC": "ذات مسؤولية محدودة",
-      "Technology": "التقنية",
-      "Services": "الخدمات",
-      "Consulting": "الاستشارية",
-      "Investment": "للاستثمار",
-      "Food": "الغذائية",
-      "Medical": "الطبية",
-      "Engineering": "الهندسية",
-      "General": "العامة",
-      "International": "الدولية",
-      "Arab": "العربية",
-      "Saudi": "السعودية",
-      "Riyadh": "الرياض",
-      "Jeddah": "جدة",
-      "Dammam": "الدمام",
-      "Makkah": "مكة",
-      "Madinah": "المدينة",
-      "Advanced": "متقدمة",
-      "New": "جديدة", 
-      "Large": "كبيرة",
-      "Small": "صغيرة",
-      "Medium": "متوسطة",
-      "High": "عالية",
-      "Quality": "جودة"
+      Factory: "مصنع",
+      Company: "شركة",
+      Corporation: "شركة",
+      Establishment: "مؤسسة",
+      Trading: "للتجارة",
+      Manufacturing: "صناعة",
+      Bags: "أكياس",
+      Plastic: "بلاستيك",
+      Modern: "الحديث",
+      Commercial: "التجارية",
+      Industrial: "الصناعية",
+      Limited: "المحدودة",
+      LLC: "ذات مسؤولية محدودة",
+      Technology: "التقنية",
+      Services: "الخدمات",
+      Consulting: "الاستشارية",
+      Investment: "للاستثمار",
+      Food: "الغذائية",
+      Medical: "الطبية",
+      Engineering: "الهندسية",
+      General: "العامة",
+      International: "الدولية",
+      Arab: "العربية",
+      Saudi: "السعودية",
+      Riyadh: "الرياض",
+      Jeddah: "جدة",
+      Dammam: "الدمام",
+      Makkah: "مكة",
+      Madinah: "المدينة",
+      Advanced: "متقدمة",
+      New: "جديدة",
+      Large: "كبيرة",
+      Small: "صغيرة",
+      Medium: "متوسطة",
+      High: "عالية",
+      Quality: "جودة",
     };
 
     // Auto-translate when user types
     if (field === "commercialNameAr" && value.trim()) {
       let translatedText = value;
-      
+
       // Replace Arabic words with English equivalents
       Object.entries(arabicToEnglish).forEach(([arabic, english]) => {
-        const regex = new RegExp(`\\b${arabic}\\b`, 'gi');
+        const regex = new RegExp(`\\b${arabic}\\b`, "gi");
         translatedText = translatedText.replace(regex, english);
       });
-      
+
       // Clean up extra spaces and format properly
       translatedText = translatedText
-        .replace(/\s+/g, ' ')
+        .replace(/\s+/g, " ")
         .trim()
-        .split(' ')
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-        .join(' ');
-      
+        .split(" ")
+        .map(
+          (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase(),
+        )
+        .join(" ");
+
       // Only auto-fill if English field is empty and translation is meaningful
-      if (translatedText !== value && translatedText.trim() && !watchedCommercialNameEn) {
+      if (
+        translatedText !== value &&
+        translatedText.trim() &&
+        !watchedCommercialNameEn
+      ) {
         setValue("commercialNameEn", translatedText);
       }
     } else if (field === "commercialNameEn" && value.trim()) {
       let translatedText = value;
-      
+
       // Replace English words with Arabic equivalents
       Object.entries(englishToArabic).forEach(([english, arabic]) => {
-        const regex = new RegExp(`\\b${english}\\b`, 'gi');
+        const regex = new RegExp(`\\b${english}\\b`, "gi");
         translatedText = translatedText.replace(regex, arabic);
       });
-      
+
       // Clean up extra spaces
-      translatedText = translatedText.replace(/\s+/g, ' ').trim();
-      
+      translatedText = translatedText.replace(/\s+/g, " ").trim();
+
       // Only auto-fill if Arabic field is empty and translation is meaningful
-      if (translatedText !== value && translatedText.trim() && !watchedCommercialNameAr) {
+      if (
+        translatedText !== value &&
+        translatedText.trim() &&
+        !watchedCommercialNameAr
+      ) {
         setValue("commercialNameAr", translatedText);
       }
     }
@@ -256,7 +318,9 @@ export default function CustomerInfoPage() {
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.message || "Failed to submit customer information");
+        throw new Error(
+          error.message || "Failed to submit customer information",
+        );
       }
 
       return response.json();
@@ -265,7 +329,8 @@ export default function CustomerInfoPage() {
       setIsSubmitted(true);
       toast({
         title: "Success تم بنجاح",
-        description: "Your information has been submitted successfully. معلوماتك تم إرسالها بنجاح",
+        description:
+          "Your information has been submitted successfully. معلوماتك تم إرسالها بنجاح",
       });
     },
     onError: (error: Error) => {
@@ -281,8 +346,12 @@ export default function CustomerInfoPage() {
     submitMutation.mutate(data);
   };
 
-  const availableCities = selectedProvince ? citiesByProvince[selectedProvince] || [] : [];
-  const availableNeighborhoods = selectedCity ? neighborhoodsByCity[selectedCity] || [] : [];
+  const availableCities = selectedProvince
+    ? citiesByProvince[selectedProvince] || []
+    : [];
+  const availableNeighborhoods = selectedCity
+    ? neighborhoodsByCity[selectedCity] || []
+    : [];
 
   if (isSubmitted) {
     return (
@@ -291,12 +360,15 @@ export default function CustomerInfoPage() {
           <CardContent className="pt-6">
             <CheckCircle className="w-16 h-16 text-green-600 mx-auto mb-4" />
             <h2 className="text-2xl font-bold text-green-800 mb-2">
-              Thank you! <span className="font-arabic font-bold">شكراً لك!</span>
+              Thank you!{" "}
+              <span className="font-arabic font-bold">شكراً لك!</span>
             </h2>
             <p className="text-gray-600">
               Your information has been submitted successfully.
               <br />
-              <span className="font-arabic font-bold">معلوماتك تم إرسالها بنجاح.</span>
+              <span className="font-arabic font-bold">
+                معلوماتك تم إرسالها بنجاح.
+              </span>
             </p>
           </CardContent>
         </Card>
@@ -309,8 +381,6 @@ export default function CustomerInfoPage() {
       {/* Header with Welcome Message and Logo */}
       <div className="bg-white shadow-sm border-b">
         <div className="container mx-auto px-4 py-8 text-center">
-          
-
           {/* Company Logo */}
           <div className="flex justify-center mb-6">
             <div className="w-32 h-32 bg-green-600 rounded-full flex items-center justify-center">
@@ -337,8 +407,12 @@ export default function CustomerInfoPage() {
             </div>
           </div>
 
-          <p className="text-lg font-extrabold text-[#ff0000]">نموذج تحديث بيانات العميل</p>
-          <p className="text-gray-700 font-arabic font-bold text-[16px]">يرجى تعبئة المعلومات التجارية أدناه</p>
+          <p className="text-lg font-extrabold text-[#ff0000]">
+            نموذج تحديث بيانات العميل
+          </p>
+          <p className="text-gray-700 font-arabic font-bold text-[16px]">
+            يرجى تعبئة المعلومات التجارية أدناه
+          </p>
         </div>
       </div>
       {/* Main Form */}
@@ -346,7 +420,8 @@ export default function CustomerInfoPage() {
         <Card className="max-w-5xl mx-auto shadow-lg">
           <CardHeader className="pb-6">
             <CardTitle className="text-2xl font-bold text-center text-green-800">
-              Customer Info <span className="font-arabic font-bold">معلومات العميل</span>
+              Customer Info{" "}
+              <span className="font-arabic font-bold">معلومات العميل</span>
             </CardTitle>
           </CardHeader>
           <CardContent className="px-4 sm:px-6 lg:px-8">
@@ -355,7 +430,10 @@ export default function CustomerInfoPage() {
               <div className="space-y-6">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                   <div className="w-full">
-                    <Label htmlFor="commercialNameAr" className="block text-center font-semibold text-[16px] text-[#000000] mb-2">
+                    <Label
+                      htmlFor="commercialNameAr"
+                      className="block text-center font-semibold text-[16px] text-[#000000] mb-2"
+                    >
                       الاسم التجاري بالعربية *
                     </Label>
                     <Input
@@ -376,7 +454,10 @@ export default function CustomerInfoPage() {
                   </div>
 
                   <div className="w-full">
-                    <Label htmlFor="commercialNameEn" className="block text-center font-semibold text-[16px] text-[#000000] mb-2">
+                    <Label
+                      htmlFor="commercialNameEn"
+                      className="block text-center font-semibold text-[16px] text-[#000000] mb-2"
+                    >
                       الإسم التجاري (En) *
                     </Label>
                     <Input
@@ -402,7 +483,10 @@ export default function CustomerInfoPage() {
               <div className="space-y-6">
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
                   <div className="w-full">
-                    <Label htmlFor="commercialRegistrationNo" className="block text-center font-semibold text-[16px] text-[#000000] mb-2">
+                    <Label
+                      htmlFor="commercialRegistrationNo"
+                      className="block text-center font-semibold text-[16px] text-[#000000] mb-2"
+                    >
                       رقم السجل التجاري *
                     </Label>
                     <Input
@@ -420,7 +504,10 @@ export default function CustomerInfoPage() {
                   </div>
 
                   <div className="w-full">
-                    <Label htmlFor="unifiedNo" className="block text-center font-semibold text-[16px] text-[#000000] mb-2">
+                    <Label
+                      htmlFor="unifiedNo"
+                      className="block text-center font-semibold text-[16px] text-[#000000] mb-2"
+                    >
                       الرقم الموحد *
                     </Label>
                     <Input
@@ -438,7 +525,10 @@ export default function CustomerInfoPage() {
                   </div>
 
                   <div className="w-full sm:col-span-2 lg:col-span-1">
-                    <Label htmlFor="vatNo" className="block text-center font-semibold text-[16px] text-[#000000] mb-2">
+                    <Label
+                      htmlFor="vatNo"
+                      className="block text-center font-semibold text-[16px] text-[#000000] mb-2"
+                    >
                       الرقم الضريبي
                     </Label>
                     <Input
@@ -460,13 +550,17 @@ export default function CustomerInfoPage() {
               {/* Address Information */}
               <div className="space-y-4">
                 <h3 className="text-xl font-bold text-green-700 text-center">
-                  Address Info <span className="font-arabic font-bold">معلومات العنوان</span>
+                  Address Info{" "}
+                  <span className="font-arabic font-bold">معلومات العنوان</span>
                 </h3>
 
                 {/* Location Dropdowns */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
                   <div className="w-full">
-                    <Label htmlFor="province" className="block text-center font-semibold text-[16px] text-[#000000] mb-2">
+                    <Label
+                      htmlFor="province"
+                      className="block text-center font-semibold text-[16px] text-[#000000] mb-2"
+                    >
                       المنطقة
                     </Label>
                     <Select
@@ -501,7 +595,10 @@ export default function CustomerInfoPage() {
                   </div>
 
                   <div className="w-full">
-                    <Label htmlFor="city" className="block text-center font-semibold text-[16px] text-[#000000] mb-2">
+                    <Label
+                      htmlFor="city"
+                      className="block text-center font-semibold text-[16px] text-[#000000] mb-2"
+                    >
                       المدينة
                     </Label>
                     <Select
@@ -532,7 +629,10 @@ export default function CustomerInfoPage() {
                   </div>
 
                   <div className="w-full sm:col-span-2 lg:col-span-1">
-                    <Label htmlFor="neighborName" className="block text-center font-semibold text-[16px] text-[#000000] mb-2">
+                    <Label
+                      htmlFor="neighborName"
+                      className="block text-center font-semibold text-[16px] text-[#000000] mb-2"
+                    >
                       الحي
                     </Label>
                     <Select
@@ -564,7 +664,10 @@ export default function CustomerInfoPage() {
                 {/* Address Details */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
                   <div className="w-full">
-                    <Label htmlFor="buildingNo" className="block text-center font-semibold text-[16px] text-[#000000] mb-2">
+                    <Label
+                      htmlFor="buildingNo"
+                      className="block text-center font-semibold text-[16px] text-[#000000] mb-2"
+                    >
                       رقم المبنى
                     </Label>
                     <Input
@@ -582,7 +685,10 @@ export default function CustomerInfoPage() {
                   </div>
 
                   <div className="w-full">
-                    <Label htmlFor="additionalNo" className="block text-center font-semibold text-[16px] text-[#000000] mb-2">
+                    <Label
+                      htmlFor="additionalNo"
+                      className="block text-center font-semibold text-[16px] text-[#000000] mb-2"
+                    >
                       الرقم الإضافي
                     </Label>
                     <Input
@@ -600,7 +706,10 @@ export default function CustomerInfoPage() {
                   </div>
 
                   <div className="w-full sm:col-span-2 lg:col-span-1">
-                    <Label htmlFor="postalCode" className="block text-center font-semibold text-[16px] text-[#000000] mb-2">
+                    <Label
+                      htmlFor="postalCode"
+                      className="block text-center font-semibold text-[16px] text-[#000000] mb-2"
+                    >
                       الرمز البريدي
                     </Label>
                     <Input
@@ -622,12 +731,16 @@ export default function CustomerInfoPage() {
               {/* Contact Information */}
               <div className="space-y-6">
                 <h3 className="text-xl font-bold text-green-700 text-center">
-                  Contact Info <span className="font-arabic font-bold">معلومات الاتصال</span>
+                  Contact Info{" "}
+                  <span className="font-arabic font-bold">معلومات الاتصال</span>
                 </h3>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                   <div className="w-full">
-                    <Label htmlFor="responseName" className="block text-center font-semibold text-[16px] text-[#000000] mb-2">
+                    <Label
+                      htmlFor="responseName"
+                      className="block text-center font-semibold text-[16px] text-[#000000] mb-2"
+                    >
                       الشخص المسؤول
                     </Label>
                     <Input
@@ -644,7 +757,10 @@ export default function CustomerInfoPage() {
                   </div>
 
                   <div className="w-full">
-                    <Label htmlFor="responseNo" className="block text-center font-semibold text-[16px] text-[#000000] mb-2">
+                    <Label
+                      htmlFor="responseNo"
+                      className="block text-center font-semibold text-[16px] text-[#000000] mb-2"
+                    >
                       رقم التواصل
                     </Label>
                     <Input
@@ -672,10 +788,14 @@ export default function CustomerInfoPage() {
                   {submitMutation.isPending ? (
                     <>
                       <Loader2 className="w-5 h-5 animate-spin mr-2" />
-                      <span className="font-arabic font-bold">جاري الإرسال...</span>
+                      <span className="font-arabic font-bold">
+                        جاري الإرسال...
+                      </span>
                     </>
                   ) : (
-                    <span className="font-arabic font-bold">إرسال المعلومات</span>
+                    <span className="font-arabic font-bold">
+                      إرسال المعلومات
+                    </span>
                   )}
                 </Button>
               </div>

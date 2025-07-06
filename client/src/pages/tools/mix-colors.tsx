@@ -4,7 +4,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useTranslation } from "react-i18next";
 import { PageHeader } from "@/components/ui/page-header";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 import {
   Form,
   FormControl,
@@ -17,7 +23,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import { Palette, ArrowLeft, Upload, Droplets } from "lucide-react";
 import { Link } from "wouter";
@@ -30,14 +42,28 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 const colorMixSchema = z.object({
   colorModel: z.enum(["cmyk", "rgb"]),
   // CMYK fields
-  cyan: z.union([z.string(), z.number()]).transform(val => parseFloat(String(val))),
-  magenta: z.union([z.string(), z.number()]).transform(val => parseFloat(String(val))),
-  yellow: z.union([z.string(), z.number()]).transform(val => parseFloat(String(val))),
-  black: z.union([z.string(), z.number()]).transform(val => parseFloat(String(val))),
+  cyan: z
+    .union([z.string(), z.number()])
+    .transform((val) => parseFloat(String(val))),
+  magenta: z
+    .union([z.string(), z.number()])
+    .transform((val) => parseFloat(String(val))),
+  yellow: z
+    .union([z.string(), z.number()])
+    .transform((val) => parseFloat(String(val))),
+  black: z
+    .union([z.string(), z.number()])
+    .transform((val) => parseFloat(String(val))),
   // RGB fields
-  red: z.union([z.string(), z.number()]).transform(val => parseInt(String(val))),
-  green: z.union([z.string(), z.number()]).transform(val => parseInt(String(val))),
-  blue: z.union([z.string(), z.number()]).transform(val => parseInt(String(val))),
+  red: z
+    .union([z.string(), z.number()])
+    .transform((val) => parseInt(String(val))),
+  green: z
+    .union([z.string(), z.number()])
+    .transform((val) => parseInt(String(val))),
+  blue: z
+    .union([z.string(), z.number()])
+    .transform((val) => parseInt(String(val))),
   // Target color (hex)
   targetColor: z.string().optional(),
 });
@@ -92,7 +118,7 @@ const standardInks = {
     { name: "Pantone 7473 C", colorCode: "#41B6AC", cmyk: [71, 0, 48, 0] },
     { name: "Pantone 7499 C", colorCode: "#F0E3C5", cmyk: [5, 5, 25, 0] },
     { name: "Pantone 212 C", colorCode: "#EF6AB5", cmyk: [0, 69, 0, 0] },
-  ]
+  ],
 };
 
 // Function to convert RGB to CMYK
@@ -126,7 +152,7 @@ function rgbToCmyk(r: number, g: number, b: number) {
     c: Math.round(cyan * 100),
     m: Math.round(magenta * 100),
     y: Math.round(yellow * 100),
-    k: Math.round(black * 100)
+    k: Math.round(black * 100),
   };
 }
 
@@ -154,7 +180,7 @@ function rgbToHex(r: number, g: number, b: number) {
 // Function to convert Hex to RGB
 function hexToRgb(hex: string) {
   // Remove # if present
-  hex = hex.replace(/^#/, '');
+  hex = hex.replace(/^#/, "");
 
   // Parse hex values
   const bigint = parseInt(hex, 16);
@@ -166,11 +192,14 @@ function hexToRgb(hex: string) {
 }
 
 // Function to calculate color difference (simple Euclidean distance in RGB space)
-function colorDistance(color1: { r: number, g: number, b: number }, color2: { r: number, g: number, b: number }) {
+function colorDistance(
+  color1: { r: number; g: number; b: number },
+  color2: { r: number; g: number; b: number },
+) {
   return Math.sqrt(
     Math.pow(color1.r - color2.r, 2) +
-    Math.pow(color1.g - color2.g, 2) +
-    Math.pow(color1.b - color2.b, 2)
+      Math.pow(color1.g - color2.g, 2) +
+      Math.pow(color1.b - color2.b, 2),
   );
 }
 
@@ -183,48 +212,49 @@ function suggestInkMixes(targetColor: string, colorModel: "cmyk" | "rgb") {
   if (colorModel === "cmyk") {
     // Convert target to CMYK
     const targetCmyk = rgbToCmyk(targetRgb.r, targetRgb.g, targetRgb.b);
-    
+
     // Generate mix suggestion using CMYK process colors
     if (targetCmyk.c > 0) {
       mixSuggestions.push({
         name: "Process Cyan",
         percentage: targetCmyk.c,
-        colorCode: "#00AEEF"
+        colorCode: "#00AEEF",
       });
     }
-    
+
     if (targetCmyk.m > 0) {
       mixSuggestions.push({
         name: "Process Magenta",
         percentage: targetCmyk.m,
-        colorCode: "#EC008C"
+        colorCode: "#EC008C",
       });
     }
-    
+
     if (targetCmyk.y > 0) {
       mixSuggestions.push({
         name: "Process Yellow",
         percentage: targetCmyk.y,
-        colorCode: "#FFF200"
+        colorCode: "#FFF200",
       });
     }
-    
+
     if (targetCmyk.k > 0) {
       mixSuggestions.push({
         name: "Process Black",
         percentage: targetCmyk.k,
-        colorCode: "#000000"
+        colorCode: "#000000",
       });
     }
-    
+
     // If it's a very light color, add white
     if (targetCmyk.c + targetCmyk.m + targetCmyk.y + targetCmyk.k < 50) {
-      const whitePercentage = 100 - (targetCmyk.c + targetCmyk.m + targetCmyk.y + targetCmyk.k);
+      const whitePercentage =
+        100 - (targetCmyk.c + targetCmyk.m + targetCmyk.y + targetCmyk.k);
       if (whitePercentage > 0) {
         mixSuggestions.push({
           name: "Transparent White",
           percentage: whitePercentage,
-          colorCode: "#FFFFFF"
+          colorCode: "#FFFFFF",
         });
       }
     }
@@ -234,26 +264,26 @@ function suggestInkMixes(targetColor: string, colorModel: "cmyk" | "rgb") {
       mixSuggestions.push({
         name: "Red",
         percentage: (targetRgb.r / 255) * 100,
-        colorCode: "#FF0000"
+        colorCode: "#FF0000",
       });
     }
-    
+
     if (targetRgb.g > 0) {
       mixSuggestions.push({
         name: "Green",
         percentage: (targetRgb.g / 255) * 100,
-        colorCode: "#00FF00"
+        colorCode: "#00FF00",
       });
     }
-    
+
     if (targetRgb.b > 0) {
       mixSuggestions.push({
         name: "Blue",
         percentage: (targetRgb.b / 255) * 100,
-        colorCode: "#0000FF"
+        colorCode: "#0000FF",
       });
     }
-    
+
     // If it's a dark color, add black
     const maxComponent = Math.max(targetRgb.r, targetRgb.g, targetRgb.b);
     if (maxComponent < 128) {
@@ -261,17 +291,17 @@ function suggestInkMixes(targetColor: string, colorModel: "cmyk" | "rgb") {
       mixSuggestions.push({
         name: "Black",
         percentage: blackPercentage,
-        colorCode: "#000000"
+        colorCode: "#000000",
       });
     }
-    
+
     // If it's a light color, add white
     if (maxComponent < 200) {
       const whitePercentage = ((255 - maxComponent) / 255) * 20; // Adjust for better visual results
       mixSuggestions.push({
         name: "White",
         percentage: whitePercentage,
-        colorCode: "#FFFFFF"
+        colorCode: "#FFFFFF",
       });
     }
   }
@@ -293,121 +323,139 @@ interface ExtractedColor {
 async function analyzeImage(file: File): Promise<ExtractedColor[]> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
-    
+
     reader.onload = (event) => {
       const img = new Image();
       img.onload = () => {
         // Create canvas to analyze image
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+
         // Resize for faster processing while maintaining color accuracy
         const maxSize = 600;
         const scale = Math.min(maxSize / img.width, maxSize / img.height, 1);
         const width = Math.floor(img.width * scale);
         const height = Math.floor(img.height * scale);
-        
+
         canvas.width = width;
         canvas.height = height;
-        
+
         if (!ctx) {
-          reject(new Error('Could not get canvas context'));
+          reject(new Error("Could not get canvas context"));
           return;
         }
-        
+
         try {
           // Draw image on canvas
-        ctx.drawImage(img, 0, 0, width, height);
-        
-        // Get all pixel data
-        const imageData = ctx.getImageData(0, 0, width, height);
-        const pixels = imageData.data;
-        const totalPixels = width * height;
-        
-        // Color frequency map
-        const colorMap = new Map<string, { rgb: { r: number; g: number; b: number }, count: number }>();
-        
-        // Sample every pixel for comprehensive color extraction
-        for (let i = 0; i < pixels.length; i += 4) {
-          const r = pixels[i];
-          const g = pixels[i + 1];
-          const b = pixels[i + 2];
-          const a = pixels[i + 3];
-          
-          // Skip transparent pixels
-          if (a < 128) continue;
-          
-          // Group similar colors to reduce noise
-          const groupedRgb = groupSimilarColors(r, g, b, 8);
-          const hex = rgbToHex(groupedRgb.r, groupedRgb.g, groupedRgb.b);
-          
-          if (colorMap.has(hex)) {
-            colorMap.get(hex)!.count++;
-          } else {
-            colorMap.set(hex, { rgb: groupedRgb, count: 1 });
+          ctx.drawImage(img, 0, 0, width, height);
+
+          // Get all pixel data
+          const imageData = ctx.getImageData(0, 0, width, height);
+          const pixels = imageData.data;
+          const totalPixels = width * height;
+
+          // Color frequency map
+          const colorMap = new Map<
+            string,
+            { rgb: { r: number; g: number; b: number }; count: number }
+          >();
+
+          // Sample every pixel for comprehensive color extraction
+          for (let i = 0; i < pixels.length; i += 4) {
+            const r = pixels[i];
+            const g = pixels[i + 1];
+            const b = pixels[i + 2];
+            const a = pixels[i + 3];
+
+            // Skip transparent pixels
+            if (a < 128) continue;
+
+            // Group similar colors to reduce noise
+            const groupedRgb = groupSimilarColors(r, g, b, 8);
+            const hex = rgbToHex(groupedRgb.r, groupedRgb.g, groupedRgb.b);
+
+            if (colorMap.has(hex)) {
+              colorMap.get(hex)!.count++;
+            } else {
+              colorMap.set(hex, { rgb: groupedRgb, count: 1 });
+            }
           }
-        }
-        
-        // Convert to array with color analysis
-        const extractedColors: ExtractedColor[] = Array.from(colorMap.entries())
-          .map(([hex, data]) => ({
-            hex,
-            rgb: data.rgb,
-            cmyk: rgbToCmyk(data.rgb.r, data.rgb.g, data.rgb.b),
-            frequency: data.count,
-            percentage: Math.round((data.count / totalPixels) * 100 * 100) / 100
-          }))
-          .filter(color => color.percentage > 0.1) // Filter out very rare colors
-          .sort((a, b) => b.frequency - a.frequency);
-        
-        // Apply advanced color clustering for better results
-        const clusteredColors = clusterColors(extractedColors, 16);
-        
-        resolve(clusteredColors);
+
+          // Convert to array with color analysis
+          const extractedColors: ExtractedColor[] = Array.from(
+            colorMap.entries(),
+          )
+            .map(([hex, data]) => ({
+              hex,
+              rgb: data.rgb,
+              cmyk: rgbToCmyk(data.rgb.r, data.rgb.g, data.rgb.b),
+              frequency: data.count,
+              percentage:
+                Math.round((data.count / totalPixels) * 100 * 100) / 100,
+            }))
+            .filter((color) => color.percentage > 0.1) // Filter out very rare colors
+            .sort((a, b) => b.frequency - a.frequency);
+
+          // Apply advanced color clustering for better results
+          const clusteredColors = clusterColors(extractedColors, 16);
+
+          resolve(clusteredColors);
         } catch (error) {
-          console.error('Error processing image:', error);
-          reject(new Error(`Image processing failed: ${error instanceof Error ? error.message : 'Unknown error'}`));
+          console.error("Error processing image:", error);
+          reject(
+            new Error(
+              `Image processing failed: ${error instanceof Error ? error.message : "Unknown error"}`,
+            ),
+          );
         }
       };
-      
+
       img.onerror = () => {
-        reject(new Error('Error loading image'));
+        reject(new Error("Error loading image"));
       };
-      
+
       if (event.target?.result) {
         img.src = event.target.result as string;
       } else {
-        reject(new Error('Failed to read file'));
+        reject(new Error("Failed to read file"));
       }
     };
-    
+
     reader.onerror = () => {
-      reject(new Error('Error reading file'));
+      reject(new Error("Error reading file"));
     };
-    
+
     reader.readAsDataURL(file);
   });
 }
 
 // Group similar colors to reduce noise
-function groupSimilarColors(r: number, g: number, b: number, tolerance: number): { r: number; g: number; b: number } {
+function groupSimilarColors(
+  r: number,
+  g: number,
+  b: number,
+  tolerance: number,
+): { r: number; g: number; b: number } {
   return {
     r: Math.round(r / tolerance) * tolerance,
     g: Math.round(g / tolerance) * tolerance,
-    b: Math.round(b / tolerance) * tolerance
+    b: Math.round(b / tolerance) * tolerance,
   };
 }
 
 // Advanced color clustering to merge very similar colors
-function clusterColors(colors: ExtractedColor[], maxColors: number): ExtractedColor[] {
+function clusterColors(
+  colors: ExtractedColor[],
+  maxColors: number,
+): ExtractedColor[] {
   if (colors.length <= maxColors) return colors;
-  
+
   const clusters: ExtractedColor[] = [];
   const threshold = 25; // Color similarity threshold
-  
+
   for (const color of colors) {
     let merged = false;
-    
+
     // Try to merge with existing cluster
     for (const cluster of clusters) {
       const distance = calculateColorDistance(color.rgb, cluster.rgb);
@@ -416,7 +464,7 @@ function clusterColors(colors: ExtractedColor[], maxColors: number): ExtractedCo
         const totalFreq = cluster.frequency + color.frequency;
         const w1 = cluster.frequency / totalFreq;
         const w2 = color.frequency / totalFreq;
-        
+
         cluster.rgb.r = Math.round(cluster.rgb.r * w1 + color.rgb.r * w2);
         cluster.rgb.g = Math.round(cluster.rgb.g * w1 + color.rgb.g * w2);
         cluster.rgb.b = Math.round(cluster.rgb.b * w1 + color.rgb.b * w2);
@@ -428,19 +476,22 @@ function clusterColors(colors: ExtractedColor[], maxColors: number): ExtractedCo
         break;
       }
     }
-    
+
     // If not merged and we have space, add as new cluster
     if (!merged && clusters.length < maxColors) {
       clusters.push({ ...color });
     }
   }
-  
+
   // Sort by frequency and return top colors
   return clusters.sort((a, b) => b.frequency - a.frequency).slice(0, maxColors);
 }
 
 // Calculate Euclidean distance between two colors in RGB space
-function calculateColorDistance(color1: { r: number; g: number; b: number }, color2: { r: number; g: number; b: number }): number {
+function calculateColorDistance(
+  color1: { r: number; g: number; b: number },
+  color2: { r: number; g: number; b: number },
+): number {
   const dr = color1.r - color2.r;
   const dg = color1.g - color2.g;
   const db = color1.b - color2.b;
@@ -451,14 +502,19 @@ export default function MixColorsCalculator() {
   const { t } = useTranslation();
   const [results, setResults] = useState<ColorMix[] | null>(null);
   const [extractedColors, setExtractedColors] = useState<ExtractedColor[]>([]);
-  const [selectedExtractedColor, setSelectedExtractedColor] = useState<ExtractedColor | null>(null);
+  const [selectedExtractedColor, setSelectedExtractedColor] =
+    useState<ExtractedColor | null>(null);
   const [targetColorPreview, setTargetColorPreview] = useState("#5A7D9A");
   const [mixedColorPreview, setMixedColorPreview] = useState("#5A7D9A");
   const [uploadError, setUploadError] = useState<string | null>(null);
-  const [filteredPantoneColors, setFilteredPantoneColors] = useState(standardInks.pantone);
-  const [selectedPantoneColor, setSelectedPantoneColor] = useState<typeof standardInks.pantone[0] | null>(null);
+  const [filteredPantoneColors, setFilteredPantoneColors] = useState(
+    standardInks.pantone,
+  );
+  const [selectedPantoneColor, setSelectedPantoneColor] = useState<
+    (typeof standardInks.pantone)[0] | null
+  >(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  
+
   // Initialize form with default values
   const form = useForm<ColorMixFormData>({
     resolver: zodResolver(colorMixSchema),
@@ -477,14 +533,14 @@ export default function MixColorsCalculator() {
 
   // Update color preview when form values change
   const watchedValues = form.watch();
-  
+
   useEffect(() => {
     if (watchedValues.colorModel === "cmyk") {
       const c = parseFloat(watchedValues.cyan?.toString() || "0");
       const m = parseFloat(watchedValues.magenta?.toString() || "0");
       const y = parseFloat(watchedValues.yellow?.toString() || "0");
       const k = parseFloat(watchedValues.black?.toString() || "0");
-      
+
       const rgb = cmykToRgb(c, m, y, k);
       const hex = rgbToHex(rgb.r, rgb.g, rgb.b);
       setMixedColorPreview(hex);
@@ -492,7 +548,7 @@ export default function MixColorsCalculator() {
       const r = parseInt(watchedValues.red?.toString() || "0");
       const g = parseInt(watchedValues.green?.toString() || "0");
       const b = parseInt(watchedValues.blue?.toString() || "0");
-      
+
       const hex = rgbToHex(r, g, b);
       setMixedColorPreview(hex);
     }
@@ -509,59 +565,63 @@ export default function MixColorsCalculator() {
   const calculateColorMix = (data: ColorMixFormData) => {
     const targetColor = data.targetColor || "#5A7D9A";
     setTargetColorPreview(targetColor);
-    
+
     // Calculate suggested ink mix
     const suggestions = suggestInkMixes(targetColor, data.colorModel);
     setResults(suggestions);
   };
 
   // Handle file upload
-  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     setUploadError(null);
     const file = event.target.files?.[0];
-    
+
     if (!file) return;
-    
+
     // Check if file is an image
-    if (!file.type.match('image.*')) {
-      setUploadError('Please upload an image file');
+    if (!file.type.match("image.*")) {
+      setUploadError("Please upload an image file");
       return;
     }
-    
+
     try {
       const extractedColorData = await analyzeImage(file);
       setExtractedColors(extractedColorData);
     } catch (error) {
-      console.error('Error analyzing image:', error);
-      setUploadError('Error analyzing image. Please try a different file.');
+      console.error("Error analyzing image:", error);
+      setUploadError("Error analyzing image. Please try a different file.");
     }
   };
 
   // Handle extracted color selection
   const handleExtractedColorSelect = (color: ExtractedColor) => {
     setSelectedExtractedColor(color);
-    form.setValue('targetColor', color.hex);
+    form.setValue("targetColor", color.hex);
     setTargetColorPreview(color.hex);
-    
+
     // Auto-fill CMYK values from extracted color
-    form.setValue('cyan', Math.round(color.cmyk.c));
-    form.setValue('magenta', Math.round(color.cmyk.m));
-    form.setValue('yellow', Math.round(color.cmyk.y));
-    form.setValue('black', Math.round(color.cmyk.k));
-    
+    form.setValue("cyan", Math.round(color.cmyk.c));
+    form.setValue("magenta", Math.round(color.cmyk.m));
+    form.setValue("yellow", Math.round(color.cmyk.y));
+    form.setValue("black", Math.round(color.cmyk.k));
+
     // Auto-fill RGB values from extracted color
-    form.setValue('red', color.rgb.r);
-    form.setValue('green', color.rgb.g);
-    form.setValue('blue', color.rgb.b);
-    
+    form.setValue("red", color.rgb.r);
+    form.setValue("green", color.rgb.g);
+    form.setValue("blue", color.rgb.b);
+
     // Update color model to CMYK for better printing accuracy
-    form.setValue('colorModel', 'cmyk');
+    form.setValue("colorModel", "cmyk");
   };
-  
+
   // Handle Pantone color selection
-  const handlePantoneColorSelect = (color: typeof standardInks.pantone[0]) => {
+  const handlePantoneColorSelect = (
+    color: (typeof standardInks.pantone)[0],
+  ) => {
     setSelectedPantoneColor(color);
-    form.setValue('targetColor', color.colorCode);
+    form.setValue("targetColor", color.colorCode);
     setTargetColorPreview(color.colorCode);
   };
 
@@ -573,19 +633,26 @@ export default function MixColorsCalculator() {
         icon="palette"
       />
 
-      <Link href="/tools" className="inline-flex items-center text-sm text-muted-foreground hover:text-primary">
+      <Link
+        href="/tools"
+        className="inline-flex items-center text-sm text-muted-foreground hover:text-primary"
+      >
         <ArrowLeft className="mr-2 h-4 w-4" />
         {t("tools.back_to_tools")}
       </Link>
-      
+
       <Tabs defaultValue="calculator">
         <TabsList className="mb-4">
-          <TabsTrigger value="calculator">{t("mix_colors.calculator")}</TabsTrigger>
-          <TabsTrigger value="upload">{t("mix_colors.upload_design")}</TabsTrigger>
+          <TabsTrigger value="calculator">
+            {t("mix_colors.calculator")}
+          </TabsTrigger>
+          <TabsTrigger value="upload">
+            {t("mix_colors.upload_design")}
+          </TabsTrigger>
           <TabsTrigger value="pantone">{t("mix_colors.pantone")}</TabsTrigger>
           <TabsTrigger value="guide">{t("mix_colors.usage_guide")}</TabsTrigger>
         </TabsList>
-        
+
         <TabsContent value="calculator">
           <div className="grid gap-6 md:grid-cols-2">
             <Card>
@@ -597,25 +664,34 @@ export default function MixColorsCalculator() {
               </CardHeader>
               <CardContent>
                 <Form {...form}>
-                  <form onSubmit={form.handleSubmit(calculateColorMix)} className="space-y-4">
+                  <form
+                    onSubmit={form.handleSubmit(calculateColorMix)}
+                    className="space-y-4"
+                  >
                     <FormField
                       control={form.control}
                       name="colorModel"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>{t("mix_colors.color_model")}</FormLabel>
-                          <Select 
+                          <Select
                             onValueChange={field.onChange}
                             defaultValue={field.value}
                           >
                             <FormControl>
                               <SelectTrigger>
-                                <SelectValue placeholder={t("mix_colors.color_model")} />
+                                <SelectValue
+                                  placeholder={t("mix_colors.color_model")}
+                                />
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              <SelectItem value="cmyk">{t("mix_colors.cmyk")}</SelectItem>
-                              <SelectItem value="rgb">{t("mix_colors.rgb")}</SelectItem>
+                              <SelectItem value="cmyk">
+                                {t("mix_colors.cmyk")}
+                              </SelectItem>
+                              <SelectItem value="rgb">
+                                {t("mix_colors.rgb")}
+                              </SelectItem>
                             </SelectContent>
                           </Select>
                           <FormMessage />
@@ -631,13 +707,17 @@ export default function MixColorsCalculator() {
                             name="cyan"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel>
-                                  Cyan: {field.value}%
-                                </FormLabel>
+                                <FormLabel>Cyan: {field.value}%</FormLabel>
                                 <FormControl>
                                   <Slider
-                                    value={[parseFloat(field.value?.toString() || "0")]}
-                                    onValueChange={(value) => field.onChange(String(value[0]))}
+                                    value={[
+                                      parseFloat(
+                                        field.value?.toString() || "0",
+                                      ),
+                                    ]}
+                                    onValueChange={(value) =>
+                                      field.onChange(String(value[0]))
+                                    }
                                     min={0}
                                     max={100}
                                     step={1}
@@ -654,13 +734,17 @@ export default function MixColorsCalculator() {
                             name="magenta"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel>
-                                  Magenta: {field.value}%
-                                </FormLabel>
+                                <FormLabel>Magenta: {field.value}%</FormLabel>
                                 <FormControl>
                                   <Slider
-                                    value={[parseFloat(field.value?.toString() || "0")]}
-                                    onValueChange={(value) => field.onChange(String(value[0]))}
+                                    value={[
+                                      parseFloat(
+                                        field.value?.toString() || "0",
+                                      ),
+                                    ]}
+                                    onValueChange={(value) =>
+                                      field.onChange(String(value[0]))
+                                    }
                                     min={0}
                                     max={100}
                                     step={1}
@@ -677,13 +761,17 @@ export default function MixColorsCalculator() {
                             name="yellow"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel>
-                                  Yellow: {field.value}%
-                                </FormLabel>
+                                <FormLabel>Yellow: {field.value}%</FormLabel>
                                 <FormControl>
                                   <Slider
-                                    value={[parseFloat(field.value?.toString() || "0")]}
-                                    onValueChange={(value) => field.onChange(String(value[0]))}
+                                    value={[
+                                      parseFloat(
+                                        field.value?.toString() || "0",
+                                      ),
+                                    ]}
+                                    onValueChange={(value) =>
+                                      field.onChange(String(value[0]))
+                                    }
                                     min={0}
                                     max={100}
                                     step={1}
@@ -700,13 +788,17 @@ export default function MixColorsCalculator() {
                             name="black"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel>
-                                  Black: {field.value}%
-                                </FormLabel>
+                                <FormLabel>Black: {field.value}%</FormLabel>
                                 <FormControl>
                                   <Slider
-                                    value={[parseFloat(field.value?.toString() || "0")]}
-                                    onValueChange={(value) => field.onChange(String(value[0]))}
+                                    value={[
+                                      parseFloat(
+                                        field.value?.toString() || "0",
+                                      ),
+                                    ]}
+                                    onValueChange={(value) =>
+                                      field.onChange(String(value[0]))
+                                    }
                                     min={0}
                                     max={100}
                                     step={1}
@@ -727,13 +819,15 @@ export default function MixColorsCalculator() {
                             name="red"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel>
-                                  Red: {field.value}
-                                </FormLabel>
+                                <FormLabel>Red: {field.value}</FormLabel>
                                 <FormControl>
                                   <Slider
-                                    value={[parseInt(field.value?.toString() || "0")]}
-                                    onValueChange={(value) => field.onChange(String(value[0]))}
+                                    value={[
+                                      parseInt(field.value?.toString() || "0"),
+                                    ]}
+                                    onValueChange={(value) =>
+                                      field.onChange(String(value[0]))
+                                    }
                                     min={0}
                                     max={255}
                                     step={1}
@@ -750,13 +844,15 @@ export default function MixColorsCalculator() {
                             name="green"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel>
-                                  Green: {field.value}
-                                </FormLabel>
+                                <FormLabel>Green: {field.value}</FormLabel>
                                 <FormControl>
                                   <Slider
-                                    value={[parseInt(field.value?.toString() || "0")]}
-                                    onValueChange={(value) => field.onChange(String(value[0]))}
+                                    value={[
+                                      parseInt(field.value?.toString() || "0"),
+                                    ]}
+                                    onValueChange={(value) =>
+                                      field.onChange(String(value[0]))
+                                    }
                                     min={0}
                                     max={255}
                                     step={1}
@@ -773,13 +869,15 @@ export default function MixColorsCalculator() {
                             name="blue"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel>
-                                  Blue: {field.value}
-                                </FormLabel>
+                                <FormLabel>Blue: {field.value}</FormLabel>
                                 <FormControl>
                                   <Slider
-                                    value={[parseInt(field.value?.toString() || "0")]}
-                                    onValueChange={(value) => field.onChange(String(value[0]))}
+                                    value={[
+                                      parseInt(field.value?.toString() || "0"),
+                                    ]}
+                                    onValueChange={(value) =>
+                                      field.onChange(String(value[0]))
+                                    }
                                     min={0}
                                     max={255}
                                     step={1}
@@ -795,7 +893,7 @@ export default function MixColorsCalculator() {
                     )}
 
                     <Separator className="my-4" />
-                    
+
                     <div className="space-y-4">
                       <FormField
                         control={form.control}
@@ -807,7 +905,7 @@ export default function MixColorsCalculator() {
                               <FormControl>
                                 <Input {...field} placeholder="#5A7D9A" />
                               </FormControl>
-                              <div 
+                              <div
                                 className="w-10 h-10 rounded border"
                                 style={{ backgroundColor: targetColorPreview }}
                               />
@@ -825,14 +923,20 @@ export default function MixColorsCalculator() {
                       <div className="flex space-x-4 items-center">
                         <div className="flex-1">
                           <Label>Input Color</Label>
-                          <div className="h-12 mt-1 rounded-md border" style={{ backgroundColor: mixedColorPreview }}></div>
+                          <div
+                            className="h-12 mt-1 rounded-md border"
+                            style={{ backgroundColor: mixedColorPreview }}
+                          ></div>
                         </div>
                         <div className="flex-1">
                           <Label>Target Color</Label>
-                          <div className="h-12 mt-1 rounded-md border" style={{ backgroundColor: targetColorPreview }}></div>
+                          <div
+                            className="h-12 mt-1 rounded-md border"
+                            style={{ backgroundColor: targetColorPreview }}
+                          ></div>
                         </div>
                       </div>
-                      
+
                       <Button type="submit" className="w-full mt-4">
                         <Droplets className="mr-2 h-4 w-4" />
                         {t("mix_colors.calculate")}
@@ -855,8 +959,10 @@ export default function MixColorsCalculator() {
                   <div className="space-y-6">
                     <div className="flex flex-col space-y-2">
                       <Label>Target Color</Label>
-                      <div className="h-16 rounded-md flex items-center justify-center border" 
-                           style={{ backgroundColor: targetColorPreview }}>
+                      <div
+                        className="h-16 rounded-md flex items-center justify-center border"
+                        style={{ backgroundColor: targetColorPreview }}
+                      >
                         <span className="text-xs font-mono bg-white bg-opacity-70 px-2 py-1 rounded">
                           {targetColorPreview}
                         </span>
@@ -868,13 +974,18 @@ export default function MixColorsCalculator() {
                       {results.length > 0 ? (
                         <div className="space-y-2">
                           {results.map((mix, index) => (
-                            <div key={index} className="flex items-center space-x-2">
-                              <div 
-                                className="w-6 h-6 rounded-full" 
+                            <div
+                              key={index}
+                              className="flex items-center space-x-2"
+                            >
+                              <div
+                                className="w-6 h-6 rounded-full"
                                 style={{ backgroundColor: mix.colorCode }}
                               />
                               <div className="flex-1">
-                                <div className="text-sm font-medium">{mix.name}</div>
+                                <div className="text-sm font-medium">
+                                  {mix.name}
+                                </div>
                                 <div className="w-full bg-gray-200 rounded-full h-2">
                                   <div
                                     className="bg-primary h-2 rounded-full"
@@ -882,16 +993,20 @@ export default function MixColorsCalculator() {
                                   />
                                 </div>
                               </div>
-                              <div className="text-sm font-medium">{mix.percentage.toFixed(1)}%</div>
+                              <div className="text-sm font-medium">
+                                {mix.percentage.toFixed(1)}%
+                              </div>
                             </div>
                           ))}
-                          
+
                           <Separator className="my-4" />
-                          
+
                           <div className="text-sm text-muted-foreground mt-2">
                             <p>
-                              <b>Mixing Instructions:</b> Combine the inks in the proportions shown above. 
-                              Start with the highest percentage ink and add smaller percentages gradually.
+                              <b>Mixing Instructions:</b> Combine the inks in
+                              the proportions shown above. Start with the
+                              highest percentage ink and add smaller percentages
+                              gradually.
                             </p>
                           </div>
                         </div>
@@ -906,8 +1021,12 @@ export default function MixColorsCalculator() {
                   <div className="flex flex-col items-center justify-center space-y-4 py-12 text-center text-muted-foreground">
                     <Droplets className="h-12 w-12" />
                     <div>
-                      <p className="text-lg font-medium">No Color Mix Calculated</p>
-                      <p className="text-sm">Enter your color specifications and click Calculate</p>
+                      <p className="text-lg font-medium">
+                        No Color Mix Calculated
+                      </p>
+                      <p className="text-sm">
+                        Enter your color specifications and click Calculate
+                      </p>
                     </div>
                   </div>
                 )}
@@ -915,7 +1034,7 @@ export default function MixColorsCalculator() {
             </Card>
           </div>
         </TabsContent>
-        
+
         <TabsContent value="pantone">
           <div className="grid gap-6 md:grid-cols-2">
             <Card>
@@ -928,33 +1047,40 @@ export default function MixColorsCalculator() {
               <CardContent>
                 <div className="space-y-6">
                   <div className="space-y-2">
-                    <Label htmlFor="pantone-search">{t("mix_colors.pantone_search")}</Label>
-                    <Input 
-                      id="pantone-search" 
-                      type="text" 
+                    <Label htmlFor="pantone-search">
+                      {t("mix_colors.pantone_search")}
+                    </Label>
+                    <Input
+                      id="pantone-search"
+                      type="text"
                       placeholder={t("mix_colors.select_pantone")}
                       onChange={(e) => {
                         const searchTerm = e.target.value.toLowerCase();
-                        const filteredColors = standardInks.pantone.filter(color => 
-                          color.name.toLowerCase().includes(searchTerm)
+                        const filteredColors = standardInks.pantone.filter(
+                          (color) =>
+                            color.name.toLowerCase().includes(searchTerm),
                         );
-                        setFilteredPantoneColors(searchTerm ? filteredColors : standardInks.pantone);
-                      }} 
+                        setFilteredPantoneColors(
+                          searchTerm ? filteredColors : standardInks.pantone,
+                        );
+                      }}
                     />
                   </div>
-                  
+
                   <div className="h-72 overflow-y-auto border rounded-md p-2">
                     <div className="grid grid-cols-2 gap-2">
                       {filteredPantoneColors.map((color, index) => (
-                        <div 
+                        <div
                           key={index}
                           className={`flex items-center p-2 rounded cursor-pointer hover:bg-muted transition-colors ${
-                            selectedPantoneColor?.name === color.name ? 'bg-primary/10 border border-primary/30' : ''
+                            selectedPantoneColor?.name === color.name
+                              ? "bg-primary/10 border border-primary/30"
+                              : ""
                           }`}
                           onClick={() => handlePantoneColorSelect(color)}
                         >
-                          <div 
-                            className="w-6 h-6 rounded mr-2 border" 
+                          <div
+                            className="w-6 h-6 rounded mr-2 border"
                             style={{ backgroundColor: color.colorCode }}
                           ></div>
                           <span className="text-sm truncate">{color.name}</span>
@@ -962,28 +1088,40 @@ export default function MixColorsCalculator() {
                       ))}
                     </div>
                   </div>
-                  
+
                   {selectedPantoneColor && (
                     <div>
-                      <h3 className="text-sm font-medium mb-2">{t("mix_colors.pantone_selected")}</h3>
+                      <h3 className="text-sm font-medium mb-2">
+                        {t("mix_colors.pantone_selected")}
+                      </h3>
                       <div className="flex items-center mb-4">
-                        <div 
-                          className="w-8 h-8 rounded mr-3 border" 
-                          style={{ backgroundColor: selectedPantoneColor.colorCode }}
+                        <div
+                          className="w-8 h-8 rounded mr-3 border"
+                          style={{
+                            backgroundColor: selectedPantoneColor.colorCode,
+                          }}
                         ></div>
-                        <span className="font-medium">{selectedPantoneColor.name}</span>
+                        <span className="font-medium">
+                          {selectedPantoneColor.name}
+                        </span>
                       </div>
-                      
-                      <Button 
+
+                      <Button
                         onClick={() => {
                           // Update form values with the Pantone color's CMYK values
-                          form.setValue('colorModel', 'cmyk');
-                          form.setValue('cyan', selectedPantoneColor.cmyk[0]);
-                          form.setValue('magenta', selectedPantoneColor.cmyk[1]); 
-                          form.setValue('yellow', selectedPantoneColor.cmyk[2]);
-                          form.setValue('black', selectedPantoneColor.cmyk[3]);
-                          form.setValue('targetColor', selectedPantoneColor.colorCode);
-                          
+                          form.setValue("colorModel", "cmyk");
+                          form.setValue("cyan", selectedPantoneColor.cmyk[0]);
+                          form.setValue(
+                            "magenta",
+                            selectedPantoneColor.cmyk[1],
+                          );
+                          form.setValue("yellow", selectedPantoneColor.cmyk[2]);
+                          form.setValue("black", selectedPantoneColor.cmyk[3]);
+                          form.setValue(
+                            "targetColor",
+                            selectedPantoneColor.colorCode,
+                          );
+
                           // Calculate color mix
                           calculateColorMix(form.getValues());
                         }}
@@ -997,7 +1135,7 @@ export default function MixColorsCalculator() {
                 </div>
               </CardContent>
             </Card>
-            
+
             <Card>
               <CardHeader>
                 <CardTitle>{t("mix_colors.color_mix_results")}</CardTitle>
@@ -1009,28 +1147,40 @@ export default function MixColorsCalculator() {
                       <div className="flex-1">
                         <Label>{t("mix_colors.pantone_formula")}</Label>
                         <div className="mt-1 p-2 rounded-md bg-muted">
-                          <p className="font-mono text-sm">{selectedPantoneColor?.name}</p>
+                          <p className="font-mono text-sm">
+                            {selectedPantoneColor?.name}
+                          </p>
                           <div className="flex space-x-2 mt-1">
-                            <div className="flex-1 h-8 rounded" style={{backgroundColor: selectedPantoneColor?.colorCode || '#FFF'}}></div>
+                            <div
+                              className="flex-1 h-8 rounded"
+                              style={{
+                                backgroundColor:
+                                  selectedPantoneColor?.colorCode || "#FFF",
+                              }}
+                            ></div>
                           </div>
                         </div>
                       </div>
                     </div>
-                    
+
                     <div className="border rounded-md overflow-hidden">
                       <table className="w-full text-sm">
                         <thead>
                           <tr className="bg-muted">
-                            <th className="py-2 px-3 text-left">{t("mix_colors.ink")}</th>
-                            <th className="py-2 px-3 text-right">{t("mix_colors.percentage")}</th>
+                            <th className="py-2 px-3 text-left">
+                              {t("mix_colors.ink")}
+                            </th>
+                            <th className="py-2 px-3 text-right">
+                              {t("mix_colors.percentage")}
+                            </th>
                           </tr>
                         </thead>
                         <tbody>
                           {results.map((result, index) => (
                             <tr key={index} className="border-t">
                               <td className="py-2 px-3 flex items-center">
-                                <div 
-                                  className="w-4 h-4 rounded mr-2" 
+                                <div
+                                  className="w-4 h-4 rounded mr-2"
                                   style={{ backgroundColor: result.colorCode }}
                                 ></div>
                                 {result.name}
@@ -1053,7 +1203,7 @@ export default function MixColorsCalculator() {
             </Card>
           </div>
         </TabsContent>
-        
+
         <TabsContent value="upload">
           <Card>
             <CardHeader>
@@ -1072,8 +1222,8 @@ export default function MixColorsCalculator() {
                   className="hidden"
                 />
                 <Upload className="h-8 w-8 mb-4 text-muted-foreground" />
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   onClick={() => fileInputRef.current?.click()}
                 >
                   Upload Image
@@ -1082,7 +1232,7 @@ export default function MixColorsCalculator() {
                   Supported formats: JPG, PNG, GIF, BMP
                 </p>
               </div>
-              
+
               {uploadError && (
                 <Alert variant="destructive">
                   <AlertTitle>Error</AlertTitle>
@@ -1094,69 +1244,98 @@ export default function MixColorsCalculator() {
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <h3 className="text-lg font-medium">Extracted Colors</h3>
-                    <span className="text-sm text-gray-500">{extractedColors.length} colors found</span>
+                    <span className="text-sm text-gray-500">
+                      {extractedColors.length} colors found
+                    </span>
                   </div>
-                  
+
                   <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
                     {extractedColors.map((color, index) => (
-                      <div 
-                        key={index} 
+                      <div
+                        key={index}
                         className={`
                           rounded-lg cursor-pointer transition-all duration-200 hover:scale-105
-                          ${selectedExtractedColor?.hex === color.hex ? 'ring-2 ring-blue-500 shadow-lg' : 'hover:ring-1 hover:ring-gray-300'}
+                          ${selectedExtractedColor?.hex === color.hex ? "ring-2 ring-blue-500 shadow-lg" : "hover:ring-1 hover:ring-gray-300"}
                         `}
                         onClick={() => handleExtractedColorSelect(color)}
                       >
-                        <div 
+                        <div
                           className="h-16 rounded-t-lg border-b"
                           style={{ backgroundColor: color.hex }}
                         />
                         <div className="p-2 bg-white rounded-b-lg border border-t-0">
-                          <div className="text-xs font-mono font-medium text-gray-700">{color.hex}</div>
-                          <div className="text-xs text-blue-600 font-medium">{color.percentage}% coverage</div>
+                          <div className="text-xs font-mono font-medium text-gray-700">
+                            {color.hex}
+                          </div>
+                          <div className="text-xs text-blue-600 font-medium">
+                            {color.percentage}% coverage
+                          </div>
                           <div className="text-xs text-gray-500 mt-1">
-                            CMYK: {Math.round(color.cmyk.c)}, {Math.round(color.cmyk.m)}, {Math.round(color.cmyk.y)}, {Math.round(color.cmyk.k)}
+                            CMYK: {Math.round(color.cmyk.c)},{" "}
+                            {Math.round(color.cmyk.m)},{" "}
+                            {Math.round(color.cmyk.y)},{" "}
+                            {Math.round(color.cmyk.k)}
                           </div>
                         </div>
                       </div>
                     ))}
                   </div>
-                  
+
                   {selectedExtractedColor && (
                     <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
                       <div className="flex items-start space-x-4">
-                        <div 
+                        <div
                           className="w-16 h-16 rounded-lg border-2 border-white shadow-sm flex-shrink-0"
-                          style={{ backgroundColor: selectedExtractedColor.hex }}
+                          style={{
+                            backgroundColor: selectedExtractedColor.hex,
+                          }}
                         />
                         <div className="flex-1">
-                          <h4 className="font-medium text-blue-900 mb-2">Selected Color Analysis</h4>
+                          <h4 className="font-medium text-blue-900 mb-2">
+                            Selected Color Analysis
+                          </h4>
                           <div className="grid grid-cols-2 gap-4 text-sm">
                             <div>
                               <p className="text-gray-600">Hex Code:</p>
-                              <p className="font-mono font-medium">{selectedExtractedColor.hex}</p>
+                              <p className="font-mono font-medium">
+                                {selectedExtractedColor.hex}
+                              </p>
                             </div>
                             <div>
                               <p className="text-gray-600">Coverage:</p>
-                              <p className="font-medium">{selectedExtractedColor.percentage}%</p>
+                              <p className="font-medium">
+                                {selectedExtractedColor.percentage}%
+                              </p>
                             </div>
                             <div>
                               <p className="text-gray-600">RGB Values:</p>
-                              <p className="font-mono">{selectedExtractedColor.rgb.r}, {selectedExtractedColor.rgb.g}, {selectedExtractedColor.rgb.b}</p>
+                              <p className="font-mono">
+                                {selectedExtractedColor.rgb.r},{" "}
+                                {selectedExtractedColor.rgb.g},{" "}
+                                {selectedExtractedColor.rgb.b}
+                              </p>
                             </div>
                             <div>
                               <p className="text-gray-600">CMYK Values:</p>
-                              <p className="font-mono">{Math.round(selectedExtractedColor.cmyk.c)}%, {Math.round(selectedExtractedColor.cmyk.m)}%, {Math.round(selectedExtractedColor.cmyk.y)}%, {Math.round(selectedExtractedColor.cmyk.k)}%</p>
+                              <p className="font-mono">
+                                {Math.round(selectedExtractedColor.cmyk.c)}%,{" "}
+                                {Math.round(selectedExtractedColor.cmyk.m)}%,{" "}
+                                {Math.round(selectedExtractedColor.cmyk.y)}%,{" "}
+                                {Math.round(selectedExtractedColor.cmyk.k)}%
+                              </p>
                             </div>
                           </div>
                           <div className="mt-3 p-2 bg-blue-100 rounded text-xs text-blue-700">
-                            <strong>Note:</strong> Color values have been automatically filled in the calculator. Click "Calculate Mix" below to generate the precise ink formula.
+                            <strong>Note:</strong> Color values have been
+                            automatically filled in the calculator. Click
+                            "Calculate Mix" below to generate the precise ink
+                            formula.
                           </div>
                         </div>
                       </div>
-                      
+
                       <div className="mt-4">
-                        <Button 
+                        <Button
                           onClick={() => form.handleSubmit(calculateColorMix)()}
                           className="w-full"
                           size="lg"
@@ -1172,7 +1351,7 @@ export default function MixColorsCalculator() {
             </CardContent>
           </Card>
         </TabsContent>
-        
+
         <TabsContent value="guide">
           <Card>
             <CardHeader>
@@ -1182,58 +1361,88 @@ export default function MixColorsCalculator() {
               <div className="space-y-2">
                 <h3 className="text-lg font-medium">About This Tool</h3>
                 <p>
-                  The Color Mixing Calculator helps printing operators find the correct formula for special colors.
-                  It can calculate the percentage of CMYK or RGB colors needed to create a specific color,
-                  and even analyze uploaded designs to extract colors and provide mixing formulas.
+                  The Color Mixing Calculator helps printing operators find the
+                  correct formula for special colors. It can calculate the
+                  percentage of CMYK or RGB colors needed to create a specific
+                  color, and even analyze uploaded designs to extract colors and
+                  provide mixing formulas.
                 </p>
               </div>
-              
+
               <Separator />
-              
+
               <div className="space-y-4">
                 <h3 className="text-lg font-medium">Using the Calculator</h3>
-                
+
                 <div className="space-y-2">
                   <h4 className="font-medium">Method 1: Enter Color Values</h4>
                   <ol className="list-decimal list-inside space-y-2 ml-4">
-                    <li>Select your preferred color model (CMYK for printing, RGB for digital)</li>
+                    <li>
+                      Select your preferred color model (CMYK for printing, RGB
+                      for digital)
+                    </li>
                     <li>Adjust the sliders to set your desired color values</li>
-                    <li>Or enter a specific hex color code in the Target Color field</li>
-                    <li>Click "Calculate Color Mix" to get the suggested ink formula</li>
+                    <li>
+                      Or enter a specific hex color code in the Target Color
+                      field
+                    </li>
+                    <li>
+                      Click "Calculate Color Mix" to get the suggested ink
+                      formula
+                    </li>
                   </ol>
                 </div>
-                
+
                 <div className="space-y-2">
                   <h4 className="font-medium">Method 2: Upload a Design</h4>
                   <ol className="list-decimal list-inside space-y-2 ml-4">
                     <li>Go to the "Upload Design" tab</li>
                     <li>Click "Upload Image" and select your design file</li>
-                    <li>The tool will extract the dominant colors from your design</li>
+                    <li>
+                      The tool will extract the dominant colors from your design
+                    </li>
                     <li>Click on any extracted color to select it</li>
-                    <li>Click "Calculate Formula for Selected Color" to get the mixing formula</li>
+                    <li>
+                      Click "Calculate Formula for Selected Color" to get the
+                      mixing formula
+                    </li>
                   </ol>
                 </div>
               </div>
-              
+
               <Separator />
-              
+
               <div className="space-y-2">
-                <h3 className="text-lg font-medium">Tips for Accurate Color Mixing</h3>
+                <h3 className="text-lg font-medium">
+                  Tips for Accurate Color Mixing
+                </h3>
                 <ul className="list-disc list-inside space-y-2 ml-4">
-                  <li>Start with the highest percentage ink and add smaller amounts gradually</li>
-                  <li>Mix a small sample batch first to check the color match</li>
-                  <li>Remember that printed colors may appear differently from screen colors</li>
-                  <li>For best results, use standardized inks and consistent mixing conditions</li>
+                  <li>
+                    Start with the highest percentage ink and add smaller
+                    amounts gradually
+                  </li>
+                  <li>
+                    Mix a small sample batch first to check the color match
+                  </li>
+                  <li>
+                    Remember that printed colors may appear differently from
+                    screen colors
+                  </li>
+                  <li>
+                    For best results, use standardized inks and consistent
+                    mixing conditions
+                  </li>
                   <li>Keep records of successful mixes for future reference</li>
                 </ul>
               </div>
-              
+
               <Alert>
                 <AlertTitle>Important Note</AlertTitle>
                 <AlertDescription>
-                  This tool provides approximations based on theoretical color models. 
-                  Actual ink behavior may vary based on substrate, printing method, and ink properties.
-                  Always test your color mix before full production.
+                  This tool provides approximations based on theoretical color
+                  models. Actual ink behavior may vary based on substrate,
+                  printing method, and ink properties. Always test your color
+                  mix before full production.
                 </AlertDescription>
               </Alert>
             </CardContent>

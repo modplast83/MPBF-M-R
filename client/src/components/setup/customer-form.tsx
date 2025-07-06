@@ -34,12 +34,12 @@ export function CustomerForm({ customer, onSuccess }: CustomerFormProps) {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const isEditing = !!customer;
-  
+
   // Fetch users (for sales person)
   const { data: users, isLoading: usersLoading } = useQuery<User[]>({
     queryKey: [API_ENDPOINTS.USERS],
   });
-  
+
   // Set up the form
   const form = useForm<z.infer<typeof insertCustomerSchema>>({
     resolver: zodResolver(insertCustomerSchema),
@@ -52,14 +52,18 @@ export function CustomerForm({ customer, onSuccess }: CustomerFormProps) {
       plateDrawerCode: customer?.plateDrawerCode || "",
     },
   });
-  
+
   // Create mutation for adding/updating customer
   const mutation = useMutation({
     mutationFn: async (values: z.infer<typeof insertCustomerSchema>) => {
       try {
         console.log("Starting customer mutation with values:", values);
         if (isEditing) {
-          return await apiRequest("PUT", `${API_ENDPOINTS.CUSTOMERS}/${customer!.id}`, values);
+          return await apiRequest(
+            "PUT",
+            `${API_ENDPOINTS.CUSTOMERS}/${customer!.id}`,
+            values,
+          );
         } else {
           return await apiRequest("POST", API_ENDPOINTS.CUSTOMERS, values);
         }
@@ -85,15 +89,15 @@ export function CustomerForm({ customer, onSuccess }: CustomerFormProps) {
       });
     },
   });
-  
+
   // Form submission handler
   const onSubmit = (values: z.infer<typeof insertCustomerSchema>) => {
     // Make a fresh copy to avoid mutations
     const updatedValues = { ...values };
-    
+
     // Server will handle ID generation with proper CID#### format
     // We don't need to generate IDs client-side anymore
-    
+
     // Handle user ID field correctly
     if (updatedValues.userId === "null") {
       // Set to null if "null" string was selected
@@ -102,20 +106,21 @@ export function CustomerForm({ customer, onSuccess }: CustomerFormProps) {
       // Ensure proper format if user ID was provided
       // Some users have "00U" prefix, others have "0U" - ensure consistency
       if (!updatedValues.userId.match(/^(0U|00U)/)) {
-        updatedValues.userId = `0U${updatedValues.userId.replace(/^0+U/, '')}`;
+        updatedValues.userId = `0U${updatedValues.userId.replace(/^0+U/, "")}`;
       }
       console.log("Formatted userId:", updatedValues.userId);
     }
-    
+
     // Ensure all empty strings are converted to empty strings (not null or undefined)
     // This is important because the schema expects strings for string fields
     if (updatedValues.nameAr === "") updatedValues.nameAr = "";
-    if (updatedValues.plateDrawerCode === "") updatedValues.plateDrawerCode = "";
-    
+    if (updatedValues.plateDrawerCode === "")
+      updatedValues.plateDrawerCode = "";
+
     console.log("Submitting customer form with final values:", updatedValues);
     mutation.mutate(updatedValues);
   };
-  
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -126,12 +131,21 @@ export function CustomerForm({ customer, onSuccess }: CustomerFormProps) {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>
-                  {t("setup.customers.customer_id")} {!isEditing && <span className="text-muted-foreground text-xs font-normal">({t("setup.customers.customer_id_help")})</span>}
+                  {t("setup.customers.customer_id")}{" "}
+                  {!isEditing && (
+                    <span className="text-muted-foreground text-xs font-normal">
+                      ({t("setup.customers.customer_id_help")})
+                    </span>
+                  )}
                 </FormLabel>
                 <FormControl>
-                  <Input 
-                    placeholder={isEditing ? t("setup.customers.customer_id") : t("setup.customers.customer_id_placeholder")} 
-                    {...field} 
+                  <Input
+                    placeholder={
+                      isEditing
+                        ? t("setup.customers.customer_id")
+                        : t("setup.customers.customer_id_placeholder")
+                    }
+                    {...field}
                     disabled={isEditing}
                   />
                 </FormControl>
@@ -139,24 +153,32 @@ export function CustomerForm({ customer, onSuccess }: CustomerFormProps) {
               </FormItem>
             )}
           />
-          
+
           <FormField
             control={form.control}
             name="code"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>
-                  {t("setup.customers.customer_code")} {!isEditing && <span className="text-muted-foreground text-xs font-normal">({t("setup.customers.customer_code_help")})</span>}
+                  {t("setup.customers.customer_code")}{" "}
+                  {!isEditing && (
+                    <span className="text-muted-foreground text-xs font-normal">
+                      ({t("setup.customers.customer_code_help")})
+                    </span>
+                  )}
                 </FormLabel>
                 <FormControl>
-                  <Input placeholder={t("setup.customers.customer_code_placeholder")} {...field} />
+                  <Input
+                    placeholder={t("setup.customers.customer_code_placeholder")}
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <FormField
             control={form.control}
@@ -165,22 +187,27 @@ export function CustomerForm({ customer, onSuccess }: CustomerFormProps) {
               <FormItem>
                 <FormLabel>{t("setup.customers.customer_name")}</FormLabel>
                 <FormControl>
-                  <Input placeholder={t("setup.customers.customer_name_placeholder")} {...field} />
+                  <Input
+                    placeholder={t("setup.customers.customer_name_placeholder")}
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          
+
           <FormField
             control={form.control}
             name="nameAr"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("setup.customers.arabic_name_optional")}</FormLabel>
+                <FormLabel>
+                  {t("setup.customers.arabic_name_optional")}
+                </FormLabel>
                 <FormControl>
-                  <Input 
-                    placeholder={t("setup.customers.arabic_name_placeholder")} 
+                  <Input
+                    placeholder={t("setup.customers.arabic_name_placeholder")}
                     {...field}
                     value={field.value || ""}
                     onChange={(e) => field.onChange(e.target.value || "")}
@@ -191,7 +218,7 @@ export function CustomerForm({ customer, onSuccess }: CustomerFormProps) {
             )}
           />
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <FormField
             control={form.control}
@@ -200,17 +227,23 @@ export function CustomerForm({ customer, onSuccess }: CustomerFormProps) {
               <FormItem>
                 <FormLabel>{t("setup.customers.sales_person")}</FormLabel>
                 <Select
-                  onValueChange={(value) => field.onChange(value === "null" ? null : value)}
+                  onValueChange={(value) =>
+                    field.onChange(value === "null" ? null : value)
+                  }
                   value={field.value || "null"}
                   disabled={usersLoading}
                 >
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder={t("setup.customers.sales_person")} />
+                      <SelectValue
+                        placeholder={t("setup.customers.sales_person")}
+                      />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="null">{t("setup.customers.none")}</SelectItem>
+                    <SelectItem value="null">
+                      {t("setup.customers.none")}
+                    </SelectItem>
                     {users?.map((user) => (
                       <SelectItem key={user.id} value={user.id}>
                         {user.firstName || user.username || user.id}
@@ -222,7 +255,7 @@ export function CustomerForm({ customer, onSuccess }: CustomerFormProps) {
               </FormItem>
             )}
           />
-          
+
           <FormField
             control={form.control}
             name="plateDrawerCode"
@@ -230,8 +263,8 @@ export function CustomerForm({ customer, onSuccess }: CustomerFormProps) {
               <FormItem>
                 <FormLabel>{t("setup.customers.plate_drawer_code")}</FormLabel>
                 <FormControl>
-                  <Input 
-                    placeholder={t("setup.customers.enter_plate_drawer_code")} 
+                  <Input
+                    placeholder={t("setup.customers.enter_plate_drawer_code")}
                     {...field}
                     value={field.value || ""}
                     onChange={(e) => field.onChange(e.target.value || "")}
@@ -242,25 +275,21 @@ export function CustomerForm({ customer, onSuccess }: CustomerFormProps) {
             )}
           />
         </div>
-        
+
         <div className="flex justify-end space-x-2 pt-4">
           {onSuccess && (
-            <Button
-              type="button"
-              variant="outline"
-              onClick={onSuccess}
-            >
+            <Button type="button" variant="outline" onClick={onSuccess}>
               {t("setup.customers.cancel")}
             </Button>
           )}
-          <Button
-            type="submit"
-            disabled={mutation.isPending}
-          >
+          <Button type="submit" disabled={mutation.isPending}>
             {mutation.isPending
-              ? isEditing ? t("common.updating") : t("common.creating")
-              : isEditing ? t("common.update") : t("setup.customers.create_customer")
-            }
+              ? isEditing
+                ? t("common.updating")
+                : t("common.creating")
+              : isEditing
+                ? t("common.update")
+                : t("setup.customers.create_customer")}
           </Button>
         </div>
       </form>

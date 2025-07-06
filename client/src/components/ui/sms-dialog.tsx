@@ -50,7 +50,12 @@ export function SmsDialog({
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const { register, handleSubmit, formState: { errors, isSubmitting }, reset } = useForm<FormData>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    reset,
+  } = useForm<FormData>({
     defaultValues: {
       recipientPhone,
       recipientName,
@@ -78,22 +83,28 @@ export function SmsDialog({
         title: "SMS sent successfully",
         description: "The message has been queued for delivery.",
       });
-      
+
       // Invalidate related queries
       if (orderId) {
-        queryClient.invalidateQueries({ queryKey: ["/api/orders", orderId, "sms-messages"] });
+        queryClient.invalidateQueries({
+          queryKey: ["/api/orders", orderId, "sms-messages"],
+        });
       }
       if (jobOrderId) {
-        queryClient.invalidateQueries({ queryKey: ["/api/job-orders", jobOrderId, "sms-messages"] });
+        queryClient.invalidateQueries({
+          queryKey: ["/api/job-orders", jobOrderId, "sms-messages"],
+        });
       }
       if (customerId) {
-        queryClient.invalidateQueries({ queryKey: ["/api/customers", customerId, "sms-messages"] });
+        queryClient.invalidateQueries({
+          queryKey: ["/api/customers", customerId, "sms-messages"],
+        });
       }
-      
+
       // Close dialog and reset form
       setOpen(false);
       reset();
-      
+
       // Call onSuccess if provided
       if (onSuccess) {
         onSuccess();
@@ -114,12 +125,15 @@ export function SmsDialog({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>{trigger || <Button variant="outline">Send SMS</Button>}</DialogTrigger>
+      <DialogTrigger asChild>
+        {trigger || <Button variant="outline">Send SMS</Button>}
+      </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Send SMS Message</DialogTitle>
           <DialogDescription>
-            Send an SMS notification to the recipient. The message will be sent immediately.
+            Send an SMS notification to the recipient. The message will be sent
+            immediately.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)}>

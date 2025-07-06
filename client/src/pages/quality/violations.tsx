@@ -4,14 +4,17 @@ import { QualityViolationsManagement } from "@/components/quality/violations-man
 
 export default function QualityViolations() {
   const { t } = useTranslation();
-  
+
   return (
     <div className="container mx-auto py-6">
-      <PageHeader 
-        title={t("quality.violations")} 
-        description={t("quality.violations_desc", "Report and track quality violations")} 
+      <PageHeader
+        title={t("quality.violations")}
+        description={t(
+          "quality.violations_desc",
+          "Report and track quality violations",
+        )}
       />
-      
+
       <div className="mt-6">
         <QualityViolationsManagement />
       </div>

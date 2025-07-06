@@ -37,7 +37,7 @@ const AuthContext = createContext<AuthContextType | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const { toast } = useToast();
   const [, setLocation] = useLocation();
-  
+
   // Using a more controlled query approach with explicit staleTime
   const {
     data: user,
@@ -49,30 +49,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     retry: false,
     refetchOnWindowFocus: false,
     staleTime: 60000, // Consider data fresh for 1 minute
-    initialData: null // Set initial data to null to avoid undefined
+    initialData: null, // Set initial data to null to avoid undefined
   });
 
   const loginMutation = useMutation<SelectUser, Error, LoginCredentials>({
     mutationFn: async (credentials) => {
-      console.log("Attempting login with credentials:", {username: credentials.username, hasPassword: !!credentials.password});
+      console.log("Attempting login with credentials:", {
+        username: credentials.username,
+        hasPassword: !!credentials.password,
+      });
       const response = await apiRequest("POST", "/api/login", credentials);
       console.log("Login response received:", response);
       return response;
     },
     onSuccess: (userData) => {
       console.log("Login successful, user data:", userData);
-      
+
       // Set the user data in the cache and ensure it's properly saved
       queryClient.setQueryData(["/api/user"], userData);
-      
+
       // Disable immediate refetch to avoid race conditions
       // Instead, rely on the explicitly set cache data
-      
+
       toast({
         title: "Login successful",
         description: `Welcome back, ${userData.username}!`,
       });
-      
+
       // Use direct navigation to ensure redirect works properly
       console.log("Redirecting to dashboard with user:", userData);
       setTimeout(() => {
@@ -84,7 +87,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       console.error("Login error:", error);
       toast({
         title: "Login failed",
-        description: error.message || "Invalid username or password. Please try again.",
+        description:
+          error.message || "Invalid username or password. Please try again.",
         variant: "destructive",
       });
     },
@@ -92,25 +96,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const registerMutation = useMutation<SelectUser, Error, RegisterData>({
     mutationFn: async (userData) => {
-      console.log("Attempting registration with data:", {username: userData.username, hasPassword: !!userData.password});
+      console.log("Attempting registration with data:", {
+        username: userData.username,
+        hasPassword: !!userData.password,
+      });
       const response = await apiRequest("POST", "/api/register", userData);
       console.log("Registration response received:", response);
       return response;
     },
     onSuccess: (userData) => {
       console.log("Registration successful, user data:", userData);
-      
+
       // Set the user data in the cache
       queryClient.setQueryData(["/api/user"], userData);
-      
+
       // Force refetch to make sure we have the latest data
       queryClient.invalidateQueries({ queryKey: ["/api/user"] });
-      
+
       toast({
         title: "Registration successful",
         description: `Welcome, ${userData.username}!`,
       });
-      
+
       // Use direct navigation to ensure redirect works properly
       console.log("Redirecting to dashboard after registration");
       setTimeout(() => {
@@ -122,7 +129,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       console.error("Registration error:", error);
       toast({
         title: "Registration failed",
-        description: error.message || "Could not create account. Please try again.",
+        description:
+          error.message || "Could not create account. Please try again.",
         variant: "destructive",
       });
     },
@@ -137,18 +145,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
     onSuccess: () => {
       console.log("Logout successful");
-      
+
       // Clear the query cache for user data
       queryClient.setQueryData(["/api/user"], null);
-      
+
       // Clear all queries to ensure fresh data on next login
       queryClient.removeQueries();
-      
+
       toast({
         title: "Logged out",
         description: "You have been successfully logged out.",
       });
-      
+
       // Redirect to auth page
       setTimeout(() => {
         setLocation("/auth");

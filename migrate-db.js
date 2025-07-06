@@ -12,10 +12,10 @@ if (!process.env.DATABASE_URL) {
 
 async function runMigration() {
   console.log("Starting database migration...");
-  
+
   // Create a connection pool
   const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-  
+
   try {
     // Push the schema directly to the database (simplest approach)
     console.log("Applying schema changes to database...");
@@ -166,7 +166,7 @@ async function runMigration() {
         status TEXT DEFAULT 'in-stock' NOT NULL
       );
       `);
-      
+
       console.log("Schema changes applied successfully");
       client.release();
     } catch (error) {
@@ -174,10 +174,10 @@ async function runMigration() {
       client.release();
       throw error;
     }
-    
+
     // Close the pool connection
     await pool.end();
-    
+
     console.log("Migration completed successfully!");
   } catch (error) {
     console.error("Migration failed:", error);

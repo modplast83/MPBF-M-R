@@ -1,9 +1,9 @@
 import { NotificationStorage } from "./notification-storage.js";
-import { 
-  InsertNotification, 
-  Notification, 
+import {
+  InsertNotification,
+  Notification,
   NotificationTemplate,
-  InsertNotificationTemplate
+  InsertNotificationTemplate,
 } from "../shared/schema.js";
 
 export class NotificationService {
@@ -19,14 +19,19 @@ export class NotificationService {
     critical: 4,
     high: 3,
     medium: 2,
-    low: 1
+    low: 1,
   };
 
   // Create notification with smart prioritization
-  async createNotification(notification: InsertNotification): Promise<Notification> {
+  async createNotification(
+    notification: InsertNotification,
+  ): Promise<Notification> {
     // Auto-set priority based on type and category if not specified
     if (!notification.priority) {
-      notification.priority = this.determinePriority(notification.type, notification.category);
+      notification.priority = this.determinePriority(
+        notification.type,
+        notification.category,
+      );
     }
 
     // Set expiration if not specified based on priority
@@ -39,10 +44,10 @@ export class NotificationService {
 
   // Create notification from template
   async createFromTemplate(
-    templateId: string, 
+    templateId: string,
     variables: Record<string, any>,
     targetUser?: string,
-    targetRole?: string
+    targetRole?: string,
   ): Promise<Notification | null> {
     const template = await this.storage.getNotificationTemplate(templateId);
     if (!template || !template.isActive) {
@@ -59,8 +64,10 @@ export class NotificationService {
       userId: targetUser || null,
       userRole: targetRole || null,
       actionRequired: template.actionRequired,
-      actionUrl: template.actionUrl ? this.replaceVariables(template.actionUrl, variables) : null,
-      metadata: { templateId, variables }
+      actionUrl: template.actionUrl
+        ? this.replaceVariables(template.actionUrl, variables)
+        : null,
+      metadata: { templateId, variables },
     };
 
     return await this.createNotification(notification);
@@ -68,13 +75,13 @@ export class NotificationService {
 
   // Broadcast notification to role or all users
   async broadcastNotification(
-    notification: Omit<InsertNotification, 'userId'>,
-    targetRole?: string
+    notification: Omit<InsertNotification, "userId">,
+    targetRole?: string,
   ): Promise<Notification> {
     return await this.createNotification({
       ...notification,
       userId: null,
-      userRole: targetRole || null
+      userRole: targetRole || null,
     });
   }
 
@@ -88,7 +95,7 @@ export class NotificationService {
       unreadOnly?: boolean;
       limit?: number;
       offset?: number;
-    } = {}
+    } = {},
   ): Promise<Notification[]> {
     const notifications = await this.storage.getNotifications({
       userId,
@@ -97,18 +104,20 @@ export class NotificationService {
       priority: filters.priority,
       isRead: filters.unreadOnly ? false : undefined,
       limit: filters.limit || 50,
-      offset: filters.offset || 0
+      offset: filters.offset || 0,
     });
 
     // Sort by priority and creation time
     return notifications.sort((a, b) => {
-      const aPriority = this.priorityOrder[a.priority as keyof typeof this.priorityOrder] || 0;
-      const bPriority = this.priorityOrder[b.priority as keyof typeof this.priorityOrder] || 0;
-      
+      const aPriority =
+        this.priorityOrder[a.priority as keyof typeof this.priorityOrder] || 0;
+      const bPriority =
+        this.priorityOrder[b.priority as keyof typeof this.priorityOrder] || 0;
+
       if (aPriority !== bPriority) {
         return bPriority - aPriority; // Higher priority first
       }
-      
+
       return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
     });
   }
@@ -124,17 +133,26 @@ export class NotificationService {
   }
 
   // Dismiss notification
-  async dismissNotification(notificationId: number, userId: string): Promise<boolean> {
+  async dismissNotification(
+    notificationId: number,
+    userId: string,
+  ): Promise<boolean> {
     return await this.storage.dismissNotification(notificationId, userId);
   }
 
   // Archive notification
-  async archiveNotification(notificationId: number, userId: string): Promise<boolean> {
+  async archiveNotification(
+    notificationId: number,
+    userId: string,
+  ): Promise<boolean> {
     return await this.storage.archiveNotification(notificationId, userId);
   }
 
   // Get unread count with priority breakdown
-  async getUnreadCount(userId: string, userRole?: string): Promise<{
+  async getUnreadCount(
+    userId: string,
+    userRole?: string,
+  ): Promise<{
     total: number;
     urgent: number;
     critical: number;
@@ -144,20 +162,20 @@ export class NotificationService {
       userId,
       userRole,
       isRead: false,
-      isArchived: false
+      isArchived: false,
     });
 
     const counts = {
       total: notifications.length,
       urgent: 0,
       critical: 0,
-      high: 0
+      high: 0,
     };
 
-    notifications.forEach(notification => {
-      if (notification.priority === 'urgent') counts.urgent++;
-      else if (notification.priority === 'critical') counts.critical++;
-      else if (notification.priority === 'high') counts.high++;
+    notifications.forEach((notification) => {
+      if (notification.priority === "urgent") counts.urgent++;
+      else if (notification.priority === "critical") counts.critical++;
+      else if (notification.priority === "high") counts.high++;
     });
 
     return counts;
@@ -173,14 +191,14 @@ export class NotificationService {
     event: string,
     data: Record<string, any>,
     targetUsers?: string[],
-    targetRoles?: string[]
+    targetRoles?: string[],
   ): Promise<Notification[]> {
     const notifications: Notification[] = [];
 
     // Find relevant templates for this event
     const templates = await this.storage.getNotificationTemplates();
     const relevantTemplates = templates.filter(
-      template => template.triggerEvent === event && template.isActive
+      (template) => template.triggerEvent === event && template.isActive,
     );
 
     for (const template of relevantTemplates) {
@@ -192,7 +210,7 @@ export class NotificationService {
             const notification = await this.createFromTemplate(
               template.id,
               data,
-              userId
+              userId,
             );
             if (notification) notifications.push(notification);
           }
@@ -205,7 +223,7 @@ export class NotificationService {
               template.id,
               data,
               undefined,
-              role
+              role,
             );
             if (notification) notifications.push(notification);
           }
@@ -230,55 +248,63 @@ export class NotificationService {
   // Private helper methods
   private determinePriority(type: string, category: string): string {
     // Auto-determine priority based on type and category
-    if (type === 'alert' || category === 'quality') return 'high';
-    if (type === 'warning' || category === 'maintenance') return 'medium';
-    if (type === 'system' || category === 'hr') return 'medium';
-    if (category === 'production') return 'high';
-    return 'medium';
+    if (type === "alert" || category === "quality") return "high";
+    if (type === "warning" || category === "maintenance") return "medium";
+    if (type === "system" || category === "hr") return "medium";
+    if (category === "production") return "high";
+    return "medium";
   }
 
   private calculateExpiration(priority: string): Date {
     const now = new Date();
     const hours = {
-      urgent: 1,    // 1 hour
-      critical: 4,  // 4 hours
-      high: 24,     // 1 day
-      medium: 72,   // 3 days
-      low: 168      // 1 week
+      urgent: 1, // 1 hour
+      critical: 4, // 4 hours
+      high: 24, // 1 day
+      medium: 72, // 3 days
+      low: 168, // 1 week
     };
 
     const expirationHours = hours[priority as keyof typeof hours] || 72;
     return new Date(now.getTime() + expirationHours * 60 * 60 * 1000);
   }
 
-  private replaceVariables(template: string, variables: Record<string, any>): string {
+  private replaceVariables(
+    template: string,
+    variables: Record<string, any>,
+  ): string {
     let result = template;
     Object.entries(variables).forEach(([key, value]) => {
-      const regex = new RegExp(`\\{\\{${key}\\}\\}`, 'g');
+      const regex = new RegExp(`\\{\\{${key}\\}\\}`, "g");
       result = result.replace(regex, String(value));
     });
     return result;
   }
 
-  private evaluateConditions(conditions: any, data: Record<string, any>): boolean {
+  private evaluateConditions(
+    conditions: any,
+    data: Record<string, any>,
+  ): boolean {
     if (!conditions) return true;
-    
+
     try {
       // Simple condition evaluation - can be extended for complex rules
-      if (typeof conditions === 'object') {
+      if (typeof conditions === "object") {
         return Object.entries(conditions).every(([key, expectedValue]) => {
           return data[key] === expectedValue;
         });
       }
       return true;
     } catch (error) {
-      console.error('Error evaluating notification conditions:', error);
+      console.error("Error evaluating notification conditions:", error);
       return false;
     }
   }
 
   // Template management
-  async createTemplate(template: InsertNotificationTemplate): Promise<NotificationTemplate> {
+  async createTemplate(
+    template: InsertNotificationTemplate,
+  ): Promise<NotificationTemplate> {
     return await this.storage.createNotificationTemplate(template);
   }
 
@@ -286,7 +312,10 @@ export class NotificationService {
     return await this.storage.getNotificationTemplates(category);
   }
 
-  async updateTemplate(id: string, updates: Partial<InsertNotificationTemplate>): Promise<boolean> {
+  async updateTemplate(
+    id: string,
+    updates: Partial<InsertNotificationTemplate>,
+  ): Promise<boolean> {
     return await this.storage.updateNotificationTemplate(id, updates);
   }
 

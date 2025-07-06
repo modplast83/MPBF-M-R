@@ -20,18 +20,51 @@ import {
   AlertCircle,
   RefreshCw,
   UserX,
-  Trash2
+  Trash2,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -49,10 +82,10 @@ const VIOLATION_TYPES = {
       "excessive_lateness",
       "early_departure",
       "extended_breaks",
-      "unauthorized_leave"
+      "unauthorized_leave",
     ],
     icon: Clock,
-    color: "bg-orange-100 text-orange-800"
+    color: "bg-orange-100 text-orange-800",
   },
   production: {
     label: "Production Violations",
@@ -61,10 +94,10 @@ const VIOLATION_TYPES = {
       "production_targets_missed",
       "wrong_specifications",
       "material_waste",
-      "process_deviation"
+      "process_deviation",
     ],
     icon: AlertTriangle,
-    color: "bg-red-100 text-red-800"
+    color: "bg-red-100 text-red-800",
   },
   conduct: {
     label: "Conduct Issues",
@@ -73,10 +106,10 @@ const VIOLATION_TYPES = {
       "harassment",
       "unprofessional_behavior",
       "conflict_with_colleagues",
-      "inappropriate_language"
+      "inappropriate_language",
     ],
     icon: UserX,
-    color: "bg-purple-100 text-purple-800"
+    color: "bg-purple-100 text-purple-800",
   },
   safety: {
     label: "Safety Violations",
@@ -85,10 +118,10 @@ const VIOLATION_TYPES = {
       "unsafe_work_practices",
       "ignoring_safety_protocols",
       "equipment_misuse",
-      "creating_hazards"
+      "creating_hazards",
     ],
     icon: AlertCircle,
-    color: "bg-yellow-100 text-yellow-800"
+    color: "bg-yellow-100 text-yellow-800",
   },
   policy: {
     label: "Policy Violations",
@@ -97,10 +130,10 @@ const VIOLATION_TYPES = {
       "mobile_phone_usage",
       "smoking_violations",
       "unauthorized_areas",
-      "data_privacy_breach"
+      "data_privacy_breach",
     ],
     icon: FileText,
-    color: "bg-blue-100 text-blue-800"
+    color: "bg-blue-100 text-blue-800",
   },
   damage: {
     label: "Equipment/Property Damage",
@@ -109,11 +142,11 @@ const VIOLATION_TYPES = {
       "product_damage",
       "facility_damage",
       "vehicle_damage",
-      "negligent_handling"
+      "negligent_handling",
     ],
     icon: DollarSign,
-    color: "bg-gray-100 text-gray-800"
-  }
+    color: "bg-gray-100 text-gray-800",
+  },
 };
 
 const ACTION_TYPES = [
@@ -122,13 +155,13 @@ const ACTION_TYPES = [
   { value: "suspension", label: "Suspension" },
   { value: "termination", label: "Termination" },
   { value: "training", label: "Additional Training" },
-  { value: "counseling", label: "Counseling" }
+  { value: "counseling", label: "Counseling" },
 ];
 
 const SEVERITY_LEVELS = [
   { value: "minor", label: "Minor", color: "bg-green-100 text-green-800" },
   { value: "major", label: "Major", color: "bg-yellow-100 text-yellow-800" },
-  { value: "critical", label: "Critical", color: "bg-red-100 text-red-800" }
+  { value: "critical", label: "Critical", color: "bg-red-100 text-red-800" },
 ];
 
 const violationFormSchema = z.object({
@@ -144,7 +177,7 @@ const violationFormSchema = z.object({
   actualCost: z.number().optional(),
   incidentDate: z.string().min(1, "Incident date is required"),
   followUpRequired: z.boolean().default(false),
-  followUpDate: z.string().optional()
+  followUpDate: z.string().optional(),
 });
 
 type ViolationFormData = z.infer<typeof violationFormSchema>;
@@ -153,8 +186,9 @@ export default function ViolationsComplaints() {
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  
-  const [selectedViolation, setSelectedViolation] = useState<HrViolation | null>(null);
+
+  const [selectedViolation, setSelectedViolation] =
+    useState<HrViolation | null>(null);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -184,7 +218,7 @@ export default function ViolationsComplaints() {
           incidentDate: new Date(data.incidentDate),
           followUpDate: data.followUpDate ? new Date(data.followUpDate) : null,
           estimatedCost: data.estimatedCost || 0,
-          actualCost: data.actualCost || 0
+          actualCost: data.actualCost || 0,
         }),
       });
       if (!response.ok) throw new Error("Failed to create violation");
@@ -219,7 +253,11 @@ export default function ViolationsComplaints() {
   });
 
   const handleDeleteViolation = (violation: HrViolation) => {
-    if (window.confirm(`Are you sure you want to delete violation ${violation.violationNumber || `VIO-${violation.id}`}? This action cannot be undone.`)) {
+    if (
+      window.confirm(
+        `Are you sure you want to delete violation ${violation.violationNumber || `VIO-${violation.id}`}? This action cannot be undone.`,
+      )
+    ) {
       deleteViolationMutation.mutate(violation.id);
     }
   };
@@ -229,7 +267,7 @@ export default function ViolationsComplaints() {
     defaultValues: {
       followUpRequired: false,
       estimatedCost: 0,
-      actualCost: 0
+      actualCost: 0,
     },
   });
 
@@ -237,28 +275,51 @@ export default function ViolationsComplaints() {
 
   // Filter violations
   const filteredViolations = violations.filter((violation: HrViolation) => {
-    const matchesSearch = violation.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         violation.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         violation.violationNumber?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === "all" || violation.status === statusFilter;
-    const matchesType = typeFilter === "all" || violation.violationType === typeFilter;
-    const matchesSeverity = severityFilter === "all" || violation.severity === severityFilter;
-    
+    const matchesSearch =
+      violation.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      violation.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      violation.violationNumber
+        ?.toLowerCase()
+        .includes(searchTerm.toLowerCase());
+    const matchesStatus =
+      statusFilter === "all" || violation.status === statusFilter;
+    const matchesType =
+      typeFilter === "all" || violation.violationType === typeFilter;
+    const matchesSeverity =
+      severityFilter === "all" || violation.severity === severityFilter;
+
     return matchesSearch && matchesStatus && matchesType && matchesSeverity;
   });
 
   const getStatusBadge = (status: string) => {
     const statusConfig = {
       open: { label: "Open", color: "bg-red-100 text-red-800", icon: XCircle },
-      investigating: { label: "Investigating", color: "bg-yellow-100 text-yellow-800", icon: RefreshCw },
-      resolved: { label: "Resolved", color: "bg-green-100 text-green-800", icon: CheckCircle },
-      appealed: { label: "Appealed", color: "bg-purple-100 text-purple-800", icon: AlertCircle },
-      dismissed: { label: "Dismissed", color: "bg-gray-100 text-gray-800", icon: XCircle }
+      investigating: {
+        label: "Investigating",
+        color: "bg-yellow-100 text-yellow-800",
+        icon: RefreshCw,
+      },
+      resolved: {
+        label: "Resolved",
+        color: "bg-green-100 text-green-800",
+        icon: CheckCircle,
+      },
+      appealed: {
+        label: "Appealed",
+        color: "bg-purple-100 text-purple-800",
+        icon: AlertCircle,
+      },
+      dismissed: {
+        label: "Dismissed",
+        color: "bg-gray-100 text-gray-800",
+        icon: XCircle,
+      },
     };
-    
-    const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.open;
+
+    const config =
+      statusConfig[status as keyof typeof statusConfig] || statusConfig.open;
     const IconComponent = config.icon;
-    
+
     return (
       <Badge className={config.color}>
         <IconComponent className="w-3 h-3 mr-1" />
@@ -270,7 +331,7 @@ export default function ViolationsComplaints() {
   const getViolationTypeBadge = (type: string) => {
     const typeConfig = VIOLATION_TYPES[type as keyof typeof VIOLATION_TYPES];
     if (!typeConfig) return <Badge>{type}</Badge>;
-    
+
     const IconComponent = typeConfig.icon;
     return (
       <Badge className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent hover:bg-primary/80 bg-blue-100 text-blue-800 text-center">
@@ -281,13 +342,19 @@ export default function ViolationsComplaints() {
   };
 
   const getSeverityBadge = (severity: string) => {
-    const severityConfig = SEVERITY_LEVELS.find(s => s.value === severity) || SEVERITY_LEVELS[0];
-    return <Badge className={severityConfig.color}>{severityConfig.label}</Badge>;
+    const severityConfig =
+      SEVERITY_LEVELS.find((s) => s.value === severity) || SEVERITY_LEVELS[0];
+    return (
+      <Badge className={severityConfig.color}>{severityConfig.label}</Badge>
+    );
   };
 
   const getUserName = (userId: string) => {
     const foundUser = users.find((u: User) => u.id === userId);
-    return foundUser ? `${foundUser.firstName || ''} ${foundUser.lastName || ''}`.trim() || foundUser.username : userId;
+    return foundUser
+      ? `${foundUser.firstName || ""} ${foundUser.lastName || ""}`.trim() ||
+          foundUser.username
+      : userId;
   };
 
   const handlePrintViolation = (violation: HrViolation) => {
@@ -317,8 +384,8 @@ export default function ViolationsComplaints() {
         <div class="info-section">
           <h3>Incident Information</h3>
           <p><strong>Title:</strong> ${violation.title}</p>
-          <p><strong>Incident Date:</strong> ${format(new Date(violation.incidentDate), 'PPP')}</p>
-          <p><strong>Report Date:</strong> ${format(new Date(violation.reportDate), 'PPP')}</p>
+          <p><strong>Incident Date:</strong> ${format(new Date(violation.incidentDate), "PPP")}</p>
+          <p><strong>Report Date:</strong> ${format(new Date(violation.reportDate), "PPP")}</p>
         </div>
 
         <div class="info-section">
@@ -330,45 +397,58 @@ export default function ViolationsComplaints() {
 
         <div class="info-section">
           <h3>Action Taken</h3>
-          <p><strong>Action:</strong> ${ACTION_TYPES.find(a => a.value === violation.actionTaken)?.label || violation.actionTaken}</p>
-          ${violation.actionDetails ? `<div class="description-box" style="margin-top: 10px;">${violation.actionDetails}</div>` : ''}
-          ${violation.disciplinaryPoints ? `<p><strong>Disciplinary Points:</strong> ${violation.disciplinaryPoints}</p>` : ''}
+          <p><strong>Action:</strong> ${ACTION_TYPES.find((a) => a.value === violation.actionTaken)?.label || violation.actionTaken}</p>
+          ${violation.actionDetails ? `<div class="description-box" style="margin-top: 10px;">${violation.actionDetails}</div>` : ""}
+          ${violation.disciplinaryPoints ? `<p><strong>Disciplinary Points:</strong> ${violation.disciplinaryPoints}</p>` : ""}
         </div>
 
-        ${violation.isRepeatOffense ? `
+        ${
+          violation.isRepeatOffense
+            ? `
           <div class="repeat-offense">
             <h3>⚠️ REPEAT OFFENSE</h3>
             <p><strong>Previous Violations:</strong> ${violation.previousViolationCount}</p>
             <p style="margin-bottom: 0;">This employee has committed similar violations before.</p>
           </div>
-        ` : ''}
+        `
+            : ""
+        }
 
-        ${(violation.estimatedCost > 0 || violation.actualCost > 0) ? `
+        ${
+          violation.estimatedCost > 0 || violation.actualCost > 0
+            ? `
           <div class="info-section">
             <h3>Financial Impact</h3>
-            ${violation.estimatedCost > 0 ? `<p><strong>Estimated Cost:</strong> $${violation.estimatedCost}</p>` : ''}
-            ${violation.actualCost > 0 ? `<p><strong>Actual Cost:</strong> $${violation.actualCost}</p>` : ''}
-            <p><strong>Cost Recovered:</strong> ${violation.costRecovered ? 'Yes' : 'No'}</p>
+            ${violation.estimatedCost > 0 ? `<p><strong>Estimated Cost:</strong> $${violation.estimatedCost}</p>` : ""}
+            ${violation.actualCost > 0 ? `<p><strong>Actual Cost:</strong> $${violation.actualCost}</p>` : ""}
+            <p><strong>Cost Recovered:</strong> ${violation.costRecovered ? "Yes" : "No"}</p>
           </div>
-        ` : ''}
+        `
+            : ""
+        }
 
-        ${violation.resolutionNotes ? `
+        ${
+          violation.resolutionNotes
+            ? `
           <div class="info-section">
             <h3>Resolution Notes</h3>
             <div class="description-box">
               ${violation.resolutionNotes}
             </div>
           </div>
-        ` : ''}
+        `
+            : ""
+        }
 
     `;
-    
-    const printWindow = window.open('', '_blank');
+
+    const printWindow = window.open("", "_blank");
     if (printWindow) {
-      printWindow.document.write(generatePrintDocument(
-        `Violation Report - ${violation.violationNumber}`,
-        printContent,
-        `
+      printWindow.document.write(
+        generatePrintDocument(
+          `Violation Report - ${violation.violationNumber}`,
+          printContent,
+          `
           .info-grid { 
             display: grid; 
             grid-template-columns: 1fr 1fr; 
@@ -403,8 +483,9 @@ export default function ViolationsComplaints() {
             color: #dc2626; 
             margin-top: 0; 
           }
-        `
-      ));
+        `,
+        ),
+      );
       printWindow.document.close();
       printWindow.print();
     }
@@ -416,18 +497,27 @@ export default function ViolationsComplaints() {
 
   // Statistics cards
   const totalViolations = violations.length;
-  const openViolations = violations.filter((v: HrViolation) => v.status === 'open').length;
-  const repeatOffenses = violations.filter((v: HrViolation) => v.isRepeatOffense).length;
-  const criticalViolations = violations.filter((v: HrViolation) => v.severity === 'critical').length;
+  const openViolations = violations.filter(
+    (v: HrViolation) => v.status === "open",
+  ).length;
+  const repeatOffenses = violations.filter(
+    (v: HrViolation) => v.isRepeatOffense,
+  ).length;
+  const criticalViolations = violations.filter(
+    (v: HrViolation) => v.severity === "critical",
+  ).length;
 
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex justify-between items-start">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Violations & Complaints</h1>
+          <h1 className="text-3xl font-bold tracking-tight">
+            Violations & Complaints
+          </h1>
           <p className="text-muted-foreground mt-2">
-            Professional employee violation management system with comprehensive tracking
+            Professional employee violation management system with comprehensive
+            tracking
           </p>
         </div>
         <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
@@ -441,11 +531,15 @@ export default function ViolationsComplaints() {
             <DialogHeader>
               <DialogTitle>Report Employee Violation</DialogTitle>
               <DialogDescription>
-                Document a professional violation with comprehensive details and tracking
+                Document a professional violation with comprehensive details and
+                tracking
               </DialogDescription>
             </DialogHeader>
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-4"
+              >
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <FormField
                     control={form.control}
@@ -453,7 +547,10 @@ export default function ViolationsComplaints() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Employee</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
                           <FormControl>
                             <SelectTrigger>
                               <SelectValue placeholder="Select employee" />
@@ -478,18 +575,23 @@ export default function ViolationsComplaints() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Violation Type</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
                           <FormControl>
                             <SelectTrigger>
                               <SelectValue placeholder="Select violation type" />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            {Object.entries(VIOLATION_TYPES).map(([key, type]) => (
-                              <SelectItem key={key} value={key}>
-                                {type.label}
-                              </SelectItem>
-                            ))}
+                            {Object.entries(VIOLATION_TYPES).map(
+                              ([key, type]) => (
+                                <SelectItem key={key} value={key}>
+                                  {type.label}
+                                </SelectItem>
+                              ),
+                            )}
                           </SelectContent>
                         </Select>
                         <FormMessage />
@@ -505,16 +607,23 @@ export default function ViolationsComplaints() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Specific Violation</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
                           <FormControl>
                             <SelectTrigger>
                               <SelectValue placeholder="Select specific violation" />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            {VIOLATION_TYPES[selectedViolationType as keyof typeof VIOLATION_TYPES]?.subtypes.map((subtype) => (
+                            {VIOLATION_TYPES[
+                              selectedViolationType as keyof typeof VIOLATION_TYPES
+                            ]?.subtypes.map((subtype) => (
                               <SelectItem key={subtype} value={subtype}>
-                                {subtype.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                                {subtype
+                                  .replace(/_/g, " ")
+                                  .replace(/\b\w/g, (l) => l.toUpperCase())}
                               </SelectItem>
                             ))}
                           </SelectContent>
@@ -532,7 +641,10 @@ export default function ViolationsComplaints() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Severity Level</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
                           <FormControl>
                             <SelectTrigger>
                               <SelectValue placeholder="Select severity" />
@@ -573,7 +685,10 @@ export default function ViolationsComplaints() {
                     <FormItem>
                       <FormLabel>Violation Title</FormLabel>
                       <FormControl>
-                        <Input placeholder="Brief description of the violation" {...field} />
+                        <Input
+                          placeholder="Brief description of the violation"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -587,10 +702,10 @@ export default function ViolationsComplaints() {
                     <FormItem>
                       <FormLabel>Detailed Description</FormLabel>
                       <FormControl>
-                        <Textarea 
+                        <Textarea
                           placeholder="Provide comprehensive details about the violation, including circumstances, witnesses, and evidence"
                           rows={4}
-                          {...field} 
+                          {...field}
                         />
                       </FormControl>
                       <FormMessage />
@@ -604,7 +719,10 @@ export default function ViolationsComplaints() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Action Taken</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue placeholder="Select action taken" />
@@ -630,10 +748,10 @@ export default function ViolationsComplaints() {
                     <FormItem>
                       <FormLabel>Action Details (Optional)</FormLabel>
                       <FormControl>
-                        <Textarea 
+                        <Textarea
                           placeholder="Additional details about the action taken"
                           rows={3}
-                          {...field} 
+                          {...field}
                         />
                       </FormControl>
                       <FormMessage />
@@ -641,7 +759,7 @@ export default function ViolationsComplaints() {
                   )}
                 />
 
-                {selectedViolationType === 'damage' && (
+                {selectedViolationType === "damage" && (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <FormField
                       control={form.control}
@@ -650,12 +768,14 @@ export default function ViolationsComplaints() {
                         <FormItem>
                           <FormLabel>Estimated Cost ($)</FormLabel>
                           <FormControl>
-                            <Input 
-                              type="number" 
+                            <Input
+                              type="number"
                               step="0.01"
                               placeholder="0.00"
                               {...field}
-                              onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                              onChange={(e) =>
+                                field.onChange(parseFloat(e.target.value) || 0)
+                              }
                             />
                           </FormControl>
                           <FormMessage />
@@ -670,12 +790,14 @@ export default function ViolationsComplaints() {
                         <FormItem>
                           <FormLabel>Actual Cost ($)</FormLabel>
                           <FormControl>
-                            <Input 
-                              type="number" 
+                            <Input
+                              type="number"
                               step="0.01"
                               placeholder="0.00"
                               {...field}
-                              onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                              onChange={(e) =>
+                                field.onChange(parseFloat(e.target.value) || 0)
+                              }
                             />
                           </FormControl>
                           <FormMessage />
@@ -699,9 +821,7 @@ export default function ViolationsComplaints() {
                           />
                         </FormControl>
                         <div className="space-y-1 leading-none">
-                          <FormLabel>
-                            Follow-up Required
-                          </FormLabel>
+                          <FormLabel>Follow-up Required</FormLabel>
                         </div>
                       </FormItem>
                     )}
@@ -725,11 +845,20 @@ export default function ViolationsComplaints() {
                 )}
 
                 <div className="flex justify-end space-x-2">
-                  <Button type="button" variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setIsCreateDialogOpen(false)}
+                  >
                     Cancel
                   </Button>
-                  <Button type="submit" disabled={createViolationMutation.isPending}>
-                    {createViolationMutation.isPending ? "Creating..." : "Create Violation"}
+                  <Button
+                    type="submit"
+                    disabled={createViolationMutation.isPending}
+                  >
+                    {createViolationMutation.isPending
+                      ? "Creating..."
+                      : "Create Violation"}
                   </Button>
                 </div>
               </form>
@@ -741,7 +870,9 @@ export default function ViolationsComplaints() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Violations</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Total Violations
+            </CardTitle>
             <FileText className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -756,29 +887,39 @@ export default function ViolationsComplaints() {
             <AlertTriangle className="h-4 w-4 text-red-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-red-600">{openViolations}</div>
+            <div className="text-2xl font-bold text-red-600">
+              {openViolations}
+            </div>
             <p className="text-xs text-muted-foreground">Requires attention</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Repeat Offenses</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Repeat Offenses
+            </CardTitle>
             <RefreshCw className="h-4 w-4 text-orange-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-orange-600">{repeatOffenses}</div>
+            <div className="text-2xl font-bold text-orange-600">
+              {repeatOffenses}
+            </div>
             <p className="text-xs text-muted-foreground">Multiple violations</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Critical Cases</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Critical Cases
+            </CardTitle>
             <AlertCircle className="h-4 w-4 text-red-800" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-red-800">{criticalViolations}</div>
+            <div className="text-2xl font-bold text-red-800">
+              {criticalViolations}
+            </div>
             <p className="text-xs text-muted-foreground">High severity</p>
           </CardContent>
         </Card>
@@ -874,7 +1015,9 @@ export default function ViolationsComplaints() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="pl-[31px] pr-[31px]">Violation #</TableHead>
+                  <TableHead className="pl-[31px] pr-[31px]">
+                    Violation #
+                  </TableHead>
                   <TableHead>Employee</TableHead>
                   <TableHead>Type</TableHead>
                   <TableHead>Severity</TableHead>
@@ -891,10 +1034,16 @@ export default function ViolationsComplaints() {
                       {violation.violationNumber || `VIO-${violation.id}`}
                     </TableCell>
                     <TableCell>{getUserName(violation.userId)}</TableCell>
-                    <TableCell>{getViolationTypeBadge(violation.violationType)}</TableCell>
-                    <TableCell>{getSeverityBadge(violation.severity)}</TableCell>
+                    <TableCell>
+                      {getViolationTypeBadge(violation.violationType)}
+                    </TableCell>
+                    <TableCell>
+                      {getSeverityBadge(violation.severity)}
+                    </TableCell>
                     <TableCell>{getStatusBadge(violation.status)}</TableCell>
-                    <TableCell>{format(new Date(violation.incidentDate), 'MMM dd, yyyy')}</TableCell>
+                    <TableCell>
+                      {format(new Date(violation.incidentDate), "MMM dd, yyyy")}
+                    </TableCell>
                     <TableCell>
                       {violation.isRepeatOffense ? (
                         <Badge className="bg-red-100 text-red-800">
@@ -902,7 +1051,9 @@ export default function ViolationsComplaints() {
                           {violation.previousViolationCount}x
                         </Badge>
                       ) : (
-                        <Badge className="bg-green-100 text-green-800">First</Badge>
+                        <Badge className="bg-green-100 text-green-800">
+                          First
+                        </Badge>
                       )}
                     </TableCell>
                     <TableCell className="text-center">
@@ -956,7 +1107,11 @@ export default function ViolationsComplaints() {
             <DialogHeader>
               <DialogTitle className="flex items-center space-x-2">
                 <AlertTriangle className="h-5 w-5" />
-                <span>Violation Details - {selectedViolation.violationNumber || `VIO-${selectedViolation.id}`}</span>
+                <span>
+                  Violation Details -{" "}
+                  {selectedViolation.violationNumber ||
+                    `VIO-${selectedViolation.id}`}
+                </span>
                 {selectedViolation.isRepeatOffense && (
                   <Badge className="bg-red-100 text-red-800">
                     <RefreshCw className="w-3 h-3 mr-1" />
@@ -968,26 +1123,48 @@ export default function ViolationsComplaints() {
                 Comprehensive violation record and action details
               </DialogDescription>
             </DialogHeader>
-            
+
             <div className="space-y-6">
               {/* Basic Information */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-3">
-                  <h4 className="font-semibold text-lg">Employee Information</h4>
+                  <h4 className="font-semibold text-lg">
+                    Employee Information
+                  </h4>
                   <div className="space-y-2">
-                    <p><strong>Employee:</strong> {getUserName(selectedViolation.userId)}</p>
-                    <p><strong>Employee ID:</strong> {selectedViolation.userId}</p>
-                    <p><strong>Reported By:</strong> {getUserName(selectedViolation.reportedBy)}</p>
+                    <p>
+                      <strong>Employee:</strong>{" "}
+                      {getUserName(selectedViolation.userId)}
+                    </p>
+                    <p>
+                      <strong>Employee ID:</strong> {selectedViolation.userId}
+                    </p>
+                    <p>
+                      <strong>Reported By:</strong>{" "}
+                      {getUserName(selectedViolation.reportedBy)}
+                    </p>
                   </div>
                 </div>
-                
+
                 <div className="space-y-3">
                   <h4 className="font-semibold text-lg">Violation Details</h4>
                   <div className="space-y-2">
-                    <div className="flex items-center gap-2 mb-2"><strong>Type:</strong> {getViolationTypeBadge(selectedViolation.violationType)}</div>
-                    <p><strong>Subtype:</strong> {selectedViolation.violationSubtype}</p>
-                    <div className="flex items-center gap-2 mb-2"><strong>Severity:</strong> {getSeverityBadge(selectedViolation.severity)}</div>
-                    <div className="flex items-center gap-2 mb-2"><strong>Status:</strong> {getStatusBadge(selectedViolation.status)}</div>
+                    <div className="flex items-center gap-2 mb-2">
+                      <strong>Type:</strong>{" "}
+                      {getViolationTypeBadge(selectedViolation.violationType)}
+                    </div>
+                    <p>
+                      <strong>Subtype:</strong>{" "}
+                      {selectedViolation.violationSubtype}
+                    </p>
+                    <div className="flex items-center gap-2 mb-2">
+                      <strong>Severity:</strong>{" "}
+                      {getSeverityBadge(selectedViolation.severity)}
+                    </div>
+                    <div className="flex items-center gap-2 mb-2">
+                      <strong>Status:</strong>{" "}
+                      {getStatusBadge(selectedViolation.status)}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -997,20 +1174,38 @@ export default function ViolationsComplaints() {
                 <div>
                   <h4 className="font-semibold text-lg mb-2">Timeline</h4>
                   <div className="space-y-2">
-                    <p><strong>Incident Date:</strong> {format(new Date(selectedViolation.incidentDate), 'PPP')}</p>
-                    <p><strong>Report Date:</strong> {format(new Date(selectedViolation.reportDate), 'PPP')}</p>
+                    <p>
+                      <strong>Incident Date:</strong>{" "}
+                      {format(new Date(selectedViolation.incidentDate), "PPP")}
+                    </p>
+                    <p>
+                      <strong>Report Date:</strong>{" "}
+                      {format(new Date(selectedViolation.reportDate), "PPP")}
+                    </p>
                     {selectedViolation.resolutionDate && (
-                      <p><strong>Resolution Date:</strong> {format(new Date(selectedViolation.resolutionDate), 'PPP')}</p>
+                      <p>
+                        <strong>Resolution Date:</strong>{" "}
+                        {format(
+                          new Date(selectedViolation.resolutionDate),
+                          "PPP",
+                        )}
+                      </p>
                     )}
                   </div>
                 </div>
 
                 {selectedViolation.isRepeatOffense && (
                   <div className="bg-red-50 p-4 rounded-lg border border-red-200">
-                    <h4 className="font-semibold text-lg mb-2 text-red-800">Repeat Offense Alert</h4>
-                    <p><strong>Previous Violations:</strong> {selectedViolation.previousViolationCount}</p>
+                    <h4 className="font-semibold text-lg mb-2 text-red-800">
+                      Repeat Offense Alert
+                    </h4>
+                    <p>
+                      <strong>Previous Violations:</strong>{" "}
+                      {selectedViolation.previousViolationCount}
+                    </p>
                     <p className="text-sm text-red-600 mt-1">
-                      This employee has committed similar violations before. Consider escalated action.
+                      This employee has committed similar violations before.
+                      Consider escalated action.
                     </p>
                   </div>
                 )}
@@ -1018,10 +1213,16 @@ export default function ViolationsComplaints() {
 
               {/* Description */}
               <div>
-                <h4 className="font-semibold text-lg mb-2">Incident Description</h4>
+                <h4 className="font-semibold text-lg mb-2">
+                  Incident Description
+                </h4>
                 <div className="bg-gray-50 p-4 rounded-lg border">
-                  <h5 className="font-medium mb-2">{selectedViolation.title}</h5>
-                  <p className="text-sm leading-relaxed">{selectedViolation.description}</p>
+                  <h5 className="font-medium mb-2">
+                    {selectedViolation.title}
+                  </h5>
+                  <p className="text-sm leading-relaxed">
+                    {selectedViolation.description}
+                  </p>
                 </div>
               </div>
 
@@ -1029,31 +1230,53 @@ export default function ViolationsComplaints() {
               <div>
                 <h4 className="font-semibold text-lg mb-2">Action Taken</h4>
                 <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                  <p><strong>Action:</strong> {ACTION_TYPES.find(a => a.value === selectedViolation.actionTaken)?.label || selectedViolation.actionTaken}</p>
+                  <p>
+                    <strong>Action:</strong>{" "}
+                    {ACTION_TYPES.find(
+                      (a) => a.value === selectedViolation.actionTaken,
+                    )?.label || selectedViolation.actionTaken}
+                  </p>
                   {selectedViolation.actionDetails && (
                     <div className="mt-2">
                       <strong>Details:</strong>
-                      <p className="text-sm mt-1">{selectedViolation.actionDetails}</p>
+                      <p className="text-sm mt-1">
+                        {selectedViolation.actionDetails}
+                      </p>
                     </div>
                   )}
                   {selectedViolation.disciplinaryPoints > 0 && (
-                    <p className="mt-2"><strong>Disciplinary Points:</strong> {selectedViolation.disciplinaryPoints}</p>
+                    <p className="mt-2">
+                      <strong>Disciplinary Points:</strong>{" "}
+                      {selectedViolation.disciplinaryPoints}
+                    </p>
                   )}
                 </div>
               </div>
 
               {/* Financial Impact */}
-              {(selectedViolation.estimatedCost > 0 || selectedViolation.actualCost > 0) && (
+              {(selectedViolation.estimatedCost > 0 ||
+                selectedViolation.actualCost > 0) && (
                 <div>
-                  <h4 className="font-semibold text-lg mb-2">Financial Impact</h4>
+                  <h4 className="font-semibold text-lg mb-2">
+                    Financial Impact
+                  </h4>
                   <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
                     {selectedViolation.estimatedCost > 0 && (
-                      <p><strong>Estimated Cost:</strong> ${selectedViolation.estimatedCost}</p>
+                      <p>
+                        <strong>Estimated Cost:</strong> $
+                        {selectedViolation.estimatedCost}
+                      </p>
                     )}
                     {selectedViolation.actualCost > 0 && (
-                      <p><strong>Actual Cost:</strong> ${selectedViolation.actualCost}</p>
+                      <p>
+                        <strong>Actual Cost:</strong> $
+                        {selectedViolation.actualCost}
+                      </p>
                     )}
-                    <p><strong>Cost Recovered:</strong> {selectedViolation.costRecovered ? 'Yes' : 'No'}</p>
+                    <p>
+                      <strong>Cost Recovered:</strong>{" "}
+                      {selectedViolation.costRecovered ? "Yes" : "No"}
+                    </p>
                   </div>
                 </div>
               )}
@@ -1061,9 +1284,13 @@ export default function ViolationsComplaints() {
               {/* Resolution Notes */}
               {selectedViolation.resolutionNotes && (
                 <div>
-                  <h4 className="font-semibold text-lg mb-2">Resolution Notes</h4>
+                  <h4 className="font-semibold text-lg mb-2">
+                    Resolution Notes
+                  </h4>
                   <div className="bg-green-50 p-4 rounded-lg border border-green-200">
-                    <p className="text-sm">{selectedViolation.resolutionNotes}</p>
+                    <p className="text-sm">
+                      {selectedViolation.resolutionNotes}
+                    </p>
                   </div>
                 </div>
               )}
@@ -1071,13 +1298,24 @@ export default function ViolationsComplaints() {
               {/* Follow-up */}
               {selectedViolation.followUpRequired && (
                 <div>
-                  <h4 className="font-semibold text-lg mb-2">Follow-up Required</h4>
+                  <h4 className="font-semibold text-lg mb-2">
+                    Follow-up Required
+                  </h4>
                   <div className="bg-orange-50 p-4 rounded-lg border border-orange-200">
                     {selectedViolation.followUpDate && (
-                      <p><strong>Follow-up Date:</strong> {format(new Date(selectedViolation.followUpDate), 'PPP')}</p>
+                      <p>
+                        <strong>Follow-up Date:</strong>{" "}
+                        {format(
+                          new Date(selectedViolation.followUpDate),
+                          "PPP",
+                        )}
+                      </p>
                     )}
                     {selectedViolation.followUpNotes && (
-                      <p className="mt-2"><strong>Notes:</strong> {selectedViolation.followUpNotes}</p>
+                      <p className="mt-2">
+                        <strong>Notes:</strong>{" "}
+                        {selectedViolation.followUpNotes}
+                      </p>
                     )}
                   </div>
                 </div>
@@ -1085,7 +1323,10 @@ export default function ViolationsComplaints() {
             </div>
 
             <div className="flex justify-end space-x-2 mt-6">
-              <Button variant="outline" onClick={() => handlePrintViolation(selectedViolation)}>
+              <Button
+                variant="outline"
+                onClick={() => handlePrintViolation(selectedViolation)}
+              >
                 <Printer className="h-4 w-4 mr-2" />
                 Print Report
               </Button>

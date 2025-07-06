@@ -7,61 +7,69 @@ import { setupVite, serveStatic, log } from "./vite";
 const app = express();
 
 // Enable trust proxy for Replit's environment
-app.set('trust proxy', 1);
+app.set("trust proxy", 1);
 
 // Serve static assets
-app.use('/assets', express.static(path.resolve(import.meta.dirname, '..', 'attached_assets')));
+app.use(
+  "/assets",
+  express.static(path.resolve(import.meta.dirname, "..", "attached_assets")),
+);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(fileUpload({
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB max file size
-  useTempFiles: false,
-  abortOnLimit: true,
-  createParentPath: true,
-  safeFileNames: true,
-  preserveExtension: true
-}));
+app.use(
+  fileUpload({
+    limits: { fileSize: 5 * 1024 * 1024 }, // 5MB max file size
+    useTempFiles: false,
+    abortOnLimit: true,
+    createParentPath: true,
+    safeFileNames: true,
+    preserveExtension: true,
+  }),
+);
 
 // Add CORS headers for cross-domain requests
 app.use((req, res, next) => {
   // Accept requests from any domain
-  res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
-  res.header('Access-Control-Allow-Credentials', 'true');
-  res.header('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-  
+  res.header("Access-Control-Allow-Origin", req.headers.origin || "*");
+  res.header("Access-Control-Allow-Credentials", "true");
+  res.header("Access-Control-Allow-Methods", "GET,HEAD,PUT,PATCH,POST,DELETE");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization",
+  );
+
   // Handle preflight requests
-  if (req.method === 'OPTIONS') {
+  if (req.method === "OPTIONS") {
     return res.status(200).end();
   }
   next();
 });
 
 // Add special middleware for auth API routes to ensure proper content-type
-app.use('/api/auth', (req, res, next) => {
+app.use("/api/auth", (req, res, next) => {
   console.log(`Intercepted auth API request: ${req.path}`);
-  
+
   // Capture the original send method
   const originalSend = res.send;
-  
+
   // Override the send method to ensure JSON content type
-  res.send = function(body) {
+  res.send = function (body) {
     // Only modify JSON responses
-    if (typeof body === 'object') {
-      res.setHeader('Content-Type', 'application/json');
+    if (typeof body === "object") {
+      res.setHeader("Content-Type", "application/json");
       return originalSend.call(this, JSON.stringify(body));
     }
     return originalSend.call(this, body);
   };
-  
+
   // Override the JSON method
   const originalJson = res.json;
-  res.json = function(body) {
-    res.setHeader('Content-Type', 'application/json');
+  res.json = function (body) {
+    res.setHeader("Content-Type", "application/json");
     return originalJson.call(this, body);
   };
-  
+
   next();
 });
 
@@ -103,12 +111,12 @@ app.use((req, res, next) => {
     const message = err.message || "Internal Server Error";
 
     console.error(`Error handler caught: ${err.stack || err}`);
-    
+
     // Send the error response but don't rethrow the error
     // This prevents unhandled exceptions
     if (!res.headersSent) {
       // Set explicit content type to ensure JSON
-      res.setHeader('Content-Type', 'application/json');
+      res.setHeader("Content-Type", "application/json");
       res.status(status).json({ message });
     }
   });
@@ -127,11 +135,11 @@ app.use((req, res, next) => {
 
   // Use environment port with fallback for deployment
   const port = parseInt(process.env.PORT || process.env.REPL_PORT || "5000");
-  const host = process.env.NODE_ENV === 'production' ? '0.0.0.0' : '0.0.0.0';
-  
+  const host = process.env.NODE_ENV === "production" ? "0.0.0.0" : "0.0.0.0";
+
   server.listen(port, host, () => {
     log(`serving on port ${port}`);
-    if (process.env.NODE_ENV === 'production') {
+    if (process.env.NODE_ENV === "production") {
       console.log(`Production server running on ${host}:${port}`);
     }
   });

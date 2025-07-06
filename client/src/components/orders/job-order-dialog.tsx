@@ -9,7 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
-  DialogFooter
+  DialogFooter,
 } from "@/components/ui/dialog";
 import {
   Form,
@@ -17,19 +17,24 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage
+  FormMessage,
 } from "@/components/ui/form";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
+  SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { API_ENDPOINTS } from "@/lib/constants";
-import { CustomerProduct, JobOrder, Order, insertJobOrderSchema } from "@shared/schema";
+import {
+  CustomerProduct,
+  JobOrder,
+  Order,
+  insertJobOrderSchema,
+} from "@shared/schema";
 
 interface JobOrderDialogProps {
   open: boolean;
@@ -42,9 +47,10 @@ interface JobOrderDialogProps {
 // Create a job order form schema based on the insert schema
 const jobOrderFormSchema = insertJobOrderSchema.extend({
   // You can add additional validations here if needed
-  quantity: z.number()
+  quantity: z
+    .number()
     .positive("Quantity must be positive")
-    .int("Quantity must be a whole number")
+    .int("Quantity must be a whole number"),
 });
 
 export function JobOrderDialog({
@@ -52,14 +58,15 @@ export function JobOrderDialog({
   onOpenChange,
   onSubmit,
   jobOrder,
-  orderId
+  orderId,
 }: JobOrderDialogProps) {
   const isEditMode = !!jobOrder;
 
   // Fetch customer products for the dropdown
-  const { data: customerProducts, isLoading: customerProductsLoading } = useQuery<CustomerProduct[]>({
-    queryKey: [API_ENDPOINTS.CUSTOMER_PRODUCTS]
-  });
+  const { data: customerProducts, isLoading: customerProductsLoading } =
+    useQuery<CustomerProduct[]>({
+      queryKey: [API_ENDPOINTS.CUSTOMER_PRODUCTS],
+    });
 
   // Initialize form with default values or job order values for editing
   const form = useForm<z.infer<typeof jobOrderFormSchema>>({
@@ -68,8 +75,8 @@ export function JobOrderDialog({
       orderId: orderId,
       customerProductId: jobOrder?.customerProductId || 0,
       quantity: jobOrder?.quantity || 0,
-      status: jobOrder?.status || "pending"
-    }
+      status: jobOrder?.status || "pending",
+    },
   });
 
   // Update form when job order changes (for editing)
@@ -79,14 +86,14 @@ export function JobOrderDialog({
         orderId: orderId,
         customerProductId: jobOrder.customerProductId,
         quantity: jobOrder.quantity,
-        status: jobOrder.status
+        status: jobOrder.status,
       });
     } else {
       form.reset({
         orderId: orderId,
         customerProductId: 0,
         quantity: 0,
-        status: "pending"
+        status: "pending",
       });
     }
   }, [jobOrder, orderId, form]);
@@ -98,30 +105,37 @@ export function JobOrderDialog({
   // Get order's customer ID
   const { data: order } = useQuery<Order>({
     queryKey: [`/api/orders/${orderId}`],
-    enabled: !!orderId
+    enabled: !!orderId,
   });
 
   // Filter customer products to get only those for this order's customer
   const getFilteredCustomerProducts = () => {
     if (!customerProducts || !order) return [];
     // Filter to only show products from the order's customer
-    return customerProducts.filter(product => product.customerId === order.customerId);
+    return customerProducts.filter(
+      (product) => product.customerId === order.customerId,
+    );
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>{isEditMode ? "Edit Job Order" : "Add New Job Order"}</DialogTitle>
+          <DialogTitle>
+            {isEditMode ? "Edit Job Order" : "Add New Job Order"}
+          </DialogTitle>
           <DialogDescription>
-            {isEditMode 
-              ? "Update the details of this job order." 
+            {isEditMode
+              ? "Update the details of this job order."
               : "Create a new job order for this customer order."}
           </DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+          <form
+            onSubmit={form.handleSubmit(handleSubmit)}
+            className="space-y-4"
+          >
             <FormField
               control={form.control}
               name="customerProductId"
@@ -140,8 +154,12 @@ export function JobOrderDialog({
                     </FormControl>
                     <SelectContent>
                       {getFilteredCustomerProducts().map((product) => (
-                        <SelectItem key={product.id} value={product.id.toString()}>
-                          {product.sizeCaption} {product.thickness}μm {product.rawMaterial || ""}
+                        <SelectItem
+                          key={product.id}
+                          value={product.id.toString()}
+                        >
+                          {product.sizeCaption} {product.thickness}μm{" "}
+                          {product.rawMaterial || ""}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -163,7 +181,9 @@ export function JobOrderDialog({
                       placeholder="Enter quantity"
                       step="1"
                       {...field}
-                      onChange={(e) => field.onChange(Math.round(parseFloat(e.target.value)))}
+                      onChange={(e) =>
+                        field.onChange(Math.round(parseFloat(e.target.value)))
+                      }
                     />
                   </FormControl>
                   <FormMessage />
@@ -178,10 +198,7 @@ export function JobOrderDialog({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Status</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      value={field.value}
-                    >
+                    <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select status" />
@@ -190,7 +207,9 @@ export function JobOrderDialog({
                       <SelectContent>
                         <SelectItem value="pending">Pending</SelectItem>
                         <SelectItem value="in_progress">In Progress</SelectItem>
-                        <SelectItem value="extrusion_completed">Extrusion Completed</SelectItem>
+                        <SelectItem value="extrusion_completed">
+                          Extrusion Completed
+                        </SelectItem>
                         <SelectItem value="completed">Completed</SelectItem>
                         <SelectItem value="cancelled">Cancelled</SelectItem>
                       </SelectContent>
@@ -202,7 +221,11 @@ export function JobOrderDialog({
             )}
 
             <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => onOpenChange(false)}
+              >
                 Cancel
               </Button>
               <Button type="submit">

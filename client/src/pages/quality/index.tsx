@@ -1,17 +1,17 @@
 import { useTranslation } from "react-i18next";
 import { useLanguage } from "@/hooks/use-language";
 import { ModuleCard } from "@/components/ui/module-card";
-import { 
-  Shield, 
-  CheckCircle, 
-  AlertTriangle, 
+import {
+  Shield,
+  CheckCircle,
+  AlertTriangle,
   TrendingUp,
   ClipboardCheck,
   FileText,
   Settings,
   BarChart3,
   GraduationCap,
-  Award
+  Award,
 } from "lucide-react";
 
 export default function QualityIndex() {
@@ -32,7 +32,7 @@ export default function QualityIndex() {
       icon: CheckCircle,
       path: "/quality/checks",
       color: "bg-gradient-to-br from-green-500 to-green-600",
-      count: 15
+      count: 15,
     },
     {
       title: "Corrective Actions",
@@ -43,7 +43,8 @@ export default function QualityIndex() {
     },
     {
       title: "Training Management",
-      description: "Organize and track quality training programs and certifications",
+      description:
+        "Organize and track quality training programs and certifications",
       icon: GraduationCap,
       path: "/quality/training",
       color: "bg-gradient-to-br from-indigo-500 to-indigo-600",
@@ -75,13 +76,15 @@ export default function QualityIndex() {
       icon: ClipboardCheck,
       path: "/quality/violations",
       color: "bg-gradient-to-br from-orange-500 to-orange-600",
-    }
+    },
   ];
 
   return (
-    <div className={`min-h-full ${isRTL ? 'rtl' : 'ltr'}`}>
+    <div className={`min-h-full ${isRTL ? "rtl" : "ltr"}`}>
       {/* Header Section */}
-      <div className={`mb-12 text-center ${isRTL ? 'text-right' : 'text-left'}`}>
+      <div
+        className={`mb-12 text-center ${isRTL ? "text-right" : "text-left"}`}
+      >
         <div className="flex items-center justify-center mb-6">
           <div className="bg-gradient-to-br from-slate-800 to-slate-900 p-4 rounded-2xl shadow-lg">
             <Shield className="h-12 w-12 text-white" />
@@ -91,10 +94,11 @@ export default function QualityIndex() {
           Quality Management
         </h1>
         <p className="text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
-          Ensure product quality through comprehensive testing and continuous improvement
+          Ensure product quality through comprehensive testing and continuous
+          improvement
         </p>
       </div>
-      
+
       {/* Modules Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 lg:gap-8">
         {qualityModules.map((module) => (
@@ -109,7 +113,7 @@ export default function QualityIndex() {
           />
         ))}
       </div>
-      
+
       {/* Quality Stats */}
       <div className="mt-16 grid grid-cols-1 md:grid-cols-4 gap-6">
         <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-6 border border-slate-200/50 text-center">

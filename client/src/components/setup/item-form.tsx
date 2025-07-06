@@ -43,12 +43,12 @@ export function ItemForm({ item, onSuccess }: ItemFormProps) {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const isEditing = !!item;
-  
+
   // Fetch categories
   const { data: categories, isLoading: categoriesLoading } = useQuery({
     queryKey: [API_ENDPOINTS.CATEGORIES],
   });
-  
+
   // Set up the form
   const form = useForm<ItemFormData>({
     resolver: zodResolver(itemFormSchema),
@@ -59,7 +59,7 @@ export function ItemForm({ item, onSuccess }: ItemFormProps) {
       fullName: item?.fullName || "",
     },
   });
-  
+
   // Create mutation for adding/updating item
   const mutation = useMutation({
     mutationFn: async (values: z.infer<typeof insertItemSchema>) => {
@@ -86,12 +86,12 @@ export function ItemForm({ item, onSuccess }: ItemFormProps) {
       });
     },
   });
-  
+
   // Form submission handler
   const onSubmit = (values: z.infer<typeof insertItemSchema>) => {
     mutation.mutate(values);
   };
-  
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -103,9 +103,9 @@ export function ItemForm({ item, onSuccess }: ItemFormProps) {
               <FormItem>
                 <FormLabel>{t("common.id")}</FormLabel>
                 <FormControl>
-                  <Input 
-                    placeholder={t("common.enter_id")} 
-                    {...field} 
+                  <Input
+                    placeholder={t("common.enter_id")}
+                    {...field}
                     disabled={isEditing}
                   />
                 </FormControl>
@@ -113,7 +113,7 @@ export function ItemForm({ item, onSuccess }: ItemFormProps) {
               </FormItem>
             )}
           />
-          
+
           <FormField
             control={form.control}
             name={"categoryId" as keyof ItemFormData}
@@ -131,11 +131,13 @@ export function ItemForm({ item, onSuccess }: ItemFormProps) {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {categories && Array.isArray(categories) && categories.map((category: any) => (
-                      <SelectItem key={category.id} value={category.id}>
-                        {category.name}
-                      </SelectItem>
-                    ))}
+                    {categories &&
+                      Array.isArray(categories) &&
+                      categories.map((category: any) => (
+                        <SelectItem key={category.id} value={category.id}>
+                          {category.name}
+                        </SelectItem>
+                      ))}
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -143,7 +145,7 @@ export function ItemForm({ item, onSuccess }: ItemFormProps) {
             )}
           />
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <FormField
             control={form.control}
@@ -152,13 +154,16 @@ export function ItemForm({ item, onSuccess }: ItemFormProps) {
               <FormItem>
                 <FormLabel>{t("setup.items.name")}</FormLabel>
                 <FormControl>
-                  <Input placeholder={t("setup.items.name_placeholder")} {...field} />
+                  <Input
+                    placeholder={t("setup.items.name_placeholder")}
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          
+
           <FormField
             control={form.control}
             name={"fullName" as keyof ItemFormData}
@@ -166,32 +171,31 @@ export function ItemForm({ item, onSuccess }: ItemFormProps) {
               <FormItem>
                 <FormLabel>{t("setup.items.full_name")}</FormLabel>
                 <FormControl>
-                  <Input placeholder={t("setup.items.full_name_placeholder")} {...field} />
+                  <Input
+                    placeholder={t("setup.items.full_name_placeholder")}
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
         </div>
-        
+
         <div className="flex justify-end space-x-2 pt-4">
           {onSuccess && (
-            <Button
-              type="button"
-              variant="outline"
-              onClick={onSuccess}
-            >
+            <Button type="button" variant="outline" onClick={onSuccess}>
               {t("common.cancel")}
             </Button>
           )}
-          <Button
-            type="submit"
-            disabled={mutation.isPending}
-          >
+          <Button type="submit" disabled={mutation.isPending}>
             {mutation.isPending
-              ? isEditing ? "Updating..." : "Creating..."
-              : isEditing ? "Update Item" : "Create Item"
-            }
+              ? isEditing
+                ? "Updating..."
+                : "Creating..."
+              : isEditing
+                ? "Update Item"
+                : "Create Item"}
           </Button>
         </div>
       </form>

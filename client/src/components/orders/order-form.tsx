@@ -4,23 +4,23 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "wouter";
-import Fuse from 'fuse.js';
-import { 
-  Form, 
-  FormControl, 
-  FormField, 
-  FormItem, 
-  FormLabel, 
-  FormMessage 
+import Fuse from "fuse.js";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import {
   Command,
@@ -28,7 +28,7 @@ import {
   CommandGroup,
   CommandInput,
   CommandItem,
-  CommandList
+  CommandList,
 } from "@/components/ui/command";
 import {
   Popover,
@@ -36,10 +36,22 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardFooter,
+} from "@/components/ui/card";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { insertOrderSchema, Customer, CustomerProduct, Item, Category } from "@shared/schema";
+import {
+  insertOrderSchema,
+  Customer,
+  CustomerProduct,
+  Item,
+  Category,
+} from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import { API_ENDPOINTS } from "@/lib/constants";
 import { toast } from "@/hooks/use-toast";
@@ -53,7 +65,7 @@ const orderFormSchema = z.object({
     z.object({
       customerProductId: z.number(),
       quantity: z.number().positive("Quantity must be positive"),
-    })
+    }),
   ),
 });
 
@@ -63,27 +75,31 @@ export function OrderForm() {
   const { t } = useTranslation();
   const [_, navigate] = useLocation();
   const queryClient = useQueryClient();
-  
+
   // Fetch customers
-  const { data: customers = [], isLoading: customersLoading } = useQuery<Customer[]>({
+  const { data: customers = [], isLoading: customersLoading } = useQuery<
+    Customer[]
+  >({
     queryKey: [API_ENDPOINTS.CUSTOMERS],
   });
-  
+
   // State to track selected customer
-  const [selectedCustomerId, setSelectedCustomerId] = useState<string | null>(null);
+  const [selectedCustomerId, setSelectedCustomerId] = useState<string | null>(
+    null,
+  );
   const [open, setOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  
+
   // Setup fuzzy search with Fuse.js
   const fuseRef = useRef<Fuse<Customer> | null>(null);
-  
+
   // When customers data is loaded, initialize Fuse
   useEffect(() => {
-    console.log('Customers data:', customers);
+    console.log("Customers data:", customers);
     if (customers && customers.length > 0) {
       // Enhanced Fuse.js configuration for bilingual search
       fuseRef.current = new Fuse(customers, {
-        keys: ['name', 'nameAr', 'code'],
+        keys: ["name", "nameAr", "code"],
         threshold: 0.4, // Balanced matching
         includeScore: true,
         ignoreLocation: true,
@@ -91,128 +107,139 @@ export function OrderForm() {
       });
     }
   }, [customers]);
-  
+
   // Advanced search function to handle both Arabic and English inputs
   const getFilteredCustomers = (): Customer[] => {
     if (!customers || !customers.length) {
-      console.log('No customers available');
+      console.log("No customers available");
       return [];
     }
-    
+
     // If no search query, return all customers
     const trimmedQuery = searchQuery.trim();
     if (!trimmedQuery) {
-      console.log('No search query, showing all customers:', customers.length);
+      console.log("No search query, showing all customers:", customers.length);
       return customers;
     }
-    
-    console.log('Search query:', trimmedQuery);
-    
+
+    console.log("Search query:", trimmedQuery);
+
     try {
       // Enhanced bilingual search for both Arabic and English
       if (trimmedQuery.length === 1) {
         // For single character searches, match start of words in both languages
         const char = trimmedQuery.toLowerCase();
-        const filteredCustomers = customers.filter(customer => {
+        const filteredCustomers = customers.filter((customer) => {
           if (!customer) return false;
-          
+
           // Match start of English name words
-          const nameStartsWithMatch = customer.name && 
-            (customer.name.toLowerCase().startsWith(char) || 
-             customer.name.toLowerCase().split(' ').some(word => word.startsWith(char)));
-          
+          const nameStartsWithMatch =
+            customer.name &&
+            (customer.name.toLowerCase().startsWith(char) ||
+              customer.name
+                .toLowerCase()
+                .split(" ")
+                .some((word) => word.startsWith(char)));
+
           // Match start of Arabic name words
-          const nameArStartsWithMatch = customer.nameAr && 
-            (customer.nameAr.startsWith(trimmedQuery) || 
-             customer.nameAr.split(' ').some(word => word.startsWith(trimmedQuery)));
-          
+          const nameArStartsWithMatch =
+            customer.nameAr &&
+            (customer.nameAr.startsWith(trimmedQuery) ||
+              customer.nameAr
+                .split(" ")
+                .some((word) => word.startsWith(trimmedQuery)));
+
           // Match code
-          const codeMatch = customer.code && 
-            customer.code.toLowerCase().startsWith(char);
-            
+          const codeMatch =
+            customer.code && customer.code.toLowerCase().startsWith(char);
+
           return nameStartsWithMatch || nameArStartsWithMatch || codeMatch;
         });
-        
+
         return filteredCustomers;
       }
-      
+
       // For normal searches, normalize query and split into terms
       const searchTerms = trimmedQuery.split(/\s+/);
-      
+
       // Enhanced multi-term search approach
-      const filteredCustomers = customers.filter(customer => {
+      const filteredCustomers = customers.filter((customer) => {
         if (!customer) return false;
-        
+
         // Check each search term separately to improve matching
         for (const term of searchTerms) {
           const termLower = term.toLowerCase();
-          
+
           // Skip very short terms unless they are numbers
           if (termLower.length < 2 && !/^\d+$/.test(termLower)) {
             continue;
           }
-          
+
           // Check if name contains term (case insensitive)
-          const nameMatch = customer.name && 
-            customer.name.toLowerCase().includes(termLower);
-          
+          const nameMatch =
+            customer.name && customer.name.toLowerCase().includes(termLower);
+
           // For Arabic names, try different matching approaches
           // 1. Direct match
-          const directArMatch = customer.nameAr && 
-            customer.nameAr.includes(term);
-            
+          const directArMatch =
+            customer.nameAr && customer.nameAr.includes(term);
+
           // 2. Match without whitespace (for connected Arabic words)
-          const noSpaceArMatch = customer.nameAr && term.length > 1 && 
-            customer.nameAr.replace(/\s+/g, '').includes(term);
-            
+          const noSpaceArMatch =
+            customer.nameAr &&
+            term.length > 1 &&
+            customer.nameAr.replace(/\s+/g, "").includes(term);
+
           // 3. Check if customer code contains the term
-          const codeMatch = customer.code && 
-            customer.code.toLowerCase().includes(termLower);
-            
+          const codeMatch =
+            customer.code && customer.code.toLowerCase().includes(termLower);
+
           // If any term matches, include this customer
           if (nameMatch || directArMatch || noSpaceArMatch || codeMatch) {
             return true;
           }
         }
-        
+
         return false;
       });
-      
+
       // Log results
-      console.log('Filtered customers:', filteredCustomers.length);
-      
+      console.log("Filtered customers:", filteredCustomers.length);
+
       // If there are too many results, limit them for better performance
       const MAX_RESULTS = 100;
       if (filteredCustomers.length > MAX_RESULTS) {
         console.log(`Showing only the first ${MAX_RESULTS} results`);
         return filteredCustomers.slice(0, MAX_RESULTS);
       }
-      
+
       return filteredCustomers;
     } catch (error) {
-      console.error('Error in customer filtering:', error);
+      console.error("Error in customer filtering:", error);
       return customers;
     }
   };
-  
+
   // Fetch customer products when a customer is selected
-  const { data: customerProducts = [], isLoading: productsLoading } = useQuery<CustomerProduct[]>({
+  const { data: customerProducts = [], isLoading: productsLoading } = useQuery<
+    CustomerProduct[]
+  >({
     queryKey: [`${API_ENDPOINTS.CUSTOMERS}/${selectedCustomerId}/products`],
     enabled: !!selectedCustomerId,
   });
-  
+
   // Fetch all items to have their names available
   const { data: items = [] } = useQuery<Item[]>({
     queryKey: [API_ENDPOINTS.ITEMS],
     enabled: !!selectedCustomerId,
   });
-  
+
   // Fetch all categories to display category names
   const { data: categories = [] } = useQuery<Category[]>({
     queryKey: [API_ENDPOINTS.CATEGORIES],
     enabled: !!selectedCustomerId,
   });
-  
+
   // Define form with default values
   const form = useForm<OrderFormValues>({
     resolver: zodResolver(orderFormSchema),
@@ -222,13 +249,13 @@ export function OrderForm() {
       jobOrders: [{ customerProductId: 0, quantity: 0 }],
     },
   });
-  
+
   // Setup field array for job orders
   const { fields, append, remove } = useFieldArray({
     control: form.control,
     name: "jobOrders",
   });
-  
+
   // Create order mutation
   const createOrderMutation = useMutation({
     mutationFn: async (data: OrderFormValues) => {
@@ -237,19 +264,23 @@ export function OrderForm() {
         customerId: data.customerId,
         note: data.note,
       });
-      
+
       // Then create job orders with adjusted quantities based on category
       for (const jobOrder of data.jobOrders) {
         // Find the customer product to get its category
-        const customerProduct = customerProducts?.find(cp => cp.id === jobOrder.customerProductId);
-        
+        const customerProduct = customerProducts?.find(
+          (cp) => cp.id === jobOrder.customerProductId,
+        );
+
         if (customerProduct) {
           // Get the category
-          const category = categories?.find(cat => cat.id === customerProduct.categoryId);
-          
+          const category = categories?.find(
+            (cat) => cat.id === customerProduct.categoryId,
+          );
+
           // Calculate adjusted quantity based on category
           let adjustedQuantity = jobOrder.quantity;
-          
+
           if (category) {
             if (category.name === "T-Shirt Bag") {
               // Add 20% to quantity for T-Shirt Bags
@@ -262,7 +293,7 @@ export function OrderForm() {
               adjustedQuantity = jobOrder.quantity * 1.05;
             }
           }
-          
+
           // Create job order with adjusted quantity
           await apiRequest("POST", API_ENDPOINTS.JOB_ORDERS, {
             orderId: orderResponse.id,
@@ -277,7 +308,7 @@ export function OrderForm() {
           });
         }
       }
-      
+
       return orderResponse;
     },
     onSuccess: (data) => {
@@ -296,21 +327,21 @@ export function OrderForm() {
       });
     },
   });
-  
+
   // Handle form submission
   const onSubmit = (data: OrderFormValues) => {
     createOrderMutation.mutate(data);
   };
-  
+
   // Update customer ID when selected
   const handleCustomerChange = (value: string) => {
     setSelectedCustomerId(value);
     form.setValue("customerId", value);
   };
-  
+
   // Get filtered customers directly
   const filteredCustomers = getFilteredCustomers();
-  
+
   return (
     <Card>
       <CardHeader>
@@ -337,30 +368,38 @@ export function OrderForm() {
                       onClick={() => setOpen(!open)}
                     >
                       {field.value
-                        ? customers?.find((customer) => customer.id === field.value)?.name || t("orders.select_customer")
+                        ? customers?.find(
+                            (customer) => customer.id === field.value,
+                          )?.name || t("orders.select_customer")
                         : t("orders.select_customer")}
                       <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
-                    
+
                     {open && (
                       <div className="absolute z-50 top-full left-0 right-0 w-full bg-popover shadow-md rounded-md border mt-1 overflow-hidden">
                         <div className="p-2 border-b">
                           <input
                             type="text"
                             className="w-full p-2 border rounded-md"
-                            placeholder={t("orders.search_customer_placeholder")}
+                            placeholder={t(
+                              "orders.search_customer_placeholder",
+                            )}
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             autoFocus
                           />
                         </div>
-                        
+
                         <div className="max-h-[300px] overflow-y-auto">
                           {filteredCustomers.length === 0 ? (
                             <div className="py-6 text-center">
-                              <span className="material-icons mb-2 text-muted-foreground">search_off</span>
+                              <span className="material-icons mb-2 text-muted-foreground">
+                                search_off
+                              </span>
                               <p>{t("orders.no_matching_customer")}</p>
-                              <p className="text-xs text-muted-foreground mt-1">{t("orders.try_different_search")}</p>
+                              <p className="text-xs text-muted-foreground mt-1">
+                                {t("orders.try_different_search")}
+                              </p>
                             </div>
                           ) : (
                             <div className="p-1">
@@ -368,7 +407,9 @@ export function OrderForm() {
                                 <div
                                   key={customer.id}
                                   className={`py-3 px-3 cursor-pointer hover:bg-accent rounded-md ${
-                                    field.value === customer.id ? 'bg-accent' : ''
+                                    field.value === customer.id
+                                      ? "bg-accent"
+                                      : ""
                                   }`}
                                   onClick={() => {
                                     handleCustomerChange(customer.id);
@@ -380,19 +421,33 @@ export function OrderForm() {
                                     <Check
                                       className={cn(
                                         "mr-2 h-4 w-4",
-                                        field.value === customer.id ? "opacity-100" : "opacity-0"
+                                        field.value === customer.id
+                                          ? "opacity-100"
+                                          : "opacity-0",
                                       )}
                                     />
                                     <div className="flex flex-col w-full">
                                       <div className="flex items-center justify-between">
-                                        <span className="text-base font-medium" dir="auto">{customer.name}</span>
+                                        <span
+                                          className="text-base font-medium"
+                                          dir="auto"
+                                        >
+                                          {customer.name}
+                                        </span>
                                         {customer.code && (
-                                          <span className="text-xs bg-muted px-2 py-1 rounded-md ml-2">#{customer.code}</span>
+                                          <span className="text-xs bg-muted px-2 py-1 rounded-md ml-2">
+                                            #{customer.code}
+                                          </span>
                                         )}
                                       </div>
                                       {customer.nameAr && (
                                         <div className="border-t mt-2 pt-1 border-dashed border-muted">
-                                          <span className="text-sm block text-right" dir="rtl">{customer.nameAr}</span>
+                                          <span
+                                            className="text-sm block text-right"
+                                            dir="rtl"
+                                          >
+                                            {customer.nameAr}
+                                          </span>
                                         </div>
                                       )}
                                     </div>
@@ -409,7 +464,7 @@ export function OrderForm() {
                 </FormItem>
               )}
             />
-            
+
             {/* Order Note */}
             <FormField
               control={form.control}
@@ -418,7 +473,7 @@ export function OrderForm() {
                 <FormItem>
                   <FormLabel>{t("orders.order_note")}</FormLabel>
                   <FormControl>
-                    <Textarea 
+                    <Textarea
                       placeholder={t("orders.order_note_placeholder")}
                       {...field}
                       value={field.value || ""}
@@ -428,11 +483,13 @@ export function OrderForm() {
                 </FormItem>
               )}
             />
-            
+
             {/* Job Orders */}
             <div className="space-y-4">
               <div className="flex justify-between items-center">
-                <h3 className="text-lg font-medium">{t("orders.add_products")}</h3>
+                <h3 className="text-lg font-medium">
+                  {t("orders.add_products")}
+                </h3>
                 <Button
                   type="button"
                   variant="outline"
@@ -444,12 +501,15 @@ export function OrderForm() {
                   {t("orders.add_product")}
                 </Button>
               </div>
-              
+
               {selectedCustomerId ? (
                 fields.length > 0 ? (
                   <div className="space-y-4">
                     {fields.map((field, index) => (
-                      <div key={field.id} className="flex gap-4 items-end border p-4 rounded-md">
+                      <div
+                        key={field.id}
+                        className="flex gap-4 items-end border p-4 rounded-md"
+                      >
                         <FormField
                           control={form.control}
                           name={`jobOrders.${index}.customerProductId`}
@@ -457,24 +517,41 @@ export function OrderForm() {
                             <FormItem className="flex-1">
                               <FormLabel>{t("orders.product")}</FormLabel>
                               <Select
-                                onValueChange={(value) => field.onChange(parseInt(value))}
+                                onValueChange={(value) =>
+                                  field.onChange(parseInt(value))
+                                }
                                 value={field.value.toString()}
                                 disabled={productsLoading}
                               >
                                 <FormControl>
                                   <SelectTrigger>
-                                    <SelectValue placeholder={t("orders.select_product")} />
+                                    <SelectValue
+                                      placeholder={t("orders.select_product")}
+                                    />
                                   </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
                                   {customerProducts?.map((product) => {
                                     // Find the corresponding item to get its name
-                                    const item = items?.find(item => item.id === product.itemId);
+                                    const item = items?.find(
+                                      (item) => item.id === product.itemId,
+                                    );
                                     // Find the corresponding category to get its name
-                                    const category = categories?.find(cat => cat.id === product.categoryId);
+                                    const category = categories?.find(
+                                      (cat) => cat.id === product.categoryId,
+                                    );
                                     return (
-                                      <SelectItem key={product.id} value={product.id.toString()}>
-                                        {category?.name} - {item?.name} {product.sizeCaption ? `(${product.sizeCaption})` : ''} {product.lengthCm ? `- ${product.lengthCm}cm` : ''}
+                                      <SelectItem
+                                        key={product.id}
+                                        value={product.id.toString()}
+                                      >
+                                        {category?.name} - {item?.name}{" "}
+                                        {product.sizeCaption
+                                          ? `(${product.sizeCaption})`
+                                          : ""}{" "}
+                                        {product.lengthCm
+                                          ? `- ${product.lengthCm}cm`
+                                          : ""}
                                       </SelectItem>
                                     );
                                   })}
@@ -484,26 +561,30 @@ export function OrderForm() {
                             </FormItem>
                           )}
                         />
-                        
+
                         <FormField
                           control={form.control}
                           name={`jobOrders.${index}.quantity`}
                           render={({ field }) => (
                             <FormItem className="flex-1">
-                              <FormLabel>{t("orders.quantity")} (كجم)</FormLabel>
+                              <FormLabel>
+                                {t("orders.quantity")} (كجم)
+                              </FormLabel>
                               <FormControl>
-                                <Input 
+                                <Input
                                   type="number"
                                   placeholder={t("orders.enter_quantity")}
                                   {...field}
-                                  onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                                  onChange={(e) =>
+                                    field.onChange(parseFloat(e.target.value))
+                                  }
                                 />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
                           )}
                         />
-                        
+
                         <Button
                           type="button"
                           variant="ghost"
@@ -518,7 +599,9 @@ export function OrderForm() {
                   </div>
                 ) : (
                   <div className="text-center py-8 text-secondary-400 border border-dashed rounded-md">
-                    <span className="material-icons text-3xl mb-2">inventory</span>
+                    <span className="material-icons text-3xl mb-2">
+                      inventory
+                    </span>
                     <p>{t("orders.add_products_to_order")}</p>
                   </div>
                 )
@@ -530,7 +613,7 @@ export function OrderForm() {
               )}
             </div>
           </CardContent>
-          
+
           <CardFooter className="flex justify-end space-x-2">
             <Button
               type="button"
@@ -539,11 +622,10 @@ export function OrderForm() {
             >
               {t("orders.cancel")}
             </Button>
-            <Button 
-              type="submit" 
-              disabled={createOrderMutation.isPending}
-            >
-              {createOrderMutation.isPending ? t("orders.creating") : t("orders.create_order")}
+            <Button type="submit" disabled={createOrderMutation.isPending}>
+              {createOrderMutation.isPending
+                ? t("orders.creating")
+                : t("orders.create_order")}
             </Button>
           </CardFooter>
         </form>

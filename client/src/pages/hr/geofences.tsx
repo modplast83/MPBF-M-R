@@ -5,9 +5,29 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+} from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useForm } from "react-hook-form";
@@ -16,55 +36,61 @@ import { z } from "zod";
 // @ts-ignore
 import { useTranslation } from "react-i18next";
 import { useLanguage } from "@/hooks/use-language";
-import { 
-  MapPin, 
-  Plus, 
-  Edit, 
-  Trash2, 
+import {
+  MapPin,
+  Plus,
+  Edit,
+  Trash2,
   Map,
   Users,
   CheckCircle,
   AlertCircle,
-  MousePointer
+  MousePointer,
 } from "lucide-react";
 
 const geofenceSchema = z.object({
   name: z.string().min(1, "Geofence name is required"),
   centerLatitude: z.number().min(-90).max(90),
   centerLongitude: z.number().min(-180).max(180),
-  radius: z.number().min(10, "Minimum radius is 10 meters").max(1000, "Maximum radius is 1000 meters"),
-  sectionIds: z.array(z.string()).optional()
+  radius: z
+    .number()
+    .min(10, "Minimum radius is 10 meters")
+    .max(1000, "Maximum radius is 1000 meters"),
+  sectionIds: z.array(z.string()).optional(),
 });
 
 type GeofenceForm = z.infer<typeof geofenceSchema>;
 
 // Simple interactive map component for location selection
-const InteractiveMap = ({ 
-  centerLat, 
-  centerLng, 
-  radius, 
-  onLocationSelect 
-}: { 
-  centerLat: number; 
-  centerLng: number; 
-  radius: number; 
-  onLocationSelect: (lat: number, lng: number) => void; 
+const InteractiveMap = ({
+  centerLat,
+  centerLng,
+  radius,
+  onLocationSelect,
+}: {
+  centerLat: number;
+  centerLng: number;
+  radius: number;
+  onLocationSelect: (lat: number, lng: number) => void;
 }) => {
   const mapRef = useRef<HTMLDivElement>(null);
-  const [mapCenter, setMapCenter] = useState({ lat: centerLat, lng: centerLng });
+  const [mapCenter, setMapCenter] = useState({
+    lat: centerLat,
+    lng: centerLng,
+  });
   const [isSelecting, setIsSelecting] = useState(false);
 
   const handleMapClick = (e: React.MouseEvent) => {
     if (!isSelecting || !mapRef.current) return;
-    
+
     const rect = mapRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
-    
+
     // Simple coordinate mapping (for demo - in production would use proper mapping)
     const lat = mapCenter.lat + (y - 200) / 1000; // Approximate scaling
     const lng = mapCenter.lng + (x - 200) / 1000;
-    
+
     onLocationSelect(lat, lng);
     setIsSelecting(false);
   };
@@ -87,32 +113,32 @@ const InteractiveMap = ({
           </Button>
         </div>
       </div>
-      <div 
+      <div
         ref={mapRef}
-        className={`h-64 bg-gradient-to-br from-green-100 to-blue-100 relative ${isSelecting ? 'cursor-crosshair' : 'cursor-default'}`}
+        className={`h-64 bg-gradient-to-br from-green-100 to-blue-100 relative ${isSelecting ? "cursor-crosshair" : "cursor-default"}`}
         onClick={handleMapClick}
       >
         {/* Map representation */}
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="text-center">
-            <div 
+            <div
               className="w-4 h-4 bg-red-500 rounded-full mx-auto mb-2"
               style={{
-                position: 'absolute',
-                left: '50%',
-                top: '50%',
-                transform: 'translate(-50%, -50%)'
+                position: "absolute",
+                left: "50%",
+                top: "50%",
+                transform: "translate(-50%, -50%)",
               }}
             />
-            <div 
+            <div
               className="border-2 border-blue-500 rounded-full opacity-30"
               style={{
                 width: `${radius / 2}px`,
                 height: `${radius / 2}px`,
-                position: 'absolute',
-                left: '50%',
-                top: '50%',
-                transform: 'translate(-50%, -50%)'
+                position: "absolute",
+                left: "50%",
+                top: "50%",
+                transform: "translate(-50%, -50%)",
               }}
             />
           </div>
@@ -142,14 +168,14 @@ export default function GeofenceManagement() {
 
   // Fetch geofences
   const { data: geofences = [], isLoading } = useQuery({
-    queryKey: ['/api/hr/geofences'],
-    queryFn: () => apiRequest('GET', '/api/hr/geofences')
+    queryKey: ["/api/hr/geofences"],
+    queryFn: () => apiRequest("GET", "/api/hr/geofences"),
   });
 
   // Fetch sections for dropdown
   const { data: sections = [] } = useQuery({
-    queryKey: ['/api/sections'],
-    queryFn: () => apiRequest('GET', '/api/sections')
+    queryKey: ["/api/sections"],
+    queryFn: () => apiRequest("GET", "/api/sections"),
   });
 
   // Form setup
@@ -157,53 +183,53 @@ export default function GeofenceManagement() {
     resolver: zodResolver(geofenceSchema),
     defaultValues: {
       radius: 100,
-      sectionIds: []
-    }
+      sectionIds: [],
+    },
   });
 
   // Create geofence mutation
   const createGeofenceMutation = useMutation({
-    mutationFn: (data: GeofenceForm) => 
-      apiRequest('POST', '/api/hr/geofences', data),
+    mutationFn: (data: GeofenceForm) =>
+      apiRequest("POST", "/api/hr/geofences", data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/hr/geofences'] });
+      queryClient.invalidateQueries({ queryKey: ["/api/hr/geofences"] });
       setIsDialogOpen(false);
       form.reset();
       toast({
         title: "Success",
-        description: "Geofence created successfully"
+        description: "Geofence created successfully",
       });
     },
     onError: (error: any) => {
       toast({
         title: "Error",
         description: error.message || "Failed to create geofence",
-        variant: "destructive"
+        variant: "destructive",
       });
-    }
+    },
   });
 
   // Update geofence mutation
   const updateGeofenceMutation = useMutation({
-    mutationFn: ({ id, data }: { id: number, data: GeofenceForm }) =>
-      apiRequest('PUT', `/api/hr/geofences/${id}`, data),
+    mutationFn: ({ id, data }: { id: number; data: GeofenceForm }) =>
+      apiRequest("PUT", `/api/hr/geofences/${id}`, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/hr/geofences'] });
+      queryClient.invalidateQueries({ queryKey: ["/api/hr/geofences"] });
       setIsDialogOpen(false);
       setSelectedGeofence(null);
       form.reset();
       toast({
         title: "Success",
-        description: "Geofence updated successfully"
+        description: "Geofence updated successfully",
       });
     },
     onError: (error: any) => {
       toast({
         title: "Error",
         description: error.message || "Failed to update geofence",
-        variant: "destructive"
+        variant: "destructive",
       });
-    }
+    },
   });
 
   const handleSubmit = (data: GeofenceForm) => {
@@ -221,7 +247,7 @@ export default function GeofenceManagement() {
       centerLatitude: geofence.centerLatitude,
       centerLongitude: geofence.centerLongitude,
       radius: geofence.radius,
-      sectionIds: geofence.sectionIds || []
+      sectionIds: geofence.sectionIds || [],
     });
     setIsDialogOpen(true);
   };
@@ -230,26 +256,27 @@ export default function GeofenceManagement() {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          form.setValue('centerLatitude', position.coords.latitude);
-          form.setValue('centerLongitude', position.coords.longitude);
+          form.setValue("centerLatitude", position.coords.latitude);
+          form.setValue("centerLongitude", position.coords.longitude);
           toast({
             title: "Location Set",
-            description: "Current location has been set as geofence center"
+            description: "Current location has been set as geofence center",
           });
         },
         (error) => {
           toast({
             title: "Location Error",
-            description: "Could not get current location. Please enter coordinates manually.",
-            variant: "destructive"
+            description:
+              "Could not get current location. Please enter coordinates manually.",
+            variant: "destructive",
           });
-        }
+        },
       );
     } else {
       toast({
         title: "Not Supported",
         description: "Geolocation is not supported by this browser",
-        variant: "destructive"
+        variant: "destructive",
       });
     }
   };
@@ -258,16 +285,23 @@ export default function GeofenceManagement() {
     <div className="container mx-auto p-4 sm:p-6">
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 sm:mb-8 space-y-4 sm:space-y-0">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">{t("hr.geofence_management.title")}</h1>
-          <p className="text-sm sm:text-base text-gray-600 mt-2">{t("hr.geofence_management.description")}</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+            {t("hr.geofence_management.title")}
+          </h1>
+          <p className="text-sm sm:text-base text-gray-600 mt-2">
+            {t("hr.geofence_management.description")}
+          </p>
         </div>
-        
+
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <Button onClick={() => {
-              setSelectedGeofence(null);
-              form.reset();
-            }} className="w-full sm:w-auto">
+            <Button
+              onClick={() => {
+                setSelectedGeofence(null);
+                form.reset();
+              }}
+              className="w-full sm:w-auto"
+            >
               <Plus className="h-4 w-4 mr-2" />
               Add Geofence
             </Button>
@@ -278,12 +312,17 @@ export default function GeofenceManagement() {
                 {selectedGeofence ? "Edit Geofence" : "Create New Geofence"}
               </DialogTitle>
               <DialogDescription>
-                {selectedGeofence ? "Modify the selected geofence settings and location parameters" : "Set up a new geographical boundary for location-based attendance tracking"}
+                {selectedGeofence
+                  ? "Modify the selected geofence settings and location parameters"
+                  : "Set up a new geographical boundary for location-based attendance tracking"}
               </DialogDescription>
             </DialogHeader>
-            
+
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4 sm:space-y-6">
+              <form
+                onSubmit={form.handleSubmit(handleSubmit)}
+                className="space-y-4 sm:space-y-6"
+              >
                 <FormField
                   control={form.control}
                   name="name"
@@ -301,15 +340,15 @@ export default function GeofenceManagement() {
                 <div className="space-y-4">
                   <Label>Location Selection</Label>
                   <InteractiveMap
-                    centerLat={form.watch('centerLatitude') || 24.7136}
-                    centerLng={form.watch('centerLongitude') || 46.6753}
-                    radius={form.watch('radius') || 100}
+                    centerLat={form.watch("centerLatitude") || 24.7136}
+                    centerLng={form.watch("centerLongitude") || 46.6753}
+                    radius={form.watch("radius") || 100}
                     onLocationSelect={(lat: number, lng: number) => {
-                      form.setValue('centerLatitude', lat);
-                      form.setValue('centerLongitude', lng);
+                      form.setValue("centerLatitude", lat);
+                      form.setValue("centerLongitude", lng);
                       toast({
                         title: "Location Updated",
-                        description: `New center: ${lat.toFixed(6)}, ${lng.toFixed(6)}`
+                        description: `New center: ${lat.toFixed(6)}, ${lng.toFixed(6)}`,
                       });
                     }}
                   />
@@ -323,11 +362,13 @@ export default function GeofenceManagement() {
                       <FormItem>
                         <FormLabel>Latitude</FormLabel>
                         <FormControl>
-                          <Input 
-                            type="number" 
-                            step="0.000001" 
-                            {...field} 
-                            onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                          <Input
+                            type="number"
+                            step="0.000001"
+                            {...field}
+                            onChange={(e) =>
+                              field.onChange(parseFloat(e.target.value))
+                            }
                             placeholder="24.7136"
                           />
                         </FormControl>
@@ -342,11 +383,13 @@ export default function GeofenceManagement() {
                       <FormItem>
                         <FormLabel>Longitude</FormLabel>
                         <FormControl>
-                          <Input 
-                            type="number" 
-                            step="0.000001" 
-                            {...field} 
-                            onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                          <Input
+                            type="number"
+                            step="0.000001"
+                            {...field}
+                            onChange={(e) =>
+                              field.onChange(parseFloat(e.target.value))
+                            }
                             placeholder="46.6753"
                           />
                         </FormControl>
@@ -356,8 +399,8 @@ export default function GeofenceManagement() {
                 </div>
 
                 <div className="flex justify-center">
-                  <Button 
-                    type="button" 
+                  <Button
+                    type="button"
                     variant={"outline" as any}
                     onClick={handleGetCurrentLocation}
                     className="w-full"
@@ -374,12 +417,14 @@ export default function GeofenceManagement() {
                     <FormItem>
                       <FormLabel>Radius (meters)</FormLabel>
                       <FormControl>
-                        <Input 
-                          type="number" 
-                          min="10" 
-                          max="1000" 
-                          {...field} 
-                          onChange={(e) => field.onChange(parseInt(e.target.value))}
+                        <Input
+                          type="number"
+                          min="10"
+                          max="1000"
+                          {...field}
+                          onChange={(e) =>
+                            field.onChange(parseInt(e.target.value))
+                          }
                         />
                       </FormControl>
                     </FormItem>
@@ -387,18 +432,24 @@ export default function GeofenceManagement() {
                 />
 
                 <div className="flex justify-end space-x-4 pt-4 border-t">
-                  <Button 
-                    type="button" 
+                  <Button
+                    type="button"
                     variant={"outline" as any}
                     onClick={() => setIsDialogOpen(false)}
                   >
                     Cancel
                   </Button>
-                  <Button 
-                    type="submit" 
-                    disabled={createGeofenceMutation.isPending || updateGeofenceMutation.isPending}
+                  <Button
+                    type="submit"
+                    disabled={
+                      createGeofenceMutation.isPending ||
+                      updateGeofenceMutation.isPending
+                    }
                   >
-                    {createGeofenceMutation.isPending || updateGeofenceMutation.isPending ? "Saving..." : "Save"}
+                    {createGeofenceMutation.isPending ||
+                    updateGeofenceMutation.isPending
+                      ? "Saving..."
+                      : "Save"}
                   </Button>
                 </div>
               </form>
@@ -413,8 +464,12 @@ export default function GeofenceManagement() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Total Geofences</p>
-                <p className="text-3xl font-bold text-gray-900">{geofences.length}</p>
+                <p className="text-sm font-medium text-gray-600">
+                  Total Geofences
+                </p>
+                <p className="text-3xl font-bold text-gray-900">
+                  {geofences.length}
+                </p>
               </div>
               <Map className="h-8 w-8 text-blue-500" />
             </div>
@@ -425,7 +480,9 @@ export default function GeofenceManagement() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Active Geofences</p>
+                <p className="text-sm font-medium text-gray-600">
+                  Active Geofences
+                </p>
                 <p className="text-3xl font-bold text-gray-900">
                   {geofences.filter((g: any) => g.isActive).length}
                 </p>
@@ -441,10 +498,15 @@ export default function GeofenceManagement() {
               <div>
                 <p className="text-sm font-medium text-gray-600">Avg Radius</p>
                 <p className="text-3xl font-bold text-gray-900">
-                  {geofences.length > 0 
-                    ? Math.round(geofences.reduce((sum: number, g: any) => sum + g.radius, 0) / geofences.length)
-                    : 0
-                  }m
+                  {geofences.length > 0
+                    ? Math.round(
+                        geofences.reduce(
+                          (sum: number, g: any) => sum + g.radius,
+                          0,
+                        ) / geofences.length,
+                      )
+                    : 0}
+                  m
                 </p>
               </div>
               <MapPin className="h-8 w-8 text-purple-500" />
@@ -466,7 +528,8 @@ export default function GeofenceManagement() {
             <div className="text-center py-8">Loading geofences...</div>
           ) : geofences.length === 0 ? (
             <div className="text-center py-8 text-gray-500">
-              No geofences configured. Create your first geofence to enable automatic attendance tracking.
+              No geofences configured. Create your first geofence to enable
+              automatic attendance tracking.
             </div>
           ) : (
             <div className="overflow-x-auto">
@@ -487,7 +550,9 @@ export default function GeofenceManagement() {
                       <TableCell className="font-medium">
                         <div>
                           <div className="font-medium">{geofence.name}</div>
-                          <div className="text-sm text-gray-500">ID: {geofence.id}</div>
+                          <div className="text-sm text-gray-500">
+                            ID: {geofence.id}
+                          </div>
                         </div>
                       </TableCell>
                       <TableCell>
@@ -499,11 +564,21 @@ export default function GeofenceManagement() {
                       <TableCell>
                         <div className="font-medium">{geofence.radius}m</div>
                         <div className="text-sm text-gray-500">
-                          {(Math.PI * Math.pow(geofence.radius, 2) / 1000000).toFixed(2)} km²
+                          {(
+                            (Math.PI * Math.pow(geofence.radius, 2)) /
+                            1000000
+                          ).toFixed(2)}{" "}
+                          km²
                         </div>
                       </TableCell>
                       <TableCell>
-                        <Badge className={geofence.isActive ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}>
+                        <Badge
+                          className={
+                            geofence.isActive
+                              ? "bg-green-100 text-green-800"
+                              : "bg-red-100 text-red-800"
+                          }
+                        >
                           {geofence.isActive ? "Active" : "Inactive"}
                         </Badge>
                       </TableCell>
@@ -545,29 +620,32 @@ export default function GeofenceManagement() {
             <div>
               <h4 className="font-semibold mb-2">Automatic Check-in</h4>
               <p className="text-sm text-gray-600">
-                Employees can only check in when they are within the configured geofence area. 
-                This ensures accurate location-based attendance tracking.
+                Employees can only check in when they are within the configured
+                geofence area. This ensures accurate location-based attendance
+                tracking.
               </p>
             </div>
             <div>
               <h4 className="font-semibold mb-2">Automatic Check-out</h4>
               <p className="text-sm text-gray-600">
-                When an employee leaves the geofenced area while still checked in, 
-                the system automatically checks them out to prevent time fraud.
+                When an employee leaves the geofenced area while still checked
+                in, the system automatically checks them out to prevent time
+                fraud.
               </p>
             </div>
             <div>
               <h4 className="font-semibold mb-2">Security Benefits</h4>
               <p className="text-sm text-gray-600">
-                Geofencing prevents remote clock-ins and ensures employees are physically 
-                present at the workplace during their recorded working hours.
+                Geofencing prevents remote clock-ins and ensures employees are
+                physically present at the workplace during their recorded
+                working hours.
               </p>
             </div>
             <div>
               <h4 className="font-semibold mb-2">Best Practices</h4>
               <p className="text-sm text-gray-600">
-                Set the radius large enough to cover parking areas and building entrances, 
-                but small enough to maintain security and accuracy.
+                Set the radius large enough to cover parking areas and building
+                entrances, but small enough to maintain security and accuracy.
               </p>
             </div>
           </div>

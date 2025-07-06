@@ -3,8 +3,22 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { CustomerForm } from "@/components/setup/customer-form";
 import { API_ENDPOINTS } from "@/lib/constants";
 import { apiRequest } from "@/lib/queryClient";
@@ -17,7 +31,9 @@ export default function Customers() {
   const queryClient = useQueryClient();
   const [formOpen, setFormOpen] = useState(false);
   const [editCustomer, setEditCustomer] = useState<Customer | null>(null);
-  const [deletingCustomer, setDeletingCustomer] = useState<Customer | null>(null);
+  const [deletingCustomer, setDeletingCustomer] = useState<Customer | null>(
+    null,
+  );
 
   // Fetch customers and related data
   const { data: customers, isLoading } = useQuery<Customer[]>({
@@ -73,7 +89,7 @@ export default function Customers() {
   // Helper function to get user name from userId - using firstName instead of username
   const getUserName = (userId: string | null) => {
     if (!userId) return t("common.none");
-    const user = users?.find(u => u.id === userId);
+    const user = users?.find((u) => u.id === userId);
     if (user) {
       return user.firstName || user.username || userId;
     }
@@ -106,16 +122,27 @@ export default function Customers() {
     {
       header: t("setup.customers.plate_drawer_code"),
       accessorKey: "plateDrawerCode",
-      cell: (row: { plateDrawerCode: string | null }) => row.plateDrawerCode || "-",
+      cell: (row: { plateDrawerCode: string | null }) =>
+        row.plateDrawerCode || "-",
     },
     {
       header: t("setup.customers.actions"),
       cell: (row: Customer) => (
         <div className="flex space-x-2">
-          <Button variant="ghost" size="icon" onClick={() => handleEdit(row)} className="text-primary-500 hover:text-primary-700">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => handleEdit(row)}
+            className="text-primary-500 hover:text-primary-700"
+          >
             <span className="material-icons text-sm">edit</span>
           </Button>
-          <Button variant="ghost" size="icon" onClick={() => handleDelete(row)} className="text-red-500 hover:text-red-700">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => handleDelete(row)}
+            className="text-red-500 hover:text-red-700"
+          >
             <span className="material-icons text-sm">delete</span>
           </Button>
         </div>
@@ -133,7 +160,9 @@ export default function Customers() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-secondary-900">{t("setup.customers.title")}</h1>
+        <h1 className="text-2xl font-bold text-secondary-900">
+          {t("setup.customers.title")}
+        </h1>
       </div>
       <Card>
         <CardHeader>
@@ -142,7 +171,7 @@ export default function Customers() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <DataTable 
+          <DataTable
             data={customers || []}
             columns={columns}
             isLoading={isLoading}
@@ -155,27 +184,34 @@ export default function Customers() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {editCustomer ? t("setup.customers.edit_customer") : t("setup.customers.add_new")}
+              {editCustomer
+                ? t("setup.customers.edit_customer")
+                : t("setup.customers.add_new")}
             </DialogTitle>
           </DialogHeader>
-          <CustomerForm 
+          <CustomerForm
             customer={editCustomer || undefined}
             onSuccess={handleFormClose}
           />
         </DialogContent>
       </Dialog>
       {/* Delete Confirmation Dialog */}
-      <AlertDialog open={!!deletingCustomer} onOpenChange={(open) => !open && setDeletingCustomer(null)}>
+      <AlertDialog
+        open={!!deletingCustomer}
+        onOpenChange={(open) => !open && setDeletingCustomer(null)}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>{t("setup.customers.are_you_sure")}</AlertDialogTitle>
+            <AlertDialogTitle>
+              {t("setup.customers.are_you_sure")}
+            </AlertDialogTitle>
             <AlertDialogDescription>
               {t("setup.customers.delete_confirmation")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>{t("setup.customers.cancel")}</AlertDialogCancel>
-            <AlertDialogAction 
+            <AlertDialogAction
               onClick={confirmDelete}
               className="bg-red-500 hover:bg-red-600"
             >

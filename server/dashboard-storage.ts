@@ -9,32 +9,43 @@ type InsertDashboardLayout = typeof dashboardLayouts.$inferInsert;
 
 export class DashboardStorage {
   // Dashboard Widgets
-  async getUserWidgets(userId: string, layoutName: string = 'default'): Promise<DashboardWidget[]> {
-    return await db.select()
+  async getUserWidgets(
+    userId: string,
+    layoutName: string = "default",
+  ): Promise<DashboardWidget[]> {
+    return await db
+      .select()
       .from(dashboardWidgets)
-      .where(and(
-        eq(dashboardWidgets.userId, userId),
-        eq(dashboardWidgets.dashboardLayout, layoutName)
-      ))
+      .where(
+        and(
+          eq(dashboardWidgets.userId, userId),
+          eq(dashboardWidgets.dashboardLayout, layoutName),
+        ),
+      )
       .orderBy(dashboardWidgets.createdAt);
   }
 
   async createWidget(widget: InsertDashboardWidget): Promise<DashboardWidget> {
-    const [newWidget] = await db.insert(dashboardWidgets)
+    const [newWidget] = await db
+      .insert(dashboardWidgets)
       .values({
         ...widget,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       })
       .returning();
     return newWidget;
   }
 
-  async updateWidget(id: number, updates: Partial<DashboardWidget>): Promise<DashboardWidget | undefined> {
-    const [updatedWidget] = await db.update(dashboardWidgets)
+  async updateWidget(
+    id: number,
+    updates: Partial<DashboardWidget>,
+  ): Promise<DashboardWidget | undefined> {
+    const [updatedWidget] = await db
+      .update(dashboardWidgets)
       .set({
         ...updates,
-        updatedAt: new Date()
+        updatedAt: new Date(),
       })
       .where(eq(dashboardWidgets.id, id))
       .returning();
@@ -42,26 +53,32 @@ export class DashboardStorage {
   }
 
   async deleteWidget(id: number): Promise<void> {
-    await db.delete(dashboardWidgets)
-      .where(eq(dashboardWidgets.id, id));
+    await db.delete(dashboardWidgets).where(eq(dashboardWidgets.id, id));
   }
 
   async deleteUserWidgets(userId: string, layoutName: string): Promise<void> {
-    await db.delete(dashboardWidgets)
-      .where(and(
-        eq(dashboardWidgets.userId, userId),
-        eq(dashboardWidgets.dashboardLayout, layoutName)
-      ));
+    await db
+      .delete(dashboardWidgets)
+      .where(
+        and(
+          eq(dashboardWidgets.userId, userId),
+          eq(dashboardWidgets.dashboardLayout, layoutName),
+        ),
+      );
   }
 
-  async saveUserLayout(userId: string, layoutName: string, widgets: any[]): Promise<void> {
+  async saveUserLayout(
+    userId: string,
+    layoutName: string,
+    widgets: any[],
+  ): Promise<void> {
     // Delete existing widgets for this layout
     await this.deleteUserWidgets(userId, layoutName);
 
     // Insert new widgets
     if (widgets.length > 0) {
-      await db.insert(dashboardWidgets)
-        .values(widgets.map(widget => ({
+      await db.insert(dashboardWidgets).values(
+        widgets.map((widget) => ({
           userId,
           widgetType: widget.widgetType,
           widgetConfig: widget.widgetConfig,
@@ -69,35 +86,42 @@ export class DashboardStorage {
           isVisible: widget.isVisible ?? true,
           dashboardLayout: layoutName,
           createdAt: new Date(),
-          updatedAt: new Date()
-        })));
+          updatedAt: new Date(),
+        })),
+      );
     }
   }
 
   // Dashboard Layouts
   async getUserLayouts(userId: string): Promise<DashboardLayout[]> {
-    return await db.select()
+    return await db
+      .select()
       .from(dashboardLayouts)
       .where(eq(dashboardLayouts.userId, userId))
       .orderBy(dashboardLayouts.createdAt);
   }
 
   async createLayout(layout: InsertDashboardLayout): Promise<DashboardLayout> {
-    const [newLayout] = await db.insert(dashboardLayouts)
+    const [newLayout] = await db
+      .insert(dashboardLayouts)
       .values({
         ...layout,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       })
       .returning();
     return newLayout;
   }
 
-  async updateLayout(id: number, updates: Partial<DashboardLayout>): Promise<DashboardLayout | undefined> {
-    const [updatedLayout] = await db.update(dashboardLayouts)
+  async updateLayout(
+    id: number,
+    updates: Partial<DashboardLayout>,
+  ): Promise<DashboardLayout | undefined> {
+    const [updatedLayout] = await db
+      .update(dashboardLayouts)
       .set({
         ...updates,
-        updatedAt: new Date()
+        updatedAt: new Date(),
       })
       .where(eq(dashboardLayouts.id, id))
       .returning();
@@ -105,8 +129,7 @@ export class DashboardStorage {
   }
 
   async deleteLayout(id: number): Promise<void> {
-    await db.delete(dashboardLayouts)
-      .where(eq(dashboardLayouts.id, id));
+    await db.delete(dashboardLayouts).where(eq(dashboardLayouts.id, id));
   }
 
   // Dashboard Statistics
@@ -120,7 +143,7 @@ export class DashboardStorage {
       qualityIssues: 3,
       efficiency: 87,
       outputRate: 92,
-      qualityScore: 96
+      qualityScore: 96,
     };
   }
 }

@@ -1,23 +1,25 @@
 #!/usr/bin/env node
 
-import { execSync } from 'child_process';
-import { writeFileSync, mkdirSync, existsSync, rmSync } from 'fs';
+import { execSync } from "child_process";
+import { writeFileSync, mkdirSync, existsSync, rmSync } from "fs";
 
 async function simpleDeploy() {
   try {
-    console.log('Starting simple deployment build...');
-    
+    console.log("Starting simple deployment build...");
+
     // Clean dist directory
-    if (existsSync('dist')) {
-      rmSync('dist', { recursive: true, force: true });
+    if (existsSync("dist")) {
+      rmSync("dist", { recursive: true, force: true });
     }
-    mkdirSync('dist', { recursive: true });
+    mkdirSync("dist", { recursive: true });
 
     // Skip frontend build and create minimal static files
-    console.log('Creating minimal frontend files...');
-    
+    console.log("Creating minimal frontend files...");
+
     // Create basic index.html
-    writeFileSync('dist/index.html', `<!DOCTYPE html>
+    writeFileSync(
+      "dist/index.html",
+      `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -53,35 +55,48 @@ async function simpleDeploy() {
         </div>
     </div>
 </body>
-</html>`);
+</html>`,
+    );
 
     // Copy server files using Node.js build
-    console.log('Building server...');
-    execSync('npx esbuild server/index.ts --bundle --platform=node --target=node18 --format=esm --outfile=dist/server.js --packages=external', { 
-      stdio: 'inherit' 
-    });
+    console.log("Building server...");
+    execSync(
+      "npx esbuild server/index.ts --bundle --platform=node --target=node18 --format=esm --outfile=dist/server.js --packages=external",
+      {
+        stdio: "inherit",
+      },
+    );
 
     // Create production entry point
-    writeFileSync('dist/index.js', `#!/usr/bin/env node
+    writeFileSync(
+      "dist/index.js",
+      `#!/usr/bin/env node
 import './server.js';
-`);
+`,
+    );
 
     // Create package.json for deployment
-    writeFileSync('dist/package.json', JSON.stringify({
-      "name": "production-management-system",
-      "version": "1.0.0",
-      "type": "module",
-      "main": "index.js",
-      "scripts": {
-        "start": "node index.js"
-      }
-    }, null, 2));
+    writeFileSync(
+      "dist/package.json",
+      JSON.stringify(
+        {
+          name: "production-management-system",
+          version: "1.0.0",
+          type: "module",
+          main: "index.js",
+          scripts: {
+            start: "node index.js",
+          },
+        },
+        null,
+        2,
+      ),
+    );
 
-    console.log('Deployment build completed successfully!');
-    console.log('Ready for deployment on port', process.env.PORT || 5000);
-    
+    console.log("Deployment build completed successfully!");
+    console.log("Ready for deployment on port", process.env.PORT || 5000);
   } catch (error) {
-    console.error('Build failed:', error.message);
+    console.error("Build failed:", error.message);
     process.exit(1);
   }
 }

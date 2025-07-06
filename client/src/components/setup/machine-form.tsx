@@ -33,12 +33,14 @@ interface MachineFormProps {
 export function MachineForm({ machine, onSuccess }: MachineFormProps) {
   const queryClient = useQueryClient();
   const isEditing = !!machine;
-  
+
   // Fetch sections
-  const { data: sections, isLoading: sectionsLoading } = useQuery<{id: string, name: string}[]>({
+  const { data: sections, isLoading: sectionsLoading } = useQuery<
+    { id: string; name: string }[]
+  >({
     queryKey: [API_ENDPOINTS.SECTIONS],
   });
-  
+
   // Set up the form
   const form = useForm<z.infer<typeof insertMachineSchema>>({
     resolver: zodResolver(insertMachineSchema),
@@ -53,12 +55,16 @@ export function MachineForm({ machine, onSuccess }: MachineFormProps) {
       isActive: machine?.isActive ?? true,
     },
   });
-  
+
   // Create mutation for adding/updating machine
   const mutation = useMutation({
     mutationFn: async (values: z.infer<typeof insertMachineSchema>) => {
       if (isEditing) {
-        await apiRequest("PUT", `${API_ENDPOINTS.MACHINES}/${machine.id}`, values);
+        await apiRequest(
+          "PUT",
+          `${API_ENDPOINTS.MACHINES}/${machine.id}`,
+          values,
+        );
       } else {
         await apiRequest("POST", API_ENDPOINTS.MACHINES, values);
       }
@@ -80,12 +86,12 @@ export function MachineForm({ machine, onSuccess }: MachineFormProps) {
       });
     },
   });
-  
+
   // Form submission handler
   const onSubmit = (values: z.infer<typeof insertMachineSchema>) => {
     mutation.mutate(values);
   };
-  
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -97,9 +103,9 @@ export function MachineForm({ machine, onSuccess }: MachineFormProps) {
               <FormItem>
                 <FormLabel>Machine ID</FormLabel>
                 <FormControl>
-                  <Input 
-                    placeholder="Enter machine ID" 
-                    {...field} 
+                  <Input
+                    placeholder="Enter machine ID"
+                    {...field}
                     disabled={isEditing}
                   />
                 </FormControl>
@@ -107,7 +113,7 @@ export function MachineForm({ machine, onSuccess }: MachineFormProps) {
               </FormItem>
             )}
           />
-          
+
           <FormField
             control={form.control}
             name="name"
@@ -131,13 +137,17 @@ export function MachineForm({ machine, onSuccess }: MachineFormProps) {
               <FormItem>
                 <FormLabel>S/N (Serial Number)</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter serial number" {...field} value={field.value || ""} />
+                  <Input
+                    placeholder="Enter serial number"
+                    {...field}
+                    value={field.value || ""}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          
+
           <FormField
             control={form.control}
             name="supplier"
@@ -145,7 +155,11 @@ export function MachineForm({ machine, onSuccess }: MachineFormProps) {
               <FormItem>
                 <FormLabel>Supplier</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter supplier name" {...field} value={field.value || ""} />
+                  <Input
+                    placeholder="Enter supplier name"
+                    {...field}
+                    value={field.value || ""}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -161,18 +175,26 @@ export function MachineForm({ machine, onSuccess }: MachineFormProps) {
               <FormItem>
                 <FormLabel>Date of Manufacturing</FormLabel>
                 <FormControl>
-                  <Input 
-                    type="date" 
+                  <Input
+                    type="date"
                     {...field}
-                    value={field.value ? new Date(field.value).toISOString().split('T')[0] : ''}
-                    onChange={(e) => field.onChange(e.target.value ? new Date(e.target.value) : null)}
+                    value={
+                      field.value
+                        ? new Date(field.value).toISOString().split("T")[0]
+                        : ""
+                    }
+                    onChange={(e) =>
+                      field.onChange(
+                        e.target.value ? new Date(e.target.value) : null,
+                      )
+                    }
                   />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          
+
           <FormField
             control={form.control}
             name="modelNumber"
@@ -180,14 +202,18 @@ export function MachineForm({ machine, onSuccess }: MachineFormProps) {
               <FormItem>
                 <FormLabel>Model #</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter model number" {...field} value={field.value || ""} />
+                  <Input
+                    placeholder="Enter model number"
+                    {...field}
+                    value={field.value || ""}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <FormField
             control={form.control}
@@ -196,7 +222,9 @@ export function MachineForm({ machine, onSuccess }: MachineFormProps) {
               <FormItem>
                 <FormLabel>Section</FormLabel>
                 <Select
-                  onValueChange={(value) => field.onChange(value === "none" ? null : value)}
+                  onValueChange={(value) =>
+                    field.onChange(value === "none" ? null : value)
+                  }
                   value={field.value || "none"}
                   disabled={sectionsLoading}
                 >
@@ -207,18 +235,19 @@ export function MachineForm({ machine, onSuccess }: MachineFormProps) {
                   </FormControl>
                   <SelectContent>
                     <SelectItem value="none">None</SelectItem>
-                    {sections && sections.map((section) => (
-                      <SelectItem key={section.id} value={section.id}>
-                        {section.name}
-                      </SelectItem>
-                    ))}
+                    {sections &&
+                      sections.map((section) => (
+                        <SelectItem key={section.id} value={section.id}>
+                          {section.name}
+                        </SelectItem>
+                      ))}
                   </SelectContent>
                 </Select>
                 <FormMessage />
               </FormItem>
             )}
           />
-          
+
           <FormField
             control={form.control}
             name="isActive"
@@ -240,25 +269,21 @@ export function MachineForm({ machine, onSuccess }: MachineFormProps) {
             )}
           />
         </div>
-        
+
         <div className="flex justify-end space-x-2 pt-4">
           {onSuccess && (
-            <Button
-              type="button"
-              variant="outline"
-              onClick={onSuccess}
-            >
+            <Button type="button" variant="outline" onClick={onSuccess}>
               Cancel
             </Button>
           )}
-          <Button
-            type="submit"
-            disabled={mutation.isPending}
-          >
+          <Button type="submit" disabled={mutation.isPending}>
             {mutation.isPending
-              ? isEditing ? "Updating..." : "Creating..."
-              : isEditing ? "Update Machine" : "Create Machine"
-            }
+              ? isEditing
+                ? "Updating..."
+                : "Creating..."
+              : isEditing
+                ? "Update Machine"
+                : "Create Machine"}
           </Button>
         </div>
       </form>

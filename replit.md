@@ -1,11 +1,13 @@
 # Production Management System
 
 ## Overview
+
 This is a comprehensive production management system built with React, TypeScript, Express.js, and PostgreSQL. The application manages manufacturing operations including order processing, production workflow, quality control, HR management, and IoT monitoring for industrial production environments.
 
 ## System Architecture
 
 ### Frontend Architecture
+
 - **Framework**: React 18 with TypeScript
 - **Build Tool**: Vite for fast development and optimized production builds
 - **UI Components**: Radix UI components with Tailwind CSS for styling
@@ -14,6 +16,7 @@ This is a comprehensive production management system built with React, TypeScrip
 - **Forms**: React Hook Form with Zod validation
 
 ### Backend Architecture
+
 - **Runtime**: Node.js 20 with ES modules
 - **Framework**: Express.js for REST API
 - **Database**: PostgreSQL with Drizzle ORM
@@ -25,6 +28,7 @@ This is a comprehensive production management system built with React, TypeScrip
 ## Key Components
 
 ### Core Modules
+
 1. **Setup Management**: Categories, products, customers, items, sections, machines, users
 2. **Production Workflow**: Order management, job orders, material mixing, quality control
 3. **HR Management**: Time attendance, employee tracking, violations, complaints
@@ -34,6 +38,7 @@ This is a comprehensive production management system built with React, TypeScrip
 7. **Notification System**: Email, SMS, and in-app notifications
 
 ### Database Schema
+
 - **Users & Permissions**: Role-based access control with section-based permissions
 - **Production Entities**: Categories, items, customers, orders, job orders, rolls
 - **Quality Management**: Quality check types, quality checks, corrective actions
@@ -44,12 +49,14 @@ This is a comprehensive production management system built with React, TypeScrip
 ## Data Flow
 
 ### Authentication Flow
+
 1. User login via Passport.js local strategy
 2. Session stored in PostgreSQL using connect-pg-simple
 3. User permissions checked against role and section assignments
 4. Protected routes validated server-side
 
 ### Production Workflow
+
 1. Orders created and assigned to customers
 2. Job orders generated from orders with specific quantities
 3. Material mixing calculated based on product specifications
@@ -58,6 +65,7 @@ This is a comprehensive production management system built with React, TypeScrip
 6. Notifications sent for bottlenecks or quality issues
 
 ### Data Persistence
+
 - Primary database: PostgreSQL via Drizzle ORM
 - Session storage: PostgreSQL sessions table
 - File uploads: Server filesystem with metadata in database
@@ -66,16 +74,19 @@ This is a comprehensive production management system built with React, TypeScrip
 ## External Dependencies
 
 ### Database
+
 - **PostgreSQL**: Primary data storage via Neon serverless
 - **Drizzle ORM**: Type-safe database queries and migrations
 - **Connection**: WebSocket-based connection for serverless compatibility
 
 ### Third-Party Services
+
 - **SendGrid**: Email notifications and alerts
 - **Taqnyat**: SMS messaging service for production alerts
 - **Replit Auth**: Optional OAuth integration for development
 
 ### Development Tools
+
 - **ESBuild**: Production bundling and optimization
 - **TypeScript**: Full type safety across frontend and backend
 - **Prettier**: Code formatting with custom ignore rules
@@ -84,12 +95,14 @@ This is a comprehensive production management system built with React, TypeScrip
 ## Deployment Strategy
 
 ### Build Process
+
 - Frontend: Vite builds optimized static assets to `dist/public`
 - Backend: ESBuild bundles Node.js server to `dist/index.js`
 - Database: Drizzle pushes schema changes to PostgreSQL
 - Assets: Static files served from `attached_assets` directory
 
 ### Production Configuration
+
 - **Port Mapping**: Local 5000 → External 80 for main application
 - **Environment**: ES modules with proper import/export syntax
 - **Database**: Auto-provisioned PostgreSQL with connection pooling
@@ -97,12 +110,14 @@ This is a comprehensive production management system built with React, TypeScrip
 - **CORS**: Configured for cross-origin requests
 
 ### Deployment Files
+
 - `build.js`: Custom build script with ES module compatibility
 - `deploy-server.js`: Standalone production server
 - Multiple deployment scripts for different environments
 - Health check endpoints for monitoring
 
 ## Recent Changes
+
 - July 6, 2025: Added comprehensive translation keys for Customer Form to support internationalization:
   - Added 14 new translation keys for customer form fields in English and Arabic
   - Added translations for Customer ID, Customer Code, Customer Name, Arabic Name, Sales Person, Plate Drawer Code
@@ -138,7 +153,7 @@ This is a comprehensive production management system built with React, TypeScrip
   - All template previews (T-shirt, D-cut, Non-cut, Sheet, Zipper-pouch) now scale dynamically
 - July 5, 2025: Implemented comprehensive Geofence Management and Attendance Process improvements:
   - Enhanced Geofence Management with interactive map component for location selection with visual radius display
-  - Added comprehensive geofence validation for all attendance operations (check-in, check-out, break start, break end)  
+  - Added comprehensive geofence validation for all attendance operations (check-in, check-out, break start, break end)
   - Implemented strict one-break-per-day policy with proper validation to prevent multiple breaks
   - Added break location tracking with new database fields (break_start_location, break_end_location)
   - Enhanced Location column in My Dashboard attendance history to show last action location with action type
@@ -373,12 +388,12 @@ This is a comprehensive production management system built with React, TypeScrip
 - June 26, 2025: Completely redesigned HR Violations & Complaints system:
   - Removed employee rank page and all related functionality as requested
   - Implemented comprehensive professional violation management system with 6 violation types:
-    * Attendance Issues: absent without notice, excessive lateness, early departure, extended breaks, unauthorized leave
-    * Production Violations: quality defects, production targets missed, wrong specifications, material waste, process deviation
-    * Conduct Issues: insubordination, harassment, unprofessional behavior, conflict with colleagues, inappropriate language
-    * Safety Violations: PPE non-compliance, unsafe work practices, ignoring safety protocols, equipment misuse, creating hazards
-    * Policy Violations: dress code, mobile phone usage, smoking violations, unauthorized areas, data privacy breach
-    * Equipment/Property Damage: equipment damage, product damage, facility damage, vehicle damage, negligent handling
+    - Attendance Issues: absent without notice, excessive lateness, early departure, extended breaks, unauthorized leave
+    - Production Violations: quality defects, production targets missed, wrong specifications, material waste, process deviation
+    - Conduct Issues: insubordination, harassment, unprofessional behavior, conflict with colleagues, inappropriate language
+    - Safety Violations: PPE non-compliance, unsafe work practices, ignoring safety protocols, equipment misuse, creating hazards
+    - Policy Violations: dress code, mobile phone usage, smoking violations, unauthorized areas, data privacy breach
+    - Equipment/Property Damage: equipment damage, product damage, facility damage, vehicle damage, negligent handling
   - Added professional action types: verbal warning, written warning, suspension, termination, additional training, counseling
   - Implemented automatic repeat offense tracking with counting and escalation alerts
   - Enhanced database schema with violation numbers (VIO-YYYY-NNNN), financial impact tracking, evidence documentation
@@ -393,7 +408,9 @@ This is a comprehensive production management system built with React, TypeScrip
   - Enhanced data transformation logic to handle complex relationship mappings
 
 ## Changelog
+
 - June 25, 2025. Initial setup
 
 ## User Preferences
+
 Preferred communication style: Simple, everyday language.

@@ -1,4 +1,4 @@
-import { MailService } from '@sendgrid/mail';
+import { MailService } from "@sendgrid/mail";
 
 if (!process.env.SENDGRID_API_KEY) {
   throw new Error("SENDGRID_API_KEY environment variable must be set");
@@ -23,7 +23,9 @@ interface CustomerFormData {
   responseNo: string;
 }
 
-export async function sendCustomerFormNotification(customerData: CustomerFormData): Promise<boolean> {
+export async function sendCustomerFormNotification(
+  customerData: CustomerFormData,
+): Promise<boolean> {
   try {
     const emailHtml = `
     <!DOCTYPE html>
@@ -59,14 +61,14 @@ export async function sendCustomerFormNotification(customerData: CustomerFormDat
         </div>
 
         <div class="timestamp">
-          <strong>Submitted on:</strong> ${new Date().toLocaleString('en-US', { 
-            timeZone: 'Asia/Riyadh',
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit'
+          <strong>Submitted on:</strong> ${new Date().toLocaleString("en-US", {
+            timeZone: "Asia/Riyadh",
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
           })} (Saudi Arabia Time)
         </div>
 
@@ -92,12 +94,16 @@ export async function sendCustomerFormNotification(customerData: CustomerFormDat
             <span class="field-label">Unified Number:</span>
             <span class="field-value">${customerData.unifiedNo}</span>
           </div>
-          ${customerData.vatNo ? `
+          ${
+            customerData.vatNo
+              ? `
           <div class="field">
             <span class="field-label">VAT Number:</span>
             <span class="field-value">${customerData.vatNo}</span>
           </div>
-          ` : ''}
+          `
+              : ""
+          }
         </div>
 
         <div class="section">
@@ -106,14 +112,22 @@ export async function sendCustomerFormNotification(customerData: CustomerFormDat
             <span class="field-label">Province:</span>
             <span class="field-value">${customerData.province}</span>
           </div>
-          ${customerData.city ? `<div class="field">
+          ${
+            customerData.city
+              ? `<div class="field">
             <span class="field-label">City:</span>
             <span class="field-value">${customerData.city}</span>
-          </div>` : ''}
-          ${customerData.neighborName ? `<div class="field">
+          </div>`
+              : ""
+          }
+          ${
+            customerData.neighborName
+              ? `<div class="field">
             <span class="field-label">Neighborhood:</span>
             <span class="field-value">${customerData.neighborName}</span>
-          </div>` : ''}
+          </div>`
+              : ""
+          }
           <div class="field">
             <span class="field-label">Building Number:</span>
             <span class="field-value">${customerData.buildingNo}</span>
@@ -152,8 +166,8 @@ export async function sendCustomerFormNotification(customerData: CustomerFormDat
 
     // Send notification email
     await mailService.send({
-      to: 'info@modernplasticbag.com', // Replace with your actual admin email
-      from: 'noreply@modernplasticbag.com', // Replace with your verified SendGrid sender email
+      to: "info@modernplasticbag.com", // Replace with your actual admin email
+      from: "noreply@modernplasticbag.com", // Replace with your verified SendGrid sender email
       subject: `🆕 New Customer Registration: ${customerData.commercialNameEn || customerData.commercialNameAr}`,
       html: emailHtml,
       text: `
@@ -166,7 +180,7 @@ Company Information:
 Registration Details:
 - Commercial Registration: ${customerData.commercialRegistrationNo}
 - Unified Number: ${customerData.unifiedNo}
-${customerData.vatNo ? `- VAT Number: ${customerData.vatNo}` : ''}
+${customerData.vatNo ? `- VAT Number: ${customerData.vatNo}` : ""}
 
 Address:
 - Province: ${customerData.province}
@@ -180,14 +194,14 @@ Contact:
 - Person: ${customerData.responseName}
 - Phone: ${customerData.responseNo}
 
-Submitted: ${new Date().toLocaleString('en-US', { timeZone: 'Asia/Riyadh' })} (Saudi Arabia Time)
-      `
+Submitted: ${new Date().toLocaleString("en-US", { timeZone: "Asia/Riyadh" })} (Saudi Arabia Time)
+      `,
     });
 
-    console.log('Customer form notification email sent successfully');
+    console.log("Customer form notification email sent successfully");
     return true;
   } catch (error) {
-    console.error('Failed to send customer form notification email:', error);
+    console.error("Failed to send customer form notification email:", error);
     return false;
   }
 }

@@ -1,7 +1,7 @@
-import React from 'react';
-import { H1 } from '@/components/ui/typography';
-import { cn } from '@/lib/utils';
-import { useLanguage } from '@/hooks/use-language';
+import React from "react";
+import { H1 } from "@/components/ui/typography";
+import { cn } from "@/lib/utils";
+import { useLanguage } from "@/hooks/use-language";
 
 interface PageHeaderProps {
   title: string;
@@ -21,23 +21,30 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
   const { isRTL } = useLanguage();
 
   return (
-    <div className={cn("flex flex-wrap items-center justify-between gap-4", className)}>
-      <div className={`flex ${isRTL ? 'flex-row-reverse' : 'flex-row'} items-center gap-3`}>
+    <div
+      className={cn(
+        "flex flex-wrap items-center justify-between gap-4",
+        className,
+      )}
+    >
+      <div
+        className={`flex ${isRTL ? "flex-row-reverse" : "flex-row"} items-center gap-3`}
+      >
         {icon && (
           <div className="flex h-10 w-10 items-center justify-center rounded-md bg-primary/10 text-primary">
             <span className="material-icons text-xl">{icon}</span>
           </div>
         )}
         <div>
-          <H1 className="scroll-m-20 lg:text-5xl font-bold tracking-tight md:text-3xl text-[40px]">{title}</H1>
+          <H1 className="scroll-m-20 lg:text-5xl font-bold tracking-tight md:text-3xl text-[40px]">
+            {title}
+          </H1>
           {description && (
             <p className="text-sm text-muted-foreground mt-1">{description}</p>
           )}
         </div>
       </div>
-      {actions && (
-        <div className="flex items-center gap-2">{actions}</div>
-      )}
+      {actions && <div className="flex items-center gap-2">{actions}</div>}
     </div>
   );
 };

@@ -1,25 +1,44 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Progress } from "@/components/ui/progress";
 import { PageHeader } from "@/components/ui/page-header";
 import { useTranslation } from "react-i18next";
 import { format, subDays, subMonths, startOfDay, endOfDay } from "date-fns";
-import { 
-  Wrench, 
-  Clock, 
-  AlertTriangle, 
-  CheckCircle, 
-  TrendingUp, 
+import {
+  Wrench,
+  Clock,
+  AlertTriangle,
+  CheckCircle,
+  TrendingUp,
   TrendingDown,
   DollarSign,
   Activity,
   Calendar,
   Users,
-  BarChart3
+  BarChart3,
 } from "lucide-react";
 import { API_ENDPOINTS } from "@/lib/constants";
 import { apiRequest } from "@/lib/queryClient";
@@ -68,51 +87,73 @@ export default function MaintenanceDashboard() {
   // Fetch maintenance requests
   const { data: requests = [] } = useQuery({
     queryKey: [API_ENDPOINTS.MAINTENANCE_REQUESTS],
-    queryFn: () => apiRequest('GET', API_ENDPOINTS.MAINTENANCE_REQUESTS)
+    queryFn: () => apiRequest("GET", API_ENDPOINTS.MAINTENANCE_REQUESTS),
   });
 
   // Fetch maintenance actions
   const { data: actions = [] } = useQuery({
     queryKey: [API_ENDPOINTS.MAINTENANCE_ACTIONS],
-    queryFn: () => apiRequest('GET', API_ENDPOINTS.MAINTENANCE_ACTIONS)
+    queryFn: () => apiRequest("GET", API_ENDPOINTS.MAINTENANCE_ACTIONS),
   });
 
   // Fetch machines
   const { data: machines = [] } = useQuery({
-    queryKey: ['/api/machines'],
-    queryFn: () => apiRequest('GET', '/api/machines')
+    queryKey: ["/api/machines"],
+    queryFn: () => apiRequest("GET", "/api/machines"),
   });
 
   // Filter data by time range with null checking
-  const filteredRequests = (requests || []).filter((request: MaintenanceRequest) => {
-    if (!request || !request.createdAt) return false;
-    const requestDate = new Date(request.createdAt);
-    return !isNaN(requestDate.getTime()) && requestDate >= startDate && requestDate <= endDate;
-  });
+  const filteredRequests = (requests || []).filter(
+    (request: MaintenanceRequest) => {
+      if (!request || !request.createdAt) return false;
+      const requestDate = new Date(request.createdAt);
+      return (
+        !isNaN(requestDate.getTime()) &&
+        requestDate >= startDate &&
+        requestDate <= endDate
+      );
+    },
+  );
 
-  const filteredActions = (actions || []).filter((action: MaintenanceAction) => {
-    if (!action || !action.actionDate) return false;
-    const actionDate = new Date(action.actionDate);
-    return !isNaN(actionDate.getTime()) && actionDate >= startDate && actionDate <= endDate;
-  });
+  const filteredActions = (actions || []).filter(
+    (action: MaintenanceAction) => {
+      if (!action || !action.actionDate) return false;
+      const actionDate = new Date(action.actionDate);
+      return (
+        !isNaN(actionDate.getTime()) &&
+        actionDate >= startDate &&
+        actionDate <= endDate
+      );
+    },
+  );
 
   // Calculate metrics
   const totalRequests = filteredRequests.length;
-  const pendingRequests = filteredRequests.filter((r: MaintenanceRequest) => r.status === 'pending').length;
-  const inProgressRequests = filteredRequests.filter((r: MaintenanceRequest) => r.status === 'in_progress').length;
-  const completedRequests = filteredRequests.filter((r: MaintenanceRequest) => r.status === 'completed').length;
-  const todayCompleted = filteredRequests.filter((r: MaintenanceRequest) => 
-    r.status === 'completed' && 
-    format(new Date(r.completedAt || ''), 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd')
+  const pendingRequests = filteredRequests.filter(
+    (r: MaintenanceRequest) => r.status === "pending",
+  ).length;
+  const inProgressRequests = filteredRequests.filter(
+    (r: MaintenanceRequest) => r.status === "in_progress",
+  ).length;
+  const completedRequests = filteredRequests.filter(
+    (r: MaintenanceRequest) => r.status === "completed",
+  ).length;
+  const todayCompleted = filteredRequests.filter(
+    (r: MaintenanceRequest) =>
+      r.status === "completed" &&
+      format(new Date(r.completedAt || ""), "yyyy-MM-dd") ===
+        format(new Date(), "yyyy-MM-dd"),
   ).length;
 
   // Calculate costs
-  const totalPartsCost = filteredActions.reduce((sum: number, action: MaintenanceAction) => 
-    sum + (action.partsCost || 0), 0
+  const totalPartsCost = filteredActions.reduce(
+    (sum: number, action: MaintenanceAction) => sum + (action.partsCost || 0),
+    0,
   );
 
-  const totalLaborHours = filteredActions.reduce((sum: number, action: MaintenanceAction) => 
-    sum + (action.laborHours || 0), 0
+  const totalLaborHours = filteredActions.reduce(
+    (sum: number, action: MaintenanceAction) => sum + (action.laborHours || 0),
+    0,
   );
 
   const averageLaborCost = 25; // $25 per hour
@@ -120,38 +161,57 @@ export default function MaintenanceDashboard() {
   const totalMaintenanceCost = totalPartsCost + totalLaborCost;
 
   // Calculate average repair time
-  const completedRequestsWithTime = filteredRequests.filter((r: MaintenanceRequest) => 
-    r.status === 'completed' && r.actualRepairTime
+  const completedRequestsWithTime = filteredRequests.filter(
+    (r: MaintenanceRequest) => r.status === "completed" && r.actualRepairTime,
   );
-  const averageRepairTime = completedRequestsWithTime.length > 0 
-    ? completedRequestsWithTime.reduce((sum: number, r: MaintenanceRequest) => sum + (r.actualRepairTime || 0), 0) / completedRequestsWithTime.length
-    : 0;
+  const averageRepairTime =
+    completedRequestsWithTime.length > 0
+      ? completedRequestsWithTime.reduce(
+          (sum: number, r: MaintenanceRequest) =>
+            sum + (r.actualRepairTime || 0),
+          0,
+        ) / completedRequestsWithTime.length
+      : 0;
 
   // Calculate efficiency metrics
-  const efficiencyRate = totalRequests > 0 ? (completedRequests / totalRequests) * 100 : 0;
-  
+  const efficiencyRate =
+    totalRequests > 0 ? (completedRequests / totalRequests) * 100 : 0;
+
   // Equipment uptime calculation (simplified)
   const totalMachines = machines.length;
-  const machinesWithIssues = new Set(filteredRequests.map((r: MaintenanceRequest) => r.machineId)).size;
-  const uptimeRate = totalMachines > 0 ? ((totalMachines - machinesWithIssues) / totalMachines) * 100 : 100;
+  const machinesWithIssues = new Set(
+    filteredRequests.map((r: MaintenanceRequest) => r.machineId),
+  ).size;
+  const uptimeRate =
+    totalMachines > 0
+      ? ((totalMachines - machinesWithIssues) / totalMachines) * 100
+      : 100;
 
   // Severity analysis
   const severityBreakdown = {
-    high: filteredRequests.filter((r: MaintenanceRequest) => r.severity === 'high').length,
-    normal: filteredRequests.filter((r: MaintenanceRequest) => r.severity === 'normal').length,
-    low: filteredRequests.filter((r: MaintenanceRequest) => r.severity === 'low').length,
+    high: filteredRequests.filter(
+      (r: MaintenanceRequest) => r.severity === "high",
+    ).length,
+    normal: filteredRequests.filter(
+      (r: MaintenanceRequest) => r.severity === "normal",
+    ).length,
+    low: filteredRequests.filter(
+      (r: MaintenanceRequest) => r.severity === "low",
+    ).length,
   };
 
   // Recent activity
   const recentRequests = requests
-    .sort((a: MaintenanceRequest, b: MaintenanceRequest) => 
-      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    .sort(
+      (a: MaintenanceRequest, b: MaintenanceRequest) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
     )
     .slice(0, 5);
 
   const recentActions = actions
-    .sort((a: MaintenanceAction, b: MaintenanceAction) => 
-      new Date(b.actionDate).getTime() - new Date(a.actionDate).getTime()
+    .sort(
+      (a: MaintenanceAction, b: MaintenanceAction) =>
+        new Date(b.actionDate).getTime() - new Date(a.actionDate).getTime(),
     )
     .slice(0, 5);
 
@@ -163,11 +223,23 @@ export default function MaintenanceDashboard() {
   const getSeverityBadge = (severity: string) => {
     switch (severity) {
       case "high":
-        return <Badge variant="destructive">{t(`maintenance.severity.${severity}`)}</Badge>;
+        return (
+          <Badge variant="destructive">
+            {t(`maintenance.severity.${severity}`)}
+          </Badge>
+        );
       case "normal":
-        return <Badge variant="secondary">{t(`maintenance.severity.${severity}`)}</Badge>;
+        return (
+          <Badge variant="secondary">
+            {t(`maintenance.severity.${severity}`)}
+          </Badge>
+        );
       case "low":
-        return <Badge variant="outline">{t(`maintenance.severity.${severity}`)}</Badge>;
+        return (
+          <Badge variant="outline">
+            {t(`maintenance.severity.${severity}`)}
+          </Badge>
+        );
       default:
         return <Badge variant="outline">{severity}</Badge>;
     }
@@ -176,11 +248,17 @@ export default function MaintenanceDashboard() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "pending":
-        return <Badge variant="outline">{t(`maintenance.status.${status}`)}</Badge>;
+        return (
+          <Badge variant="outline">{t(`maintenance.status.${status}`)}</Badge>
+        );
       case "in_progress":
-        return <Badge variant="secondary">{t(`maintenance.status.${status}`)}</Badge>;
+        return (
+          <Badge variant="secondary">{t(`maintenance.status.${status}`)}</Badge>
+        );
       case "completed":
-        return <Badge variant="default">{t(`maintenance.status.${status}`)}</Badge>;
+        return (
+          <Badge variant="default">{t(`maintenance.status.${status}`)}</Badge>
+        );
       default:
         return <Badge variant="outline">{status}</Badge>;
     }
@@ -223,7 +301,9 @@ export default function MaintenanceDashboard() {
           <CardContent>
             <div className="text-2xl font-bold">{pendingRequests}</div>
             <p className="text-xs text-muted-foreground">
-              {totalRequests > 0 ? `${((pendingRequests / totalRequests) * 100).toFixed(1)}% of total` : 'No requests'}
+              {totalRequests > 0
+                ? `${((pendingRequests / totalRequests) * 100).toFixed(1)}% of total`
+                : "No requests"}
             </p>
           </CardContent>
         </Card>
@@ -238,7 +318,9 @@ export default function MaintenanceDashboard() {
           <CardContent>
             <div className="text-2xl font-bold">{inProgressRequests}</div>
             <p className="text-xs text-muted-foreground">
-              {totalRequests > 0 ? `${((inProgressRequests / totalRequests) * 100).toFixed(1)}% of total` : 'No requests'}
+              {totalRequests > 0
+                ? `${((inProgressRequests / totalRequests) * 100).toFixed(1)}% of total`
+                : "No requests"}
             </p>
           </CardContent>
         </Card>
@@ -266,9 +348,12 @@ export default function MaintenanceDashboard() {
             <DollarSign className="h-4 w-4 text-purple-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">${totalMaintenanceCost.toFixed(0)}</div>
+            <div className="text-2xl font-bold">
+              ${totalMaintenanceCost.toFixed(0)}
+            </div>
             <p className="text-xs text-muted-foreground">
-              Parts: ${totalPartsCost.toFixed(0)} | Labor: ${totalLaborCost.toFixed(0)}
+              Parts: ${totalPartsCost.toFixed(0)} | Labor: $
+              {totalLaborCost.toFixed(0)}
             </p>
           </CardContent>
         </Card>
@@ -284,7 +369,9 @@ export default function MaintenanceDashboard() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{efficiencyRate.toFixed(1)}%</div>
+            <div className="text-2xl font-bold">
+              {efficiencyRate.toFixed(1)}%
+            </div>
             <Progress value={efficiencyRate} className="mt-2" />
             <p className="text-xs text-muted-foreground mt-2">
               {completedRequests} of {totalRequests} requests completed
@@ -303,7 +390,8 @@ export default function MaintenanceDashboard() {
             <div className="text-2xl font-bold">{uptimeRate.toFixed(1)}%</div>
             <Progress value={uptimeRate} className="mt-2" />
             <p className="text-xs text-muted-foreground mt-2">
-              {totalMachines - machinesWithIssues} of {totalMachines} machines operational
+              {totalMachines - machinesWithIssues} of {totalMachines} machines
+              operational
             </p>
           </CardContent>
         </Card>
@@ -316,7 +404,9 @@ export default function MaintenanceDashboard() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{averageRepairTime.toFixed(1)}h</div>
+            <div className="text-2xl font-bold">
+              {averageRepairTime.toFixed(1)}h
+            </div>
             <p className="text-xs text-muted-foreground">
               Based on {completedRequestsWithTime.length} completed repairs
             </p>
@@ -338,27 +428,47 @@ export default function MaintenanceDashboard() {
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="text-center">
-              <div className="text-2xl font-bold text-red-600">{severityBreakdown.high}</div>
+              <div className="text-2xl font-bold text-red-600">
+                {severityBreakdown.high}
+              </div>
               <div className="text-sm text-muted-foreground">High Priority</div>
-              <Progress 
-                value={totalRequests > 0 ? (severityBreakdown.high / totalRequests) * 100 : 0} 
-                className="mt-2 h-2" 
+              <Progress
+                value={
+                  totalRequests > 0
+                    ? (severityBreakdown.high / totalRequests) * 100
+                    : 0
+                }
+                className="mt-2 h-2"
               />
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-yellow-600">{severityBreakdown.normal}</div>
-              <div className="text-sm text-muted-foreground">Normal Priority</div>
-              <Progress 
-                value={totalRequests > 0 ? (severityBreakdown.normal / totalRequests) * 100 : 0} 
-                className="mt-2 h-2" 
+              <div className="text-2xl font-bold text-yellow-600">
+                {severityBreakdown.normal}
+              </div>
+              <div className="text-sm text-muted-foreground">
+                Normal Priority
+              </div>
+              <Progress
+                value={
+                  totalRequests > 0
+                    ? (severityBreakdown.normal / totalRequests) * 100
+                    : 0
+                }
+                className="mt-2 h-2"
               />
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-green-600">{severityBreakdown.low}</div>
+              <div className="text-2xl font-bold text-green-600">
+                {severityBreakdown.low}
+              </div>
               <div className="text-sm text-muted-foreground">Low Priority</div>
-              <Progress 
-                value={totalRequests > 0 ? (severityBreakdown.low / totalRequests) * 100 : 0} 
-                className="mt-2 h-2" 
+              <Progress
+                value={
+                  totalRequests > 0
+                    ? (severityBreakdown.low / totalRequests) * 100
+                    : 0
+                }
+                className="mt-2 h-2"
               />
             </div>
           </div>
@@ -382,12 +492,19 @@ export default function MaintenanceDashboard() {
             ) : (
               <div className="space-y-3">
                 {recentRequests.map((request: MaintenanceRequest) => (
-                  <div key={request.id} className="flex items-center justify-between p-3 border rounded-lg">
+                  <div
+                    key={request.id}
+                    className="flex items-center justify-between p-3 border rounded-lg"
+                  >
                     <div className="flex-1">
-                      <div className="font-medium">{getMachineName(request.machineId)}</div>
-                      <div className="text-sm text-gray-600 truncate">{request.description}</div>
+                      <div className="font-medium">
+                        {getMachineName(request.machineId)}
+                      </div>
+                      <div className="text-sm text-gray-600 truncate">
+                        {request.description}
+                      </div>
                       <div className="text-xs text-gray-500">
-                        {format(new Date(request.createdAt), 'MMM dd, HH:mm')}
+                        {format(new Date(request.createdAt), "MMM dd, HH:mm")}
                       </div>
                     </div>
                     <div className="flex flex-col items-end space-y-1">
@@ -416,20 +533,32 @@ export default function MaintenanceDashboard() {
             ) : (
               <div className="space-y-3">
                 {recentActions.map((action: MaintenanceAction) => (
-                  <div key={action.id} className="flex items-center justify-between p-3 border rounded-lg">
+                  <div
+                    key={action.id}
+                    className="flex items-center justify-between p-3 border rounded-lg"
+                  >
                     <div className="flex-1">
-                      <div className="font-medium">{getMachineName(action.machineId)}</div>
-                      <div className="text-sm text-gray-600 truncate">{action.actionsTaken}</div>
+                      <div className="font-medium">
+                        {getMachineName(action.machineId)}
+                      </div>
+                      <div className="text-sm text-gray-600 truncate">
+                        {action.actionsTaken}
+                      </div>
                       <div className="text-xs text-gray-500">
-                        {format(new Date(action.actionDate), 'MMM dd, HH:mm')} by {action.actionBy}
+                        {format(new Date(action.actionDate), "MMM dd, HH:mm")}{" "}
+                        by {action.actionBy}
                       </div>
                     </div>
                     <div className="text-right">
                       {action.partsCost && (
-                        <div className="text-sm font-medium">${action.partsCost}</div>
+                        <div className="text-sm font-medium">
+                          ${action.partsCost}
+                        </div>
                       )}
                       {action.laborHours && (
-                        <div className="text-xs text-gray-500">{action.laborHours}h labor</div>
+                        <div className="text-xs text-gray-500">
+                          {action.laborHours}h labor
+                        </div>
                       )}
                     </div>
                   </div>

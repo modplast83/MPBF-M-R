@@ -33,17 +33,19 @@ interface UserFormProps {
 export function UserForm({ user, onSuccess }: UserFormProps) {
   const queryClient = useQueryClient();
   const isEditing = !!user;
-  
+
   // Fetch sections
-  const { data: sections, isLoading: sectionsLoading } = useQuery<{id: string, name: string}[]>({
+  const { data: sections, isLoading: sectionsLoading } = useQuery<
+    { id: string; name: string }[]
+  >({
     queryKey: [API_ENDPOINTS.SECTIONS],
   });
-  
+
   // Use the base schema directly
   const userFormSchema = upsertUserSchema.extend({
     displayName: z.string().optional(),
   });
-  
+
   // Set up the form
   const form = useForm({
     resolver: zodResolver(userFormSchema),
@@ -59,32 +61,39 @@ export function UserForm({ user, onSuccess }: UserFormProps) {
       phone: user?.phone || null,
       isActive: user?.isActive ?? true,
       sectionId: user?.sectionId || null,
-      displayName: user?.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : "",
+      displayName: user?.firstName
+        ? `${user.firstName} ${user.lastName || ""}`.trim()
+        : "",
     },
   });
-  
+
   // Create mutation for adding/updating user
   const mutation = useMutation({
     mutationFn: async (values: z.infer<typeof userFormSchema>) => {
       // Process name values
       const { displayName, ...userData } = values;
-      
+
       // If displayName is provided, split it into firstName and lastName
-      if (displayName && displayName.trim() !== '') {
-        const nameParts = displayName.trim().split(' ');
+      if (displayName && displayName.trim() !== "") {
+        const nameParts = displayName.trim().split(" ");
         userData.firstName = nameParts[0];
-        userData.lastName = nameParts.length > 1 ? nameParts.slice(1).join(' ') : null;
+        userData.lastName =
+          nameParts.length > 1 ? nameParts.slice(1).join(" ") : null;
       }
-      
+
       // When editing, we need to preserve the password field
       if (isEditing && user) {
         const userDataWithPassword = {
           ...userData,
           // Add a placeholder value for the password field to satisfy the not-null constraint
           // The actual password hash will remain unchanged in the database
-          password: "UNCHANGED_PASSWORD"
+          password: "UNCHANGED_PASSWORD",
         };
-        await apiRequest("PUT", `${API_ENDPOINTS.USERS}/${user.id}`, userDataWithPassword);
+        await apiRequest(
+          "PUT",
+          `${API_ENDPOINTS.USERS}/${user.id}`,
+          userDataWithPassword,
+        );
       } else {
         // For new users, password is required
         await apiRequest("POST", API_ENDPOINTS.USERS, userData);
@@ -107,12 +116,12 @@ export function UserForm({ user, onSuccess }: UserFormProps) {
       });
     },
   });
-  
+
   // Form submission handler
   const onSubmit = (values: z.infer<typeof userFormSchema>) => {
     mutation.mutate(values);
   };
-  
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -130,7 +139,7 @@ export function UserForm({ user, onSuccess }: UserFormProps) {
               </FormItem>
             )}
           />
-          
+
           <FormField
             control={form.control}
             name="displayName"
@@ -145,7 +154,7 @@ export function UserForm({ user, onSuccess }: UserFormProps) {
             )}
           />
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <FormField
             control={form.control}
@@ -154,9 +163,10 @@ export function UserForm({ user, onSuccess }: UserFormProps) {
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter email address" 
-                    {...field} 
-                    value={field.value || ''}
+                  <Input
+                    placeholder="Enter email address"
+                    {...field}
+                    value={field.value || ""}
                     onChange={(e) => field.onChange(e.target.value || null)}
                   />
                 </FormControl>
@@ -164,7 +174,7 @@ export function UserForm({ user, onSuccess }: UserFormProps) {
               </FormItem>
             )}
           />
-          
+
           <FormField
             control={form.control}
             name="phone"
@@ -172,9 +182,10 @@ export function UserForm({ user, onSuccess }: UserFormProps) {
               <FormItem>
                 <FormLabel>Phone</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter phone number" 
-                    {...field} 
-                    value={field.value || ''}
+                  <Input
+                    placeholder="Enter phone number"
+                    {...field}
+                    value={field.value || ""}
                     onChange={(e) => field.onChange(e.target.value || null)}
                   />
                 </FormControl>
@@ -183,7 +194,7 @@ export function UserForm({ user, onSuccess }: UserFormProps) {
             )}
           />
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <FormField
             control={form.control}
@@ -205,7 +216,7 @@ export function UserForm({ user, onSuccess }: UserFormProps) {
               </FormItem>
             )}
           />
-          
+
           <FormField
             control={form.control}
             name="sectionId"
@@ -213,7 +224,9 @@ export function UserForm({ user, onSuccess }: UserFormProps) {
               <FormItem>
                 <FormLabel>Section</FormLabel>
                 <Select
-                  onValueChange={(value) => field.onChange(value === "none" ? null : value)}
+                  onValueChange={(value) =>
+                    field.onChange(value === "none" ? null : value)
+                  }
                   value={field.value || "none"}
                   disabled={sectionsLoading}
                 >
@@ -224,11 +237,12 @@ export function UserForm({ user, onSuccess }: UserFormProps) {
                   </FormControl>
                   <SelectContent>
                     <SelectItem value="none">None</SelectItem>
-                    {sections && sections.map((section) => (
-                      <SelectItem key={section.id} value={section.id}>
-                        {section.name}
-                      </SelectItem>
-                    ))}
+                    {sections &&
+                      sections.map((section) => (
+                        <SelectItem key={section.id} value={section.id}>
+                          {section.name}
+                        </SelectItem>
+                      ))}
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -236,7 +250,7 @@ export function UserForm({ user, onSuccess }: UserFormProps) {
             )}
           />
         </div>
-        
+
         <FormField
           control={form.control}
           name="isActive"
@@ -257,25 +271,21 @@ export function UserForm({ user, onSuccess }: UserFormProps) {
             </FormItem>
           )}
         />
-        
+
         <div className="flex justify-end space-x-2 pt-4">
           {onSuccess && (
-            <Button
-              type="button"
-              variant="outline"
-              onClick={onSuccess}
-            >
+            <Button type="button" variant="outline" onClick={onSuccess}>
               Cancel
             </Button>
           )}
-          <Button
-            type="submit"
-            disabled={mutation.isPending}
-          >
+          <Button type="submit" disabled={mutation.isPending}>
             {mutation.isPending
-              ? isEditing ? "Updating..." : "Creating..."
-              : isEditing ? "Update User" : "Create User"
-            }
+              ? isEditing
+                ? "Updating..."
+                : "Creating..."
+              : isEditing
+                ? "Update User"
+                : "Create User"}
           </Button>
         </div>
       </form>

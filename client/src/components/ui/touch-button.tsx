@@ -1,8 +1,8 @@
-import * as React from "react"
-import { Slot } from "@radix-ui/react-slot"
-import { cva, type VariantProps } from "class-variance-authority"
-import { buttonVariants as originalButtonVariants } from "./button"
-import { cn } from "@/lib/utils"
+import * as React from "react";
+import { Slot } from "@radix-ui/react-slot";
+import { cva, type VariantProps } from "class-variance-authority";
+import { buttonVariants as originalButtonVariants } from "./button";
+import { cn } from "@/lib/utils";
 
 // Modified version of the button component with touch-friendly sizes and improvements
 const touchButtonVariants = cva(
@@ -35,18 +35,18 @@ const touchButtonVariants = cva(
       variant: "default",
       size: "default",
     },
-  }
-)
+  },
+);
 
 // Create a type that combines the original button size variants and our new touch variants
-type TouchButtonSize = 
-  | "default" 
-  | "sm" 
-  | "lg" 
-  | "xl" 
-  | "icon" 
-  | "icon-sm" 
-  | "icon-lg" 
+type TouchButtonSize =
+  | "default"
+  | "sm"
+  | "lg"
+  | "xl"
+  | "icon"
+  | "icon-sm"
+  | "icon-lg"
   | "icon-round";
 
 // Need to omit size from the original VariantProps to avoid type conflicts
@@ -55,23 +55,23 @@ type TouchSizeVariantProps = { size?: TouchButtonSize };
 
 export interface TouchButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    Omit<OriginalButtonVariantProps, 'size'>,
+    Omit<OriginalButtonVariantProps, "size">,
     TouchSizeVariantProps {
-  asChild?: boolean
+  asChild?: boolean;
 }
 
 const TouchButton = React.forwardRef<HTMLButtonElement, TouchButtonProps>(
   ({ className, variant, size, asChild = false, ...props }, ref) => {
-    const Comp = asChild ? Slot : "button"
+    const Comp = asChild ? Slot : "button";
     return (
       <Comp
         className={cn(touchButtonVariants({ variant, size, className }))}
         ref={ref}
         {...props}
       />
-    )
-  }
-)
-TouchButton.displayName = "TouchButton"
+    );
+  },
+);
+TouchButton.displayName = "TouchButton";
 
-export { TouchButton, touchButtonVariants }
+export { TouchButton, touchButtonVariants };

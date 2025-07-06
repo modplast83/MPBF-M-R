@@ -1,20 +1,26 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { QualityViolations } from "@/components/quality/enhanced-violation-management";
 import { QualityPenaltiesManagement } from "@/components/quality/enhanced-penalties-management";
 import { QualityCorrectiveActions } from "@/components/quality/enhanced-corrective-actions";
 import { IntegratedQualityChecksManagement } from "@/components/quality/integrated-quality-check-form";
-import { 
-  PieChart, 
-  BarChart, 
-  ClipboardCheck, 
-  AlertTriangle, 
-  ShieldAlert, 
+import {
+  PieChart,
+  BarChart,
+  ClipboardCheck,
+  AlertTriangle,
+  ShieldAlert,
   FileWarning,
   Check,
-  XCircle
+  XCircle,
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { Progress } from "@/components/ui/progress";
@@ -40,11 +46,15 @@ export default function UnifiedQualityDashboard() {
     completedActions: 0,
     totalPenalties: 0,
     activePenalties: 0,
-    closedPenalties: 0
+    closedPenalties: 0,
   };
 
   // Fetch quality statistics
-  const { data: stats, isLoading: statsLoading, error: statsError } = useQuery({
+  const {
+    data: stats,
+    isLoading: statsLoading,
+    error: statsError,
+  } = useQuery({
     queryKey: ["/api/quality/stats"],
     queryFn: async () => {
       const response = await fetch("/api/quality/stats");
@@ -52,7 +62,7 @@ export default function UnifiedQualityDashboard() {
         throw new Error("Failed to fetch quality statistics");
       }
       return response.json();
-    }
+    },
   });
 
   // Default chart colors
@@ -62,124 +72,149 @@ export default function UnifiedQualityDashboard() {
     yellow: "#f59e0b",
     blue: "#3b82f6",
     purple: "#8b5cf6",
-    gray: "#6b7280"
+    gray: "#6b7280",
   };
 
   // Fetch violations by severity
-  const { data: violations = [], isLoading: violationsLoading } = useQuery<any[]>({
+  const { data: violations = [], isLoading: violationsLoading } = useQuery<
+    any[]
+  >({
     queryKey: ["/api/quality-violations"],
     retry: 3,
     staleTime: 30000,
-    refetchOnWindowFocus: false
+    refetchOnWindowFocus: false,
   });
-  
+
   // Fetch quality checks
   const { data: checks = [], isLoading: checksLoading } = useQuery<any[]>({
     queryKey: ["/api/quality-checks"],
     retry: 3,
     staleTime: 30000,
-    refetchOnWindowFocus: false
+    refetchOnWindowFocus: false,
   });
-  
+
   // Use stats from API or default values
   const statsData = stats || defaultStats;
-  
+
   // Calculate total quality score
-  const calculateQualityScore = () => {    
-    const passRate = statsData.totalChecks > 0 
-      ? (statsData.passedChecks / statsData.totalChecks) * 100 
-      : 0;
-    
-    const violationResolutionRate = statsData.totalViolations > 0 
-      ? (statsData.resolvedViolations / statsData.totalViolations) * 100 
-      : 100;
-    
-    const actionCompletionRate = statsData.totalCorrectiveActions > 0 
-      ? (statsData.completedActions / statsData.totalCorrectiveActions) * 100 
-      : 100;
-    
+  const calculateQualityScore = () => {
+    const passRate =
+      statsData.totalChecks > 0
+        ? (statsData.passedChecks / statsData.totalChecks) * 100
+        : 0;
+
+    const violationResolutionRate =
+      statsData.totalViolations > 0
+        ? (statsData.resolvedViolations / statsData.totalViolations) * 100
+        : 100;
+
+    const actionCompletionRate =
+      statsData.totalCorrectiveActions > 0
+        ? (statsData.completedActions / statsData.totalCorrectiveActions) * 100
+        : 100;
+
     // Weighted score: 60% pass rate, 25% violation resolution, 15% action completion
-    return (passRate * 0.6) + (violationResolutionRate * 0.25) + (actionCompletionRate * 0.15);
+    return (
+      passRate * 0.6 +
+      violationResolutionRate * 0.25 +
+      actionCompletionRate * 0.15
+    );
   };
-  
+
   const qualityScore = calculateQualityScore();
-  
+
   const getQualityRating = (score: number) => {
     if (score >= 90) return "excellent";
     if (score >= 75) return "good";
     if (score >= 60) return "average";
     return "poor";
   };
-  
+
   const qualityRating = getQualityRating(qualityScore);
-  
+
   // Calculate violations by severity
   const violationsBySeverity = {
     Critical: violations.filter((v: any) => v.severity === "Critical").length,
     Major: violations.filter((v: any) => v.severity === "Major").length,
-    Minor: violations.filter((v: any) => v.severity === "Minor").length
+    Minor: violations.filter((v: any) => v.severity === "Minor").length,
   };
-  
+
   // Calculate checks by result
   const checksByResult = {
-    Passed: checks.filter((c: any) => c.status === 'passed').length,
-    Failed: checks.filter((c: any) => c.status === 'failed' || c.status === 'pending').length
+    Passed: checks.filter((c: any) => c.status === "passed").length,
+    Failed: checks.filter(
+      (c: any) => c.status === "failed" || c.status === "pending",
+    ).length,
   };
-  
+
   // Recent violations for the dashboard
   const recentViolations = violations
-    .sort((a: any, b: any) => new Date(b.reportDate).getTime() - new Date(a.reportDate).getTime())
+    .sort(
+      (a: any, b: any) =>
+        new Date(b.reportDate).getTime() - new Date(a.reportDate).getTime(),
+    )
     .slice(0, 5);
-  
+
   // Recent checks for the dashboard
   const recentChecks = checks
-    .sort((a: any, b: any) => new Date(b.checkDate).getTime() - new Date(a.checkDate).getTime())
+    .sort(
+      (a: any, b: any) =>
+        new Date(b.checkDate).getTime() - new Date(a.checkDate).getTime(),
+    )
     .slice(0, 5);
-  
+
   const isLoading = statsLoading || violationsLoading || checksLoading;
-  
+
   return (
     <div className="container mx-auto py-6 space-y-8">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">{t("quality.unified_dashboard_title") || t("sidebar.unified_dashboard")}</h1>
-          <p className="text-muted-foreground">{t("quality.comprehensive_quality_control")}</p>
+          <h1 className="text-3xl font-bold tracking-tight">
+            {t("quality.unified_dashboard_title") ||
+              t("sidebar.unified_dashboard")}
+          </h1>
+          <p className="text-muted-foreground">
+            {t("quality.comprehensive_quality_control")}
+          </p>
         </div>
       </div>
 
-      <Tabs 
-        defaultValue="overview" 
+      <Tabs
+        defaultValue="overview"
         className="w-full"
         value={activeTab}
         onValueChange={setActiveTab}
       >
         <TabsList className="flex w-full h-auto flex-wrap md:grid md:grid-cols-3 mb-8 p-1 bg-muted rounded-md">
-          <TabsTrigger 
-            value="overview" 
+          <TabsTrigger
+            value="overview"
             className="flex items-center justify-center min-w-0 flex-1 md:flex-initial px-2 py-2 text-xs sm:text-sm whitespace-nowrap"
           >
             <PieChart className="h-4 w-4 mr-1 flex-shrink-0" />
             <span className="hidden sm:inline">{t("quality.overview")}</span>
             <span className="sm:hidden">Overview</span>
           </TabsTrigger>
-          <TabsTrigger 
-            value="checks" 
+          <TabsTrigger
+            value="checks"
             className="flex items-center justify-center min-w-0 flex-1 md:flex-initial px-2 py-2 text-xs sm:text-sm whitespace-nowrap"
           >
             <ClipboardCheck className="h-4 w-4 mr-1 flex-shrink-0" />
-            <span className="hidden sm:inline">{t("quality.quality_checks")}</span>
+            <span className="hidden sm:inline">
+              {t("quality.quality_checks")}
+            </span>
             <span className="sm:hidden">Checks</span>
           </TabsTrigger>
-          
-          <TabsTrigger 
-            value="actions" 
+
+          <TabsTrigger
+            value="actions"
             className="flex items-center justify-center min-w-0 flex-1 md:flex-initial px-2 py-2 text-xs sm:text-sm whitespace-nowrap"
           >
             <ShieldAlert className="h-4 w-4 mr-1 flex-shrink-0" />
-            <span className="hidden sm:inline">{t("quality.corrective_actions")}</span>
+            <span className="hidden sm:inline">
+              {t("quality.corrective_actions")}
+            </span>
             <span className="sm:hidden">Actions</span>
           </TabsTrigger>
-          
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">
@@ -192,13 +227,17 @@ export default function UnifiedQualityDashboard() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <Card>
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-lg">{t("quality.quality_rate")}</CardTitle>
+                    <CardTitle className="text-lg">
+                      {t("quality.quality_rate")}
+                    </CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="flex flex-col items-center">
                       <div className="relative w-32 h-32 mb-4">
                         <div className="absolute inset-0 flex items-center justify-center">
-                          <span className="text-4xl font-bold">{Math.round(qualityScore)}%</span>
+                          <span className="text-4xl font-bold">
+                            {Math.round(qualityScore)}%
+                          </span>
                         </div>
                         <svg className="w-full h-full" viewBox="0 0 100 100">
                           <circle
@@ -215,10 +254,13 @@ export default function UnifiedQualityDashboard() {
                             r="45"
                             fill="none"
                             stroke={
-                              qualityRating === "excellent" ? CHART_COLORS.green :
-                              qualityRating === "good" ? CHART_COLORS.blue :
-                              qualityRating === "average" ? CHART_COLORS.yellow :
-                              CHART_COLORS.red
+                              qualityRating === "excellent"
+                                ? CHART_COLORS.green
+                                : qualityRating === "good"
+                                  ? CHART_COLORS.blue
+                                  : qualityRating === "average"
+                                    ? CHART_COLORS.yellow
+                                    : CHART_COLORS.red
                             }
                             strokeWidth="10"
                             strokeDasharray={`${qualityScore * 2.83} 283`}
@@ -236,33 +278,50 @@ export default function UnifiedQualityDashboard() {
 
                 <Card>
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-lg">{t("quality.quality_checks")}</CardTitle>
+                    <CardTitle className="text-lg">
+                      {t("quality.quality_checks")}
+                    </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-3xl font-bold mb-2">{statsData.totalChecks}</div>
-                    <div className="text-muted-foreground mb-4">{t("quality.total_checks")}</div>
+                    <div className="text-3xl font-bold mb-2">
+                      {statsData.totalChecks}
+                    </div>
+                    <div className="text-muted-foreground mb-4">
+                      {t("quality.total_checks")}
+                    </div>
                     <div className="flex items-end gap-2 mb-1">
                       <div className="text-green-500 font-semibold">
-                        {statsData.passedChecks} <Check className="h-4 w-4 inline" />
+                        {statsData.passedChecks}{" "}
+                        <Check className="h-4 w-4 inline" />
                       </div>
                       <span className="text-muted-foreground mx-1">|</span>
                       <div className="text-red-500 font-semibold">
-                        {statsData.failedChecks} <XCircle className="h-4 w-4 inline" />
+                        {statsData.failedChecks}{" "}
+                        <XCircle className="h-4 w-4 inline" />
                       </div>
                     </div>
-                    <Progress 
-                      value={statsData.totalChecks > 0 ? (statsData.passedChecks / statsData.totalChecks) * 100 : 0} 
-                      className="h-2" 
+                    <Progress
+                      value={
+                        statsData.totalChecks > 0
+                          ? (statsData.passedChecks / statsData.totalChecks) *
+                            100
+                          : 0
+                      }
+                      className="h-2"
                     />
                   </CardContent>
                 </Card>
 
                 <Card>
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-lg">{t("quality.violations")}</CardTitle>
+                    <CardTitle className="text-lg">
+                      {t("quality.violations")}
+                    </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-3xl font-bold mb-2">{statsData.totalViolations}</div>
+                    <div className="text-3xl font-bold mb-2">
+                      {statsData.totalViolations}
+                    </div>
                     <div className="flex items-end gap-2 mb-1">
                       <div className="text-yellow-500 font-semibold">
                         {statsData.openViolations} {t("quality.open")}
@@ -272,19 +331,29 @@ export default function UnifiedQualityDashboard() {
                         {statsData.resolvedViolations} {t("quality.resolved")}
                       </div>
                     </div>
-                    <Progress 
-                      value={statsData.totalViolations > 0 ? (statsData.resolvedViolations / statsData.totalViolations) * 100 : 100} 
-                      className="h-2" 
+                    <Progress
+                      value={
+                        statsData.totalViolations > 0
+                          ? (statsData.resolvedViolations /
+                              statsData.totalViolations) *
+                            100
+                          : 100
+                      }
+                      className="h-2"
                     />
                   </CardContent>
                 </Card>
 
                 <Card>
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-lg">{t("quality.penalties")}</CardTitle>
+                    <CardTitle className="text-lg">
+                      {t("quality.penalties")}
+                    </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-3xl font-bold mb-2">{statsData.totalPenalties}</div>
+                    <div className="text-3xl font-bold mb-2">
+                      {statsData.totalPenalties}
+                    </div>
                     <div className="flex items-end gap-2 mb-1">
                       <div className="text-red-500 font-semibold">
                         {statsData.activePenalties} {t("quality.active")}
@@ -294,9 +363,15 @@ export default function UnifiedQualityDashboard() {
                         {statsData.closedPenalties} {t("quality.closed")}
                       </div>
                     </div>
-                    <Progress 
-                      value={statsData.totalPenalties > 0 ? (statsData.closedPenalties / statsData.totalPenalties) * 100 : 100} 
-                      className="h-2" 
+                    <Progress
+                      value={
+                        statsData.totalPenalties > 0
+                          ? (statsData.closedPenalties /
+                              statsData.totalPenalties) *
+                            100
+                          : 100
+                      }
+                      className="h-2"
                     />
                   </CardContent>
                 </Card>
@@ -306,7 +381,9 @@ export default function UnifiedQualityDashboard() {
                 <Card>
                   <CardHeader>
                     <CardTitle>{t("quality.violations_by_severity")}</CardTitle>
-                    <CardDescription>{t("quality.violations_severity_description")}</CardDescription>
+                    <CardDescription>
+                      {t("quality.violations_severity_description")}
+                    </CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
@@ -316,9 +393,18 @@ export default function UnifiedQualityDashboard() {
                           <span>{t("quality.severity_critical")}</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <QualityBadge variant="destructive">{violationsBySeverity.Critical}</QualityBadge>
+                          <QualityBadge variant="destructive">
+                            {violationsBySeverity.Critical}
+                          </QualityBadge>
                           <span className="text-muted-foreground text-xs">
-                            {violations.length > 0 ? Math.round((violationsBySeverity.Critical / violations.length) * 100) : 0}%
+                            {violations.length > 0
+                              ? Math.round(
+                                  (violationsBySeverity.Critical /
+                                    violations.length) *
+                                    100,
+                                )
+                              : 0}
+                            %
                           </span>
                         </div>
                       </div>
@@ -332,7 +418,14 @@ export default function UnifiedQualityDashboard() {
                             {violationsBySeverity.Major}
                           </QualityBadge>
                           <span className="text-muted-foreground text-xs">
-                            {violations.length > 0 ? Math.round((violationsBySeverity.Major / violations.length) * 100) : 0}%
+                            {violations.length > 0
+                              ? Math.round(
+                                  (violationsBySeverity.Major /
+                                    violations.length) *
+                                    100,
+                                )
+                              : 0}
+                            %
                           </span>
                         </div>
                       </div>
@@ -342,9 +435,18 @@ export default function UnifiedQualityDashboard() {
                           <span>{t("quality.severity_minor")}</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <QualityBadge variant="info">{violationsBySeverity.Minor}</QualityBadge>
+                          <QualityBadge variant="info">
+                            {violationsBySeverity.Minor}
+                          </QualityBadge>
                           <span className="text-muted-foreground text-xs">
-                            {violations.length > 0 ? Math.round((violationsBySeverity.Minor / violations.length) * 100) : 0}%
+                            {violations.length > 0
+                              ? Math.round(
+                                  (violationsBySeverity.Minor /
+                                    violations.length) *
+                                    100,
+                                )
+                              : 0}
+                            %
                           </span>
                         </div>
                       </div>
@@ -355,60 +457,108 @@ export default function UnifiedQualityDashboard() {
                 <Card>
                   <CardHeader>
                     <CardTitle>{t("quality.recent_activity")}</CardTitle>
-                    <CardDescription>{t("quality.recent_activity_description")}</CardDescription>
+                    <CardDescription>
+                      {t("quality.recent_activity_description")}
+                    </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    {recentViolations.length === 0 && recentChecks.length === 0 ? (
-                      <p className="text-muted-foreground">No Recent Activity</p>
+                    {recentViolations.length === 0 &&
+                    recentChecks.length === 0 ? (
+                      <p className="text-muted-foreground">
+                        No Recent Activity
+                      </p>
                     ) : (
                       <div className="space-y-4">
-                        {recentViolations.slice(0, 2).map((violation: any, index: number) => (
-                          <div key={`violation-${index}`} className="flex items-start gap-3 border-b pb-3">
-                            <AlertTriangle className="h-5 w-5 text-yellow-500 mt-0.5" />
-                            <div>
-                              <div className="font-semibold">{t("quality.violation")} #{violation.id}</div>
-                              <div className="text-sm text-muted-foreground truncate max-w-sm">
-                                {violation.description?.substring(0, 60) || t("common.not_available")}...
-                              </div>
-                              <div className="flex mt-1">
-                                <QualityBadge variant={
-                                  violation.severity === "Critical" ? "destructive" : 
-                                  violation.severity === "Major" ? "warning" : "info"
-                                }>
-                                  {violation.severity}
-                                </QualityBadge>
-                                <QualityBadge 
-                                  variant={violation.status === "Open" ? "destructive" : 
-                                         violation.status === "In Progress" ? "warning" : "success"}
-                                  className="ml-2"
-                                >
-                                  {violation.status}
-                                </QualityBadge>
+                        {recentViolations
+                          .slice(0, 2)
+                          .map((violation: any, index: number) => (
+                            <div
+                              key={`violation-${index}`}
+                              className="flex items-start gap-3 border-b pb-3"
+                            >
+                              <AlertTriangle className="h-5 w-5 text-yellow-500 mt-0.5" />
+                              <div>
+                                <div className="font-semibold">
+                                  {t("quality.violation")} #{violation.id}
+                                </div>
+                                <div className="text-sm text-muted-foreground truncate max-w-sm">
+                                  {violation.description?.substring(0, 60) ||
+                                    t("common.not_available")}
+                                  ...
+                                </div>
+                                <div className="flex mt-1">
+                                  <QualityBadge
+                                    variant={
+                                      violation.severity === "Critical"
+                                        ? "destructive"
+                                        : violation.severity === "Major"
+                                          ? "warning"
+                                          : "info"
+                                    }
+                                  >
+                                    {violation.severity}
+                                  </QualityBadge>
+                                  <QualityBadge
+                                    variant={
+                                      violation.status === "Open"
+                                        ? "destructive"
+                                        : violation.status === "In Progress"
+                                          ? "warning"
+                                          : "success"
+                                    }
+                                    className="ml-2"
+                                  >
+                                    {violation.status}
+                                  </QualityBadge>
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        ))}
-                        
-                        {recentChecks.slice(0, 2).map((check: any, index: number) => (
-                          <div key={`check-${index}`} className="flex items-start gap-3 border-b pb-3">
-                            <ClipboardCheck className={`h-5 w-5 ${check.passed ? 'text-green-500' : 'text-red-500'} mt-0.5`} />
-                            <div>
-                              <div className="font-semibold">Quality Check #{check.id}</div>
-                              <div className="text-sm text-muted-foreground">
-                                {check.notes?.substring(0, 60) || t("common.not_available")}
-                                {check.notes && check.notes.length > 60 ? '...' : ''}
-                              </div>
-                              <div className="flex mt-1">
-                                <QualityBadge variant={check.status === "Passed" ? "success" : "destructive"}>
-                                  {check.status === "Passed" ? t("quality.passed") : t("quality.failed")}
-                                </QualityBadge>
-                                <span className="text-xs text-muted-foreground ml-2 mt-0.5">
-                                  {check.timestamp ? new Date(check.timestamp).toLocaleDateString() : t("common.not_available")}
-                                </span>
+                          ))}
+
+                        {recentChecks
+                          .slice(0, 2)
+                          .map((check: any, index: number) => (
+                            <div
+                              key={`check-${index}`}
+                              className="flex items-start gap-3 border-b pb-3"
+                            >
+                              <ClipboardCheck
+                                className={`h-5 w-5 ${check.passed ? "text-green-500" : "text-red-500"} mt-0.5`}
+                              />
+                              <div>
+                                <div className="font-semibold">
+                                  Quality Check #{check.id}
+                                </div>
+                                <div className="text-sm text-muted-foreground">
+                                  {check.notes?.substring(0, 60) ||
+                                    t("common.not_available")}
+                                  {check.notes && check.notes.length > 60
+                                    ? "..."
+                                    : ""}
+                                </div>
+                                <div className="flex mt-1">
+                                  <QualityBadge
+                                    variant={
+                                      check.status === "Passed"
+                                        ? "success"
+                                        : "destructive"
+                                    }
+                                  >
+                                    {check.status === "Passed"
+                                      ? t("quality.passed")
+                                      : t("quality.failed")}
+                                  </QualityBadge>
+                                  <span className="text-xs text-muted-foreground ml-2 mt-0.5">
+                                    {check.timestamp
+                                      ? new Date(
+                                          check.timestamp,
+                                        ).toLocaleDateString()
+                                      : t("common.not_available")}
+                                  </span>
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        ))}
+                          ))}
                       </div>
                     )}
                   </CardContent>
@@ -420,23 +570,27 @@ export default function UnifiedQualityDashboard() {
 
         <TabsContent value="checks">
           <div className="rounded-lg border p-6 bg-card">
-            <h2 className="text-2xl font-bold mb-4">{t("quality.quality_checks")}</h2>
-            <p className="text-muted-foreground mb-6">{t("quality.quality_checks_description")}</p>
+            <h2 className="text-2xl font-bold mb-4">
+              {t("quality.quality_checks")}
+            </h2>
+            <p className="text-muted-foreground mb-6">
+              {t("quality.quality_checks_description")}
+            </p>
             <IntegratedQualityChecksManagement />
           </div>
         </TabsContent>
 
-        
-
         <TabsContent value="actions">
           <div className="rounded-lg border p-3 sm:p-6 bg-card">
-            <h2 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-4">{t("quality.corrective_actions")}</h2>
-            <p className="text-sm sm:text-base text-muted-foreground mb-4 sm:mb-6">Corrective Actions Description</p>
+            <h2 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-4">
+              {t("quality.corrective_actions")}
+            </h2>
+            <p className="text-sm sm:text-base text-muted-foreground mb-4 sm:mb-6">
+              Corrective Actions Description
+            </p>
             <QualityCorrectiveActions />
           </div>
         </TabsContent>
-
-        
       </Tabs>
     </div>
   );

@@ -37,9 +37,16 @@ import {
   Package,
   Factory,
   Users,
-  Layers
+  Layers,
 } from "lucide-react";
-import type { JobOrder, Order, Customer, CustomerProduct, Item, MasterBatch } from "shared/schema";
+import type {
+  JobOrder,
+  Order,
+  Customer,
+  CustomerProduct,
+  Item,
+  MasterBatch,
+} from "shared/schema";
 
 type SortField = "orderId" | "id" | "customerName" | "productName" | "quantity";
 type SortDirection = "asc" | "desc";
@@ -55,7 +62,7 @@ interface JobOrderWithDetails extends JobOrder {
 export default function JobOrdersPage() {
   const { t } = useTranslation();
   const { isRTL } = useLanguage();
-  
+
   const [searchTerm, setSearchTerm] = useState("");
   const [customerFilter, setCustomerFilter] = useState("all");
   const [materialFilter, setMaterialFilter] = useState("all");
@@ -63,53 +70,63 @@ export default function JobOrdersPage() {
   const [productFilter, setProductFilter] = useState("all");
   const [sortField, setSortField] = useState<SortField>("orderId");
   const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
-  const [selectedJobOrders, setSelectedJobOrders] = useState<Set<number>>(new Set());
+  const [selectedJobOrders, setSelectedJobOrders] = useState<Set<number>>(
+    new Set(),
+  );
 
   // Fetch required data
-  const { data: jobOrders = [], isLoading: jobOrdersLoading } = useQuery<JobOrder[]>({
-    queryKey: ["/api/job-orders"]
+  const { data: jobOrders = [], isLoading: jobOrdersLoading } = useQuery<
+    JobOrder[]
+  >({
+    queryKey: ["/api/job-orders"],
   });
 
   const { data: orders = [] } = useQuery<Order[]>({
-    queryKey: ["/api/orders"]
+    queryKey: ["/api/orders"],
   });
 
   const { data: customers = [] } = useQuery<Customer[]>({
-    queryKey: ["/api/customers"]
+    queryKey: ["/api/customers"],
   });
 
   const { data: customerProducts = [] } = useQuery<CustomerProduct[]>({
-    queryKey: ["/api/customer-products"]
+    queryKey: ["/api/customer-products"],
   });
 
   const { data: items = [] } = useQuery<Item[]>({
-    queryKey: ["/api/items"]
+    queryKey: ["/api/items"],
   });
 
   const { data: masterBatches = [] } = useQuery<MasterBatch[]>({
-    queryKey: ["/api/master-batches"]
+    queryKey: ["/api/master-batches"],
   });
 
   // Filter job orders for "For Production" status orders only
   const productionJobOrders = useMemo(() => {
     return jobOrders
       .map((jo): JobOrderWithDetails => {
-        const order = orders.find(o => o.id === jo.orderId);
-        const customerProduct = customerProducts.find(cp => cp.id === jo.customerProductId);
-        const customer = customers.find(c => c.id === (jo.customerId || customerProduct?.customerId));
-        const item = items.find(i => i.id === customerProduct?.itemId);
-        const masterBatch = masterBatches.find(mb => mb.id === customerProduct?.masterBatchId);
+        const order = orders.find((o) => o.id === jo.orderId);
+        const customerProduct = customerProducts.find(
+          (cp) => cp.id === jo.customerProductId,
+        );
+        const customer = customers.find(
+          (c) => c.id === (jo.customerId || customerProduct?.customerId),
+        );
+        const item = items.find((i) => i.id === customerProduct?.itemId);
+        const masterBatch = masterBatches.find(
+          (mb) => mb.id === customerProduct?.masterBatchId,
+        );
 
         return {
           ...jo,
           order,
           customer,
-          customerProduct, 
+          customerProduct,
           item,
-          masterBatch
+          masterBatch,
         };
       })
-      .filter(jo => jo.order?.status === "processing");
+      .filter((jo) => jo.order?.status === "processing");
   }, [jobOrders, orders, customers, customerProducts, items, masterBatches]);
 
   // Apply filters and sorting
@@ -118,37 +135,42 @@ export default function JobOrdersPage() {
 
     // Apply search filter (Order No)
     if (searchTerm) {
-      filtered = filtered.filter(jo => 
-        jo.orderId.toString().includes(searchTerm.toLowerCase()) ||
-        jo.id.toString().includes(searchTerm.toLowerCase())
+      filtered = filtered.filter(
+        (jo) =>
+          jo.orderId.toString().includes(searchTerm.toLowerCase()) ||
+          jo.id.toString().includes(searchTerm.toLowerCase()),
       );
     }
 
     // Apply customer filter
     if (customerFilter && customerFilter !== "all") {
-      filtered = filtered.filter(jo => 
-        jo.customer?.name.toLowerCase().includes(customerFilter.toLowerCase())
+      filtered = filtered.filter((jo) =>
+        jo.customer?.name.toLowerCase().includes(customerFilter.toLowerCase()),
       );
     }
 
     // Apply material filter
     if (materialFilter && materialFilter !== "all") {
-      filtered = filtered.filter(jo => 
-        jo.customerProduct?.rawMaterial?.toLowerCase() === materialFilter.toLowerCase()
+      filtered = filtered.filter(
+        (jo) =>
+          jo.customerProduct?.rawMaterial?.toLowerCase() ===
+          materialFilter.toLowerCase(),
       );
     }
 
     // Apply masterbatch filter
     if (masterbatchFilter && masterbatchFilter !== "all") {
-      filtered = filtered.filter(jo => 
-        jo.masterBatch?.name?.toLowerCase() === masterbatchFilter.toLowerCase()
+      filtered = filtered.filter(
+        (jo) =>
+          jo.masterBatch?.name?.toLowerCase() ===
+          masterbatchFilter.toLowerCase(),
       );
     }
 
     // Apply product filter
     if (productFilter && productFilter !== "all") {
-      filtered = filtered.filter(jo => 
-        jo.item?.name?.toLowerCase() === productFilter.toLowerCase()
+      filtered = filtered.filter(
+        (jo) => jo.item?.name?.toLowerCase() === productFilter.toLowerCase(),
       );
     }
 
@@ -196,7 +218,16 @@ export default function JobOrdersPage() {
     });
 
     return filtered;
-  }, [productionJobOrders, searchTerm, customerFilter, materialFilter, masterbatchFilter, productFilter, sortField, sortDirection]);
+  }, [
+    productionJobOrders,
+    searchTerm,
+    customerFilter,
+    materialFilter,
+    masterbatchFilter,
+    productFilter,
+    sortField,
+    sortDirection,
+  ]);
 
   // Handle sorting
   const handleSort = (field: SortField) => {
@@ -213,7 +244,9 @@ export default function JobOrdersPage() {
     if (selectedJobOrders.size === filteredAndSortedJobOrders.length) {
       setSelectedJobOrders(new Set());
     } else {
-      setSelectedJobOrders(new Set(filteredAndSortedJobOrders.map(jo => jo.id)));
+      setSelectedJobOrders(
+        new Set(filteredAndSortedJobOrders.map((jo) => jo.id)),
+      );
     }
   };
 
@@ -230,7 +263,7 @@ export default function JobOrdersPage() {
   // Get unique values for filters
   const uniqueCustomers = useMemo(() => {
     const customerNames = productionJobOrders
-      .map(jo => jo.customer?.name)
+      .map((jo) => jo.customer?.name)
       .filter(Boolean)
       .filter((name, index, arr) => arr.indexOf(name) === index);
     return customerNames.sort();
@@ -238,7 +271,7 @@ export default function JobOrdersPage() {
 
   const uniqueMaterials = useMemo(() => {
     const materialNames = productionJobOrders
-      .map(jo => jo.customerProduct?.rawMaterial)
+      .map((jo) => jo.customerProduct?.rawMaterial)
       .filter(Boolean)
       .filter((name, index, arr) => arr.indexOf(name) === index);
     return materialNames.sort();
@@ -246,7 +279,7 @@ export default function JobOrdersPage() {
 
   const uniqueMasterBatches = useMemo(() => {
     const mbNames = productionJobOrders
-      .map(jo => jo.masterBatch?.name)
+      .map((jo) => jo.masterBatch?.name)
       .filter(Boolean)
       .filter((name, index, arr) => arr.indexOf(name) === index);
     return mbNames.sort();
@@ -254,13 +287,19 @@ export default function JobOrdersPage() {
 
   const uniqueProducts = useMemo(() => {
     const productNames = productionJobOrders
-      .map(jo => jo.item?.name)
+      .map((jo) => jo.item?.name)
       .filter(Boolean)
       .filter((name, index, arr) => arr.indexOf(name) === index);
     return productNames.sort();
   }, [productionJobOrders]);
 
-  const SortButton = ({ field, children }: { field: SortField; children: React.ReactNode }) => (
+  const SortButton = ({
+    field,
+    children,
+  }: {
+    field: SortField;
+    children: React.ReactNode;
+  }) => (
     <Button
       variant="ghost"
       size="sm"
@@ -288,12 +327,17 @@ export default function JobOrdersPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">{t("job_orders.title")}</h1>
+          <h1 className="text-3xl font-bold tracking-tight">
+            {t("job_orders.title")}
+          </h1>
           <p className="text-muted-foreground">
-            {t("job_orders.description", "Manage job orders for production scheduling and tracking")}
+            {t(
+              "job_orders.description",
+              "Manage job orders for production scheduling and tracking",
+            )}
           </p>
         </div>
-        
+
         {selectedJobOrders.size > 0 && (
           <div className="flex items-center gap-2">
             <Badge variant="outline" className="bg-primary/10">
@@ -318,7 +362,9 @@ export default function JobOrdersPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
             {/* Order No Search */}
             <div className="space-y-2">
-              <label className="text-sm font-medium">{t("orders.order_no")}</label>
+              <label className="text-sm font-medium">
+                {t("orders.order_no")}
+              </label>
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
@@ -332,7 +378,9 @@ export default function JobOrdersPage() {
 
             {/* Customer Filter */}
             <div className="space-y-2">
-              <label className="text-sm font-medium">{t("setup.customers.name")}</label>
+              <label className="text-sm font-medium">
+                {t("setup.customers.name")}
+              </label>
               <Select value={customerFilter} onValueChange={setCustomerFilter}>
                 <SelectTrigger>
                   <SelectValue placeholder={t("common.all")} />
@@ -350,11 +398,15 @@ export default function JobOrdersPage() {
 
             {/* Materials Filter */}
             <div className="space-y-2">
-              <label className="text-sm font-medium">{t("orders.material")}</label>
+              <label className="text-sm font-medium">
+                {t("orders.material")}
+              </label>
               <Select value={materialFilter} onValueChange={setMaterialFilter}>
                 <SelectTrigger>
                   <SelectValue placeholder={t("common.all")}>
-                    {materialFilter === "all" ? t("common.all") : materialFilter}
+                    {materialFilter === "all"
+                      ? t("common.all")
+                      : materialFilter}
                   </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
@@ -371,7 +423,10 @@ export default function JobOrdersPage() {
             {/* Master Batch Filter */}
             <div className="space-y-2">
               <label className="text-sm font-medium">{t("common.batch")}</label>
-              <Select value={masterbatchFilter} onValueChange={setMasterbatchFilter}>
+              <Select
+                value={masterbatchFilter}
+                onValueChange={setMasterbatchFilter}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder={t("common.all")} />
                 </SelectTrigger>
@@ -388,7 +443,9 @@ export default function JobOrdersPage() {
 
             {/* Product Filter */}
             <div className="space-y-2">
-              <label className="text-sm font-medium">{t("orders.product")}</label>
+              <label className="text-sm font-medium">
+                {t("orders.product")}
+              </label>
               <Select value={productFilter} onValueChange={setProductFilter}>
                 <SelectTrigger>
                   <SelectValue placeholder={t("common.all")} />
@@ -406,7 +463,11 @@ export default function JobOrdersPage() {
           </div>
 
           {/* Clear Filters */}
-          {(searchTerm || customerFilter !== "all" || materialFilter !== "all" || masterbatchFilter !== "all" || productFilter !== "all") && (
+          {(searchTerm ||
+            customerFilter !== "all" ||
+            materialFilter !== "all" ||
+            masterbatchFilter !== "all" ||
+            productFilter !== "all") && (
             <div className="flex justify-end mt-4">
               <Button
                 variant="outline"
@@ -448,27 +509,39 @@ export default function JobOrdersPage() {
                 <TableRow>
                   <TableHead className="w-12">
                     <Checkbox
-                      checked={selectedJobOrders.size === filteredAndSortedJobOrders.length && filteredAndSortedJobOrders.length > 0}
+                      checked={
+                        selectedJobOrders.size ===
+                          filteredAndSortedJobOrders.length &&
+                        filteredAndSortedJobOrders.length > 0
+                      }
                       onCheckedChange={handleSelectAll}
                     />
                   </TableHead>
                   <TableHead className="pl-[0px] pr-[0px]">
-                    <SortButton field="orderId">{t("orders.order_id")}</SortButton>
+                    <SortButton field="orderId">
+                      {t("orders.order_id")}
+                    </SortButton>
                   </TableHead>
                   <TableHead>
                     <SortButton field="id">{t("job_orders.jo_id")}</SortButton>
                   </TableHead>
                   <TableHead>
-                    <SortButton field="customerName">{t("setup.customers.name")}</SortButton>
+                    <SortButton field="customerName">
+                      {t("setup.customers.name")}
+                    </SortButton>
                   </TableHead>
                   <TableHead>
-                    <SortButton field="productName">{t("orders.product")}</SortButton>
+                    <SortButton field="productName">
+                      {t("orders.product")}
+                    </SortButton>
                   </TableHead>
                   <TableHead>{t("orders.size")}</TableHead>
                   <TableHead>{t("orders.material")}</TableHead>
                   <TableHead>{t("common.batch")}</TableHead>
                   <TableHead>
-                    <SortButton field="quantity">{t("job_orders.jo_qty")}</SortButton>
+                    <SortButton field="quantity">
+                      {t("job_orders.jo_qty")}
+                    </SortButton>
                   </TableHead>
                 </TableRow>
               </TableHeader>
@@ -488,7 +561,9 @@ export default function JobOrdersPage() {
                       <TableCell>
                         <Checkbox
                           checked={selectedJobOrders.has(jobOrder.id)}
-                          onCheckedChange={() => handleSelectJobOrder(jobOrder.id)}
+                          onCheckedChange={() =>
+                            handleSelectJobOrder(jobOrder.id)
+                          }
                         />
                       </TableCell>
                       <TableCell className="font-medium">

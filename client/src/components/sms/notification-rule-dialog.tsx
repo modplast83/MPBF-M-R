@@ -7,9 +7,29 @@ import { queryClient, apiRequest } from "@/lib/queryClient";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from "@/components/ui/dialog";
-import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from "@/components/ui/form";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Plus, Save, Loader2, Bell } from "lucide-react";
@@ -60,7 +80,12 @@ const userRoles = [
   { value: "hr_manager", label: "HR Manager" },
 ];
 
-export function NotificationRuleDialog({ children, rule, templates, onSuccess }: NotificationRuleDialogProps) {
+export function NotificationRuleDialog({
+  children,
+  rule,
+  templates,
+  onSuccess,
+}: NotificationRuleDialogProps) {
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
 
@@ -74,7 +99,7 @@ export function NotificationRuleDialog({ children, rule, templates, onSuccess }:
       recipientRoles: rule?.recipientRoles || [],
       recipientUsers: rule?.recipientUsers || [],
       isActive: rule?.isActive ?? true,
-      priority: rule?.priority as any || "normal",
+      priority: (rule?.priority as any) || "normal",
       cooldownMinutes: rule?.cooldownMinutes || 0,
       workingHoursOnly: rule?.workingHoursOnly || false,
     },
@@ -83,14 +108,18 @@ export function NotificationRuleDialog({ children, rule, templates, onSuccess }:
   const saveRuleMutation = useMutation({
     mutationFn: async (data: NotificationRuleFormValues) => {
       const method = rule ? "PUT" : "POST";
-      const url = rule ? `/api/sms-notification-rules/${rule.id}` : "/api/sms-notification-rules";
+      const url = rule
+        ? `/api/sms-notification-rules/${rule.id}`
+        : "/api/sms-notification-rules";
       await apiRequest(method, url, data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/sms-notification-rules"] });
+      queryClient.invalidateQueries({
+        queryKey: ["/api/sms-notification-rules"],
+      });
       toast({
         title: rule ? "Rule Updated" : "Rule Created",
-        description: `Notification rule has been ${rule ? "updated" : "created"} successfully.`
+        description: `Notification rule has been ${rule ? "updated" : "created"} successfully.`,
       });
       form.reset();
       setOpen(false);
@@ -100,9 +129,9 @@ export function NotificationRuleDialog({ children, rule, templates, onSuccess }:
       toast({
         title: "Error",
         description: error.message || "Failed to save notification rule.",
-        variant: "destructive"
+        variant: "destructive",
       });
-    }
+    },
   });
 
   const onSubmit = (data: NotificationRuleFormValues) => {
@@ -110,20 +139,22 @@ export function NotificationRuleDialog({ children, rule, templates, onSuccess }:
   };
 
   const selectedRoles = form.watch("recipientRoles");
-  const selectedTemplate = templates.find(t => t.id === form.watch("templateId"));
+  const selectedTemplate = templates.find(
+    (t) => t.id === form.watch("templateId"),
+  );
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        {children}
-      </DialogTrigger>
+      <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
             {rule ? "Edit Notification Rule" : "Create Notification Rule"}
           </DialogTitle>
           <DialogDescription>
-            {rule ? "Modify the automated notification rule settings and conditions." : "Set up automated SMS notifications based on system events and conditions."}
+            {rule
+              ? "Modify the automated notification rule settings and conditions."
+              : "Set up automated SMS notifications based on system events and conditions."}
           </DialogDescription>
         </DialogHeader>
 
@@ -210,11 +241,13 @@ export function NotificationRuleDialog({ children, rule, templates, onSuccess }:
                     </FormControl>
                     <SelectContent>
                       <SelectItem value="">No template</SelectItem>
-                      {templates.filter(t => t.isActive).map((template) => (
-                        <SelectItem key={template.id} value={template.id}>
-                          {template.name} ({template.category})
-                        </SelectItem>
-                      ))}
+                      {templates
+                        .filter((t) => t.isActive)
+                        .map((template) => (
+                          <SelectItem key={template.id} value={template.id}>
+                            {template.name} ({template.category})
+                          </SelectItem>
+                        ))}
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -225,7 +258,9 @@ export function NotificationRuleDialog({ children, rule, templates, onSuccess }:
             {selectedTemplate && (
               <div className="p-3 border rounded-md bg-gray-50">
                 <Label className="text-sm font-medium">Template Preview:</Label>
-                <p className="text-sm text-gray-600 mt-1">{selectedTemplate.template}</p>
+                <p className="text-sm text-gray-600 mt-1">
+                  {selectedTemplate.template}
+                </p>
               </div>
             )}
 
@@ -250,9 +285,16 @@ export function NotificationRuleDialog({ children, rule, templates, onSuccess }:
                                 onCheckedChange={(checked) => {
                                   const currentRoles = field.value || [];
                                   if (checked) {
-                                    field.onChange([...currentRoles, role.value]);
+                                    field.onChange([
+                                      ...currentRoles,
+                                      role.value,
+                                    ]);
                                   } else {
-                                    field.onChange(currentRoles.filter(r => r !== role.value));
+                                    field.onChange(
+                                      currentRoles.filter(
+                                        (r) => r !== role.value,
+                                      ),
+                                    );
                                   }
                                 }}
                               />
@@ -277,7 +319,7 @@ export function NotificationRuleDialog({ children, rule, templates, onSuccess }:
                 <div className="flex flex-wrap gap-1">
                   {selectedRoles.map((role) => (
                     <Badge key={role} variant="secondary" className="text-xs">
-                      {userRoles.find(r => r.value === role)?.label || role}
+                      {userRoles.find((r) => r.value === role)?.label || role}
                     </Badge>
                   ))}
                 </div>
@@ -293,12 +335,14 @@ export function NotificationRuleDialog({ children, rule, templates, onSuccess }:
                   <FormItem>
                     <FormLabel>Cooldown (minutes)</FormLabel>
                     <FormControl>
-                      <Input 
-                        type="number" 
-                        min="0" 
+                      <Input
+                        type="number"
+                        min="0"
                         placeholder="0"
                         {...field}
-                        onChange={e => field.onChange(parseInt(e.target.value) || 0)}
+                        onChange={(e) =>
+                          field.onChange(parseInt(e.target.value) || 0)
+                        }
                       />
                     </FormControl>
                     <div className="text-xs text-gray-500">
@@ -350,7 +394,11 @@ export function NotificationRuleDialog({ children, rule, templates, onSuccess }:
             </div>
 
             <div className="flex justify-end gap-2">
-              <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setOpen(false)}
+              >
                 Cancel
               </Button>
               <Button type="submit" disabled={saveRuleMutation.isPending}>

@@ -2,25 +2,25 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogHeader, 
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
   DialogTitle,
   DialogDescription,
-  DialogFooter
+  DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "@/components/ui/table";
 import {
   AlertTriangle,
@@ -32,7 +32,7 @@ import {
   Pencil,
   Loader2,
   Plus,
-  FilePlus
+  FilePlus,
 } from "lucide-react";
 import { QualityBadge } from "./quality-badge";
 import {
@@ -58,8 +58,8 @@ interface QualityViolation {
   description: string;
   reportedBy: string | null;
   qualityCheckId: number | null;
-  severity: 'Critical' | 'Major' | 'Minor';
-  status: 'Open' | 'In Progress' | 'Resolved';
+  severity: "Critical" | "Major" | "Minor";
+  status: "Open" | "In Progress" | "Resolved";
   notes: string | null;
   imageUrls: string[] | null;
   violationType: string;
@@ -112,20 +112,21 @@ export function QualityViolationsManagement() {
   // States
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
-  const [currentViolation, setCurrentViolation] = useState<QualityViolation | null>(null);
+  const [currentViolation, setCurrentViolation] =
+    useState<QualityViolation | null>(null);
   const [formData, setFormData] = useState<Partial<QualityViolation>>({
     description: "",
     severity: "Major",
     status: "Open",
     violationType: "Process",
     affectedArea: "Machine",
-    notes: ""
+    notes: "",
   });
   const [filters, setFilters] = useState<ViolationFilterState>({
     severity: "all",
     status: "all",
     dateRange: "all",
-    searchTerm: ""
+    searchTerm: "",
   });
 
   // Fetch violation data
@@ -143,7 +144,7 @@ export function QualityViolationsManagement() {
         console.error("Error fetching violations:", error);
         return [];
       }
-    }
+    },
   });
 
   // Fetch users data for assignment
@@ -158,15 +159,16 @@ export function QualityViolationsManagement() {
         const data = await response.json();
         return data.map((user: User) => ({
           ...user,
-          fullName: user.firstName && user.lastName 
-            ? `${user.firstName} ${user.lastName}` 
-            : user.username
+          fullName:
+            user.firstName && user.lastName
+              ? `${user.firstName} ${user.lastName}`
+              : user.username,
         }));
       } catch (error) {
         console.error("Error fetching users:", error);
         return [];
       }
-    }
+    },
   });
 
   // Fetch quality checks
@@ -183,7 +185,7 @@ export function QualityViolationsManagement() {
         console.error("Error fetching quality checks:", error);
         return [];
       }
-    }
+    },
   });
 
   // Fetch job orders
@@ -200,7 +202,7 @@ export function QualityViolationsManagement() {
         console.error("Error fetching job orders:", error);
         return [];
       }
-    }
+    },
   });
 
   // Fetch rolls
@@ -217,7 +219,7 @@ export function QualityViolationsManagement() {
         console.error("Error fetching rolls:", error);
         return [];
       }
-    }
+    },
   });
 
   // Create mutation
@@ -229,7 +231,9 @@ export function QualityViolationsManagement() {
       queryClient.invalidateQueries({ queryKey: ["/api/quality-violations"] });
       toast({
         title: t("common.success"),
-        description: t("common.item_created", { item: t("quality.violations") }),
+        description: t("common.item_created", {
+          item: t("quality.violations"),
+        }),
       });
       setIsDialogOpen(false);
       resetForm();
@@ -240,19 +244,25 @@ export function QualityViolationsManagement() {
         description: error.message || t("common.something_went_wrong"),
         variant: "destructive",
       });
-    }
+    },
   });
 
   // Update mutation
   const updateMutation = useMutation({
     mutationFn: async (data: Partial<QualityViolation>) => {
-      return apiRequest(`/api/quality-violations/${currentViolation?.id}`, "PATCH", data);
+      return apiRequest(
+        `/api/quality-violations/${currentViolation?.id}`,
+        "PATCH",
+        data,
+      );
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/quality-violations"] });
       toast({
         title: t("common.success"),
-        description: t("common.item_updated", { item: t("quality.violations") }),
+        description: t("common.item_updated", {
+          item: t("quality.violations"),
+        }),
       });
       setIsDialogOpen(false);
       resetForm();
@@ -263,7 +273,7 @@ export function QualityViolationsManagement() {
         description: error.message || t("common.something_went_wrong"),
         variant: "destructive",
       });
-    }
+    },
   });
 
   const resetForm = () => {
@@ -274,31 +284,40 @@ export function QualityViolationsManagement() {
       violationType: "Process",
       affectedArea: "Machine",
       notes: "",
-      qualityCheckId: qualityChecks && qualityChecks.length > 0 ? qualityChecks[0].id : undefined
+      qualityCheckId:
+        qualityChecks && qualityChecks.length > 0
+          ? qualityChecks[0].id
+          : undefined,
     });
     setCurrentViolation(null);
   };
 
-
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSelectChange = (name: string, value: string) => {
     if (name === "qualityCheckId") {
       // Convert string to number for qualityCheckId, or set to undefined if empty
       const numericValue = value && value !== "" ? parseInt(value) : undefined;
-      setFormData(prev => ({ ...prev, [name]: numericValue }));
+      setFormData((prev) => ({ ...prev, [name]: numericValue }));
     } else {
-      setFormData(prev => ({ ...prev, [name]: value }));
+      setFormData((prev) => ({ ...prev, [name]: value }));
     }
   };
 
   const handleCreateOrUpdate = () => {
     // Validate required fields
-    if (!formData.description || !formData.severity || !formData.status || !formData.violationType || !formData.affectedArea) {
+    if (
+      !formData.description ||
+      !formData.severity ||
+      !formData.status ||
+      !formData.violationType ||
+      !formData.affectedArea
+    ) {
       toast({
         title: t("common.validation_error"),
         description: t("common.required_fields"),
@@ -313,15 +332,16 @@ export function QualityViolationsManagement() {
       // For new violations, we need to provide a qualityCheckId
       // If no specific quality check is selected, use the first available one
       let qualityCheckId = formData.qualityCheckId;
-      
+
       if (!qualityCheckId && qualityChecks && qualityChecks.length > 0) {
         qualityCheckId = qualityChecks[0].id;
       }
-      
+
       if (!qualityCheckId) {
         toast({
           title: t("common.validation_error"),
-          description: "Please select a quality check or ensure quality checks exist in the system",
+          description:
+            "Please select a quality check or ensure quality checks exist in the system",
           variant: "destructive",
         });
         return;
@@ -329,7 +349,10 @@ export function QualityViolationsManagement() {
 
       createMutation.mutate({
         ...formData,
-        qualityCheckId: typeof qualityCheckId === 'number' ? qualityCheckId : parseInt(qualityCheckId.toString()),
+        qualityCheckId:
+          typeof qualityCheckId === "number"
+            ? qualityCheckId
+            : parseInt(qualityCheckId.toString()),
         reportDate: new Date(),
         reportedBy: users[0]?.id || "Unknown",
       });
@@ -348,7 +371,7 @@ export function QualityViolationsManagement() {
       rootCause: violation.rootCause || "",
       qualityCheckId: violation.qualityCheckId,
       jobOrderId: violation.jobOrderId,
-      rollId: violation.rollId
+      rollId: violation.rollId,
     });
     setIsDialogOpen(true);
   };
@@ -359,48 +382,58 @@ export function QualityViolationsManagement() {
   };
 
   // Apply filters
-  const filteredViolations = violations.filter((violation: QualityViolation) => {
-    let match = true;
-    
-    // Filter by severity
-    if (filters.severity !== "all" && violation.severity !== filters.severity) {
-      match = false;
-    }
-    
-    // Filter by status
-    if (filters.status !== "all" && violation.status !== filters.status) {
-      match = false;
-    }
-    
-    // Filter by date range
-    if (filters.dateRange !== "all") {
-      const today = new Date();
-      const violationDate = new Date(violation.reportDate);
-      const daysDiff = Math.floor((today.getTime() - violationDate.getTime()) / (1000 * 60 * 60 * 24));
-      
+  const filteredViolations = violations.filter(
+    (violation: QualityViolation) => {
+      let match = true;
+
+      // Filter by severity
       if (
-        (filters.dateRange === "week" && daysDiff > 7) ||
-        (filters.dateRange === "month" && daysDiff > 30) ||
-        (filters.dateRange === "quarter" && daysDiff > 90)
+        filters.severity !== "all" &&
+        violation.severity !== filters.severity
       ) {
         match = false;
       }
-    }
-    
-    // Filter by search term
-    if (filters.searchTerm) {
-      const searchLower = filters.searchTerm.toLowerCase();
-      const descMatch = violation.description?.toLowerCase().includes(searchLower) || false;
-      const notesMatch = violation.notes?.toLowerCase().includes(searchLower) || false;
-      const areaMatch = violation.affectedArea?.toLowerCase().includes(searchLower) || false;
-      
-      if (!descMatch && !notesMatch && !areaMatch) {
+
+      // Filter by status
+      if (filters.status !== "all" && violation.status !== filters.status) {
         match = false;
       }
-    }
-    
-    return match;
-  });
+
+      // Filter by date range
+      if (filters.dateRange !== "all") {
+        const today = new Date();
+        const violationDate = new Date(violation.reportDate);
+        const daysDiff = Math.floor(
+          (today.getTime() - violationDate.getTime()) / (1000 * 60 * 60 * 24),
+        );
+
+        if (
+          (filters.dateRange === "week" && daysDiff > 7) ||
+          (filters.dateRange === "month" && daysDiff > 30) ||
+          (filters.dateRange === "quarter" && daysDiff > 90)
+        ) {
+          match = false;
+        }
+      }
+
+      // Filter by search term
+      if (filters.searchTerm) {
+        const searchLower = filters.searchTerm.toLowerCase();
+        const descMatch =
+          violation.description?.toLowerCase().includes(searchLower) || false;
+        const notesMatch =
+          violation.notes?.toLowerCase().includes(searchLower) || false;
+        const areaMatch =
+          violation.affectedArea?.toLowerCase().includes(searchLower) || false;
+
+        if (!descMatch && !notesMatch && !areaMatch) {
+          match = false;
+        }
+      }
+
+      return match;
+    },
+  );
 
   return (
     <div className="space-y-8">
@@ -409,12 +442,16 @@ export function QualityViolationsManagement() {
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
             <div>
               <CardTitle>{t("quality.violations")}</CardTitle>
-              <CardDescription>{t("quality.violations_description")}</CardDescription>
+              <CardDescription>
+                {t("quality.violations_description")}
+              </CardDescription>
             </div>
-            <Button onClick={() => {
-              resetForm();
-              setIsDialogOpen(true);
-            }}>
+            <Button
+              onClick={() => {
+                resetForm();
+                setIsDialogOpen(true);
+              }}
+            >
               <Plus className="mr-2 h-4 w-4" />
               {t("common.add_new", { item: t("quality.violations") })}
             </Button>
@@ -429,7 +466,12 @@ export function QualityViolationsManagement() {
                 <Input
                   placeholder={t("common.search")}
                   value={filters.searchTerm}
-                  onChange={(e) => setFilters((prev) => ({ ...prev, searchTerm: e.target.value }))}
+                  onChange={(e) =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      searchTerm: e.target.value,
+                    }))
+                  }
                   className="h-9"
                 />
               </div>
@@ -437,7 +479,9 @@ export function QualityViolationsManagement() {
                 <div className="flex items-center space-x-2">
                   <Select
                     value={filters.severity}
-                    onValueChange={(value) => setFilters((prev) => ({ ...prev, severity: value }))}
+                    onValueChange={(value) =>
+                      setFilters((prev) => ({ ...prev, severity: value }))
+                    }
                   >
                     <SelectTrigger className="h-9 w-[130px]">
                       <Filter className="mr-2 h-4 w-4" />
@@ -445,16 +489,24 @@ export function QualityViolationsManagement() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">{t("common.all")}</SelectItem>
-                      <SelectItem value="Critical">{t("quality.severity_critical")}</SelectItem>
-                      <SelectItem value="Major">{t("quality.severity_major")}</SelectItem>
-                      <SelectItem value="Minor">{t("quality.severity_minor")}</SelectItem>
+                      <SelectItem value="Critical">
+                        {t("quality.severity_critical")}
+                      </SelectItem>
+                      <SelectItem value="Major">
+                        {t("quality.severity_major")}
+                      </SelectItem>
+                      <SelectItem value="Minor">
+                        {t("quality.severity_minor")}
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Select
                     value={filters.status}
-                    onValueChange={(value) => setFilters((prev) => ({ ...prev, status: value }))}
+                    onValueChange={(value) =>
+                      setFilters((prev) => ({ ...prev, status: value }))
+                    }
                   >
                     <SelectTrigger className="h-9 w-[130px]">
                       <Filter className="mr-2 h-4 w-4" />
@@ -463,25 +515,39 @@ export function QualityViolationsManagement() {
                     <SelectContent>
                       <SelectItem value="all">{t("common.all")}</SelectItem>
                       <SelectItem value="Open">{t("quality.open")}</SelectItem>
-                      <SelectItem value="In Progress">{t("common.in_progress")}</SelectItem>
-                      <SelectItem value="Resolved">{t("quality.resolved")}</SelectItem>
+                      <SelectItem value="In Progress">
+                        {t("common.in_progress")}
+                      </SelectItem>
+                      <SelectItem value="Resolved">
+                        {t("quality.resolved")}
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Select
                     value={filters.dateRange}
-                    onValueChange={(value) => setFilters((prev) => ({ ...prev, dateRange: value }))}
+                    onValueChange={(value) =>
+                      setFilters((prev) => ({ ...prev, dateRange: value }))
+                    }
                   >
                     <SelectTrigger className="h-9 w-[130px]">
                       <Filter className="mr-2 h-4 w-4" />
                       <SelectValue placeholder={t("common.date_range")} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">{t("common.all_time")}</SelectItem>
-                      <SelectItem value="week">{t("common.past_week")}</SelectItem>
-                      <SelectItem value="month">{t("common.past_month")}</SelectItem>
-                      <SelectItem value="quarter">{t("common.past_quarter")}</SelectItem>
+                      <SelectItem value="all">
+                        {t("common.all_time")}
+                      </SelectItem>
+                      <SelectItem value="week">
+                        {t("common.past_week")}
+                      </SelectItem>
+                      <SelectItem value="month">
+                        {t("common.past_month")}
+                      </SelectItem>
+                      <SelectItem value="quarter">
+                        {t("common.past_quarter")}
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -496,7 +562,9 @@ export function QualityViolationsManagement() {
           ) : filteredViolations.length === 0 ? (
             <div className="text-center py-10 text-muted-foreground">
               <FileWarning className="h-12 w-12 mx-auto mb-4 opacity-20" />
-              <p>{t("common.no_items_found", { items: t("quality.violations") })}</p>
+              <p>
+                {t("common.no_items_found", { items: t("quality.violations") })}
+              </p>
             </div>
           ) : (
             <div className="overflow-x-auto">
@@ -509,7 +577,9 @@ export function QualityViolationsManagement() {
                     <TableHead>{t("common.status")}</TableHead>
                     <TableHead>{t("common.area")}</TableHead>
                     <TableHead>{t("common.date")}</TableHead>
-                    <TableHead className="text-right">{t("common.actions")}</TableHead>
+                    <TableHead className="text-right">
+                      {t("common.actions")}
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -520,20 +590,26 @@ export function QualityViolationsManagement() {
                         {violation.description}
                       </TableCell>
                       <TableCell>
-                        <QualityBadge 
+                        <QualityBadge
                           variant={
-                            violation.severity === "Critical" ? "destructive" :
-                            violation.severity === "Major" ? "warning" : "info"
+                            violation.severity === "Critical"
+                              ? "destructive"
+                              : violation.severity === "Major"
+                                ? "warning"
+                                : "info"
                           }
                         >
                           {violation.severity}
                         </QualityBadge>
                       </TableCell>
                       <TableCell>
-                        <QualityBadge 
+                        <QualityBadge
                           variant={
-                            violation.status === "Open" ? "destructive" :
-                            violation.status === "In Progress" ? "warning" : "success"
+                            violation.status === "Open"
+                              ? "destructive"
+                              : violation.status === "In Progress"
+                                ? "warning"
+                                : "success"
                           }
                         >
                           {violation.status}
@@ -575,12 +651,14 @@ export function QualityViolationsManagement() {
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
-              {currentViolation 
-                ? t("common.edit_item", { item: t("quality.violations") }) 
+              {currentViolation
+                ? t("common.edit_item", { item: t("quality.violations") })
                 : t("common.add_new", { item: t("quality.violations") })}
             </DialogTitle>
             <DialogDescription>
-              {currentViolation ? "Edit the quality violation details and status." : "Create a new quality violation record to track and manage quality issues."}
+              {currentViolation
+                ? "Edit the quality violation details and status."
+                : "Create a new quality violation record to track and manage quality issues."}
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
@@ -605,15 +683,23 @@ export function QualityViolationsManagement() {
                   </Label>
                   <Select
                     value={formData.severity as string}
-                    onValueChange={(value) => handleSelectChange("severity", value)}
+                    onValueChange={(value) =>
+                      handleSelectChange("severity", value)
+                    }
                   >
                     <SelectTrigger id="severity">
                       <SelectValue placeholder={t("common.select_severity")} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="Critical">{t("quality.severity_critical")}</SelectItem>
-                      <SelectItem value="Major">{t("quality.severity_major")}</SelectItem>
-                      <SelectItem value="Minor">{t("quality.severity_minor")}</SelectItem>
+                      <SelectItem value="Critical">
+                        {t("quality.severity_critical")}
+                      </SelectItem>
+                      <SelectItem value="Major">
+                        {t("quality.severity_major")}
+                      </SelectItem>
+                      <SelectItem value="Minor">
+                        {t("quality.severity_minor")}
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -623,15 +709,21 @@ export function QualityViolationsManagement() {
                   </Label>
                   <Select
                     value={formData.status as string}
-                    onValueChange={(value) => handleSelectChange("status", value)}
+                    onValueChange={(value) =>
+                      handleSelectChange("status", value)
+                    }
                   >
                     <SelectTrigger id="status">
                       <SelectValue placeholder={t("common.select_status")} />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="Open">{t("quality.open")}</SelectItem>
-                      <SelectItem value="In Progress">{t("common.in_progress")}</SelectItem>
-                      <SelectItem value="Resolved">{t("quality.resolved")}</SelectItem>
+                      <SelectItem value="In Progress">
+                        {t("common.in_progress")}
+                      </SelectItem>
+                      <SelectItem value="Resolved">
+                        {t("quality.resolved")}
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -644,17 +736,29 @@ export function QualityViolationsManagement() {
                 </Label>
                 <Select
                   value={formData.violationType as string}
-                  onValueChange={(value) => handleSelectChange("violationType", value)}
+                  onValueChange={(value) =>
+                    handleSelectChange("violationType", value)
+                  }
                 >
                   <SelectTrigger id="violationType">
                     <SelectValue placeholder={t("common.select_type")} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="Process">{t("common.process")}</SelectItem>
-                    <SelectItem value="Product">{t("common.product")}</SelectItem>
-                    <SelectItem value="Material">{t("common.material")}</SelectItem>
-                    <SelectItem value="Machine">{t("common.machine")}</SelectItem>
-                    <SelectItem value="Operator">{t("common.operator")}</SelectItem>
+                    <SelectItem value="Process">
+                      {t("common.process")}
+                    </SelectItem>
+                    <SelectItem value="Product">
+                      {t("common.product")}
+                    </SelectItem>
+                    <SelectItem value="Material">
+                      {t("common.material")}
+                    </SelectItem>
+                    <SelectItem value="Machine">
+                      {t("common.machine")}
+                    </SelectItem>
+                    <SelectItem value="Operator">
+                      {t("common.operator")}
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -664,18 +768,32 @@ export function QualityViolationsManagement() {
                 </Label>
                 <Select
                   value={formData.affectedArea as string}
-                  onValueChange={(value) => handleSelectChange("affectedArea", value)}
+                  onValueChange={(value) =>
+                    handleSelectChange("affectedArea", value)
+                  }
                 >
                   <SelectTrigger id="affectedArea">
                     <SelectValue placeholder={t("common.select_area")} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="Machine">{t("common.machine")}</SelectItem>
-                    <SelectItem value="Extrusion">{t("workflow.extrusion")}</SelectItem>
-                    <SelectItem value="Printing">{t("workflow.printing")}</SelectItem>
-                    <SelectItem value="Cutting">{t("workflow.cutting")}</SelectItem>
-                    <SelectItem value="Quality">{t("quality.title")}</SelectItem>
-                    <SelectItem value="Warehouse">{t("warehouse.title")}</SelectItem>
+                    <SelectItem value="Machine">
+                      {t("common.machine")}
+                    </SelectItem>
+                    <SelectItem value="Extrusion">
+                      {t("workflow.extrusion")}
+                    </SelectItem>
+                    <SelectItem value="Printing">
+                      {t("workflow.printing")}
+                    </SelectItem>
+                    <SelectItem value="Cutting">
+                      {t("workflow.cutting")}
+                    </SelectItem>
+                    <SelectItem value="Quality">
+                      {t("quality.title")}
+                    </SelectItem>
+                    <SelectItem value="Warehouse">
+                      {t("warehouse.title")}
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -687,10 +805,14 @@ export function QualityViolationsManagement() {
                 </Label>
                 <Select
                   value={formData.qualityCheckId?.toString() || ""}
-                  onValueChange={(value) => handleSelectChange("qualityCheckId", value)}
+                  onValueChange={(value) =>
+                    handleSelectChange("qualityCheckId", value)
+                  }
                 >
                   <SelectTrigger id="qualityCheckId">
-                    <SelectValue placeholder={t("common.select_if_applicable")} />
+                    <SelectValue
+                      placeholder={t("common.select_if_applicable")}
+                    />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="">{t("common.none")}</SelectItem>
@@ -703,9 +825,7 @@ export function QualityViolationsManagement() {
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="rootCause">
-                  {t("common.root_cause")}
-                </Label>
+                <Label htmlFor="rootCause">{t("common.root_cause")}</Label>
                 <Input
                   id="rootCause"
                   name="rootCause"
@@ -716,9 +836,7 @@ export function QualityViolationsManagement() {
               </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="notes">
-                {t("common.notes")}
-              </Label>
+              <Label htmlFor="notes">{t("common.notes")}</Label>
               <Textarea
                 id="notes"
                 name="notes"
@@ -730,13 +848,10 @@ export function QualityViolationsManagement() {
             </div>
           </div>
           <DialogFooter>
-            <Button 
-              variant="outline" 
-              onClick={() => setIsDialogOpen(false)}
-            >
+            <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
               {t("common.cancel")}
             </Button>
-            <Button 
+            <Button
               onClick={handleCreateOrUpdate}
               disabled={createMutation.isPending || updateMutation.isPending}
             >
@@ -757,7 +872,8 @@ export function QualityViolationsManagement() {
               {t("quality.violations")} #{currentViolation?.id}
             </DialogTitle>
             <DialogDescription>
-              View detailed information about this quality violation including status, severity, and resolution notes.
+              View detailed information about this quality violation including
+              status, severity, and resolution notes.
             </DialogDescription>
           </DialogHeader>
           {currentViolation && (
@@ -799,8 +915,11 @@ export function QualityViolationsManagement() {
                       </h3>
                       <QualityBadge
                         variant={
-                          currentViolation.severity === "Critical" ? "destructive" :
-                          currentViolation.severity === "Major" ? "warning" : "info"
+                          currentViolation.severity === "Critical"
+                            ? "destructive"
+                            : currentViolation.severity === "Major"
+                              ? "warning"
+                              : "info"
                         }
                       >
                         {currentViolation.severity}
@@ -812,8 +931,11 @@ export function QualityViolationsManagement() {
                       </h3>
                       <QualityBadge
                         variant={
-                          currentViolation.status === "Open" ? "destructive" :
-                          currentViolation.status === "In Progress" ? "warning" : "success"
+                          currentViolation.status === "Open"
+                            ? "destructive"
+                            : currentViolation.status === "In Progress"
+                              ? "warning"
+                              : "success"
                         }
                       >
                         {currentViolation.status}
@@ -824,14 +946,24 @@ export function QualityViolationsManagement() {
                     <h3 className="text-sm font-medium text-muted-foreground mb-1">
                       {t("common.report_date")}
                     </h3>
-                    <p>{format(new Date(currentViolation.reportDate), "yyyy-MM-dd HH:mm")}</p>
+                    <p>
+                      {format(
+                        new Date(currentViolation.reportDate),
+                        "yyyy-MM-dd HH:mm",
+                      )}
+                    </p>
                   </div>
                   {currentViolation.resolutionDate && (
                     <div>
                       <h3 className="text-sm font-medium text-muted-foreground mb-1">
                         {t("common.resolution_date")}
                       </h3>
-                      <p>{format(new Date(currentViolation.resolutionDate), "yyyy-MM-dd HH:mm")}</p>
+                      <p>
+                        {format(
+                          new Date(currentViolation.resolutionDate),
+                          "yyyy-MM-dd HH:mm",
+                        )}
+                      </p>
                     </div>
                   )}
                   {currentViolation.rootCause && (
@@ -844,9 +976,11 @@ export function QualityViolationsManagement() {
                   )}
                 </div>
               </div>
-              
+
               <div className="pt-4 border-t border-border">
-                <h3 className="text-sm font-medium mb-2">{t("common.related_information")}</h3>
+                <h3 className="text-sm font-medium mb-2">
+                  {t("common.related_information")}
+                </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {currentViolation.qualityCheckId && (
                     <div>
@@ -878,8 +1012,8 @@ export function QualityViolationsManagement() {
                         {t("common.reported_by")}
                       </h4>
                       <p>
-                        {users.find(u => u.id === currentViolation.reportedBy)?.fullName || 
-                          currentViolation.reportedBy}
+                        {users.find((u) => u.id === currentViolation.reportedBy)
+                          ?.fullName || currentViolation.reportedBy}
                       </p>
                     </div>
                   )}
@@ -888,10 +1022,13 @@ export function QualityViolationsManagement() {
             </div>
           )}
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsViewDialogOpen(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setIsViewDialogOpen(false)}
+            >
               {t("common.close")}
             </Button>
-            <Button 
+            <Button
               onClick={() => {
                 setIsViewDialogOpen(false);
                 if (currentViolation) {

@@ -7,7 +7,11 @@ import { Card } from "@/components/ui/card";
 interface CelebrationScreenProps {
   isVisible: boolean;
   onClose: () => void;
-  type: "task_completed" | "milestone_reached" | "streak_achieved" | "perfect_score";
+  type:
+    | "task_completed"
+    | "milestone_reached"
+    | "streak_achieved"
+    | "perfect_score";
   data: {
     title: string;
     subtitle?: string;
@@ -18,28 +22,28 @@ interface CelebrationScreenProps {
 }
 
 const celebrationVariants = {
-  hidden: { 
-    opacity: 0, 
+  hidden: {
+    opacity: 0,
     scale: 0.8,
-    y: 50 
+    y: 50,
   },
-  visible: { 
-    opacity: 1, 
+  visible: {
+    opacity: 1,
     scale: 1,
     y: 0,
     transition: {
       type: "spring",
       damping: 15,
       stiffness: 300,
-      duration: 0.6
-    }
+      duration: 0.6,
+    },
   },
-  exit: { 
-    opacity: 0, 
+  exit: {
+    opacity: 0,
     scale: 0.9,
     y: -30,
-    transition: { duration: 0.3 }
-  }
+    transition: { duration: 0.3 },
+  },
 };
 
 const particleVariants = {
@@ -52,9 +56,9 @@ const particleVariants = {
     transition: {
       duration: 2,
       delay: i * 0.1,
-      ease: "easeOut"
-    }
-  })
+      ease: "easeOut",
+    },
+  }),
 };
 
 const pulseVariants = {
@@ -63,23 +67,28 @@ const pulseVariants = {
     transition: {
       duration: 1.5,
       repeat: Infinity,
-      ease: "easeInOut"
-    }
-  }
+      ease: "easeInOut",
+    },
+  },
 };
 
-export function CelebrationScreen({ isVisible, onClose, type, data }: CelebrationScreenProps) {
+export function CelebrationScreen({
+  isVisible,
+  onClose,
+  type,
+  data,
+}: CelebrationScreenProps) {
   const [particles, setParticles] = useState<number[]>([]);
-  
+
   useEffect(() => {
     if (isVisible) {
       setParticles(Array.from({ length: 20 }, (_, i) => i));
-      
+
       // Auto-close after 5 seconds
       const timer = setTimeout(() => {
         onClose();
       }, 5000);
-      
+
       return () => clearTimeout(timer);
     }
   }, [isVisible, onClose]);
@@ -152,16 +161,21 @@ export function CelebrationScreen({ isVisible, onClose, type, data }: Celebratio
           >
             <Card className="max-w-md w-full mx-auto overflow-hidden">
               {/* Gradient header */}
-              <div className={`bg-gradient-to-r ${getColors()} p-6 text-white text-center relative overflow-hidden`}>
+              <div
+                className={`bg-gradient-to-r ${getColors()} p-6 text-white text-center relative overflow-hidden`}
+              >
                 {/* Background pattern */}
                 <div className="absolute inset-0 opacity-20">
-                  <div className="absolute inset-0" style={{
-                    backgroundImage: `radial-gradient(circle at 20% 50%, white 1px, transparent 1px),
+                  <div
+                    className="absolute inset-0"
+                    style={{
+                      backgroundImage: `radial-gradient(circle at 20% 50%, white 1px, transparent 1px),
                                      radial-gradient(circle at 70% 50%, white 1px, transparent 1px)`,
-                    backgroundSize: '20px 20px'
-                  }} />
+                      backgroundSize: "20px 20px",
+                    }}
+                  />
                 </div>
-                
+
                 <motion.div
                   variants={pulseVariants}
                   animate="pulse"
@@ -169,8 +183,8 @@ export function CelebrationScreen({ isVisible, onClose, type, data }: Celebratio
                 >
                   {getIcon()}
                 </motion.div>
-                
-                <motion.h2 
+
+                <motion.h2
                   className="text-2xl font-bold mt-4 relative z-10"
                   initial={{ y: 20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
@@ -178,9 +192,9 @@ export function CelebrationScreen({ isVisible, onClose, type, data }: Celebratio
                 >
                   {data.title}
                 </motion.h2>
-                
+
                 {data.subtitle && (
-                  <motion.p 
+                  <motion.p
                     className="text-white/90 mt-2 relative z-10"
                     initial={{ y: 20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
@@ -194,7 +208,7 @@ export function CelebrationScreen({ isVisible, onClose, type, data }: Celebratio
               {/* Content */}
               <div className="p-6 text-center">
                 {data.description && (
-                  <motion.p 
+                  <motion.p
                     className="text-gray-600 mb-4"
                     initial={{ y: 20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
@@ -206,7 +220,7 @@ export function CelebrationScreen({ isVisible, onClose, type, data }: Celebratio
 
                 {/* Stats */}
                 {data.stats && data.stats.length > 0 && (
-                  <motion.div 
+                  <motion.div
                     className="grid grid-cols-2 gap-4 mb-6"
                     initial={{ y: 20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
@@ -214,15 +228,19 @@ export function CelebrationScreen({ isVisible, onClose, type, data }: Celebratio
                   >
                     {data.stats.map((stat, index) => (
                       <div key={index} className="text-center">
-                        <div className="text-2xl font-bold text-blue-600">{stat.value}</div>
-                        <div className="text-sm text-gray-500">{stat.label}</div>
+                        <div className="text-2xl font-bold text-blue-600">
+                          {stat.value}
+                        </div>
+                        <div className="text-sm text-gray-500">
+                          {stat.label}
+                        </div>
                       </div>
                     ))}
                   </motion.div>
                 )}
 
                 {/* Action buttons */}
-                <motion.div 
+                <motion.div
                   className="flex gap-3 justify-center"
                   initial={{ y: 20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
@@ -253,27 +271,27 @@ export function useCelebration() {
   }>({
     isVisible: false,
     type: "task_completed",
-    data: { title: "" }
+    data: { title: "" },
   });
 
   const showCelebration = (
-    type: CelebrationScreenProps["type"], 
-    data: CelebrationScreenProps["data"]
+    type: CelebrationScreenProps["type"],
+    data: CelebrationScreenProps["data"],
   ) => {
     setCelebration({
       isVisible: true,
       type,
-      data
+      data,
     });
   };
 
   const hideCelebration = () => {
-    setCelebration(prev => ({ ...prev, isVisible: false }));
+    setCelebration((prev) => ({ ...prev, isVisible: false }));
   };
 
   return {
     celebration,
     showCelebration,
-    hideCelebration
+    hideCelebration,
   };
 }

@@ -38,12 +38,23 @@ import { Loader2 } from "lucide-react";
 
 // Define the form schema
 const calculatorSchema = z.object({
-  width: z.string().min(1, "Width is required").transform(val => parseFloat(val)),
-  height: z.string().min(1, "Height is required").transform(val => parseFloat(val)),
-  colors: z.string().min(1, "Number of colors is required").transform(val => parseInt(val)),
+  width: z
+    .string()
+    .min(1, "Width is required")
+    .transform((val) => parseFloat(val)),
+  height: z
+    .string()
+    .min(1, "Height is required")
+    .transform((val) => parseFloat(val)),
+  colors: z
+    .string()
+    .min(1, "Number of colors is required")
+    .transform((val) => parseInt(val)),
   plateType: z.string().min(1, "Plate type is required"),
-  thickness: z.string().transform(val => val ? parseFloat(val) : undefined),
-  customerDiscount: z.string().transform(val => val ? parseFloat(val) : undefined),
+  thickness: z.string().transform((val) => (val ? parseFloat(val) : undefined)),
+  customerDiscount: z
+    .string()
+    .transform((val) => (val ? parseFloat(val) : undefined)),
   notes: z.string().optional(),
 });
 
@@ -121,25 +132,29 @@ export default function Calculator() {
   // Save calculation
   const handleSave = () => {
     if (!calculation) return;
-    
+
     // Get the raw form values
     const rawValues = form.getValues();
-    
+
     // Convert string values to numbers as required by the API
     const saveData = {
       width: parseFloat(rawValues.width),
       height: parseFloat(rawValues.height),
       colors: parseInt(rawValues.colors),
       plateType: rawValues.plateType,
-      thickness: rawValues.thickness ? parseFloat(rawValues.thickness) : undefined,
-      customerDiscount: rawValues.customerDiscount ? parseFloat(rawValues.customerDiscount) : undefined,
+      thickness: rawValues.thickness
+        ? parseFloat(rawValues.thickness)
+        : undefined,
+      customerDiscount: rawValues.customerDiscount
+        ? parseFloat(rawValues.customerDiscount)
+        : undefined,
       notes: rawValues.notes,
       // Include calculated values from the calculation result
       basePricePerUnit: calculation.basePricePerUnit,
       colorMultiplier: calculation.colorMultiplier,
       thicknessMultiplier: calculation.thicknessMultiplier,
       area: calculation.area,
-      calculatedPrice: calculation.calculatedPrice
+      calculatedPrice: calculation.calculatedPrice,
     };
 
     saveMutation.mutate(saveData);
@@ -162,19 +177,19 @@ export default function Calculator() {
                     <FormItem>
                       <FormLabel>{t("cliches.width")} (cm)</FormLabel>
                       <FormControl>
-                        <Input 
-                          {...field} 
-                          type="number" 
-                          step="0.1" 
+                        <Input
+                          {...field}
+                          type="number"
+                          step="0.1"
                           min="0.1"
-                          placeholder="0.0" 
+                          placeholder="0.0"
                         />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-                
+
                 {/* Height */}
                 <FormField
                   control={form.control}
@@ -183,12 +198,12 @@ export default function Calculator() {
                     <FormItem>
                       <FormLabel>{t("cliches.height")} (cm)</FormLabel>
                       <FormControl>
-                        <Input 
-                          {...field} 
-                          type="number" 
-                          step="0.1" 
+                        <Input
+                          {...field}
+                          type="number"
+                          step="0.1"
                           min="0.1"
-                          placeholder="0.0" 
+                          placeholder="0.0"
                         />
                       </FormControl>
                       <FormMessage />
@@ -205,8 +220,8 @@ export default function Calculator() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>{t("cliches.numberOfColors")}</FormLabel>
-                      <Select 
-                        onValueChange={field.onChange} 
+                      <Select
+                        onValueChange={field.onChange}
                         defaultValue={field.value}
                       >
                         <FormControl>
@@ -215,7 +230,7 @@ export default function Calculator() {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {[1, 2, 3, 4, 5, 6, 7, 8].map(num => (
+                          {[1, 2, 3, 4, 5, 6, 7, 8].map((num) => (
                             <SelectItem key={num} value={num.toString()}>
                               {num}
                             </SelectItem>
@@ -226,7 +241,7 @@ export default function Calculator() {
                     </FormItem>
                   )}
                 />
-                
+
                 {/* Thickness */}
                 <FormField
                   control={form.control}
@@ -235,12 +250,12 @@ export default function Calculator() {
                     <FormItem>
                       <FormLabel>{t("cliches.thickness")} (mm)</FormLabel>
                       <FormControl>
-                        <Input 
-                          {...field} 
-                          type="number" 
-                          step="0.1" 
+                        <Input
+                          {...field}
+                          type="number"
+                          step="0.1"
                           min="0.5"
-                          placeholder="1.14" 
+                          placeholder="1.14"
                         />
                       </FormControl>
                       <FormMessage />
@@ -248,7 +263,7 @@ export default function Calculator() {
                   )}
                 />
               </div>
-              
+
               <div className="grid grid-cols-1 gap-4">
                 {/* Plate Type */}
                 <FormField
@@ -257,8 +272,8 @@ export default function Calculator() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Plate Type</FormLabel>
-                      <Select 
-                        onValueChange={field.onChange} 
+                      <Select
+                        onValueChange={field.onChange}
                         defaultValue={field.value}
                       >
                         <FormControl>
@@ -277,7 +292,7 @@ export default function Calculator() {
                   )}
                 />
               </div>
-              
+
               {/* Discount */}
               <FormField
                 control={form.control}
@@ -286,20 +301,20 @@ export default function Calculator() {
                   <FormItem>
                     <FormLabel>{t("cliches.discount")} (%)</FormLabel>
                     <FormControl>
-                      <Input 
-                        {...field} 
-                        type="number" 
+                      <Input
+                        {...field}
+                        type="number"
                         min="0"
                         max="100"
                         step="0.5"
-                        placeholder="0" 
+                        placeholder="0"
                       />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              
+
               {/* Notes */}
               <FormField
                 control={form.control}
@@ -308,8 +323,8 @@ export default function Calculator() {
                   <FormItem>
                     <FormLabel>{t("cliches.notes")}</FormLabel>
                     <FormControl>
-                      <Textarea 
-                        {...field} 
+                      <Textarea
+                        {...field}
                         placeholder={t("cliches.notes")}
                         className="min-h-[80px]"
                       />
@@ -318,9 +333,9 @@ export default function Calculator() {
                   </FormItem>
                 )}
               />
-              
-              <Button 
-                type="submit" 
+
+              <Button
+                type="submit"
                 className="w-full"
                 disabled={calculateMutation.isPending}
               >
@@ -337,83 +352,95 @@ export default function Calculator() {
           </Form>
         </CardContent>
       </Card>
-      
+
       {/* Calculation Results */}
       <Card>
         <CardContent className="pt-6">
           <H3 className="mb-4">{t("cliches.calculationResults")}</H3>
-          
+
           {calculation ? (
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-2">
                 <div className="space-y-1">
-                  <p className="text-sm text-muted-foreground">{t("cliches.dimensions")}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {t("cliches.dimensions")}
+                  </p>
                   <p className="font-medium">
                     {form.getValues("width")} × {form.getValues("height")} cm
                   </p>
                 </div>
-                
+
                 <div className="space-y-1">
-                  <p className="text-sm text-muted-foreground">{t("cliches.area")}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {t("cliches.area")}
+                  </p>
                   <p className="font-medium">
                     {calculation.area.toFixed(2)} cm²
                   </p>
                 </div>
-                
+
                 <div className="space-y-1">
-                  <p className="text-sm text-muted-foreground">{t("cliches.colors")}</p>
-                  <p className="font-medium">
-                    {form.getValues("colors")}
+                  <p className="text-sm text-muted-foreground">
+                    {t("cliches.colors")}
                   </p>
+                  <p className="font-medium">{form.getValues("colors")}</p>
                 </div>
-                
+
                 <div className="space-y-1">
-                  <p className="text-sm text-muted-foreground">{t("cliches.appliedDiscount")}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {t("cliches.appliedDiscount")}
+                  </p>
                   <p className="font-medium">
                     {calculation.customerDiscount || 0}%
                   </p>
                 </div>
               </div>
-              
+
               <Separator />
-              
+
               <H4>{t("cliches.pricingFactors")}</H4>
-              
+
               <div className="grid grid-cols-2 gap-2">
                 <div className="space-y-1">
-                  <p className="text-sm text-muted-foreground">{t("cliches.basePrice")}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {t("cliches.basePrice")}
+                  </p>
                   <p className="font-medium">
                     SR {calculation.basePricePerUnit}/cm²
                   </p>
                 </div>
-                
+
                 <div className="space-y-1">
-                  <p className="text-sm text-muted-foreground">{t("cliches.colorFactor")}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {t("cliches.colorFactor")}
+                  </p>
                   <p className="font-medium">
                     {calculation.colorMultiplier.toFixed(2)}x
                   </p>
                 </div>
-                
+
                 <div className="space-y-1">
-                  <p className="text-sm text-muted-foreground">{t("cliches.thicknessFactor")}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {t("cliches.thicknessFactor")}
+                  </p>
                   <p className="font-medium">
                     {calculation.thicknessMultiplier.toFixed(2)}x
                   </p>
                 </div>
               </div>
-              
+
               <Separator />
-              
+
               <div className="bg-primary/5 p-4 rounded-lg">
                 <p className="text-lg font-semibold">{t("cliches.price")}</p>
                 <p className="text-3xl font-bold text-primary">
                   SR {calculation.calculatedPrice.toFixed(2)}
                 </p>
               </div>
-              
-              <Button 
-                onClick={handleSave} 
-                variant="outline" 
+
+              <Button
+                onClick={handleSave}
+                variant="outline"
                 className="w-full"
                 disabled={saveMutation.isPending}
               >
@@ -432,7 +459,8 @@ export default function Calculator() {
               <div className="text-6xl mb-4">📐</div>
               <H4 className="mb-2">{t("cliches.calculatorTitle")}</H4>
               <p className="text-muted-foreground mb-6">
-                Enter plate dimensions and specifications to calculate the price.
+                Enter plate dimensions and specifications to calculate the
+                price.
               </p>
             </div>
           )}

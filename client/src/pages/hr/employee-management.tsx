@@ -6,10 +6,36 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+} from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useForm } from "react-hook-form";
@@ -17,17 +43,17 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useTranslation } from "react-i18next";
 import { useLanguage } from "@/hooks/use-language";
-import { 
-  Users, 
-  UserPlus, 
-  Edit, 
-  Trash2, 
-  Award, 
-  Clock, 
+import {
+  Users,
+  UserPlus,
+  Edit,
+  Trash2,
+  Award,
+  Clock,
   Calendar,
   TrendingUp,
   DollarSign,
-  MapPin
+  MapPin,
 } from "lucide-react";
 
 const userSchema = z.object({
@@ -41,29 +67,41 @@ const userSchema = z.object({
 
   position: z.string().optional(),
   hireDate: z.string().optional(),
-  contractType: z.enum(["full_time", "part_time", "contract", "intern"]).default("full_time"),
-  workSchedule: z.object({
-    startTime: z.string().default("08:00"),
-    endTime: z.string().default("17:00"),
-    workingDays: z.array(z.string()).default(["monday", "tuesday", "wednesday", "thursday", "friday"]),
-    breakDuration: z.number().default(1)
-  }).optional(),
-  emergencyContact: z.object({
-    name: z.string(),
-    phone: z.string(),
-    relationship: z.string()
-  }).optional(),
-  bankDetails: z.object({
-    accountNumber: z.string(),
-    bankName: z.string(),
-    branchName: z.string()
-  }).optional(),
-  allowances: z.object({
-    transport: z.number().default(0),
-    housing: z.number().default(0),
-    food: z.number().default(0),
-    other: z.number().default(0)
-  }).optional()
+  contractType: z
+    .enum(["full_time", "part_time", "contract", "intern"])
+    .default("full_time"),
+  workSchedule: z
+    .object({
+      startTime: z.string().default("08:00"),
+      endTime: z.string().default("17:00"),
+      workingDays: z
+        .array(z.string())
+        .default(["monday", "tuesday", "wednesday", "thursday", "friday"]),
+      breakDuration: z.number().default(1),
+    })
+    .optional(),
+  emergencyContact: z
+    .object({
+      name: z.string(),
+      phone: z.string(),
+      relationship: z.string(),
+    })
+    .optional(),
+  bankDetails: z
+    .object({
+      accountNumber: z.string(),
+      bankName: z.string(),
+      branchName: z.string(),
+    })
+    .optional(),
+  allowances: z
+    .object({
+      transport: z.number().default(0),
+      housing: z.number().default(0),
+      food: z.number().default(0),
+      other: z.number().default(0),
+    })
+    .optional(),
 });
 
 type UserForm = z.infer<typeof userSchema>;
@@ -77,16 +115,14 @@ export default function EmployeeManagement() {
 
   // Fetch users (employees)
   const { data: employees = [], isLoading: loadingEmployees } = useQuery({
-    queryKey: ['/api/users'],
-    queryFn: () => apiRequest('GET', '/api/users')
+    queryKey: ["/api/users"],
+    queryFn: () => apiRequest("GET", "/api/users"),
   });
-
-
 
   // Fetch sections
   const { data: sections = [] } = useQuery({
-    queryKey: ['/api/sections'],
-    queryFn: () => apiRequest('GET', '/api/sections')
+    queryKey: ["/api/sections"],
+    queryFn: () => apiRequest("GET", "/api/sections"),
   });
 
   // Form setup
@@ -99,79 +135,82 @@ export default function EmployeeManagement() {
       firstName: "",
       lastName: "",
       phone: "",
-      hireDate: new Date().toISOString().split('T')[0],
+      hireDate: new Date().toISOString().split("T")[0],
       contractType: "full_time",
       workSchedule: {
         startTime: "08:00",
         endTime: "17:00",
         workingDays: ["monday", "tuesday", "wednesday", "thursday", "friday"],
-        breakDuration: 1
+        breakDuration: 1,
       },
       allowances: {
         transport: 0,
         housing: 0,
         food: 0,
-        other: 0
-      }
-    }
+        other: 0,
+      },
+    },
   });
 
   // Create employee mutation
   const createEmployeeMutation = useMutation({
-    mutationFn: (data: Omit<UserForm, 'id'>) =>
-      apiRequest('POST', '/api/users', data),
+    mutationFn: (data: Omit<UserForm, "id">) =>
+      apiRequest("POST", "/api/users", data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/users'] });
+      queryClient.invalidateQueries({ queryKey: ["/api/users"] });
       setIsDialogOpen(false);
       setSelectedEmployee(null);
       form.reset();
       toast({
         title: "Success",
-        description: "Employee profile created successfully"
+        description: "Employee profile created successfully",
       });
     },
     onError: (error: any) => {
       toast({
         title: "Error",
         description: error.message || "Failed to create employee profile",
-        variant: "destructive"
+        variant: "destructive",
       });
-    }
+    },
   });
 
   // Update employee mutation
   const updateEmployeeMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string, data: Partial<UserForm> }) =>
-      apiRequest('PUT', `/api/users/${id}`, data),
+    mutationFn: ({ id, data }: { id: string; data: Partial<UserForm> }) =>
+      apiRequest("PUT", `/api/users/${id}`, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/users'] });
+      queryClient.invalidateQueries({ queryKey: ["/api/users"] });
       setIsDialogOpen(false);
       setSelectedEmployee(null);
       form.reset();
       toast({
         title: "Success",
-        description: "Employee profile updated successfully"
+        description: "Employee profile updated successfully",
       });
     },
     onError: (error: any) => {
       toast({
         title: "Error",
         description: error.message || "Failed to update employee profile",
-        variant: "destructive"
+        variant: "destructive",
       });
-    }
+    },
   });
 
   const handleSubmit = (data: UserForm) => {
     // Transform date string to Date object if provided
     const transformedData = {
       ...data,
-      hireDate: data.hireDate ? new Date(data.hireDate) : null
+      hireDate: data.hireDate ? new Date(data.hireDate) : null,
     };
 
     if (selectedEmployee) {
       // Update existing employee
-      updateEmployeeMutation.mutate({ id: selectedEmployee.id, data: transformedData });
+      updateEmployeeMutation.mutate({
+        id: selectedEmployee.id,
+        data: transformedData,
+      });
     } else {
       // Create new employee
       const { id, ...createData } = transformedData;
@@ -190,13 +229,15 @@ export default function EmployeeManagement() {
       phone: employee.phone || "",
       sectionId: employee.sectionId || "",
       position: employee.position || "",
-      hireDate: employee.hireDate ? new Date(employee.hireDate).toISOString().split('T')[0] : "",
+      hireDate: employee.hireDate
+        ? new Date(employee.hireDate).toISOString().split("T")[0]
+        : "",
       contractType: employee.contractType || "full_time",
       workSchedule: employee.workSchedule || {
         startTime: "08:00",
         endTime: "17:00",
         workingDays: ["monday", "tuesday", "wednesday", "thursday", "friday"],
-        breakDuration: 1
+        breakDuration: 1,
       },
       emergencyContact: employee.emergencyContact,
       bankDetails: employee.bankDetails,
@@ -204,8 +245,8 @@ export default function EmployeeManagement() {
         transport: 0,
         housing: 0,
         food: 0,
-        other: 0
-      }
+        other: 0,
+      },
     });
     setIsDialogOpen(true);
   };
@@ -221,30 +262,30 @@ export default function EmployeeManagement() {
       phone: "",
       sectionId: "",
       position: "",
-      hireDate: new Date().toISOString().split('T')[0],
+      hireDate: new Date().toISOString().split("T")[0],
       contractType: "full_time",
       workSchedule: {
         startTime: "08:00",
         endTime: "17:00",
         workingDays: ["monday", "tuesday", "wednesday", "thursday", "friday"],
-        breakDuration: 1
+        breakDuration: 1,
       },
       emergencyContact: {
         name: "",
         phone: "",
-        relationship: ""
+        relationship: "",
       },
       bankDetails: {
         accountNumber: "",
         bankName: "",
-        branchName: ""
+        branchName: "",
       },
       allowances: {
         transport: 0,
         housing: 0,
         food: 0,
-        other: 0
-      }
+        other: 0,
+      },
     });
     setIsDialogOpen(true);
   };
@@ -252,7 +293,10 @@ export default function EmployeeManagement() {
   // Employee ranks functionality has been removed
 
   const getUserName = (employee: any) => {
-    return `${employee.firstName || ''} ${employee.lastName || ''}`.trim() || employee.username;
+    return (
+      `${employee.firstName || ""} ${employee.lastName || ""}`.trim() ||
+      employee.username
+    );
   };
 
   const getContractTypeBadge = (type: string) => {
@@ -260,7 +304,7 @@ export default function EmployeeManagement() {
       full_time: "bg-green-100 text-green-800",
       part_time: "bg-blue-100 text-blue-800",
       contract: "bg-orange-100 text-orange-800",
-      intern: "bg-purple-100 text-purple-800"
+      intern: "bg-purple-100 text-purple-800",
     };
     return variants[type] || "bg-gray-100 text-gray-800";
   };
@@ -269,10 +313,14 @@ export default function EmployeeManagement() {
     <div className="container mx-auto p-4 sm:p-6">
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 sm:mb-8 space-y-4 sm:space-y-0">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">{t("hr.employee_management.title")}</h1>
-          <p className="text-sm sm:text-base text-gray-600 mt-2">{t("hr.employee_management.description")}</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+            {t("hr.employee_management.title")}
+          </h1>
+          <p className="text-sm sm:text-base text-gray-600 mt-2">
+            {t("hr.employee_management.description")}
+          </p>
         </div>
-        
+
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button onClick={handleCreateNew} className="w-full sm:w-auto">
@@ -283,20 +331,29 @@ export default function EmployeeManagement() {
           <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>
-                {selectedEmployee ? t("hr.employee_management.edit_profile") : t("hr.employee_management.create_profile")}
+                {selectedEmployee
+                  ? t("hr.employee_management.edit_profile")
+                  : t("hr.employee_management.create_profile")}
               </DialogTitle>
               <DialogDescription>
-                {selectedEmployee ? "Update employee information and work details" : "Create a new employee profile with personal and work information"}
+                {selectedEmployee
+                  ? "Update employee information and work details"
+                  : "Create a new employee profile with personal and work information"}
               </DialogDescription>
             </DialogHeader>
-            
+
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4 sm:space-y-6">
+              <form
+                onSubmit={form.handleSubmit(handleSubmit)}
+                className="space-y-4 sm:space-y-6"
+              >
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                   {/* Basic Information */}
                   <div className="space-y-4">
-                    <h3 className="text-lg font-semibold">{t("hr.employee_management.basic_info")}</h3>
-                    
+                    <h3 className="text-lg font-semibold">
+                      {t("hr.employee_management.basic_info")}
+                    </h3>
+
                     <FormField
                       control={form.control}
                       name="username"
@@ -304,7 +361,11 @@ export default function EmployeeManagement() {
                         <FormItem>
                           <FormLabel>Username</FormLabel>
                           <FormControl>
-                            <Input {...field} placeholder="Enter username" disabled={!!selectedEmployee} />
+                            <Input
+                              {...field}
+                              placeholder="Enter username"
+                              disabled={!!selectedEmployee}
+                            />
                           </FormControl>
                         </FormItem>
                       )}
@@ -343,7 +404,11 @@ export default function EmployeeManagement() {
                         <FormItem>
                           <FormLabel>Email</FormLabel>
                           <FormControl>
-                            <Input {...field} type="email" placeholder="Enter email" />
+                            <Input
+                              {...field}
+                              type="email"
+                              placeholder="Enter email"
+                            />
                           </FormControl>
                         </FormItem>
                       )}
@@ -356,13 +421,19 @@ export default function EmployeeManagement() {
                         <FormItem>
                           <FormLabel>Section</FormLabel>
                           <FormControl>
-                            <Select onValueChange={field.onChange} value={field.value}>
+                            <Select
+                              onValueChange={field.onChange}
+                              value={field.value}
+                            >
                               <SelectTrigger>
                                 <SelectValue placeholder="Select section" />
                               </SelectTrigger>
                               <SelectContent>
                                 {sections?.map((section) => (
-                                  <SelectItem key={section.id} value={section.id}>
+                                  <SelectItem
+                                    key={section.id}
+                                    value={section.id}
+                                  >
                                     {section.name}
                                   </SelectItem>
                                 ))}
@@ -372,8 +443,6 @@ export default function EmployeeManagement() {
                         </FormItem>
                       )}
                     />
-
-
 
                     <FormField
                       control={form.control}
@@ -408,14 +477,23 @@ export default function EmployeeManagement() {
                         <FormItem>
                           <FormLabel>Contract Type</FormLabel>
                           <FormControl>
-                            <Select onValueChange={field.onChange} value={field.value}>
+                            <Select
+                              onValueChange={field.onChange}
+                              value={field.value}
+                            >
                               <SelectTrigger>
                                 <SelectValue />
                               </SelectTrigger>
                               <SelectContent>
-                                <SelectItem value="full_time">Full Time</SelectItem>
-                                <SelectItem value="part_time">Part Time</SelectItem>
-                                <SelectItem value="contract">Contract</SelectItem>
+                                <SelectItem value="full_time">
+                                  Full Time
+                                </SelectItem>
+                                <SelectItem value="part_time">
+                                  Part Time
+                                </SelectItem>
+                                <SelectItem value="contract">
+                                  Contract
+                                </SelectItem>
                                 <SelectItem value="intern">Intern</SelectItem>
                               </SelectContent>
                             </Select>
@@ -428,7 +506,7 @@ export default function EmployeeManagement() {
                   {/* Work Schedule and Allowances */}
                   <div className="space-y-4">
                     <h3 className="text-lg font-semibold">Work Schedule</h3>
-                    
+
                     <div className="grid grid-cols-2 gap-4">
                       <FormField
                         control={form.control}
@@ -464,21 +542,25 @@ export default function EmployeeManagement() {
                         <FormItem>
                           <FormLabel>Break Duration (hours)</FormLabel>
                           <FormControl>
-                            <Input 
-                              type="number" 
-                              step="0.5" 
-                              min="0" 
-                              max="4" 
-                              {...field} 
-                              onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                            <Input
+                              type="number"
+                              step="0.5"
+                              min="0"
+                              max="4"
+                              {...field}
+                              onChange={(e) =>
+                                field.onChange(parseFloat(e.target.value))
+                              }
                             />
                           </FormControl>
                         </FormItem>
                       )}
                     />
 
-                    <h3 className="text-lg font-semibold mt-6">Monthly Allowances (SAR)</h3>
-                    
+                    <h3 className="text-lg font-semibold mt-6">
+                      Monthly Allowances (SAR)
+                    </h3>
+
                     <div className="grid grid-cols-2 gap-4">
                       <FormField
                         control={form.control}
@@ -487,11 +569,15 @@ export default function EmployeeManagement() {
                           <FormItem>
                             <FormLabel>Transport</FormLabel>
                             <FormControl>
-                              <Input 
-                                type="number" 
-                                min="0" 
-                                {...field} 
-                                onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                              <Input
+                                type="number"
+                                min="0"
+                                {...field}
+                                onChange={(e) =>
+                                  field.onChange(
+                                    parseFloat(e.target.value) || 0,
+                                  )
+                                }
                               />
                             </FormControl>
                           </FormItem>
@@ -505,11 +591,15 @@ export default function EmployeeManagement() {
                           <FormItem>
                             <FormLabel>Housing</FormLabel>
                             <FormControl>
-                              <Input 
-                                type="number" 
-                                min="0" 
-                                {...field} 
-                                onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                              <Input
+                                type="number"
+                                min="0"
+                                {...field}
+                                onChange={(e) =>
+                                  field.onChange(
+                                    parseFloat(e.target.value) || 0,
+                                  )
+                                }
                               />
                             </FormControl>
                           </FormItem>
@@ -523,11 +613,15 @@ export default function EmployeeManagement() {
                           <FormItem>
                             <FormLabel>Food</FormLabel>
                             <FormControl>
-                              <Input 
-                                type="number" 
-                                min="0" 
-                                {...field} 
-                                onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                              <Input
+                                type="number"
+                                min="0"
+                                {...field}
+                                onChange={(e) =>
+                                  field.onChange(
+                                    parseFloat(e.target.value) || 0,
+                                  )
+                                }
                               />
                             </FormControl>
                           </FormItem>
@@ -541,11 +635,15 @@ export default function EmployeeManagement() {
                           <FormItem>
                             <FormLabel>Other</FormLabel>
                             <FormControl>
-                              <Input 
-                                type="number" 
-                                min="0" 
-                                {...field} 
-                                onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                              <Input
+                                type="number"
+                                min="0"
+                                {...field}
+                                onChange={(e) =>
+                                  field.onChange(
+                                    parseFloat(e.target.value) || 0,
+                                  )
+                                }
                               />
                             </FormControl>
                           </FormItem>
@@ -556,18 +654,20 @@ export default function EmployeeManagement() {
                 </div>
 
                 <div className="flex justify-end space-x-4 pt-4 border-t">
-                  <Button 
-                    type="button" 
-                    variant="outline" 
+                  <Button
+                    type="button"
+                    variant="outline"
                     onClick={() => setIsDialogOpen(false)}
                   >
                     {t("common.cancel")}
                   </Button>
-                  <Button 
-                    type="submit" 
+                  <Button
+                    type="submit"
                     disabled={updateEmployeeMutation.isPending}
                   >
-                    {updateEmployeeMutation.isPending ? t("common.saving") : t("common.save")}
+                    {updateEmployeeMutation.isPending
+                      ? t("common.saving")
+                      : t("common.save")}
                   </Button>
                 </div>
               </form>
@@ -589,7 +689,8 @@ export default function EmployeeManagement() {
             <div className="text-center py-8">Loading employees...</div>
           ) : employees.length === 0 ? (
             <div className="text-center py-8 text-gray-500">
-              No employee profiles found. Create your first employee profile to get started.
+              No employee profiles found. Create your first employee profile to
+              get started.
             </div>
           ) : (
             <div className="overflow-x-auto">
@@ -607,41 +708,51 @@ export default function EmployeeManagement() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {employees.filter((employee: any) => employee.employeeId).map((employee: any) => (
-                    <TableRow key={employee.id}>
-                      <TableCell className="font-medium">{employee.employeeId}</TableCell>
-                      <TableCell>
-                        {getUserName(employee)}
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant="outline">
-                          {employee.position || 'Employee'}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>{employee.department || '-'}</TableCell>
-                      <TableCell>{employee.position || '-'}</TableCell>
-                      <TableCell>
-                        <Badge className={getContractTypeBadge(employee.contractType)}>
-                          {employee.contractType?.replace('_', ' ').toUpperCase()}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        {employee.hireDate ? new Date(employee.hireDate).toLocaleDateString() : '-'}
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex space-x-1 sm:space-x-2">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => handleEdit(employee)}
-                            className="p-1 sm:p-2"
+                  {employees
+                    .filter((employee: any) => employee.employeeId)
+                    .map((employee: any) => (
+                      <TableRow key={employee.id}>
+                        <TableCell className="font-medium">
+                          {employee.employeeId}
+                        </TableCell>
+                        <TableCell>{getUserName(employee)}</TableCell>
+                        <TableCell>
+                          <Badge variant="outline">
+                            {employee.position || "Employee"}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>{employee.department || "-"}</TableCell>
+                        <TableCell>{employee.position || "-"}</TableCell>
+                        <TableCell>
+                          <Badge
+                            className={getContractTypeBadge(
+                              employee.contractType,
+                            )}
                           >
-                            <Edit className="h-3 w-3 sm:h-4 sm:w-4" />
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                            {employee.contractType
+                              ?.replace("_", " ")
+                              .toUpperCase()}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          {employee.hireDate
+                            ? new Date(employee.hireDate).toLocaleDateString()
+                            : "-"}
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex space-x-1 sm:space-x-2">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleEdit(employee)}
+                              className="p-1 sm:p-2"
+                            >
+                              <Edit className="h-3 w-3 sm:h-4 sm:w-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
                 </TableBody>
               </Table>
             </div>

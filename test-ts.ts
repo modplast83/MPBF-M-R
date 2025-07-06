@@ -6,7 +6,7 @@ interface TestInterface {
 
 const testObject: TestInterface = {
   name: "test",
-  value: 42
+  value: 42,
 };
 
 console.log(testObject);

@@ -1,22 +1,22 @@
-import { useState, useRef, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { useToast } from '@/hooks/use-toast';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { apiRequest } from '@/lib/queryClient';
-import { 
-  Play, 
-  Pause, 
-  AlertTriangle, 
-  CheckCircle, 
+import { useState, useRef, useEffect } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { useToast } from "@/hooks/use-toast";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
+import {
+  Play,
+  Pause,
+  AlertTriangle,
+  CheckCircle,
   XCircle,
   RotateCcw,
   ArrowUp,
   ArrowDown,
   ArrowLeft,
-  ArrowRight
-} from 'lucide-react';
+  ArrowRight,
+} from "lucide-react";
 
 interface GestureAction {
   id: string;
@@ -30,59 +30,59 @@ interface GestureAction {
 
 const GESTURE_ACTIONS: GestureAction[] = [
   {
-    id: 'start_production',
-    name: 'Start Production',
-    gesture: 'swipe_right',
+    id: "start_production",
+    name: "Start Production",
+    gesture: "swipe_right",
     icon: <Play className="w-6 h-6" />,
-    color: 'bg-green-500',
-    description: 'Swipe right to start production',
-    endpoint: '/api/production/start'
+    color: "bg-green-500",
+    description: "Swipe right to start production",
+    endpoint: "/api/production/start",
   },
   {
-    id: 'pause_production',
-    name: 'Pause Production',
-    gesture: 'swipe_left',
+    id: "pause_production",
+    name: "Pause Production",
+    gesture: "swipe_left",
     icon: <Pause className="w-6 h-6" />,
-    color: 'bg-yellow-500',
-    description: 'Swipe left to pause production',
-    endpoint: '/api/production/pause'
+    color: "bg-yellow-500",
+    description: "Swipe left to pause production",
+    endpoint: "/api/production/pause",
   },
   {
-    id: 'report_issue',
-    name: 'Report Issue',
-    gesture: 'swipe_up',
+    id: "report_issue",
+    name: "Report Issue",
+    gesture: "swipe_up",
     icon: <AlertTriangle className="w-6 h-6" />,
-    color: 'bg-red-500',
-    description: 'Swipe up to report an issue',
-    endpoint: '/api/issues'
+    color: "bg-red-500",
+    description: "Swipe up to report an issue",
+    endpoint: "/api/issues",
   },
   {
-    id: 'mark_complete',
-    name: 'Mark Complete',
-    gesture: 'swipe_down',
+    id: "mark_complete",
+    name: "Mark Complete",
+    gesture: "swipe_down",
     icon: <CheckCircle className="w-6 h-6" />,
-    color: 'bg-blue-500',
-    description: 'Swipe down to mark task complete',
-    endpoint: '/api/tasks/complete'
+    color: "bg-blue-500",
+    description: "Swipe down to mark task complete",
+    endpoint: "/api/tasks/complete",
   },
   {
-    id: 'quality_check',
-    name: 'Quality Check',
-    gesture: 'double_tap',
+    id: "quality_check",
+    name: "Quality Check",
+    gesture: "double_tap",
     icon: <XCircle className="w-6 h-6" />,
-    color: 'bg-purple-500',
-    description: 'Double tap for quality check',
-    endpoint: '/api/quality-checks'
+    color: "bg-purple-500",
+    description: "Double tap for quality check",
+    endpoint: "/api/quality-checks",
   },
   {
-    id: 'reset_machine',
-    name: 'Reset Machine',
-    gesture: 'long_press',
+    id: "reset_machine",
+    name: "Reset Machine",
+    gesture: "long_press",
     icon: <RotateCcw className="w-6 h-6" />,
-    color: 'bg-orange-500',
-    description: 'Long press to reset machine',
-    endpoint: '/api/machines/reset'
-  }
+    color: "bg-orange-500",
+    description: "Long press to reset machine",
+    endpoint: "/api/machines/reset",
+  },
 ];
 
 interface TouchPoint {
@@ -109,20 +109,30 @@ export function GestureInterface() {
 
   // Mutation for executing actions
   const executeActionMutation = useMutation({
-    mutationFn: async ({ actionId, payload }: { actionId: string; payload?: any }) => {
-      const action = GESTURE_ACTIONS.find(a => a.id === actionId);
+    mutationFn: async ({
+      actionId,
+      payload,
+    }: {
+      actionId: string;
+      payload?: any;
+    }) => {
+      const action = GESTURE_ACTIONS.find((a) => a.id === actionId);
       if (!action?.endpoint) return;
 
-      return apiRequest('POST', action.endpoint, payload || {
-        timestamp: new Date().toISOString(),
-        source: 'gesture_interface'
-      });
+      return apiRequest(
+        "POST",
+        action.endpoint,
+        payload || {
+          timestamp: new Date().toISOString(),
+          source: "gesture_interface",
+        },
+      );
     },
     onSuccess: (data, variables) => {
-      const action = GESTURE_ACTIONS.find(a => a.id === variables.actionId);
-      queryClient.invalidateQueries({ queryKey: ['/api/production'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/quality-checks'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/job-orders'] });
+      const action = GESTURE_ACTIONS.find((a) => a.id === variables.actionId);
+      queryClient.invalidateQueries({ queryKey: ["/api/production"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/quality-checks"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/job-orders"] });
 
       toast({
         title: "Action Completed",
@@ -131,7 +141,7 @@ export function GestureInterface() {
       });
     },
     onError: (error, variables) => {
-      const action = GESTURE_ACTIONS.find(a => a.id === variables.actionId);
+      const action = GESTURE_ACTIONS.find((a) => a.id === variables.actionId);
       console.error(`Failed to execute ${action?.name}:`, error);
 
       toast({
@@ -140,7 +150,7 @@ export function GestureInterface() {
         variant: "destructive",
         duration: 3000,
       });
-    }
+    },
   });
 
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -151,7 +161,7 @@ export function GestureInterface() {
     const touchPoint: TouchPoint = {
       x: touch.clientX,
       y: touch.clientY,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     };
 
     setTouchStart(touchPoint);
@@ -161,7 +171,7 @@ export function GestureInterface() {
     // Start long press timer
     longPressTimer.current = setTimeout(() => {
       setIsLongPress(true);
-      executeAction('reset_machine');
+      executeAction("reset_machine");
       navigator.vibrate?.(200); // Haptic feedback
     }, 800);
   };
@@ -174,7 +184,7 @@ export function GestureInterface() {
     setTouchEnd({
       x: touch.clientX,
       y: touch.clientY,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   };
 
@@ -213,20 +223,20 @@ export function GestureInterface() {
     if (Math.abs(deltaX) > Math.abs(deltaY)) {
       // Horizontal swipe
       if (deltaX > 0) {
-        executeAction('start_production');
-        setDetectedGesture('swipe_right');
+        executeAction("start_production");
+        setDetectedGesture("swipe_right");
       } else {
-        executeAction('pause_production');
-        setDetectedGesture('swipe_left');
+        executeAction("pause_production");
+        setDetectedGesture("swipe_left");
       }
     } else {
       // Vertical swipe
       if (deltaY < 0) {
-        executeAction('report_issue');
-        setDetectedGesture('swipe_up');
+        executeAction("report_issue");
+        setDetectedGesture("swipe_up");
       } else {
-        executeAction('mark_complete');
-        setDetectedGesture('swipe_down');
+        executeAction("mark_complete");
+        setDetectedGesture("swipe_down");
       }
     }
 
@@ -234,7 +244,7 @@ export function GestureInterface() {
   };
 
   const handleTap = () => {
-    setTapCount(prev => prev + 1);
+    setTapCount((prev) => prev + 1);
 
     if (doubleTapTimer.current) {
       clearTimeout(doubleTapTimer.current);
@@ -242,8 +252,8 @@ export function GestureInterface() {
 
     doubleTapTimer.current = setTimeout(() => {
       if (tapCount + 1 >= 2) {
-        executeAction('quality_check');
-        setDetectedGesture('double_tap');
+        executeAction("quality_check");
+        setDetectedGesture("double_tap");
         navigator.vibrate?.(150);
       }
       setTapCount(0);
@@ -251,7 +261,7 @@ export function GestureInterface() {
   };
 
   const executeAction = (actionId: string) => {
-    const action = GESTURE_ACTIONS.find(a => a.id === actionId);
+    const action = GESTURE_ACTIONS.find((a) => a.id === actionId);
     if (!action) return;
 
     setLastAction(action.name);
@@ -298,9 +308,9 @@ export function GestureInterface() {
               ref={gestureAreaRef}
               className={`
                 relative w-full h-64 border-2 border-dashed rounded-lg
-                ${isActive ? 'border-blue-500 bg-blue-50' : 'border-gray-300 bg-gray-50'}
+                ${isActive ? "border-blue-500 bg-blue-50" : "border-gray-300 bg-gray-50"}
                 flex items-center justify-center touch-none select-none
-                ${executeActionMutation.isPending ? 'opacity-50' : ''}
+                ${executeActionMutation.isPending ? "opacity-50" : ""}
               `}
               onTouchStart={handleTouchStart}
               onTouchMove={handleTouchMove}
@@ -316,7 +326,7 @@ export function GestureInterface() {
                   ) : detectedGesture ? (
                     <div className="space-y-2">
                       <Badge variant="secondary" className="text-lg p-2">
-                        {detectedGesture.replace('_', ' ').toUpperCase()}
+                        {detectedGesture.replace("_", " ").toUpperCase()}
                       </Badge>
                       {lastAction && (
                         <p className="text-sm text-gray-600">{lastAction}</p>
@@ -335,7 +345,9 @@ export function GestureInterface() {
                 </div>
               ) : (
                 <div className="text-center">
-                  <p className="text-gray-500">Tap "Enable" to activate gesture controls</p>
+                  <p className="text-gray-500">
+                    Tap "Enable" to activate gesture controls
+                  </p>
                 </div>
               )}
             </div>
@@ -344,7 +356,9 @@ export function GestureInterface() {
             {isActive && (
               <div className="text-center space-y-2">
                 <Badge variant={detectedGesture ? "default" : "outline"}>
-                  {detectedGesture ? `Last: ${detectedGesture}` : "Ready for gestures"}
+                  {detectedGesture
+                    ? `Last: ${detectedGesture}`
+                    : "Ready for gestures"}
                 </Badge>
                 {executeActionMutation.isPending && (
                   <Badge variant="secondary">Processing...</Badge>
@@ -375,12 +389,24 @@ export function GestureInterface() {
                   <p className="text-sm text-gray-500">{action.description}</p>
                 </div>
                 <div className="text-right">
-                  {action.gesture === 'swipe_right' && <ArrowRight className="w-4 h-4" />}
-                  {action.gesture === 'swipe_left' && <ArrowLeft className="w-4 h-4" />}
-                  {action.gesture === 'swipe_up' && <ArrowUp className="w-4 h-4" />}
-                  {action.gesture === 'swipe_down' && <ArrowDown className="w-4 h-4" />}
-                  {action.gesture === 'double_tap' && <span className="text-xs">2x</span>}
-                  {action.gesture === 'long_press' && <span className="text-xs">⌐</span>}
+                  {action.gesture === "swipe_right" && (
+                    <ArrowRight className="w-4 h-4" />
+                  )}
+                  {action.gesture === "swipe_left" && (
+                    <ArrowLeft className="w-4 h-4" />
+                  )}
+                  {action.gesture === "swipe_up" && (
+                    <ArrowUp className="w-4 h-4" />
+                  )}
+                  {action.gesture === "swipe_down" && (
+                    <ArrowDown className="w-4 h-4" />
+                  )}
+                  {action.gesture === "double_tap" && (
+                    <span className="text-xs">2x</span>
+                  )}
+                  {action.gesture === "long_press" && (
+                    <span className="text-xs">⌐</span>
+                  )}
                 </div>
               </div>
             ))}

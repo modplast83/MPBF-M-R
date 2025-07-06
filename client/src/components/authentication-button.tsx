@@ -48,10 +48,7 @@ export function AuthenticationButton() {
               )}
             </div>
           </div>
-          <DropdownMenuItem
-            className="cursor-pointer"
-            onClick={() => logout()}
-          >
+          <DropdownMenuItem className="cursor-pointer" onClick={() => logout()}>
             Logout
           </DropdownMenuItem>
         </DropdownMenuContent>
@@ -60,8 +57,6 @@ export function AuthenticationButton() {
   }
 
   return (
-    <Button onClick={() => window.location.href = "/auth"}>
-      Login
-    </Button>
+    <Button onClick={() => (window.location.href = "/auth")}>Login</Button>
   );
 }

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, ReactNode } from 'react';
+import React, { createContext, useContext, ReactNode } from "react";
 
 interface DragDropContextType {
   // Placeholder for future drag and drop functionality
@@ -22,7 +22,7 @@ export function DragDropProvider({ children }: DragDropProviderProps) {
 export function useDragDrop() {
   const context = useContext(DragDropContextProvider);
   if (!context) {
-    throw new Error('useDragDrop must be used within a DragDropProvider');
+    throw new Error("useDragDrop must be used within a DragDropProvider");
   }
   return context;
 }

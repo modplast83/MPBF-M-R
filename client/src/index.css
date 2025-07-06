@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;600;700&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -7,22 +7,22 @@
 @layer base {
   /* Arabic font styling */
   .font-arabic {
-    font-family: 'Noto Sans Arabic', 'Times New Roman', serif;
+    font-family: "Noto Sans Arabic", "Times New Roman", serif;
     direction: rtl;
   }
-  
+
   /* Enhanced responsive design for mobile forms */
   @media (max-width: 640px) {
     .customer-form-container {
       padding: 1rem;
     }
-    
+
     .customer-form-input input,
     .customer-form-input select {
       font-size: 16px !important; /* Prevents zoom on iOS */
     }
   }
-  
+
   /* Better text alignment for Arabic RTL content */
   .rtl-content {
     text-align: center;
@@ -40,17 +40,22 @@
       background-position: 200% 0;
     }
   }
-  
+
   .animate-shimmer {
     animation: shimmer 2s ease-in-out infinite;
   }
-  
+
   /* Enhanced bounce animation for new rows */
   @keyframes gentle-bounce {
-    0%, 20%, 53%, 80%, 100% {
+    0%,
+    20%,
+    53%,
+    80%,
+    100% {
       transform: translate3d(0, 0, 0);
     }
-    40%, 43% {
+    40%,
+    43% {
       transform: translate3d(0, -5px, 0);
     }
     70% {
@@ -60,35 +65,37 @@
       transform: translate3d(0, -1px, 0);
     }
   }
-  
+
   .animate-gentle-bounce {
     animation: gentle-bounce 1s ease-in-out;
   }
-  
+
   /* Smooth scale animation for interactive elements */
   @keyframes pulse-scale {
-    0%, 100% {
+    0%,
+    100% {
       transform: scale(1);
     }
     50% {
       transform: scale(1.02);
     }
   }
-  
+
   .animate-pulse-scale {
     animation: pulse-scale 2s ease-in-out infinite;
   }
-  
+
   /* Gradient background animation */
   @keyframes gradient-shift {
-    0%, 100% {
+    0%,
+    100% {
       background-position: 0% 50%;
     }
     50% {
       background-position: 100% 50%;
     }
   }
-  
+
   .animate-gradient {
     background-size: 200% 200%;
     animation: gradient-shift 3s ease infinite;
@@ -103,80 +110,80 @@
   body {
     @apply font-sans antialiased bg-background text-foreground;
   }
-  
+
   /* RTL language support */
   body.rtl {
     direction: rtl;
     text-align: right;
   }
-  
+
   /* RTL for HTML element */
   html[dir="rtl"] {
     direction: rtl;
     text-align: right;
   }
-  
+
   /* Flip icons and other direction-dependent elements in RTL mode */
   body.rtl .material-icons.flip-in-rtl,
   html[dir="rtl"] .material-icons.flip-in-rtl {
     transform: scaleX(-1);
   }
-  
+
   /* Adjust padding/margin for RTL */
   body.rtl .rtl-swap-padding,
   html[dir="rtl"] .rtl-swap-padding {
     @apply pl-0 pr-4;
   }
-  
+
   body:not(.rtl) .rtl-swap-padding,
   html:not([dir="rtl"]) .rtl-swap-padding {
     @apply pr-0 pl-4;
   }
-  
+
   /* Adjust margins for RTL */
   body.rtl .rtl-swap-margin,
   html[dir="rtl"] .rtl-swap-margin {
     @apply ml-0 mr-4;
   }
-  
+
   body:not(.rtl) .rtl-swap-margin,
   html:not([dir="rtl"]) .rtl-swap-margin {
     @apply mr-0 ml-4;
   }
-  
+
   /* RTL utility classes */
   .rtl\:flex-row-reverse {
     @apply flex-row-reverse;
   }
-  
+
   /* General RTL/LTR classes */
   .rtl {
     direction: rtl;
     text-align: right;
   }
-  
+
   .ltr {
     direction: ltr;
     text-align: left;
   }
-  
+
   .flip-in-rtl {
     transform: scaleX(-1);
   }
-  
+
   /* Print specific styles */
   @media print {
     /* Hide everything except the printable content */
     body * {
       visibility: hidden;
     }
-    
+
     /* Only show the print area */
     .print\:block,
     .print\:block * {
       visibility: visible !important;
     }
-    
+
     /* Set the print dimensions and page break behavior */
     .printable-label {
       position: absolute;
@@ -191,9 +198,10 @@
       background-color: white !important;
       color: black !important;
     }
-    
+
     /* Hide scrollbars and other UI elements */
-    html, body {
+    html,
+    body {
       overflow: hidden !important;
       background-color: white !important;
       width: 4in !important;

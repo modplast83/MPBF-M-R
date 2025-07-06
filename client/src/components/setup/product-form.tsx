@@ -23,7 +23,13 @@ import {
 import { toast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { API_ENDPOINTS } from "@/lib/constants";
-import { insertCustomerProductSchema, CustomerProduct, Customer, Category, Item } from "@shared/schema";
+import {
+  insertCustomerProductSchema,
+  CustomerProduct,
+  Customer,
+  Category,
+  Item,
+} from "@shared/schema";
 
 interface ProductFormProps {
   product?: CustomerProduct;
@@ -32,27 +38,37 @@ interface ProductFormProps {
   isDuplicate?: boolean;
 }
 
-export function ProductForm({ product, onSuccess, preSelectedCustomerId, isDuplicate = false }: ProductFormProps) {
+export function ProductForm({
+  product,
+  onSuccess,
+  preSelectedCustomerId,
+  isDuplicate = false,
+}: ProductFormProps) {
   const queryClient = useQueryClient();
   const isEditing = !!product && !isDuplicate;
-  
+
   // Fetch required data
-  const { data: customers = [], isLoading: customersLoading } = useQuery<Customer[]>({
+  const { data: customers = [], isLoading: customersLoading } = useQuery<
+    Customer[]
+  >({
     queryKey: [API_ENDPOINTS.CUSTOMERS],
   });
-  
-  const { data: categories = [], isLoading: categoriesLoading } = useQuery<Category[]>({
+
+  const { data: categories = [], isLoading: categoriesLoading } = useQuery<
+    Category[]
+  >({
     queryKey: [API_ENDPOINTS.CATEGORIES],
   });
-  
+
   const { data: items = [], isLoading: itemsLoading } = useQuery<Item[]>({
     queryKey: [API_ENDPOINTS.ITEMS],
   });
-  
-  const { data: masterBatches = [], isLoading: masterBatchesLoading } = useQuery<any[]>({
-    queryKey: [API_ENDPOINTS.MASTER_BATCHES],
-  });
-  
+
+  const { data: masterBatches = [], isLoading: masterBatchesLoading } =
+    useQuery<any[]>({
+      queryKey: [API_ENDPOINTS.MASTER_BATCHES],
+    });
+
   // Create a simplified schema for the form
   const formSchema = z.object({
     customerId: z.string().min(1, "Customer is required"),
@@ -81,7 +97,7 @@ export function ProductForm({ product, onSuccess, preSelectedCustomerId, isDupli
     knife: z.string().nullable().optional(),
     notes: z.string().nullable().optional(),
   });
-  
+
   // Set up the form
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -96,7 +112,10 @@ export function ProductForm({ product, onSuccess, preSelectedCustomerId, isDupli
       thickness: product?.thickness || undefined,
       thicknessOne: product?.thicknessOne || undefined,
       printingCylinder: product?.printingCylinder || null,
-      lengthCm: product?.lengthCm === null || product?.lengthCm === undefined ? "Not Printed" : product?.lengthCm,
+      lengthCm:
+        product?.lengthCm === null || product?.lengthCm === undefined
+          ? "Not Printed"
+          : product?.lengthCm,
       cuttingLength: product?.cuttingLength || undefined,
       rawMaterial: product?.rawMaterial || "",
       masterBatchId: product?.masterBatchId || "none",
@@ -113,10 +132,10 @@ export function ProductForm({ product, onSuccess, preSelectedCustomerId, isDupli
       notes: product?.notes || null,
     },
   });
-  
+
   // Auto-calculate Thickness One when Thickness changes
   const watchedThickness = form.watch("thickness");
-  
+
   useEffect(() => {
     if (watchedThickness !== undefined && watchedThickness > 0) {
       const calculatedThicknessOne = (watchedThickness / 4) * 10;
@@ -126,9 +145,13 @@ export function ProductForm({ product, onSuccess, preSelectedCustomerId, isDupli
 
   // Auto-calculate Length (cm) when Printing Cylinder changes
   const watchedPrintingCylinder = form.watch("printingCylinder");
-  
+
   useEffect(() => {
-    if (watchedPrintingCylinder !== undefined && watchedPrintingCylinder !== null && watchedPrintingCylinder > 0) {
+    if (
+      watchedPrintingCylinder !== undefined &&
+      watchedPrintingCylinder !== null &&
+      watchedPrintingCylinder > 0
+    ) {
       const calculatedLength = Math.round(watchedPrintingCylinder * 2.54);
       form.setValue("lengthCm", calculatedLength);
     } else if (watchedPrintingCylinder === null) {
@@ -151,7 +174,7 @@ export function ProductForm({ product, onSuccess, preSelectedCustomerId, isDupli
 
     if (width !== undefined && width > 0) {
       let sizeCaption = "";
-      
+
       // If both Right F and Left F are null or 0, size caption = Width
       if (rightF === 0 && leftF === 0) {
         sizeCaption = width.toString();
@@ -163,7 +186,7 @@ export function ProductForm({ product, onSuccess, preSelectedCustomerId, isDupli
         if (leftF > 0) parts.push(leftF.toString());
         sizeCaption = parts.join("+");
       }
-      
+
       form.setValue("sizeCaption", sizeCaption);
     }
   }, [watchedWidth, watchedLeftF, watchedRightF, form]);
@@ -181,29 +204,46 @@ export function ProductForm({ product, onSuccess, preSelectedCustomerId, isDupli
       form.setValue("packageKg", packageKg);
     }
   }, [watchedUnitWeight, watchedUnitQty, form]);
-  
+
   useEffect(() => {
     if (
-      watchedRightF !== undefined && 
-      watchedWidth !== undefined && 
+      watchedRightF !== undefined &&
+      watchedWidth !== undefined &&
       watchedLeftF !== undefined &&
-      watchedLengthCm !== undefined && 
+      watchedLengthCm !== undefined &&
       watchedThicknessOne !== undefined &&
-      watchedRightF > 0 && watchedWidth > 0 && watchedLeftF > 0 && 
-      watchedLengthCm > 0 && watchedThicknessOne > 0
+      watchedRightF > 0 &&
+      watchedWidth > 0 &&
+      watchedLeftF > 0 &&
+      watchedLengthCm > 0 &&
+      watchedThicknessOne > 0
     ) {
-      const calculatedVolume = ((watchedRightF + watchedWidth + watchedLeftF) * watchedLengthCm * 2 * watchedThicknessOne) / 1000;
+      const calculatedVolume =
+        ((watchedRightF + watchedWidth + watchedLeftF) *
+          watchedLengthCm *
+          2 *
+          watchedThicknessOne) /
+        1000;
       form.setValue("volum", calculatedVolume.toFixed(2));
     }
-  }, [watchedRightF, watchedWidth, watchedLeftF, watchedLengthCm, watchedThicknessOne, form]);
+  }, [
+    watchedRightF,
+    watchedWidth,
+    watchedLeftF,
+    watchedLengthCm,
+    watchedThicknessOne,
+    form,
+  ]);
 
   // Auto-calculate Size Caption when dimensions change
   useEffect(() => {
     if (
-      watchedWidth !== undefined && 
-      watchedLeftF !== undefined && 
+      watchedWidth !== undefined &&
+      watchedLeftF !== undefined &&
       watchedRightF !== undefined &&
-      watchedWidth > 0 && watchedLeftF > 0 && watchedRightF > 0
+      watchedWidth > 0 &&
+      watchedLeftF > 0 &&
+      watchedRightF > 0
     ) {
       const calculatedSizeCaption = `${watchedWidth}+${watchedLeftF}+${watchedRightF}`;
       form.setValue("sizeCaption", calculatedSizeCaption);
@@ -212,8 +252,9 @@ export function ProductForm({ product, onSuccess, preSelectedCustomerId, isDupli
 
   // Filter items based on selected category
   const watchedCategoryId = form.watch("categoryId");
-  const filteredItems = items?.filter(item => item.categoryId === watchedCategoryId) || [];
-  
+  const filteredItems =
+    items?.filter((item) => item.categoryId === watchedCategoryId) || [];
+
   // Create mutation for adding/updating product
   const mutation = useMutation({
     mutationFn: async (values: z.infer<typeof formSchema>) => {
@@ -224,16 +265,37 @@ export function ProductForm({ product, onSuccess, preSelectedCustomerId, isDupli
         width: values.width !== undefined ? Number(values.width) : undefined,
         leftF: values.leftF !== undefined ? Number(values.leftF) : undefined,
         rightF: values.rightF !== undefined ? Number(values.rightF) : undefined,
-        thickness: values.thickness !== undefined ? Number(values.thickness) : undefined,
-        thicknessOne: values.thicknessOne !== undefined ? Number(values.thicknessOne) : undefined,
-        printingCylinder: values.printingCylinder !== undefined && values.printingCylinder !== null ? Number(values.printingCylinder) : null,
-        lengthCm: values.lengthCm === "Not Printed" ? null : (values.lengthCm !== undefined && typeof values.lengthCm === 'number' ? Number(values.lengthCm) : undefined),
-        cuttingLength: values.cuttingLength !== undefined ? Number(values.cuttingLength) : undefined,
-        unitWeight: values.unitWeight !== undefined ? Number(values.unitWeight) : undefined,
-        
+        thickness:
+          values.thickness !== undefined ? Number(values.thickness) : undefined,
+        thicknessOne:
+          values.thicknessOne !== undefined
+            ? Number(values.thicknessOne)
+            : undefined,
+        printingCylinder:
+          values.printingCylinder !== undefined &&
+          values.printingCylinder !== null
+            ? Number(values.printingCylinder)
+            : null,
+        lengthCm:
+          values.lengthCm === "Not Printed"
+            ? null
+            : values.lengthCm !== undefined &&
+                typeof values.lengthCm === "number"
+              ? Number(values.lengthCm)
+              : undefined,
+        cuttingLength:
+          values.cuttingLength !== undefined
+            ? Number(values.cuttingLength)
+            : undefined,
+        unitWeight:
+          values.unitWeight !== undefined
+            ? Number(values.unitWeight)
+            : undefined,
+
         // Handle masterBatchId correctly
-        masterBatchId: values.masterBatchId === "none" ? undefined : values.masterBatchId,
-        
+        masterBatchId:
+          values.masterBatchId === "none" ? undefined : values.masterBatchId,
+
         // Ensure text fields are never null or undefined
         sizeCaption: values.sizeCaption || "",
         rawMaterial: values.rawMaterial || "",
@@ -246,13 +308,17 @@ export function ProductForm({ product, onSuccess, preSelectedCustomerId, isDupli
         knife: values.knife || "",
         notes: values.notes || "",
       };
-      
+
       console.log("Submitting customer product with payload:", payload);
-      
+
       try {
         if (isEditing && product && !isDuplicate) {
           // Only do an update if we're editing and not duplicating
-          await apiRequest("PUT", `${API_ENDPOINTS.CUSTOMER_PRODUCTS}/${product.id}`, payload);
+          await apiRequest(
+            "PUT",
+            `${API_ENDPOINTS.CUSTOMER_PRODUCTS}/${product.id}`,
+            payload,
+          );
         } else {
           // For both new products and duplications, create a new record
           await apiRequest("POST", API_ENDPOINTS.CUSTOMER_PRODUCTS, payload);
@@ -263,12 +329,14 @@ export function ProductForm({ product, onSuccess, preSelectedCustomerId, isDupli
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [API_ENDPOINTS.CUSTOMER_PRODUCTS] });
-      
+      queryClient.invalidateQueries({
+        queryKey: [API_ENDPOINTS.CUSTOMER_PRODUCTS],
+      });
+
       // Determine the appropriate success message based on the operation type
       let actionTitle = "Created";
       let actionDescription = "created";
-      
+
       if (isDuplicate) {
         actionTitle = "Duplicated";
         actionDescription = "duplicated";
@@ -276,12 +344,12 @@ export function ProductForm({ product, onSuccess, preSelectedCustomerId, isDupli
         actionTitle = "Updated";
         actionDescription = "updated";
       }
-      
+
       toast({
         title: `Product ${actionTitle}`,
         description: `The product has been ${actionDescription} successfully.`,
       });
-      
+
       form.reset();
       if (onSuccess) onSuccess();
     },
@@ -293,7 +361,7 @@ export function ProductForm({ product, onSuccess, preSelectedCustomerId, isDupli
       } else if (isEditing) {
         actionType = "update";
       }
-      
+
       toast({
         title: "Error",
         description: `Failed to ${actionType} product: ${error}`,
@@ -301,14 +369,18 @@ export function ProductForm({ product, onSuccess, preSelectedCustomerId, isDupli
       });
     },
   });
-  
+
   // Form submission handler
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     mutation.mutate(values);
   };
-  
-  const isLoading = customersLoading || categoriesLoading || itemsLoading || masterBatchesLoading;
-  
+
+  const isLoading =
+    customersLoading ||
+    categoriesLoading ||
+    itemsLoading ||
+    masterBatchesLoading;
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -341,7 +413,7 @@ export function ProductForm({ product, onSuccess, preSelectedCustomerId, isDupli
               </FormItem>
             )}
           />
-          
+
           <FormField
             control={form.control}
             name="categoryId"
@@ -370,7 +442,7 @@ export function ProductForm({ product, onSuccess, preSelectedCustomerId, isDupli
               </FormItem>
             )}
           />
-          
+
           <FormField
             control={form.control}
             name="itemId"
@@ -384,7 +456,13 @@ export function ProductForm({ product, onSuccess, preSelectedCustomerId, isDupli
                 >
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder={watchedCategoryId ? "Select item" : "Select category first"} />
+                      <SelectValue
+                        placeholder={
+                          watchedCategoryId
+                            ? "Select item"
+                            : "Select category first"
+                        }
+                      />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
@@ -399,7 +477,7 @@ export function ProductForm({ product, onSuccess, preSelectedCustomerId, isDupli
               </FormItem>
             )}
           />
-          
+
           <FormField
             control={form.control}
             name="sizeCaption"
@@ -407,7 +485,7 @@ export function ProductForm({ product, onSuccess, preSelectedCustomerId, isDupli
               <FormItem>
                 <FormLabel>Size Caption (Auto-calculated)</FormLabel>
                 <FormControl>
-                  <Input 
+                  <Input
                     placeholder="Auto-calculated from dimensions"
                     {...field}
                     value={field.value || ""}
@@ -420,7 +498,7 @@ export function ProductForm({ product, onSuccess, preSelectedCustomerId, isDupli
             )}
           />
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <FormField
             control={form.control}
@@ -429,18 +507,22 @@ export function ProductForm({ product, onSuccess, preSelectedCustomerId, isDupli
               <FormItem>
                 <FormLabel>Right F</FormLabel>
                 <FormControl>
-                  <Input 
-                    type="number" 
-                    placeholder="Right F" 
+                  <Input
+                    type="number"
+                    placeholder="Right F"
                     {...field}
-                    onChange={(e) => field.onChange(e.target.value ? parseFloat(e.target.value) : undefined)}
+                    onChange={(e) =>
+                      field.onChange(
+                        e.target.value ? parseFloat(e.target.value) : undefined,
+                      )
+                    }
                   />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          
+
           <FormField
             control={form.control}
             name="width"
@@ -448,18 +530,22 @@ export function ProductForm({ product, onSuccess, preSelectedCustomerId, isDupli
               <FormItem>
                 <FormLabel>Width</FormLabel>
                 <FormControl>
-                  <Input 
-                    type="number" 
-                    placeholder="Width" 
+                  <Input
+                    type="number"
+                    placeholder="Width"
                     {...field}
-                    onChange={(e) => field.onChange(e.target.value ? parseFloat(e.target.value) : undefined)}
+                    onChange={(e) =>
+                      field.onChange(
+                        e.target.value ? parseFloat(e.target.value) : undefined,
+                      )
+                    }
                   />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          
+
           <FormField
             control={form.control}
             name="leftF"
@@ -467,11 +553,15 @@ export function ProductForm({ product, onSuccess, preSelectedCustomerId, isDupli
               <FormItem>
                 <FormLabel>Left F</FormLabel>
                 <FormControl>
-                  <Input 
-                    type="number" 
-                    placeholder="Left F" 
+                  <Input
+                    type="number"
+                    placeholder="Left F"
                     {...field}
-                    onChange={(e) => field.onChange(e.target.value ? parseFloat(e.target.value) : undefined)}
+                    onChange={(e) =>
+                      field.onChange(
+                        e.target.value ? parseFloat(e.target.value) : undefined,
+                      )
+                    }
                   />
                 </FormControl>
                 <FormMessage />
@@ -479,7 +569,7 @@ export function ProductForm({ product, onSuccess, preSelectedCustomerId, isDupli
             )}
           />
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <FormField
             control={form.control}
@@ -488,18 +578,22 @@ export function ProductForm({ product, onSuccess, preSelectedCustomerId, isDupli
               <FormItem>
                 <FormLabel>Thickness</FormLabel>
                 <FormControl>
-                  <Input 
-                    type="number" 
-                    placeholder="Thickness" 
+                  <Input
+                    type="number"
+                    placeholder="Thickness"
                     {...field}
-                    onChange={(e) => field.onChange(e.target.value ? parseFloat(e.target.value) : undefined)}
+                    onChange={(e) =>
+                      field.onChange(
+                        e.target.value ? parseFloat(e.target.value) : undefined,
+                      )
+                    }
                   />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          
+
           <FormField
             control={form.control}
             name="thicknessOne"
@@ -507,8 +601,8 @@ export function ProductForm({ product, onSuccess, preSelectedCustomerId, isDupli
               <FormItem>
                 <FormLabel>Thickness One (Auto-calculated)</FormLabel>
                 <FormControl>
-                  <Input 
-                    type="number" 
+                  <Input
+                    type="number"
                     placeholder="Auto-calculated from thickness"
                     {...field}
                     value={field.value || ""}
@@ -520,7 +614,7 @@ export function ProductForm({ product, onSuccess, preSelectedCustomerId, isDupli
               </FormItem>
             )}
           />
-          
+
           <FormField
             control={form.control}
             name="printingCylinder"
@@ -544,7 +638,10 @@ export function ProductForm({ product, onSuccess, preSelectedCustomerId, isDupli
                   </FormControl>
                   <SelectContent>
                     <SelectItem value="non">Non</SelectItem>
-                    {[8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 39].map((size) => (
+                    {[
+                      8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36,
+                      38, 39,
+                    ].map((size) => (
                       <SelectItem key={size} value={size.toString()}>
                         {size}"
                       </SelectItem>
@@ -556,7 +653,7 @@ export function ProductForm({ product, onSuccess, preSelectedCustomerId, isDupli
             )}
           />
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <FormField
             control={form.control}
@@ -565,10 +662,14 @@ export function ProductForm({ product, onSuccess, preSelectedCustomerId, isDupli
               <FormItem>
                 <FormLabel>Length (cm) (Auto-calculated)</FormLabel>
                 <FormControl>
-                  <Input 
+                  <Input
                     placeholder="Auto-calculated from printing cylinder"
                     {...field}
-                    value={field.value === "Not Printed" ? "Not Printed" : (field.value || "")}
+                    value={
+                      field.value === "Not Printed"
+                        ? "Not Printed"
+                        : field.value || ""
+                    }
                     readOnly
                     className="bg-gray-50"
                   />
@@ -577,7 +678,7 @@ export function ProductForm({ product, onSuccess, preSelectedCustomerId, isDupli
               </FormItem>
             )}
           />
-          
+
           <FormField
             control={form.control}
             name="cuttingLength"
@@ -585,18 +686,22 @@ export function ProductForm({ product, onSuccess, preSelectedCustomerId, isDupli
               <FormItem>
                 <FormLabel>Cutting Length (cm)</FormLabel>
                 <FormControl>
-                  <Input 
-                    type="number" 
-                    placeholder="Cutting Length" 
+                  <Input
+                    type="number"
+                    placeholder="Cutting Length"
                     {...field}
-                    onChange={(e) => field.onChange(e.target.value ? parseFloat(e.target.value) : undefined)}
+                    onChange={(e) =>
+                      field.onChange(
+                        e.target.value ? parseFloat(e.target.value) : undefined,
+                      )
+                    }
                   />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          
+
           <FormField
             control={form.control}
             name="rawMaterial"
@@ -623,7 +728,7 @@ export function ProductForm({ product, onSuccess, preSelectedCustomerId, isDupli
             )}
           />
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <FormField
             control={form.control}
@@ -654,7 +759,7 @@ export function ProductForm({ product, onSuccess, preSelectedCustomerId, isDupli
               </FormItem>
             )}
           />
-          
+
           <FormField
             control={form.control}
             name="printed"
@@ -680,7 +785,7 @@ export function ProductForm({ product, onSuccess, preSelectedCustomerId, isDupli
             )}
           />
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <FormField
             control={form.control}
@@ -709,7 +814,7 @@ export function ProductForm({ product, onSuccess, preSelectedCustomerId, isDupli
               </FormItem>
             )}
           />
-          
+
           <FormField
             control={form.control}
             name="unitWeight"
@@ -717,11 +822,15 @@ export function ProductForm({ product, onSuccess, preSelectedCustomerId, isDupli
               <FormItem>
                 <FormLabel>Unit Weight (Kg)</FormLabel>
                 <FormControl>
-                  <Input 
-                    type="number" 
-                    placeholder="Unit Weight" 
+                  <Input
+                    type="number"
+                    placeholder="Unit Weight"
                     {...field}
-                    onChange={(e) => field.onChange(e.target.value ? parseFloat(e.target.value) : undefined)}
+                    onChange={(e) =>
+                      field.onChange(
+                        e.target.value ? parseFloat(e.target.value) : undefined,
+                      )
+                    }
                   />
                 </FormControl>
                 <FormMessage />
@@ -736,11 +845,15 @@ export function ProductForm({ product, onSuccess, preSelectedCustomerId, isDupli
               <FormItem>
                 <FormLabel>Unit Qty</FormLabel>
                 <FormControl>
-                  <Input 
-                    type="number" 
-                    placeholder="Unit Quantity" 
+                  <Input
+                    type="number"
+                    placeholder="Unit Quantity"
                     {...field}
-                    onChange={(e) => field.onChange(e.target.value ? parseFloat(e.target.value) : undefined)}
+                    onChange={(e) =>
+                      field.onChange(
+                        e.target.value ? parseFloat(e.target.value) : undefined,
+                      )
+                    }
                   />
                 </FormControl>
                 <FormMessage />
@@ -755,8 +868,8 @@ export function ProductForm({ product, onSuccess, preSelectedCustomerId, isDupli
               <FormItem>
                 <FormLabel>Package Kg (Auto-calculated)</FormLabel>
                 <FormControl>
-                  <Input 
-                    type="number" 
+                  <Input
+                    type="number"
                     placeholder="Auto-calculated from Unit Weight × Unit Qty"
                     {...field}
                     value={field.value || ""}
@@ -768,7 +881,7 @@ export function ProductForm({ product, onSuccess, preSelectedCustomerId, isDupli
               </FormItem>
             )}
           />
-          
+
           <FormField
             control={form.control}
             name="packing"
@@ -783,7 +896,7 @@ export function ProductForm({ product, onSuccess, preSelectedCustomerId, isDupli
             )}
           />
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <FormField
             control={form.control}
@@ -803,7 +916,9 @@ export function ProductForm({ product, onSuccess, preSelectedCustomerId, isDupli
                   <SelectContent>
                     <SelectItem value="None">None</SelectItem>
                     <SelectItem value="T-Shirt">T-Shirt</SelectItem>
-                    <SelectItem value="T-Shirt w/Hook">T-Shirt w/Hook</SelectItem>
+                    <SelectItem value="T-Shirt w/Hook">
+                      T-Shirt w/Hook
+                    </SelectItem>
                     <SelectItem value="Banana">Banana</SelectItem>
                   </SelectContent>
                 </Select>
@@ -811,7 +926,7 @@ export function ProductForm({ product, onSuccess, preSelectedCustomerId, isDupli
               </FormItem>
             )}
           />
-          
+
           <FormField
             control={form.control}
             name="cover"
@@ -825,7 +940,7 @@ export function ProductForm({ product, onSuccess, preSelectedCustomerId, isDupli
               </FormItem>
             )}
           />
-          
+
           <FormField
             control={form.control}
             name="volum"
@@ -833,7 +948,7 @@ export function ProductForm({ product, onSuccess, preSelectedCustomerId, isDupli
               <FormItem>
                 <FormLabel>Volume (cm³) (Auto-calculated)</FormLabel>
                 <FormControl>
-                  <Input 
+                  <Input
                     placeholder="Auto-calculated from dimensions"
                     {...field}
                     value={field.value || ""}
@@ -846,7 +961,7 @@ export function ProductForm({ product, onSuccess, preSelectedCustomerId, isDupli
             )}
           />
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <FormField
             control={form.control}
@@ -855,8 +970,8 @@ export function ProductForm({ product, onSuccess, preSelectedCustomerId, isDupli
               <FormItem>
                 <FormLabel>Knife</FormLabel>
                 <FormControl>
-                  <Input 
-                    placeholder="Knife" 
+                  <Input
+                    placeholder="Knife"
                     {...field}
                     value={field.value || ""}
                     onChange={(e) => field.onChange(e.target.value || null)}
@@ -866,7 +981,7 @@ export function ProductForm({ product, onSuccess, preSelectedCustomerId, isDupli
               </FormItem>
             )}
           />
-          
+
           <FormField
             control={form.control}
             name="notes"
@@ -874,8 +989,8 @@ export function ProductForm({ product, onSuccess, preSelectedCustomerId, isDupli
               <FormItem>
                 <FormLabel>Notes</FormLabel>
                 <FormControl>
-                  <Input 
-                    placeholder="Notes" 
+                  <Input
+                    placeholder="Notes"
                     {...field}
                     value={field.value || ""}
                     onChange={(e) => field.onChange(e.target.value || null)}
@@ -886,25 +1001,25 @@ export function ProductForm({ product, onSuccess, preSelectedCustomerId, isDupli
             )}
           />
         </div>
-        
+
         <div className="flex justify-end space-x-2 pt-4">
           {onSuccess && (
-            <Button
-              type="button"
-              variant="outline"
-              onClick={onSuccess}
-            >
+            <Button type="button" variant="outline" onClick={onSuccess}>
               Cancel
             </Button>
           )}
-          <Button
-            type="submit"
-            disabled={mutation.isPending}
-          >
+          <Button type="submit" disabled={mutation.isPending}>
             {mutation.isPending
-              ? isEditing ? "Updating..." : isDuplicate ? "Duplicating..." : "Creating..."
-              : isEditing ? "Update Product" : isDuplicate ? "Duplicate Product" : "Create Product"
-            }
+              ? isEditing
+                ? "Updating..."
+                : isDuplicate
+                  ? "Duplicating..."
+                  : "Creating..."
+              : isEditing
+                ? "Update Product"
+                : isDuplicate
+                  ? "Duplicate Product"
+                  : "Create Product"}
           </Button>
         </div>
       </form>

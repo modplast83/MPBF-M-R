@@ -1,29 +1,29 @@
 #!/usr/bin/env node
 
-import { build } from 'esbuild';
-import { writeFileSync, mkdirSync, existsSync, rmSync } from 'fs';
+import { build } from "esbuild";
+import { writeFileSync, mkdirSync, existsSync, rmSync } from "fs";
 
 async function buildProductionServer() {
   try {
-    console.log('Building production server...');
-    
+    console.log("Building production server...");
+
     // Clean and prepare dist directory
-    if (existsSync('dist')) {
-      rmSync('dist', { recursive: true, force: true });
+    if (existsSync("dist")) {
+      rmSync("dist", { recursive: true, force: true });
     }
-    mkdirSync('dist', { recursive: true });
+    mkdirSync("dist", { recursive: true });
 
     // Build only the server with ES module support
     await build({
-      entryPoints: ['server/index.ts'],
+      entryPoints: ["server/index.ts"],
       bundle: true,
-      platform: 'node',
-      target: 'node18',
-      format: 'esm',
-      outfile: 'dist/server.js',
-      packages: 'external',
-      mainFields: ['module', 'main'],
-      conditions: ['import', 'node'],
+      platform: "node",
+      target: "node18",
+      format: "esm",
+      outfile: "dist/server.js",
+      packages: "external",
+      mainFields: ["module", "main"],
+      conditions: ["import", "node"],
       banner: {
         js: `// Production ES Module Server
 import { createRequire } from 'module';
@@ -31,28 +31,28 @@ import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 const require = createRequire(import.meta.url);
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);`
+const __dirname = dirname(__filename);`,
       },
       define: {
-        'process.env.NODE_ENV': '"production"'
+        "process.env.NODE_ENV": '"production"',
       },
       external: [
-        'express',
-        'pg',
-        'drizzle-orm',
-        '@neondatabase/serverless',
-        'express-session',
-        'passport',
-        'passport-local',
-        'connect-pg-simple',
-        'express-fileupload',
-        '@sendgrid/mail',
-        'twilio',
-        'bcrypt',
-        'uuid',
-        'memorystore',
-        'ws'
-      ]
+        "express",
+        "pg",
+        "drizzle-orm",
+        "@neondatabase/serverless",
+        "express-session",
+        "passport",
+        "passport-local",
+        "connect-pg-simple",
+        "express-fileupload",
+        "@sendgrid/mail",
+        "twilio",
+        "bcrypt",
+        "uuid",
+        "memorystore",
+        "ws",
+      ],
     });
 
     // Create production entry point that handles deployment requirements
@@ -75,26 +75,25 @@ import('./server.js').catch(error => {
 });
 `;
 
-    writeFileSync('dist/index.js', entryScript);
+    writeFileSync("dist/index.js", entryScript);
 
     // Create package.json with proper ES module configuration
     const packageJson = {
-      type: 'module',
-      main: 'index.js',
+      type: "module",
+      main: "index.js",
       scripts: {
-        start: 'node index.js'
+        start: "node index.js",
       },
       engines: {
-        node: '>=18.0.0'
-      }
+        node: ">=18.0.0",
+      },
     };
-    writeFileSync('dist/package.json', JSON.stringify(packageJson, null, 2));
+    writeFileSync("dist/package.json", JSON.stringify(packageJson, null, 2));
 
-    console.log('Production server build completed!');
-    console.log('Ready for deployment with ES module support');
-    
+    console.log("Production server build completed!");
+    console.log("Ready for deployment with ES module support");
   } catch (error) {
-    console.error('Production build failed:', error);
+    console.error("Production build failed:", error);
     process.exit(1);
   }
 }

@@ -2,14 +2,14 @@ import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { format } from "date-fns";
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogHeader, 
-  DialogTitle, 
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
   DialogTrigger,
   DialogFooter,
-  DialogDescription
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,7 +18,7 @@ import {
   TableRow,
   TableHead,
   TableBody,
-  TableCell
+  TableCell,
 } from "@/components/ui/table";
 import {
   Select,
@@ -33,15 +33,15 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { Checkbox } from "@/components/ui/checkbox";
-import { 
-  Edit, 
-  Trash2, 
-  Plus, 
+import {
+  Edit,
+  Trash2,
+  Plus,
   Filter,
   Search,
   Eye,
   CheckCircle2,
-  Printer
+  Printer,
 } from "lucide-react";
 import { queryClient } from "@/lib/queryClient";
 import { useAuth } from "@/hooks/use-auth-v2";
@@ -49,7 +49,8 @@ import { useAuth } from "@/hooks/use-auth-v2";
 // Badge variants for success/warning states
 const badgeVariants = {
   success: "bg-green-500 text-white hover:bg-green-600",
-  destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/80"
+  destructive:
+    "bg-destructive text-destructive-foreground hover:bg-destructive/80",
 };
 
 export function QualityChecksManagement() {
@@ -70,23 +71,27 @@ export function QualityChecksManagement() {
     rollId: "none",
     jobOrderId: "none",
     performedBy: "",
-    checkDate: new Date().toISOString().split('T')[0],
+    checkDate: new Date().toISOString().split("T")[0],
     passed: true,
-    notes: ""
+    notes: "",
   });
 
   // Auto-set performedBy when user is available
   useEffect(() => {
     if (user && !formData.performedBy) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        performedBy: user.id
+        performedBy: user.id,
       }));
     }
   }, [user, formData.performedBy]);
 
   // Fetch quality checks
-  const { data: checks = [], isLoading: checksLoading, refetch: refetchChecks } = useQuery({
+  const {
+    data: checks = [],
+    isLoading: checksLoading,
+    refetch: refetchChecks,
+  } = useQuery({
     queryKey: ["/api/quality-checks"],
     queryFn: async () => {
       const response = await fetch("/api/quality-checks");
@@ -94,7 +99,7 @@ export function QualityChecksManagement() {
         throw new Error("Failed to fetch quality checks");
       }
       return response.json();
-    }
+    },
   });
 
   // Fetch check types
@@ -106,7 +111,7 @@ export function QualityChecksManagement() {
         throw new Error("Failed to fetch check types");
       }
       return response.json();
-    }
+    },
   });
 
   // Fetch rolls
@@ -118,7 +123,7 @@ export function QualityChecksManagement() {
         throw new Error("Failed to fetch rolls");
       }
       return response.json();
-    }
+    },
   });
 
   // Fetch job orders
@@ -130,7 +135,7 @@ export function QualityChecksManagement() {
         throw new Error("Failed to fetch job orders");
       }
       return response.json();
-    }
+    },
   });
 
   // Fetch orders for customer resolution
@@ -142,7 +147,7 @@ export function QualityChecksManagement() {
         throw new Error("Failed to fetch orders");
       }
       return response.json();
-    }
+    },
   });
 
   // Fetch users for dropdown selection
@@ -154,7 +159,7 @@ export function QualityChecksManagement() {
         throw new Error("Failed to fetch users");
       }
       return response.json();
-    }
+    },
   });
 
   // Fetch customers for better job order display
@@ -166,7 +171,7 @@ export function QualityChecksManagement() {
         throw new Error("Failed to fetch customers");
       }
       return response.json();
-    }
+    },
   });
 
   // Fetch customer products for better job order display
@@ -178,7 +183,7 @@ export function QualityChecksManagement() {
         throw new Error("Failed to fetch customer products");
       }
       return response.json();
-    }
+    },
   });
 
   // Fetch items for product name resolution
@@ -190,7 +195,7 @@ export function QualityChecksManagement() {
         throw new Error("Failed to fetch items");
       }
       return response.json();
-    }
+    },
   });
 
   // Create mutation
@@ -203,11 +208,11 @@ export function QualityChecksManagement() {
         },
         body: JSON.stringify(data),
       });
-      
+
       if (!response.ok) {
         throw new Error("Failed to create quality check");
       }
-      
+
       return response.json();
     },
     onSuccess: () => {
@@ -239,11 +244,11 @@ export function QualityChecksManagement() {
         },
         body: JSON.stringify(data),
       });
-      
+
       if (!response.ok) {
         throw new Error("Failed to update quality check");
       }
-      
+
       return response.json();
     },
     onSuccess: () => {
@@ -271,11 +276,11 @@ export function QualityChecksManagement() {
       const response = await fetch(`/api/quality-checks/${id}`, {
         method: "DELETE",
       });
-      
+
       if (!response.ok) {
         throw new Error("Failed to delete quality check");
       }
-      
+
       return response.json();
     },
     onSuccess: () => {
@@ -302,9 +307,9 @@ export function QualityChecksManagement() {
       rollId: "none",
       jobOrderId: "none",
       performedBy: user?.id || "",
-      checkDate: new Date().toISOString().split('T')[0],
+      checkDate: new Date().toISOString().split("T")[0],
       passed: true,
-      notes: ""
+      notes: "",
     });
     setFilteredRolls([]);
     setCurrentCheck(null);
@@ -312,18 +317,19 @@ export function QualityChecksManagement() {
 
   const handleCreateSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Map form data to proper database fields
     const dataToSubmit = {
       checkTypeId: formData.checkTypeId,
       rollId: formData.rollId === "none" ? null : formData.rollId,
-      jobOrderId: formData.jobOrderId === "none" ? null : parseInt(formData.jobOrderId),
+      jobOrderId:
+        formData.jobOrderId === "none" ? null : parseInt(formData.jobOrderId),
       performedBy: formData.performedBy,
-      status: formData.passed ? 'passed' : 'failed',
+      status: formData.passed ? "passed" : "failed",
       notes: formData.notes,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
-    
+
     console.log("Submitting quality check data:", dataToSubmit);
     createMutation.mutate(dataToSubmit);
   };
@@ -335,12 +341,13 @@ export function QualityChecksManagement() {
       const dataToSubmit = {
         checkTypeId: formData.checkTypeId,
         rollId: formData.rollId === "none" ? null : formData.rollId,
-        jobOrderId: formData.jobOrderId === "none" ? null : parseInt(formData.jobOrderId),
+        jobOrderId:
+          formData.jobOrderId === "none" ? null : parseInt(formData.jobOrderId),
         performedBy: formData.performedBy,
-        status: formData.passed ? 'passed' : 'failed',
-        notes: formData.notes
+        status: formData.passed ? "passed" : "failed",
+        notes: formData.notes,
       };
-      
+
       console.log("Updating quality check data:", dataToSubmit);
       updateMutation.mutate({ id: currentCheck.id, data: dataToSubmit });
     }
@@ -353,19 +360,27 @@ export function QualityChecksManagement() {
   };
 
   const handlePrintClick = (check: any) => {
-    const printWindow = window.open('', '_blank');
+    const printWindow = window.open("", "_blank");
     if (!printWindow) return;
 
-    const checkType = checkTypes.find(ct => ct.id === check.checkTypeId);
-    const jobOrder = jobOrders.find(jo => jo.id === check.jobOrderId);
-    let customer = jobOrder ? customers.find(c => c.id === jobOrder.customerId) : null;
+    const checkType = checkTypes.find((ct) => ct.id === check.checkTypeId);
+    const jobOrder = jobOrders.find((jo) => jo.id === check.jobOrderId);
+    let customer = jobOrder
+      ? customers.find((c) => c.id === jobOrder.customerId)
+      : null;
     if (!customer && jobOrder?.orderId) {
-      const order = orders.find(o => o.id === jobOrder.orderId);
-      customer = order ? customers.find(c => c.id === order.customerId) : null;
+      const order = orders.find((o) => o.id === jobOrder.orderId);
+      customer = order
+        ? customers.find((c) => c.id === order.customerId)
+        : null;
     }
-    const customerProduct = jobOrder ? customerProducts.find(p => p.id === jobOrder.customerProductId) : null;
-    const item = customerProduct ? items.find(i => i.id === customerProduct.itemId) : null;
-    const performer = users.find(u => u.id === check.performedBy);
+    const customerProduct = jobOrder
+      ? customerProducts.find((p) => p.id === jobOrder.customerProductId)
+      : null;
+    const item = customerProduct
+      ? items.find((i) => i.id === customerProduct.itemId)
+      : null;
+    const performer = users.find((u) => u.id === check.performedBy);
 
     const printContent = `
       <!DOCTYPE html>
@@ -457,19 +472,19 @@ export function QualityChecksManagement() {
             </div>
             <div class="detail-row">
               <div class="detail-label">Check Type:</div>
-              <div class="detail-value">${checkType?.name || 'Unknown'}</div>
+              <div class="detail-value">${checkType?.name || "Unknown"}</div>
             </div>
             <div class="detail-row">
               <div class="detail-label">Status:</div>
               <div class="detail-value">
-                <span class="${check.status === 'passed' ? 'status-passed' : 'status-failed'}">
-                  ${check.status === 'passed' ? 'PASSED' : 'FAILED'}
+                <span class="${check.status === "passed" ? "status-passed" : "status-failed"}">
+                  ${check.status === "passed" ? "PASSED" : "FAILED"}
                 </span>
               </div>
             </div>
             <div class="detail-row">
               <div class="detail-label">Date & Time:</div>
-              <div class="detail-value">${format(new Date(check.timestamp || check.checkDate), 'MMM dd, yyyy - HH:mm')}</div>
+              <div class="detail-value">${format(new Date(check.timestamp || check.checkDate), "MMM dd, yyyy - HH:mm")}</div>
             </div>
           </div>
 
@@ -477,35 +492,35 @@ export function QualityChecksManagement() {
             <div class="section-title">Production Details</div>
             <div class="detail-row">
               <div class="detail-label">Job Order:</div>
-              <div class="detail-value">${jobOrder ? `JO #${jobOrder.id}` : 'Not specified'}</div>
+              <div class="detail-value">${jobOrder ? `JO #${jobOrder.id}` : "Not specified"}</div>
             </div>
             <div class="detail-row">
               <div class="detail-label">Customer:</div>
-              <div class="detail-value">${customer?.name || 'Not specified'}</div>
+              <div class="detail-value">${customer?.name || "Not specified"}</div>
             </div>
             <div class="detail-row">
               <div class="detail-label">Product:</div>
-              <div class="detail-value">${item?.name || customerProduct?.sizeCaption || 'Not specified'}</div>
+              <div class="detail-value">${item?.name || customerProduct?.sizeCaption || "Not specified"}</div>
             </div>
             <div class="detail-row">
               <div class="detail-label">Roll ID:</div>
-              <div class="detail-value">${check.rollId || 'Not specified'}</div>
+              <div class="detail-value">${check.rollId || "Not specified"}</div>
             </div>
             <div class="detail-row">
               <div class="detail-label">Size Caption:</div>
-              <div class="detail-value">${customerProduct?.sizeCaption || 'Not specified'}</div>
+              <div class="detail-value">${customerProduct?.sizeCaption || "Not specified"}</div>
             </div>
             <div class="detail-row">
               <div class="detail-label">Thickness:</div>
-              <div class="detail-value">${customerProduct?.thickness ? `${customerProduct.thickness} mm` : 'Not specified'}</div>
+              <div class="detail-value">${customerProduct?.thickness ? `${customerProduct.thickness} mm` : "Not specified"}</div>
             </div>
             <div class="detail-row">
               <div class="detail-label">Length (cm):</div>
-              <div class="detail-value">${customerProduct?.lengthCm ? `${customerProduct.lengthCm} cm` : 'Not specified'}</div>
+              <div class="detail-value">${customerProduct?.lengthCm ? `${customerProduct.lengthCm} cm` : "Not specified"}</div>
             </div>
             <div class="detail-row">
               <div class="detail-label">Raw Material:</div>
-              <div class="detail-value">${customerProduct?.rawMaterial || 'Not specified'}</div>
+              <div class="detail-value">${customerProduct?.rawMaterial || "Not specified"}</div>
             </div>
           </div>
 
@@ -513,16 +528,16 @@ export function QualityChecksManagement() {
             <div class="section-title">Quality Control</div>
             <div class="detail-row">
               <div class="detail-label">Performed By:</div>
-              <div class="detail-value">${performer ? `${performer.firstName} ${performer.lastName}` : 'Unknown'}</div>
+              <div class="detail-value">${performer ? `${performer.firstName} ${performer.lastName}` : "Unknown"}</div>
             </div>
             <div class="detail-row">
               <div class="detail-label">Notes:</div>
-              <div class="detail-value">${check.notes || 'No additional notes'}</div>
+              <div class="detail-value">${check.notes || "No additional notes"}</div>
             </div>
           </div>
 
           <div class="footer">
-            <p>Generated on ${format(new Date(), 'MMM dd, yyyy - HH:mm')} | Production Management System</p>
+            <p>Generated on ${format(new Date(), "MMM dd, yyyy - HH:mm")} | Production Management System</p>
           </div>
 
           <script>
@@ -540,22 +555,26 @@ export function QualityChecksManagement() {
 
   const handleEditClick = (check: any) => {
     setCurrentCheck(check);
-    
+
     // When editing, filter rolls for the selected job order
     if (check.jobOrderId) {
       const jobOrderId = parseInt(check.jobOrderId.toString());
-      const relatedRolls = rolls.filter((roll: any) => roll.jobOrderId === jobOrderId);
+      const relatedRolls = rolls.filter(
+        (roll: any) => roll.jobOrderId === jobOrderId,
+      );
       setFilteredRolls(relatedRolls);
     }
-    
+
     setFormData({
       checkTypeId: check.checkTypeId ? String(check.checkTypeId) : "",
       rollId: check.rollId || "none",
       jobOrderId: check.jobOrderId ? String(check.jobOrderId) : "none",
       performedBy: check.performedBy || "",
-      checkDate: check.checkDate ? new Date(check.checkDate).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
-      passed: check.status === 'passed',
-      notes: check.notes || ""
+      checkDate: check.checkDate
+        ? new Date(check.checkDate).toISOString().split("T")[0]
+        : new Date().toISOString().split("T")[0],
+      passed: check.status === "passed",
+      notes: check.notes || "",
     });
     setShowEditDialog(true);
   };
@@ -572,15 +591,19 @@ export function QualityChecksManagement() {
 
   // Filter and search functionality
   const filteredChecks = checks.filter((check: any) => {
-    const matchesSearch = searchQuery === "" || 
-      (check.notes && check.notes.toLowerCase().includes(searchQuery.toLowerCase()));
-    
-    const matchesResult = filterResult === "all" || 
-      (filterResult === "passed" && check.status === 'passed') || 
-      (filterResult === "failed" && check.status === 'failed');
-    
-    const matchesType = filterType === "all" || check.checkTypeId === filterType;
-    
+    const matchesSearch =
+      searchQuery === "" ||
+      (check.notes &&
+        check.notes.toLowerCase().includes(searchQuery.toLowerCase()));
+
+    const matchesResult =
+      filterResult === "all" ||
+      (filterResult === "passed" && check.status === "passed") ||
+      (filterResult === "failed" && check.status === "failed");
+
+    const matchesType =
+      filterType === "all" || check.checkTypeId === filterType;
+
     return matchesSearch && matchesResult && matchesType;
   });
 
@@ -595,12 +618,17 @@ export function QualityChecksManagement() {
   const getUserById = (id: string) => {
     const user = users.find((user: any) => user.id === id);
     if (user) {
-      return `${user.firstName || ''} ${user.lastName || ''}`;
+      return `${user.firstName || ""} ${user.lastName || ""}`;
     }
     return id || t("common.unknown");
   };
 
-  const isLoading = checksLoading || checkTypesLoading || rollsLoading || jobOrdersLoading || usersLoading;
+  const isLoading =
+    checksLoading ||
+    checkTypesLoading ||
+    rollsLoading ||
+    jobOrdersLoading ||
+    usersLoading;
 
   return (
     <div className="space-y-4">
@@ -615,14 +643,11 @@ export function QualityChecksManagement() {
             className="pl-8"
           />
         </div>
-        
+
         <div className="flex flex-wrap gap-2">
           <div className="flex items-center">
             <Filter className="h-4 w-4 mr-2 text-muted-foreground" />
-            <Select 
-              value={filterResult} 
-              onValueChange={setFilterResult}
-            >
+            <Select value={filterResult} onValueChange={setFilterResult}>
               <SelectTrigger className="w-[120px]">
                 <SelectValue placeholder={t("quality.result")} />
               </SelectTrigger>
@@ -633,13 +658,10 @@ export function QualityChecksManagement() {
               </SelectContent>
             </Select>
           </div>
-          
+
           <div className="flex items-center">
             <CheckCircle2 className="h-4 w-4 mr-2 text-muted-foreground" />
-            <Select 
-              value={filterType} 
-              onValueChange={setFilterType}
-            >
+            <Select value={filterType} onValueChange={setFilterType}>
               <SelectTrigger className="w-[140px]">
                 <SelectValue placeholder={t("quality.check_type")} />
               </SelectTrigger>
@@ -653,32 +675,43 @@ export function QualityChecksManagement() {
               </SelectContent>
             </Select>
           </div>
-          
+
           <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
             <DialogTrigger asChild>
-              <Button variant="default" onClick={() => {
-                resetForm();
-                setShowAddDialog(true);
-              }}>
+              <Button
+                variant="default"
+                onClick={() => {
+                  resetForm();
+                  setShowAddDialog(true);
+                }}
+              >
                 <Plus className="mr-2 h-4 w-4" /> {t("quality.add_check")}
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[500px]">
               <DialogHeader>
                 <DialogTitle>{t("quality.add_quality_check")}</DialogTitle>
-                <DialogDescription>{t("quality.add_quality_check_description")}</DialogDescription>
+                <DialogDescription>
+                  {t("quality.add_quality_check_description")}
+                </DialogDescription>
               </DialogHeader>
               <form onSubmit={handleCreateSubmit}>
                 <div className="space-y-4 py-4">
                   {/* Check Type Selection */}
                   <div>
-                    <Label htmlFor="checkTypeId">{t("quality.check_type")} *</Label>
-                    <Select 
-                      value={formData.checkTypeId} 
-                      onValueChange={(value) => setFormData({...formData, checkTypeId: value})}
+                    <Label htmlFor="checkTypeId">
+                      {t("quality.check_type")} *
+                    </Label>
+                    <Select
+                      value={formData.checkTypeId}
+                      onValueChange={(value) =>
+                        setFormData({ ...formData, checkTypeId: value })
+                      }
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder={t("quality.select_check_type")} />
+                        <SelectValue
+                          placeholder={t("quality.select_check_type")}
+                        />
                       </SelectTrigger>
                       <SelectContent>
                         {checkTypes.map((type: any) => (
@@ -689,20 +722,28 @@ export function QualityChecksManagement() {
                       </SelectContent>
                     </Select>
                   </div>
-                  
+
                   {/* Job Order Selection - comes first */}
                   <div>
-                    <Label htmlFor="jobOrderId">{t("quality.related_job_order")}</Label>
-                    <Select 
-                      value={formData.jobOrderId} 
+                    <Label htmlFor="jobOrderId">
+                      {t("quality.related_job_order")}
+                    </Label>
+                    <Select
+                      value={formData.jobOrderId}
                       onValueChange={(value) => {
                         // Reset roll selection when job order changes
-                        setFormData({...formData, jobOrderId: value, rollId: "none"});
-                        
+                        setFormData({
+                          ...formData,
+                          jobOrderId: value,
+                          rollId: "none",
+                        });
+
                         // Filter rolls based on selected job order
                         if (value && value !== "none") {
                           const jobOrderId = parseInt(value);
-                          const relatedRolls = rolls.filter((roll: any) => roll.jobOrderId === jobOrderId);
+                          const relatedRolls = rolls.filter(
+                            (roll: any) => roll.jobOrderId === jobOrderId,
+                          );
                           setFilteredRolls(relatedRolls);
                         } else {
                           setFilteredRolls([]);
@@ -710,58 +751,87 @@ export function QualityChecksManagement() {
                       }}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder={t("quality.select_job_order")} />
+                        <SelectValue
+                          placeholder={t("quality.select_job_order")}
+                        />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="none">{t("common.none")}</SelectItem>
                         {jobOrders.map((jo: any) => {
                           // Try to get customer directly from job order, then from related order
-                          let customer = customers.find(c => c.id === jo.customerId);
+                          let customer = customers.find(
+                            (c) => c.id === jo.customerId,
+                          );
                           if (!customer && jo.orderId) {
-                            const order = orders.find(o => o.id === jo.orderId);
-                            customer = order ? customers.find(c => c.id === order.customerId) : null;
+                            const order = orders.find(
+                              (o) => o.id === jo.orderId,
+                            );
+                            customer = order
+                              ? customers.find((c) => c.id === order.customerId)
+                              : null;
                           }
-                          const customerProduct = customerProducts.find(p => p.id === jo.customerProductId);
-                          const item = customerProduct ? items.find(i => i.id === customerProduct.itemId) : null;
+                          const customerProduct = customerProducts.find(
+                            (p) => p.id === jo.customerProductId,
+                          );
+                          const item = customerProduct
+                            ? items.find((i) => i.id === customerProduct.itemId)
+                            : null;
                           return (
                             <SelectItem key={jo.id} value={jo.id.toString()}>
-                              JO #{jo.id} - {customer?.name || "No Customer"} - {item?.name || customerProduct?.sizeCaption || "No Item"}
+                              JO #{jo.id} - {customer?.name || "No Customer"} -{" "}
+                              {item?.name ||
+                                customerProduct?.sizeCaption ||
+                                "No Item"}
                             </SelectItem>
                           );
                         })}
                       </SelectContent>
                     </Select>
                   </div>
-                  
+
                   {/* Roll Selection - depends on job order */}
                   <div>
                     <Label htmlFor="rollId">{t("quality.related_roll")}</Label>
-                    <Select 
-                      value={formData.rollId} 
-                      onValueChange={(value) => setFormData({...formData, rollId: value})}
+                    <Select
+                      value={formData.rollId}
+                      onValueChange={(value) =>
+                        setFormData({ ...formData, rollId: value })
+                      }
                       disabled={formData.jobOrderId === "none"}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder={formData.jobOrderId !== "none" ? 
-                          t("quality.select_roll") : t("quality.select_job_order_first") || "Select job order first"} />
+                        <SelectValue
+                          placeholder={
+                            formData.jobOrderId !== "none"
+                              ? t("quality.select_roll")
+                              : t("quality.select_job_order_first") ||
+                                "Select job order first"
+                          }
+                        />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="none">{t("common.none")}</SelectItem>
-                        {(filteredRolls.length > 0 ? filteredRolls : []).map((roll: any) => (
-                          <SelectItem key={roll.id} value={roll.id}>
-                            {roll.id}
-                          </SelectItem>
-                        ))}
+                        {(filteredRolls.length > 0 ? filteredRolls : []).map(
+                          (roll: any) => (
+                            <SelectItem key={roll.id} value={roll.id}>
+                              {roll.id}
+                            </SelectItem>
+                          ),
+                        )}
                       </SelectContent>
                     </Select>
                   </div>
-                  
+
                   {/* User Selection - Auto-selected for current user */}
                   <div>
-                    <Label htmlFor="performedBy">{t("quality.performed_by")} *</Label>
-                    <Select 
-                      value={formData.performedBy} 
-                      onValueChange={(value) => setFormData({...formData, performedBy: value})}
+                    <Label htmlFor="performedBy">
+                      {t("quality.performed_by")} *
+                    </Label>
+                    <Select
+                      value={formData.performedBy}
+                      onValueChange={(value) =>
+                        setFormData({ ...formData, performedBy: value })
+                      }
                       disabled={true}
                     >
                       <SelectTrigger>
@@ -776,46 +846,59 @@ export function QualityChecksManagement() {
                       </SelectContent>
                     </Select>
                   </div>
-                  
+
                   {/* Check Date */}
                   <div>
-                    <Label htmlFor="checkDate">{t("quality.check_date")} *</Label>
+                    <Label htmlFor="checkDate">
+                      {t("quality.check_date")} *
+                    </Label>
                     <Input
                       type="date"
                       id="checkDate"
                       value={formData.checkDate}
-                      onChange={(e) => setFormData({...formData, checkDate: e.target.value})}
+                      onChange={(e) =>
+                        setFormData({ ...formData, checkDate: e.target.value })
+                      }
                     />
                   </div>
-                  
+
                   {/* Passed/Failed Checkbox */}
                   <div className="flex items-center space-x-2">
-                    <Checkbox 
+                    <Checkbox
                       id="passed"
                       checked={formData.passed}
-                      onCheckedChange={(checked) => 
-                        setFormData({...formData, passed: checked === true})
+                      onCheckedChange={(checked) =>
+                        setFormData({ ...formData, passed: checked === true })
                       }
                     />
                     <Label htmlFor="passed">{t("quality.passed")}</Label>
                   </div>
-                  
+
                   {/* Notes */}
                   <div>
                     <Label htmlFor="notes">{t("quality.notes")}</Label>
                     <Textarea
                       id="notes"
                       value={formData.notes}
-                      onChange={(e) => setFormData({...formData, notes: e.target.value})}
+                      onChange={(e) =>
+                        setFormData({ ...formData, notes: e.target.value })
+                      }
                       placeholder={t("quality.notes_placeholder")}
                     />
                   </div>
                 </div>
                 <DialogFooter>
-                  <Button type="button" variant="outline" onClick={() => setShowAddDialog(false)}>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setShowAddDialog(false)}
+                  >
                     {t("common.cancel")}
                   </Button>
-                  <Button type="submit" disabled={!formData.checkTypeId || !formData.performedBy}>
+                  <Button
+                    type="submit"
+                    disabled={!formData.checkTypeId || !formData.performedBy}
+                  >
                     {t("common.save")}
                   </Button>
                 </DialogFooter>
@@ -858,46 +941,73 @@ export function QualityChecksManagement() {
                   <TableCell className="font-medium">{check.id}</TableCell>
                   <TableCell>{getCheckTypeName(check.checkTypeId)}</TableCell>
                   <TableCell>
-                    {check.jobOrderId ? (() => {
-                      const jobOrder = jobOrders.find(jo => jo.id === check.jobOrderId);
-                      let customer = jobOrder ? customers.find(c => c.id === jobOrder.customerId) : null;
-                      if (!customer && jobOrder?.orderId) {
-                        const order = orders.find(o => o.id === jobOrder.orderId);
-                        customer = order ? customers.find(c => c.id === order.customerId) : null;
-                      }
-                      const customerProduct = jobOrder ? customerProducts.find(p => p.id === jobOrder.customerProductId) : null;
-                      const item = customerProduct ? items.find(i => i.id === customerProduct.itemId) : null;
-                      return `JO #${check.jobOrderId} - ${customer?.name || "No Customer"} - ${item?.name || customerProduct?.sizeCaption || "No Item"}`;
-                    })() : (
-                      <span className="text-muted-foreground italic">{t("common.none")}</span>
+                    {check.jobOrderId ? (
+                      (() => {
+                        const jobOrder = jobOrders.find(
+                          (jo) => jo.id === check.jobOrderId,
+                        );
+                        let customer = jobOrder
+                          ? customers.find((c) => c.id === jobOrder.customerId)
+                          : null;
+                        if (!customer && jobOrder?.orderId) {
+                          const order = orders.find(
+                            (o) => o.id === jobOrder.orderId,
+                          );
+                          customer = order
+                            ? customers.find((c) => c.id === order.customerId)
+                            : null;
+                        }
+                        const customerProduct = jobOrder
+                          ? customerProducts.find(
+                              (p) => p.id === jobOrder.customerProductId,
+                            )
+                          : null;
+                        const item = customerProduct
+                          ? items.find((i) => i.id === customerProduct.itemId)
+                          : null;
+                        return `JO #${check.jobOrderId} - ${customer?.name || "No Customer"} - ${item?.name || customerProduct?.sizeCaption || "No Item"}`;
+                      })()
+                    ) : (
+                      <span className="text-muted-foreground italic">
+                        {t("common.none")}
+                      </span>
                     )}
                   </TableCell>
                   <TableCell>
-                    <Badge className={check.status === 'passed' ? badgeVariants.success : badgeVariants.destructive}>
-                      {check.status === 'passed' ? "Passed" : t("quality.failed")}
+                    <Badge
+                      className={
+                        check.status === "passed"
+                          ? badgeVariants.success
+                          : badgeVariants.destructive
+                      }
+                    >
+                      {check.status === "passed"
+                        ? "Passed"
+                        : t("quality.failed")}
                     </Badge>
                   </TableCell>
                   <TableCell>{getUserById(check.performedBy)}</TableCell>
                   <TableCell>
-                    {
-                      check.checkDate ? format(new Date(check.checkDate), 'MMM dd, yyyy') :
-                      check.timestamp ? format(new Date(check.timestamp), 'MMM dd, yyyy') :
-                      check.checkedAt ? format(new Date(check.checkedAt), 'MMM dd, yyyy') :
-                      t("common.not_available")
-                    }
+                    {check.checkDate
+                      ? format(new Date(check.checkDate), "MMM dd, yyyy")
+                      : check.timestamp
+                        ? format(new Date(check.timestamp), "MMM dd, yyyy")
+                        : check.checkedAt
+                          ? format(new Date(check.checkedAt), "MMM dd, yyyy")
+                          : t("common.not_available")}
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
-                      <Button 
-                        variant="ghost" 
+                      <Button
+                        variant="ghost"
                         size="icon"
                         onClick={() => handleViewClick(check)}
                         title="View Details"
                       >
                         <Eye className="h-4 w-4" />
                       </Button>
-                      <Button 
-                        variant="ghost" 
+                      <Button
+                        variant="ghost"
                         size="icon"
                         onClick={() => handlePrintClick(check)}
                         title="Print Quality Check"
@@ -905,16 +1015,16 @@ export function QualityChecksManagement() {
                       >
                         <Printer className="h-4 w-4" />
                       </Button>
-                      <Button 
-                        variant="ghost" 
+                      <Button
+                        variant="ghost"
                         size="icon"
                         onClick={() => handleEditClick(check)}
                         title="Edit"
                       >
                         <Edit className="h-4 w-4" />
                       </Button>
-                      <Button 
-                        variant="ghost" 
+                      <Button
+                        variant="ghost"
                         size="icon"
                         onClick={() => handleDeleteClick(check)}
                         title="Delete"
@@ -943,53 +1053,100 @@ export function QualityChecksManagement() {
                   <h4 className="text-sm font-medium">Check Type</h4>
                   <p>{getCheckTypeName(currentCheck.checkTypeId)}</p>
                 </div>
-                
+
                 <div>
                   <h4 className="text-sm font-medium">Status</h4>
-                  <Badge className={currentCheck.status === 'passed' ? badgeVariants.success : badgeVariants.destructive}>
-                    {currentCheck.status === 'passed' ? "Passed" : t("quality.failed")}
+                  <Badge
+                    className={
+                      currentCheck.status === "passed"
+                        ? badgeVariants.success
+                        : badgeVariants.destructive
+                    }
+                  >
+                    {currentCheck.status === "passed"
+                      ? "Passed"
+                      : t("quality.failed")}
                   </Badge>
                 </div>
-                
+
                 <div>
-                  <h4 className="text-sm font-medium">{t("quality.related_job_order")}</h4>
-                  <p>{currentCheck.jobOrderId ? (() => {
-                    const jobOrder = jobOrders.find(jo => jo.id === currentCheck.jobOrderId);
-                    let customer = jobOrder ? customers.find(c => c.id === jobOrder.customerId) : null;
-                    if (!customer && jobOrder?.orderId) {
-                      const order = orders.find(o => o.id === jobOrder.orderId);
-                      customer = order ? customers.find(c => c.id === order.customerId) : null;
-                    }
-                    const customerProduct = jobOrder ? customerProducts.find(p => p.id === jobOrder.customerProductId) : null;
-                    const item = customerProduct ? items.find(i => i.id === customerProduct.itemId) : null;
-                    return `JO #${currentCheck.jobOrderId} - ${customer?.name || "No Customer"} - ${item?.name || customerProduct?.sizeCaption || "No Item"}`;
-                  })() : t("common.none")}</p>
+                  <h4 className="text-sm font-medium">
+                    {t("quality.related_job_order")}
+                  </h4>
+                  <p>
+                    {currentCheck.jobOrderId
+                      ? (() => {
+                          const jobOrder = jobOrders.find(
+                            (jo) => jo.id === currentCheck.jobOrderId,
+                          );
+                          let customer = jobOrder
+                            ? customers.find(
+                                (c) => c.id === jobOrder.customerId,
+                              )
+                            : null;
+                          if (!customer && jobOrder?.orderId) {
+                            const order = orders.find(
+                              (o) => o.id === jobOrder.orderId,
+                            );
+                            customer = order
+                              ? customers.find((c) => c.id === order.customerId)
+                              : null;
+                          }
+                          const customerProduct = jobOrder
+                            ? customerProducts.find(
+                                (p) => p.id === jobOrder.customerProductId,
+                              )
+                            : null;
+                          const item = customerProduct
+                            ? items.find((i) => i.id === customerProduct.itemId)
+                            : null;
+                          return `JO #${currentCheck.jobOrderId} - ${customer?.name || "No Customer"} - ${item?.name || customerProduct?.sizeCaption || "No Item"}`;
+                        })()
+                      : t("common.none")}
+                  </p>
                 </div>
-                
+
                 <div>
-                  <h4 className="text-sm font-medium">{t("quality.related_roll")}</h4>
+                  <h4 className="text-sm font-medium">
+                    {t("quality.related_roll")}
+                  </h4>
                   <p>{currentCheck.rollId || t("common.none")}</p>
                 </div>
-                
+
                 <div>
-                  <h4 className="text-sm font-medium">{t("quality.performed_by")}</h4>
+                  <h4 className="text-sm font-medium">
+                    {t("quality.performed_by")}
+                  </h4>
                   <p>{getUserById(currentCheck.performedBy)}</p>
                 </div>
-                
+
                 <div>
-                  <h4 className="text-sm font-medium">{t("quality.check_date")}</h4>
-                  <p>{
-                    currentCheck.checkDate ? format(new Date(currentCheck.checkDate), 'MMM dd, yyyy') :
-                    currentCheck.timestamp ? format(new Date(currentCheck.timestamp), 'MMM dd, yyyy') :
-                    currentCheck.checkedAt ? format(new Date(currentCheck.checkedAt), 'MMM dd, yyyy') :
-                    t("common.unknown")
-                  }</p>
+                  <h4 className="text-sm font-medium">
+                    {t("quality.check_date")}
+                  </h4>
+                  <p>
+                    {currentCheck.checkDate
+                      ? format(new Date(currentCheck.checkDate), "MMM dd, yyyy")
+                      : currentCheck.timestamp
+                        ? format(
+                            new Date(currentCheck.timestamp),
+                            "MMM dd, yyyy",
+                          )
+                        : currentCheck.checkedAt
+                          ? format(
+                              new Date(currentCheck.checkedAt),
+                              "MMM dd, yyyy",
+                            )
+                          : t("common.unknown")}
+                  </p>
                 </div>
               </div>
-              
+
               <div>
                 <h4 className="text-sm font-medium">Notes</h4>
-                <p className="text-sm mt-1">{currentCheck.notes || t("common.none")}</p>
+                <p className="text-sm mt-1">
+                  {currentCheck.notes || t("common.none")}
+                </p>
               </div>
             </div>
           )}
@@ -1012,9 +1169,11 @@ export function QualityChecksManagement() {
               {/* Check Type Selection */}
               <div>
                 <Label htmlFor="checkTypeId">{t("quality.check_type")} *</Label>
-                <Select 
-                  value={formData.checkTypeId} 
-                  onValueChange={(value) => setFormData({...formData, checkTypeId: value})}
+                <Select
+                  value={formData.checkTypeId}
+                  onValueChange={(value) =>
+                    setFormData({ ...formData, checkTypeId: value })
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue placeholder={t("quality.select_check_type")} />
@@ -1028,20 +1187,28 @@ export function QualityChecksManagement() {
                   </SelectContent>
                 </Select>
               </div>
-              
+
               {/* Job Order Selection - comes first */}
               <div>
-                <Label htmlFor="jobOrderId">{t("quality.related_job_order")}</Label>
-                <Select 
-                  value={formData.jobOrderId} 
+                <Label htmlFor="jobOrderId">
+                  {t("quality.related_job_order")}
+                </Label>
+                <Select
+                  value={formData.jobOrderId}
                   onValueChange={(value) => {
                     // Reset roll selection when job order changes
-                    setFormData({...formData, jobOrderId: value, rollId: "none"});
-                    
+                    setFormData({
+                      ...formData,
+                      jobOrderId: value,
+                      rollId: "none",
+                    });
+
                     // Filter rolls based on selected job order
                     if (value && value !== "none") {
                       const jobOrderId = parseInt(value);
-                      const relatedRolls = rolls.filter((roll: any) => roll.jobOrderId === jobOrderId);
+                      const relatedRolls = rolls.filter(
+                        (roll: any) => roll.jobOrderId === jobOrderId,
+                      );
                       setFilteredRolls(relatedRolls);
                     } else {
                       setFilteredRolls([]);
@@ -1054,52 +1221,77 @@ export function QualityChecksManagement() {
                   <SelectContent>
                     <SelectItem value="none">{t("common.none")}</SelectItem>
                     {jobOrders.map((jo: any) => {
-                      let customer = customers.find(c => c.id === jo.customerId);
+                      let customer = customers.find(
+                        (c) => c.id === jo.customerId,
+                      );
                       if (!customer && jo.orderId) {
-                        const order = orders.find(o => o.id === jo.orderId);
-                        customer = order ? customers.find(c => c.id === order.customerId) : null;
+                        const order = orders.find((o) => o.id === jo.orderId);
+                        customer = order
+                          ? customers.find((c) => c.id === order.customerId)
+                          : null;
                       }
-                      const customerProduct = customerProducts.find(p => p.id === jo.customerProductId);
-                      const item = customerProduct ? items.find(i => i.id === customerProduct.itemId) : null;
+                      const customerProduct = customerProducts.find(
+                        (p) => p.id === jo.customerProductId,
+                      );
+                      const item = customerProduct
+                        ? items.find((i) => i.id === customerProduct.itemId)
+                        : null;
                       return (
                         <SelectItem key={jo.id} value={jo.id.toString()}>
-                          JO #{jo.id} - {customer?.name || "No Customer"} - {item?.name || customerProduct?.sizeCaption || "No Item"}
+                          JO #{jo.id} - {customer?.name || "No Customer"} -{" "}
+                          {item?.name ||
+                            customerProduct?.sizeCaption ||
+                            "No Item"}
                         </SelectItem>
                       );
                     })}
                   </SelectContent>
                 </Select>
               </div>
-              
+
               {/* Roll Selection - depends on job order */}
               <div>
                 <Label htmlFor="rollId">{t("quality.related_roll")}</Label>
-                <Select 
-                  value={formData.rollId} 
-                  onValueChange={(value) => setFormData({...formData, rollId: value})}
+                <Select
+                  value={formData.rollId}
+                  onValueChange={(value) =>
+                    setFormData({ ...formData, rollId: value })
+                  }
                   disabled={formData.jobOrderId === "none"}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder={formData.jobOrderId !== "none" ? 
-                      t("quality.select_roll") : t("quality.select_job_order_first") || "Select job order first"} />
+                    <SelectValue
+                      placeholder={
+                        formData.jobOrderId !== "none"
+                          ? t("quality.select_roll")
+                          : t("quality.select_job_order_first") ||
+                            "Select job order first"
+                      }
+                    />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="none">{t("common.none")}</SelectItem>
-                    {(filteredRolls.length > 0 ? filteredRolls : []).map((roll: any) => (
-                      <SelectItem key={roll.id} value={roll.id}>
-                        {roll.id}
-                      </SelectItem>
-                    ))}
+                    {(filteredRolls.length > 0 ? filteredRolls : []).map(
+                      (roll: any) => (
+                        <SelectItem key={roll.id} value={roll.id}>
+                          {roll.id}
+                        </SelectItem>
+                      ),
+                    )}
                   </SelectContent>
                 </Select>
               </div>
-              
+
               {/* User Selection - Auto-selected for current user */}
               <div>
-                <Label htmlFor="performedBy">{t("quality.performed_by")} *</Label>
-                <Select 
-                  value={formData.performedBy} 
-                  onValueChange={(value) => setFormData({...formData, performedBy: value})}
+                <Label htmlFor="performedBy">
+                  {t("quality.performed_by")} *
+                </Label>
+                <Select
+                  value={formData.performedBy}
+                  onValueChange={(value) =>
+                    setFormData({ ...formData, performedBy: value })
+                  }
                   disabled={true}
                 >
                   <SelectTrigger>
@@ -1114,7 +1306,7 @@ export function QualityChecksManagement() {
                   </SelectContent>
                 </Select>
               </div>
-              
+
               {/* Check Date */}
               <div>
                 <Label htmlFor="checkDate">{t("quality.check_date")} *</Label>
@@ -1122,38 +1314,49 @@ export function QualityChecksManagement() {
                   type="date"
                   id="checkDate"
                   value={formData.checkDate}
-                  onChange={(e) => setFormData({...formData, checkDate: e.target.value})}
+                  onChange={(e) =>
+                    setFormData({ ...formData, checkDate: e.target.value })
+                  }
                 />
               </div>
-              
+
               {/* Passed/Failed Checkbox */}
               <div className="flex items-center space-x-2">
-                <Checkbox 
+                <Checkbox
                   id="passed"
                   checked={formData.passed}
-                  onCheckedChange={(checked) => 
-                    setFormData({...formData, passed: checked === true})
+                  onCheckedChange={(checked) =>
+                    setFormData({ ...formData, passed: checked === true })
                   }
                 />
                 <Label htmlFor="passed">{t("quality.passed")}</Label>
               </div>
-              
+
               {/* Notes */}
               <div>
                 <Label htmlFor="notes">{t("quality.notes")}</Label>
                 <Textarea
                   id="notes"
                   value={formData.notes}
-                  onChange={(e) => setFormData({...formData, notes: e.target.value})}
+                  onChange={(e) =>
+                    setFormData({ ...formData, notes: e.target.value })
+                  }
                   placeholder={t("quality.notes_placeholder")}
                 />
               </div>
             </div>
             <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => setShowEditDialog(false)}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setShowEditDialog(false)}
+              >
                 {t("common.cancel")}
               </Button>
-              <Button type="submit" disabled={!formData.checkTypeId || !formData.performedBy}>
+              <Button
+                type="submit"
+                disabled={!formData.checkTypeId || !formData.performedBy}
+              >
                 {t("common.save")}
               </Button>
             </DialogFooter>
@@ -1168,21 +1371,27 @@ export function QualityChecksManagement() {
             <DialogTitle>{t("quality.delete_quality_check")}</DialogTitle>
             <DialogDescription>
               {t("quality.delete_check_confirmation", {
-                id: currentCheck?.id
+                id: currentCheck?.id,
               })}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => setShowDeleteDialog(false)}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setShowDeleteDialog(false)}
+            >
               {t("common.cancel")}
             </Button>
-            <Button 
-              type="button" 
-              variant="destructive" 
+            <Button
+              type="button"
+              variant="destructive"
               onClick={handleDeleteConfirm}
               disabled={deleteMutation.isPending}
             >
-              {deleteMutation.isPending ? t("common.deleting") : t("common.delete")}
+              {deleteMutation.isPending
+                ? t("common.deleting")
+                : t("common.delete")}
             </Button>
           </DialogFooter>
         </DialogContent>

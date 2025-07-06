@@ -4,16 +4,22 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { 
+import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogFooter,
-  DialogDescription
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { queryClient } from "@/lib/queryClient";
@@ -44,37 +50,37 @@ interface Permission {
 
 // All available modules in the system
 const ALL_MODULES = [
-  "Dashboard", 
-  "Orders", 
-  "Setup", 
+  "Dashboard",
+  "Orders",
+  "Setup",
   "Production",
-  "Workflow", 
+  "Workflow",
   "Warehouse",
-  "Quality", 
-  "Reports", 
+  "Quality",
+  "Reports",
   "System",
   "Tools",
   "HR",
   "Maintenance",
   "Cliches",
   // Setup submodules
-  "Categories", 
-  "Products", 
-  "Customers", 
-  "Items", 
-  "Sections", 
-  "Machines", 
+  "Categories",
+  "Products",
+  "Customers",
+  "Items",
+  "Sections",
+  "Machines",
   "Users",
   // Warehouse submodules
-  "Raw Materials", 
+  "Raw Materials",
   "Final Products",
   // Production submodules
   "Mix Materials",
   "Bottleneck Monitor",
   "Production Metrics",
   // Quality submodules
-  "Check Types", 
-  "Quality Checks", 
+  "Check Types",
+  "Quality Checks",
   "Corrective Actions",
   "Unified Dashboard",
   "Violation and Complaint",
@@ -86,21 +92,21 @@ const ALL_MODULES = [
   "Maintenance Actions",
   "Maintenance Schedule",
   // Tools submodules
-  "Bag Weight Calculator", 
-  "Ink Consumption", 
+  "Bag Weight Calculator",
+  "Ink Consumption",
   "Mix Colors",
   "Utility Tools",
   "Cost",
   // System submodules
-  "Database", 
-  "Permissions", 
-  "Import & Export", 
-  "SMS Management"
+  "Database",
+  "Permissions",
+  "Import & Export",
+  "SMS Management",
 ];
 
 // Helper to convert API format to UI format
 function apiToUiFormat(dto: PermissionDTO): Permission {
-  console.log('Converting permission:', dto); // Debug log
+  console.log("Converting permission:", dto); // Debug log
   return {
     id: dto.id,
     role: dto.role,
@@ -110,7 +116,7 @@ function apiToUiFormat(dto: PermissionDTO): Permission {
     canCreate: dto.can_create === true,
     canEdit: dto.can_edit === true,
     canDelete: dto.can_delete === true,
-    isActive: dto.is_active === true
+    isActive: dto.is_active === true,
   };
 }
 
@@ -121,119 +127,130 @@ export default function Permissions() {
   const [selectedModule, setSelectedModule] = useState("Dashboard");
   const [showInactive, setShowInactive] = useState(true);
   const { toast } = useToast();
-  
+
   // Fetch permissions data
-  const { 
-    data: apiPermissions = [], 
+  const {
+    data: apiPermissions = [],
     isLoading,
-    refetch
-  } = useQuery<PermissionDTO[]>({ 
-    queryKey: ['/api/permissions']
+    refetch,
+  } = useQuery<PermissionDTO[]>({
+    queryKey: ["/api/permissions"],
   });
-  
+
   // Convert API data to UI format
   const permissions: Permission[] = apiPermissions.map(apiToUiFormat);
-  
+
   // Check for missing modules and create them automatically
   useEffect(() => {
     if (apiPermissions.length > 0) {
-      const existingModules = new Set(apiPermissions.map(p => p.module));
-      const missingModules = ALL_MODULES.filter(module => !existingModules.has(module));
-      
+      const existingModules = new Set(apiPermissions.map((p) => p.module));
+      const missingModules = ALL_MODULES.filter(
+        (module) => !existingModules.has(module),
+      );
+
       if (missingModules.length > 0) {
-        console.log('Creating permissions for missing modules:', missingModules);
-        
+        console.log(
+          "Creating permissions for missing modules:",
+          missingModules,
+        );
+
         // Create permissions for missing modules for administrator role
-        missingModules.forEach(module => {
+        missingModules.forEach((module) => {
           createPermissionMutation.mutate({
-            role: 'administrator',
+            role: "administrator",
             module: module,
             can_view: true,
             can_create: true,
             can_edit: true,
             can_delete: true,
-            is_active: true
+            is_active: true,
           });
         });
       }
     }
   }, [apiPermissions]);
-  
+
   // Group permissions by role for better organization
   const permissionsByRole: Record<string, Permission[]> = {};
-  permissions.forEach(permission => {
+  permissions.forEach((permission) => {
     if (!permissionsByRole[permission.role]) {
       permissionsByRole[permission.role] = [];
     }
     permissionsByRole[permission.role].push(permission);
   });
-  
+
   // Get unique roles
   const roles = Object.keys(permissionsByRole).sort();
-  
+
   // Update permission mutation
   const updatePermissionMutation = useMutation({
-    mutationFn: async ({ id, update }: { id: number, update: Record<string, boolean> }) => {
-      console.log('Sending update to server:', JSON.stringify(update));
-      
+    mutationFn: async ({
+      id,
+      update,
+    }: {
+      id: number;
+      update: Record<string, boolean>;
+    }) => {
+      console.log("Sending update to server:", JSON.stringify(update));
+
       try {
         const response = await fetch(`/api/permissions/${id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(update)
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(update),
         });
-        
+
         // Try to parse the response as JSON first
         let data;
         const text = await response.text();
-        
+
         if (text) {
           try {
             data = JSON.parse(text);
-            console.log('Received response:', data);
+            console.log("Received response:", data);
           } catch (parseError) {
             console.error("Failed to parse response:", text);
             data = { message: text };
           }
         }
-        
+
         if (!response.ok) {
           throw new Error(data?.message || `Server error: ${response.status}`);
         }
-        
+
         return data;
       } catch (networkError) {
-        console.error('Network error during update:', networkError);
+        console.error("Network error during update:", networkError);
         throw networkError;
       }
     },
     onSuccess: (data) => {
-      console.log('Update successful:', data);
-      
+      console.log("Update successful:", data);
+
       // Force a refetch to get updated data
-      queryClient.invalidateQueries({ queryKey: ['/api/permissions'] });
-      
+      queryClient.invalidateQueries({ queryKey: ["/api/permissions"] });
+
       toast({
         title: "Success",
         description: "Permission updated successfully",
-        duration: 2000
+        duration: 2000,
       });
     },
     onError: (error: Error) => {
       console.error("Update failed:", error);
-      
+
       toast({
         title: "Update Failed",
         description: error.message || "Failed to update permission",
         variant: "destructive",
-        duration: 3000
+        duration: 3000,
       });
-      
+
       // Force a refetch to reset UI state
-      queryClient.invalidateQueries({ queryKey: ['/api/permissions'] });
-    }
+      queryClient.invalidateQueries({ queryKey: ["/api/permissions"] });
+    },
   });
-  
+
   // Create permission mutation
   const createPermissionMutation = useMutation({
     mutationFn: async (data: {
@@ -245,85 +262,89 @@ export default function Permissions() {
       can_delete: boolean;
       is_active: boolean;
     }) => {
-      const response = await fetch('/api/permissions', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
+      const response = await fetch("/api/permissions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
       });
-      
+
       if (!response.ok) {
         const errorText = await response.text();
         throw new Error(`Failed to create permission: ${errorText}`);
       }
-      
+
       return await response.json();
     },
     onSuccess: () => {
       // Force a refetch to get updated data
-      queryClient.invalidateQueries({ queryKey: ['/api/permissions'] });
-      
+      queryClient.invalidateQueries({ queryKey: ["/api/permissions"] });
+
       setRoleDialogOpen(false);
       setNewRoleName("");
       setSelectedModule("Dashboard");
       toast({
-        title: "Success", 
-        description: "New permission created successfully"
+        title: "Success",
+        description: "New permission created successfully",
       });
     },
     onError: (error: Error) => {
       toast({
         title: "Creation Failed",
         description: error.message || "Failed to create permission",
-        variant: "destructive"
+        variant: "destructive",
       });
-    }
+    },
   });
-  
+
   // Handle permission change directly
-  const handlePermissionChange = (id: number, field: keyof Permission, value: boolean) => {
+  const handlePermissionChange = (
+    id: number,
+    field: keyof Permission,
+    value: boolean,
+  ) => {
     // Prepare update based on the field
     const update: Record<string, boolean> = {};
-    
+
     // Convert to API snake_case format
-    switch(field) {
-      case 'canView':
+    switch (field) {
+      case "canView":
         update.can_view = value;
         break;
-      case 'canCreate':
+      case "canCreate":
         update.can_create = value;
         break;
-      case 'canEdit':
+      case "canEdit":
         update.can_edit = value;
         break;
-      case 'canDelete':
+      case "canDelete":
         update.can_delete = value;
         break;
-      case 'isActive':
+      case "isActive":
         update.is_active = value;
         break;
       default:
         break;
     }
-    
+
     // Show optimistic update feedback
-    const affectedPermission = permissions.find(p => p.id === id);
+    const affectedPermission = permissions.find((p) => p.id === id);
     if (affectedPermission) {
       // Update the local state optimistically for better UX
-      const updatedPermissions = permissions.map(p => {
+      const updatedPermissions = permissions.map((p) => {
         if (p.id === id) {
           return { ...p, [field]: value };
         }
         return p;
       });
-      
+
       // Log the update
       console.log(`Updating permission ${id}:`, field, value);
-      console.log('Update payload:', update);
-      
+      console.log("Update payload:", update);
+
       toast({
         title: "Updating Permission",
         description: `Changing ${field} for ${affectedPermission.role} - ${affectedPermission.module}`,
-        duration: 2000
+        duration: 2000,
       });
     } else {
       console.error(`Permission with ID ${id} not found`);
@@ -331,26 +352,26 @@ export default function Permissions() {
         title: "Error",
         description: `Could not find permission with ID ${id}`,
         variant: "destructive",
-        duration: 2000
+        duration: 2000,
       });
       return;
     }
-    
+
     // Send update to server
     updatePermissionMutation.mutate({ id, update });
   };
-  
+
   // Handle adding new role
   const handleAddCustomRole = () => {
     if (!newRoleName.trim()) {
       toast({
         title: "Error",
         description: "Role name cannot be empty",
-        variant: "destructive"
+        variant: "destructive",
       });
       return;
     }
-    
+
     createPermissionMutation.mutate({
       role: newRoleName.toLowerCase(),
       module: selectedModule,
@@ -358,14 +379,14 @@ export default function Permissions() {
       can_create: false,
       can_edit: false,
       can_delete: false,
-      is_active: true
+      is_active: true,
     });
   };
-  
+
   // Filter permissions based on active status if needed
-  const filteredPermissions = showInactive 
-    ? permissions 
-    : permissions.filter(p => p.isActive);
+  const filteredPermissions = showInactive
+    ? permissions
+    : permissions.filter((p) => p.isActive);
 
   // Loading state
   if (isLoading) {
@@ -379,7 +400,9 @@ export default function Permissions() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-secondary-900">User Permissions</h1>
+        <h1 className="text-2xl font-bold text-secondary-900">
+          User Permissions
+        </h1>
         <Button onClick={() => refetch()}>
           <span className="material-icons text-sm mr-1">refresh</span>
           Refresh
@@ -395,33 +418,40 @@ export default function Permissions() {
             <div className="flex items-start">
               <span className="material-icons text-warning-500 mr-2">info</span>
               <div>
-                <h3 className="font-medium text-secondary-900">Caution: Permission Changes</h3>
+                <h3 className="font-medium text-secondary-900">
+                  Caution: Permission Changes
+                </h3>
                 <p className="text-sm text-secondary-600">
-                  Changes to permissions will affect user access immediately.
-                  Be careful when modifying Administrator permissions to avoid locking yourself out.
+                  Changes to permissions will affect user access immediately. Be
+                  careful when modifying Administrator permissions to avoid
+                  locking yourself out.
                 </p>
               </div>
             </div>
           </div>
-          
+
           {/* Role-Based Permissions Tabs */}
           <div className="overflow-x-auto">
-            {roles.map(role => {
+            {roles.map((role) => {
               // Get filtered permissions for this role
-              const rolePermissions = showInactive 
+              const rolePermissions = showInactive
                 ? permissionsByRole[role]
-                : permissionsByRole[role].filter(p => p.isActive);
-              
+                : permissionsByRole[role].filter((p) => p.isActive);
+
               if (rolePermissions.length === 0) return null;
-              
+
               return (
                 <div key={role} className="mb-8">
                   <div className="bg-secondary-50 p-3 rounded-t-md border border-secondary-200">
                     <h3 className="text-lg font-semibold capitalize text-primary-700 flex items-center">
                       <span className="material-icons mr-2 text-primary-500">
-                        {role === 'administrator' ? 'admin_panel_settings' : 
-                         role === 'manager' ? 'manage_accounts' : 
-                         role === 'operator' ? 'engineering' : 'person'}
+                        {role === "administrator"
+                          ? "admin_panel_settings"
+                          : role === "manager"
+                            ? "manage_accounts"
+                            : role === "operator"
+                              ? "engineering"
+                              : "person"}
                       </span>
                       {role}
                     </h3>
@@ -438,46 +468,69 @@ export default function Permissions() {
                       </tr>
                     </thead>
                     <tbody className="text-secondary-800">
-                      {rolePermissions.map(permission => (
-                        <tr key={permission.id} className="border-b border-secondary-100">
+                      {rolePermissions.map((permission) => (
+                        <tr
+                          key={permission.id}
+                          className="border-b border-secondary-100"
+                        >
                           <td className="py-3 px-4">{permission.module}</td>
                           <td className="py-3 px-4 text-center">
-                            <Checkbox 
+                            <Checkbox
                               checked={permission.canView}
-                              onCheckedChange={(checked) => 
-                                handlePermissionChange(permission.id, "canView", Boolean(checked))
+                              onCheckedChange={(checked) =>
+                                handlePermissionChange(
+                                  permission.id,
+                                  "canView",
+                                  Boolean(checked),
+                                )
                               }
                             />
                           </td>
                           <td className="py-3 px-4 text-center">
-                            <Checkbox 
+                            <Checkbox
                               checked={permission.canCreate}
-                              onCheckedChange={(checked) => 
-                                handlePermissionChange(permission.id, "canCreate", Boolean(checked))
+                              onCheckedChange={(checked) =>
+                                handlePermissionChange(
+                                  permission.id,
+                                  "canCreate",
+                                  Boolean(checked),
+                                )
                               }
                             />
                           </td>
                           <td className="py-3 px-4 text-center">
-                            <Checkbox 
+                            <Checkbox
                               checked={permission.canEdit}
-                              onCheckedChange={(checked) => 
-                                handlePermissionChange(permission.id, "canEdit", Boolean(checked))
+                              onCheckedChange={(checked) =>
+                                handlePermissionChange(
+                                  permission.id,
+                                  "canEdit",
+                                  Boolean(checked),
+                                )
                               }
                             />
                           </td>
                           <td className="py-3 px-4 text-center">
-                            <Checkbox 
+                            <Checkbox
                               checked={permission.canDelete}
-                              onCheckedChange={(checked) => 
-                                handlePermissionChange(permission.id, "canDelete", Boolean(checked))
+                              onCheckedChange={(checked) =>
+                                handlePermissionChange(
+                                  permission.id,
+                                  "canDelete",
+                                  Boolean(checked),
+                                )
                               }
                             />
                           </td>
                           <td className="py-3 px-4 text-center">
-                            <Switch 
+                            <Switch
                               checked={permission.isActive}
-                              onCheckedChange={(checked) => 
-                                handlePermissionChange(permission.id, "isActive", checked)
+                              onCheckedChange={(checked) =>
+                                handlePermissionChange(
+                                  permission.id,
+                                  "isActive",
+                                  checked,
+                                )
                               }
                             />
                           </td>
@@ -489,25 +542,27 @@ export default function Permissions() {
               );
             })}
           </div>
-          
+
           <div className="mt-6">
             <div className="flex items-center space-x-2 p-3 bg-secondary-50 rounded-md border border-secondary-200">
-              <Switch 
-                id="disable-role" 
+              <Switch
+                id="disable-role"
                 checked={showInactive}
                 onCheckedChange={setShowInactive}
               />
               <Label htmlFor="disable-role" className="font-medium">
                 Show inactive roles and modules
                 <span className="text-sm block text-secondary-500">
-                  {showInactive ? "Showing all permissions" : "Only showing active permissions"}
+                  {showInactive
+                    ? "Showing all permissions"
+                    : "Only showing active permissions"}
                 </span>
               </Label>
             </div>
           </div>
         </CardContent>
       </Card>
-      
+
       <Card>
         <CardHeader>
           <CardTitle>Custom Permissions</CardTitle>
@@ -516,29 +571,27 @@ export default function Permissions() {
           <p className="text-secondary-600 mb-4">
             Create custom permissions and roles for specialized access needs.
           </p>
-          
+
           <div className="flex justify-end">
-            <Button 
-              variant="outline"
-              onClick={() => setRoleDialogOpen(true)}
-            >
+            <Button variant="outline" onClick={() => setRoleDialogOpen(true)}>
               <span className="material-icons text-sm mr-1">add</span>
               Add Custom Role
             </Button>
           </div>
         </CardContent>
       </Card>
-      
+
       {/* Add Custom Role Dialog */}
       <Dialog open={roleDialogOpen} onOpenChange={setRoleDialogOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Add Custom Role</DialogTitle>
             <DialogDescription>
-              Create a new custom role with specific permissions for users in your organization.
+              Create a new custom role with specific permissions for users in
+              your organization.
             </DialogDescription>
           </DialogHeader>
-          
+
           <div className="space-y-4 py-4">
             <div className="space-y-2">
               <Label htmlFor="role-name">Role Name</Label>
@@ -549,7 +602,7 @@ export default function Permissions() {
                 onChange={(e) => setNewRoleName(e.target.value)}
               />
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="module">Module</Label>
               <Select value={selectedModule} onValueChange={setSelectedModule}>
@@ -566,22 +619,24 @@ export default function Permissions() {
               </Select>
             </div>
           </div>
-          
+
           <DialogFooter>
             <Button variant="outline" onClick={() => setRoleDialogOpen(false)}>
               Cancel
             </Button>
-            <Button 
+            <Button
               onClick={handleAddCustomRole}
               disabled={createPermissionMutation.isPending}
             >
               {createPermissionMutation.isPending ? (
                 <>
-                  <span className="material-icons animate-spin text-sm mr-1">refresh</span>
+                  <span className="material-icons animate-spin text-sm mr-1">
+                    refresh
+                  </span>
                   Adding...
                 </>
               ) : (
-                'Add Role'
+                "Add Role"
               )}
             </Button>
           </DialogFooter>

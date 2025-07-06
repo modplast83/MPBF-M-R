@@ -3,8 +3,23 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { SectionForm } from "@/components/setup/section-form";
 import { API_ENDPOINTS } from "@/lib/constants";
 import { apiRequest } from "@/lib/queryClient";
@@ -79,10 +94,20 @@ export default function Sections() {
       header: "Actions",
       cell: (row: Section) => (
         <div className="flex space-x-2">
-          <Button variant="ghost" size="icon" onClick={() => handleEdit(row)} className="text-primary-500 hover:text-primary-700">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => handleEdit(row)}
+            className="text-primary-500 hover:text-primary-700"
+          >
             <span className="material-icons text-sm">edit</span>
           </Button>
-          <Button variant="ghost" size="icon" onClick={() => handleDelete(row)} className="text-red-500 hover:text-red-700">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => handleDelete(row)}
+            className="text-red-500 hover:text-red-700"
+          >
             <span className="material-icons text-sm">delete</span>
           </Button>
         </div>
@@ -93,24 +118,26 @@ export default function Sections() {
   const tableActions = (
     <Button onClick={() => setFormOpen(true)}>
       <span className="material-icons text-sm mr-1">add</span>
-      {t('setup.sections.add_section')}
+      {t("setup.sections.add_section")}
     </Button>
   );
 
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-secondary-900">{t('setup.sections.title')}</h1>
+        <h1 className="text-2xl font-bold text-secondary-900">
+          {t("setup.sections.title")}
+        </h1>
       </div>
 
       <Card>
         <CardHeader>
           <CardTitle className="flex justify-between items-center">
-            <span>{t('setup.sections.description')}</span>
+            <span>{t("setup.sections.description")}</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <DataTable 
+          <DataTable
             data={sections || []}
             columns={columns}
             isLoading={isLoading}
@@ -124,13 +151,17 @@ export default function Sections() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {editSection ? t('setup.sections.edit_section') : t('setup.sections.add_new')}
+              {editSection
+                ? t("setup.sections.edit_section")
+                : t("setup.sections.add_new")}
             </DialogTitle>
             <DialogDescription>
-              {editSection ? 'Modify the section details below' : 'Fill in the form below to create a new section'}
+              {editSection
+                ? "Modify the section details below"
+                : "Fill in the form below to create a new section"}
             </DialogDescription>
           </DialogHeader>
-          <SectionForm 
+          <SectionForm
             section={editSection || undefined}
             onSuccess={handleFormClose}
           />
@@ -138,21 +169,28 @@ export default function Sections() {
       </Dialog>
 
       {/* Delete Confirmation Dialog */}
-      <AlertDialog open={!!deletingSection} onOpenChange={(open) => !open && setDeletingSection(null)}>
+      <AlertDialog
+        open={!!deletingSection}
+        onOpenChange={(open) => !open && setDeletingSection(null)}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>{t('setup.sections.are_you_sure')}</AlertDialogTitle>
+            <AlertDialogTitle>
+              {t("setup.sections.are_you_sure")}
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              {t('setup.sections.delete_confirmation', { name: deletingSection?.name })}
+              {t("setup.sections.delete_confirmation", {
+                name: deletingSection?.name,
+              })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>{t('setup.sections.cancel')}</AlertDialogCancel>
-            <AlertDialogAction 
+            <AlertDialogCancel>{t("setup.sections.cancel")}</AlertDialogCancel>
+            <AlertDialogAction
               onClick={confirmDelete}
               className="bg-red-500 hover:bg-red-600"
             >
-              {t('setup.sections.delete')}
+              {t("setup.sections.delete")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

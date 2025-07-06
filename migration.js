@@ -1,9 +1,9 @@
 // migration.js - Create tables for material inputs
-import { db } from './server/db';
-import { materialInputs, materialInputItems } from './shared/schema';
+import { db } from "./server/db";
+import { materialInputs, materialInputItems } from "./shared/schema";
 
 async function main() {
-  console.log('Creating material_inputs table...');
+  console.log("Creating material_inputs table...");
   await db.execute(`
     CREATE TABLE IF NOT EXISTS material_inputs (
       id SERIAL PRIMARY KEY,
@@ -13,7 +13,7 @@ async function main() {
     );
   `);
 
-  console.log('Creating material_input_items table...');
+  console.log("Creating material_input_items table...");
   await db.execute(`
     CREATE TABLE IF NOT EXISTS material_input_items (
       id SERIAL PRIMARY KEY,
@@ -23,11 +23,11 @@ async function main() {
     );
   `);
 
-  console.log('Migration complete!');
+  console.log("Migration complete!");
   process.exit(0);
 }
 
 main().catch((err) => {
-  console.error('Migration failed:', err);
+  console.error("Migration failed:", err);
   process.exit(1);
 });

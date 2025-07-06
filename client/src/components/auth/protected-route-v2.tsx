@@ -4,7 +4,6 @@ import { Loader2 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth-v2";
 import { usePermissions } from "@/hooks/use-permissions";
 
-
 type ProtectedRouteProps = {
   path: string;
   component: React.ComponentType;
@@ -13,20 +12,20 @@ type ProtectedRouteProps = {
   workflowTab?: string; // Optional workflow tab name for section-specific access
 };
 
-export function ProtectedRoute({ 
-  path, 
+export function ProtectedRoute({
+  path,
   component: Component,
   module,
   sectionOnly = false,
-  workflowTab
+  workflowTab,
 }: ProtectedRouteProps) {
   const { user, isLoading, isAuthenticated } = useAuth();
   const [location, setLocation] = useLocation();
-  
+
   // Add safety check for permissions provider
   let hasPermission = (module: string) => true;
   let hasWorkflowTabPermission = (tab: string) => true;
-  
+
   try {
     const permissions = usePermissions();
     hasPermission = permissions.hasPermission;
@@ -40,26 +39,26 @@ export function ProtectedRoute({
     // Only redirect if not already on the auth page
     if (!isLoading && !isAuthenticated && location !== "/auth") {
       // Save the current URL before redirecting to auth (simple localStorage approach)
-      if (location !== '/auth' && location !== '/') {
-        localStorage.setItem('intended_url', location);
+      if (location !== "/auth" && location !== "/") {
+        localStorage.setItem("intended_url", location);
       }
       setLocation("/auth");
       return;
     }
-    
+
     if (!isLoading && isAuthenticated) {
       // Check for workflow tab permission if specified
       if (workflowTab && !hasWorkflowTabPermission(workflowTab)) {
         setLocation("/");
         return;
       }
-      
+
       // If module is specified, check if user has permission
       if (module && !hasPermission(module)) {
         setLocation("/");
         return;
       }
-      
+
       // If sectionOnly is specified, ensure the user has a section assigned
       if (sectionOnly && user && (!user.sectionId || user.sectionId === "")) {
         setLocation("/");
@@ -67,17 +66,17 @@ export function ProtectedRoute({
       }
     }
   }, [
-    isLoading, 
-    isAuthenticated, 
-    module, 
+    isLoading,
+    isAuthenticated,
+    module,
     workflowTab,
-    hasPermission, 
-    hasWorkflowTabPermission, 
-    location, 
+    hasPermission,
+    hasWorkflowTabPermission,
+    location,
     setLocation,
     sectionOnly,
     user,
-    path
+    path,
   ]);
 
   // Loader while checking authentication

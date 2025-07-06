@@ -26,7 +26,9 @@ interface FrontendQualityCheckType {
 /**
  * Transforms database quality check type to frontend expected format
  */
-export function adaptToFrontend(dbCheckType: DatabaseQualityCheckType): FrontendQualityCheckType {
+export function adaptToFrontend(
+  dbCheckType: DatabaseQualityCheckType,
+): FrontendQualityCheckType {
   return {
     id: dbCheckType.id,
     name: dbCheckType.name,
@@ -34,14 +36,16 @@ export function adaptToFrontend(dbCheckType: DatabaseQualityCheckType): Frontend
     targetStage: dbCheckType.targetStage,
     checklistItems: dbCheckType.checklistItems,
     parameters: dbCheckType.parameters,
-    isActive: dbCheckType.isActive
+    isActive: dbCheckType.isActive,
   };
 }
 
 /**
  * Transforms frontend quality check type to database format
  */
-export function adaptToDatabase(frontendCheckType: FrontendQualityCheckType): DatabaseQualityCheckType {
+export function adaptToDatabase(
+  frontendCheckType: FrontendQualityCheckType,
+): DatabaseQualityCheckType {
   return {
     id: frontendCheckType.id,
     name: frontendCheckType.name,
@@ -49,6 +53,6 @@ export function adaptToDatabase(frontendCheckType: FrontendQualityCheckType): Da
     targetStage: frontendCheckType.targetStage,
     checklistItems: frontendCheckType.checklistItems,
     parameters: frontendCheckType.parameters,
-    isActive: frontendCheckType.isActive
+    isActive: frontendCheckType.isActive,
   };
 }

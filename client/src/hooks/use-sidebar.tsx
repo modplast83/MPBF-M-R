@@ -16,6 +16,6 @@ export const useSidebar = create<SidebarState>()(
     }),
     {
       name: "sidebar-state",
-    }
-  )
+    },
+  ),
 );
