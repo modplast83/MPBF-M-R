@@ -487,10 +487,13 @@ export default function MaintenanceActionsPage() {
   });
 
   // Fetch maintenance requests
-  const { data: requests = [] } = useQuery({
+  const { data: allRequests = [] } = useQuery({
     queryKey: ['/api/maintenance/requests'],
     queryFn: () => apiRequest('GET', '/api/maintenance/requests')
   });
+
+  // Filter requests to show only uncompleted ones for the create form
+  const uncompletedRequests = allRequests.filter(request => request.status !== 'completed');
 
   // Create maintenance action mutation
   const createActionMutation = useMutation({
@@ -829,7 +832,7 @@ export default function MaintenanceActionsPage() {
             </DialogDescription>
           </DialogHeader>
           <CreateActionForm 
-            requests={requests}
+            requests={uncompletedRequests}
             onSubmit={(data) => createActionMutation.mutate(data)}
             onCancel={() => setIsCreateDialogOpen(false)}
             isLoading={createActionMutation.isPending}
@@ -849,7 +852,7 @@ export default function MaintenanceActionsPage() {
           {selectedAction && (
             <EditActionForm 
               action={selectedAction}
-              requests={requests}
+              requests={allRequests}
               onSubmit={(data) => updateActionMutation.mutate({ id: selectedAction.id, data })}
               onCancel={() => {
                 setIsEditDialogOpen(false);
