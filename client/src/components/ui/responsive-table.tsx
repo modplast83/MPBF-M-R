@@ -143,7 +143,7 @@ export function ResponsiveTable<T>({
                 <div className="h-5 bg-gray-200 rounded w-2/3"></div>
                 <div className="h-4 bg-gray-200 rounded w-1/2 mt-2"></div>
               </CardHeader>
-              <CardContent className="p-3 pt-1">
+              <CardContent className="p-4 pt-3">
                 <div className="space-y-2">
                   <div className="h-4 bg-gray-200 rounded w-full"></div>
                   <div className="h-4 bg-gray-200 rounded w-3/4"></div>
@@ -216,7 +216,7 @@ export function ResponsiveTable<T>({
                       return null;
                     })}
                 </CardHeader>
-                <CardContent className="p-3 pt-1">
+                <CardContent className="p-4 pt-3">
                   <div className="space-y-2">
                     {columns
                       .filter(

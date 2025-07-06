@@ -81,10 +81,10 @@ const FormItem = React.forwardRef<
     <FormItemContext.Provider value={{ id }}>
       <motion.div
         ref={ref}
-        className={cn("space-y-2", className)}
-        initial={{ opacity: 0, y: 5 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.2 }}
+        className={cn("space-y-3 p-4 bg-card/50 rounded-lg border border-border/50 backdrop-blur-sm shadow-sm hover:shadow-md transition-all duration-300", className)}
+        initial={{ opacity: 0, y: 10, scale: 0.98 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.3, ease: "easeOut" }}
         {...props}
       />
     </FormItemContext.Provider>
@@ -101,7 +101,11 @@ const FormLabel = React.forwardRef<
   return (
     <Label
       ref={ref}
-      className={cn(error && "text-destructive", className)}
+      className={cn(
+        "text-sm font-semibold text-foreground/80 tracking-wide transition-colors duration-200", 
+        error && "text-destructive", 
+        className
+      )}
       htmlFor={formItemId}
       {...props}
     />
@@ -167,13 +171,17 @@ const FormMessage = React.forwardRef<
     <motion.p
       ref={ref}
       id={formMessageId}
-      className={cn("text-sm font-medium text-destructive", className)}
-      initial={{ opacity: 0, y: -5, height: 0 }}
-      animate={{ opacity: 1, y: 0, height: "auto" }}
-      exit={{ opacity: 0, y: -5, height: 0 }}
-      transition={{ type: "spring", damping: 25, stiffness: 500 }}
+      className={cn(
+        "text-sm font-medium text-destructive bg-destructive/5 border border-destructive/20 rounded-md px-3 py-2 flex items-center gap-2", 
+        className
+      )}
+      initial={{ opacity: 0, y: -10, height: 0, scale: 0.95 }}
+      animate={{ opacity: 1, y: 0, height: "auto", scale: 1 }}
+      exit={{ opacity: 0, y: -10, height: 0, scale: 0.95 }}
+      transition={{ type: "spring", damping: 25, stiffness: 400 }}
       {...props}
     >
+      <span className="w-2 h-2 rounded-full bg-destructive animate-pulse"></span>
       {body}
     </motion.p>
   );
