@@ -124,17 +124,39 @@ interface MaintenanceRequest {
 
 // Create Action Form Component
 function CreateActionForm({ requests, onSubmit, onCancel, isLoading }) {
+  const { data: user } = useQuery({
+    queryKey: ['/api/user'],
+    queryFn: () => apiRequest('GET', '/api/user')
+  });
+
   const [formData, setFormData] = useState({
     requestId: '',
     machineId: '',
     actionsTaken: [],
     description: '',
-    actionBy: '',
+    actionBy: user?.id || '',
     laborHours: '',
     partsCost: '',
     partReplaced: '',
     readyToWork: false
   });
+
+  // Update actionBy when user data loads
+  useEffect(() => {
+    if (user?.id && !formData.actionBy) {
+      setFormData(prev => ({ ...prev, actionBy: user.id }));
+    }
+  }, [user?.id, formData.actionBy]);
+
+  // Update machineId when requestId changes
+  useEffect(() => {
+    if (formData.requestId) {
+      const selectedRequest = requests.find(r => r.id.toString() === formData.requestId);
+      if (selectedRequest) {
+        setFormData(prev => ({ ...prev, machineId: selectedRequest.machineId }));
+      }
+    }
+  }, [formData.requestId, requests]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -200,9 +222,9 @@ function CreateActionForm({ requests, onSubmit, onCancel, isLoading }) {
           <Label htmlFor="actionBy">Performed By</Label>
           <Input 
             id="actionBy"
-            value={formData.actionBy}
-            onChange={(e) => setFormData(prev => ({ ...prev, actionBy: e.target.value }))}
-            placeholder="Technician name"
+            value={user?.firstName || user?.username || 'Current User'}
+            readOnly
+            className="bg-gray-50"
           />
         </div>
         <div>
@@ -340,9 +362,9 @@ function EditActionForm({ action, requests, onSubmit, onCancel, isLoading }) {
           <Label htmlFor="actionBy">Performed By</Label>
           <Input 
             id="actionBy"
-            value={formData.actionBy}
-            onChange={(e) => setFormData(prev => ({ ...prev, actionBy: e.target.value }))}
-            placeholder="Technician name"
+            value={user?.firstName || user?.username || 'Current User'}
+            readOnly
+            className="bg-gray-50"
           />
         </div>
         <div>
