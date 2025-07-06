@@ -103,6 +103,15 @@ This is a comprehensive production management system built with React, TypeScrip
 - Health check endpoints for monitoring
 
 ## Recent Changes
+- July 6, 2025: Fixed Maintenance Actions "add action" functionality:
+  - Fixed API endpoint mismatch by updating server routes from /api/maintenance-actions to /api/maintenance/actions
+  - Added missing PUT and DELETE routes for maintenance actions CRUD operations
+  - Implemented complete Create Action Form with maintenance request selection, action types, and validation
+  - Added Edit Action Form for updating existing maintenance actions
+  - Added View Action Details dialog for displaying complete action information
+  - Fixed totalCost display error by adding safe fallback to cost field for undefined values
+  - Form includes request selection, action checkboxes (Repair, Change Parts, Workshop, etc.), description, technician, hours, and costs
+  - Added "Ready to Work" checkbox to complete maintenance requests when actions are finished
 - July 5, 2025: Enhanced Order Design functionality with dynamic Live Preview and advanced Design Editor:
   - Updated Live Preview to expand proportionally based on product dimensions (width and length)
   - Implemented dynamic SVG scaling with proper aspect ratio calculations for all template types

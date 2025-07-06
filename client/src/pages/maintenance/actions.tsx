@@ -453,7 +453,7 @@ function ViewActionDetails({ action }) {
         </div>
         <div>
           <Label className="text-sm font-medium text-gray-600">Total Cost</Label>
-          <p className="text-sm font-medium">${action.totalCost?.toFixed(2) || '0.00'}</p>
+          <p className="text-sm font-medium">${(action.totalCost || action.cost || 0).toFixed(2)}</p>
         </div>
       </div>
 
@@ -749,7 +749,7 @@ export default function MaintenanceActionsPage() {
                             <TableCell>{action.performedBy}</TableCell>
                             <TableCell>
                               <span className="font-medium">
-                                ${action.totalCost.toFixed(2)}
+                                ${(action.totalCost || action.cost || 0).toFixed(2)}
                               </span>
                             </TableCell>
                             <TableCell>
