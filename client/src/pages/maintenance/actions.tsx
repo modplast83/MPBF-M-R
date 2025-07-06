@@ -122,6 +122,351 @@ interface MaintenanceRequest {
   requestedBy: string;
 }
 
+// Create Action Form Component
+function CreateActionForm({ requests, onSubmit, onCancel, isLoading }) {
+  const [formData, setFormData] = useState({
+    requestId: '',
+    machineId: '',
+    actionsTaken: [],
+    description: '',
+    actionBy: '',
+    laborHours: '',
+    partsCost: '',
+    partReplaced: '',
+    readyToWork: false
+  });
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!formData.requestId || !formData.description) {
+      return;
+    }
+    onSubmit(formData);
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div>
+        <Label htmlFor="requestId">Maintenance Request</Label>
+        <Select value={formData.requestId} onValueChange={(value) => setFormData(prev => ({ ...prev, requestId: value }))}>
+          <SelectTrigger>
+            <SelectValue placeholder="Select maintenance request" />
+          </SelectTrigger>
+          <SelectContent>
+            {requests.map((request) => (
+              <SelectItem key={request.id} value={request.id.toString()}>
+                {request.requestNumber} - {request.machineName}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div>
+        <Label htmlFor="actionsTaken">Actions Taken</Label>
+        <div className="grid grid-cols-2 gap-2 mt-2">
+          {['Repair', 'Change Parts', 'Workshop', 'Cleaning', 'Inspection', 'Adjustment'].map((action) => (
+            <div key={action} className="flex items-center space-x-2">
+              <Checkbox 
+                id={action}
+                checked={formData.actionsTaken.includes(action)}
+                onCheckedChange={(checked) => {
+                  if (checked) {
+                    setFormData(prev => ({ ...prev, actionsTaken: [...prev.actionsTaken, action] }));
+                  } else {
+                    setFormData(prev => ({ ...prev, actionsTaken: prev.actionsTaken.filter(a => a !== action) }));
+                  }
+                }}
+              />
+              <Label htmlFor={action} className="text-sm">{action}</Label>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <Label htmlFor="description">Description</Label>
+        <Textarea 
+          id="description"
+          value={formData.description}
+          onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+          placeholder="Describe the maintenance action performed..."
+          required
+        />
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <Label htmlFor="actionBy">Performed By</Label>
+          <Input 
+            id="actionBy"
+            value={formData.actionBy}
+            onChange={(e) => setFormData(prev => ({ ...prev, actionBy: e.target.value }))}
+            placeholder="Technician name"
+          />
+        </div>
+        <div>
+          <Label htmlFor="laborHours">Labor Hours</Label>
+          <Input 
+            id="laborHours"
+            type="number"
+            step="0.5"
+            value={formData.laborHours}
+            onChange={(e) => setFormData(prev => ({ ...prev, laborHours: e.target.value }))}
+            placeholder="0.0"
+          />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <Label htmlFor="partsCost">Parts Cost</Label>
+          <Input 
+            id="partsCost"
+            type="number"
+            step="0.01"
+            value={formData.partsCost}
+            onChange={(e) => setFormData(prev => ({ ...prev, partsCost: e.target.value }))}
+            placeholder="0.00"
+          />
+        </div>
+        <div>
+          <Label htmlFor="partReplaced">Part Replaced</Label>
+          <Input 
+            id="partReplaced"
+            value={formData.partReplaced}
+            onChange={(e) => setFormData(prev => ({ ...prev, partReplaced: e.target.value }))}
+            placeholder="Part name/number"
+          />
+        </div>
+      </div>
+
+      <div className="flex items-center space-x-2">
+        <Checkbox 
+          id="readyToWork"
+          checked={formData.readyToWork}
+          onCheckedChange={(checked) => setFormData(prev => ({ ...prev, readyToWork: checked }))}
+        />
+        <Label htmlFor="readyToWork">Ready to Work (Complete maintenance request)</Label>
+      </div>
+
+      <div className="flex justify-end space-x-2 pt-4">
+        <Button type="button" variant="outline" onClick={onCancel}>
+          Cancel
+        </Button>
+        <Button type="submit" disabled={isLoading}>
+          {isLoading ? 'Recording...' : 'Record Action'}
+        </Button>
+      </div>
+    </form>
+  );
+}
+
+// Edit Action Form Component
+function EditActionForm({ action, requests, onSubmit, onCancel, isLoading }) {
+  const [formData, setFormData] = useState({
+    requestId: action.requestId?.toString() || '',
+    machineId: action.machineId || '',
+    actionsTaken: action.actionType?.split(', ') || [],
+    description: action.description || '',
+    actionBy: action.performedBy || '',
+    laborHours: action.hours?.toString() || '',
+    partsCost: action.cost?.toString() || '',
+    partReplaced: action.partReplaced || '',
+    readyToWork: action.status === 'completed'
+  });
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!formData.requestId || !formData.description) {
+      return;
+    }
+    onSubmit(formData);
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div>
+        <Label htmlFor="requestId">Maintenance Request</Label>
+        <Select value={formData.requestId} onValueChange={(value) => setFormData(prev => ({ ...prev, requestId: value }))}>
+          <SelectTrigger>
+            <SelectValue placeholder="Select maintenance request" />
+          </SelectTrigger>
+          <SelectContent>
+            {requests.map((request) => (
+              <SelectItem key={request.id} value={request.id.toString()}>
+                {request.requestNumber} - {request.machineName}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div>
+        <Label htmlFor="actionsTaken">Actions Taken</Label>
+        <div className="grid grid-cols-2 gap-2 mt-2">
+          {['Repair', 'Change Parts', 'Workshop', 'Cleaning', 'Inspection', 'Adjustment'].map((action) => (
+            <div key={action} className="flex items-center space-x-2">
+              <Checkbox 
+                id={action}
+                checked={formData.actionsTaken.includes(action)}
+                onCheckedChange={(checked) => {
+                  if (checked) {
+                    setFormData(prev => ({ ...prev, actionsTaken: [...prev.actionsTaken, action] }));
+                  } else {
+                    setFormData(prev => ({ ...prev, actionsTaken: prev.actionsTaken.filter(a => a !== action) }));
+                  }
+                }}
+              />
+              <Label htmlFor={action} className="text-sm">{action}</Label>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <Label htmlFor="description">Description</Label>
+        <Textarea 
+          id="description"
+          value={formData.description}
+          onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+          placeholder="Describe the maintenance action performed..."
+          required
+        />
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <Label htmlFor="actionBy">Performed By</Label>
+          <Input 
+            id="actionBy"
+            value={formData.actionBy}
+            onChange={(e) => setFormData(prev => ({ ...prev, actionBy: e.target.value }))}
+            placeholder="Technician name"
+          />
+        </div>
+        <div>
+          <Label htmlFor="laborHours">Labor Hours</Label>
+          <Input 
+            id="laborHours"
+            type="number"
+            step="0.5"
+            value={formData.laborHours}
+            onChange={(e) => setFormData(prev => ({ ...prev, laborHours: e.target.value }))}
+            placeholder="0.0"
+          />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <Label htmlFor="partsCost">Parts Cost</Label>
+          <Input 
+            id="partsCost"
+            type="number"
+            step="0.01"
+            value={formData.partsCost}
+            onChange={(e) => setFormData(prev => ({ ...prev, partsCost: e.target.value }))}
+            placeholder="0.00"
+          />
+        </div>
+        <div>
+          <Label htmlFor="partReplaced">Part Replaced</Label>
+          <Input 
+            id="partReplaced"
+            value={formData.partReplaced}
+            onChange={(e) => setFormData(prev => ({ ...prev, partReplaced: e.target.value }))}
+            placeholder="Part name/number"
+          />
+        </div>
+      </div>
+
+      <div className="flex items-center space-x-2">
+        <Checkbox 
+          id="readyToWork"
+          checked={formData.readyToWork}
+          onCheckedChange={(checked) => setFormData(prev => ({ ...prev, readyToWork: checked }))}
+        />
+        <Label htmlFor="readyToWork">Ready to Work (Complete maintenance request)</Label>
+      </div>
+
+      <div className="flex justify-end space-x-2 pt-4">
+        <Button type="button" variant="outline" onClick={onCancel}>
+          Cancel
+        </Button>
+        <Button type="submit" disabled={isLoading}>
+          {isLoading ? 'Updating...' : 'Update Action'}
+        </Button>
+      </div>
+    </form>
+  );
+}
+
+// View Action Details Component
+function ViewActionDetails({ action }) {
+  return (
+    <div className="space-y-4">
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <Label className="text-sm font-medium text-gray-600">Request Number</Label>
+          <p className="text-sm">{action.requestNumber}</p>
+        </div>
+        <div>
+          <Label className="text-sm font-medium text-gray-600">Machine</Label>
+          <p className="text-sm">{action.machineName}</p>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <Label className="text-sm font-medium text-gray-600">Action Type</Label>
+          <p className="text-sm">{action.actionType}</p>
+        </div>
+        <div>
+          <Label className="text-sm font-medium text-gray-600">Status</Label>
+          <Badge className={action.status === 'Completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}>
+            {action.status}
+          </Badge>
+        </div>
+      </div>
+
+      <div>
+        <Label className="text-sm font-medium text-gray-600">Description</Label>
+        <p className="text-sm bg-gray-50 p-3 rounded">{action.description}</p>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <Label className="text-sm font-medium text-gray-600">Performed By</Label>
+          <p className="text-sm">{action.performedBy}</p>
+        </div>
+        <div>
+          <Label className="text-sm font-medium text-gray-600">Action Date</Label>
+          <p className="text-sm">{formatDate(action.actionDate, 'dd/MM/yyyy HH:mm')}</p>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <Label className="text-sm font-medium text-gray-600">Labor Hours</Label>
+          <p className="text-sm">{action.hours || 0} hours</p>
+        </div>
+        <div>
+          <Label className="text-sm font-medium text-gray-600">Total Cost</Label>
+          <p className="text-sm font-medium">${action.totalCost?.toFixed(2) || '0.00'}</p>
+        </div>
+      </div>
+
+      {action.partReplaced && (
+        <div>
+          <Label className="text-sm font-medium text-gray-600">Part Replaced</Label>
+          <p className="text-sm">{action.partReplaced}</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function MaintenanceActionsPage() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
@@ -473,6 +818,63 @@ export default function MaintenanceActionsPage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Create Action Dialog */}
+      <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Add New Maintenance Action</DialogTitle>
+            <DialogDescription>
+              Record a new maintenance action for a request.
+            </DialogDescription>
+          </DialogHeader>
+          <CreateActionForm 
+            requests={requests}
+            onSubmit={(data) => createActionMutation.mutate(data)}
+            onCancel={() => setIsCreateDialogOpen(false)}
+            isLoading={createActionMutation.isPending}
+          />
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Action Dialog */}
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Edit Maintenance Action</DialogTitle>
+            <DialogDescription>
+              Update maintenance action details.
+            </DialogDescription>
+          </DialogHeader>
+          {selectedAction && (
+            <EditActionForm 
+              action={selectedAction}
+              requests={requests}
+              onSubmit={(data) => updateActionMutation.mutate({ id: selectedAction.id, data })}
+              onCancel={() => {
+                setIsEditDialogOpen(false);
+                setSelectedAction(null);
+              }}
+              isLoading={updateActionMutation.isPending}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* View Action Dialog */}
+      <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Maintenance Action Details</DialogTitle>
+            <DialogDescription>
+              Complete information about this maintenance action.
+            </DialogDescription>
+          </DialogHeader>
+          {selectedAction && (
+            <ViewActionDetails action={selectedAction} />
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

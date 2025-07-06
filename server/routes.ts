@@ -6437,7 +6437,7 @@ COMMIT;
   });
 
   // Maintenance Actions
-  app.get("/api/maintenance-actions", async (req: Request, res: Response) => {
+  app.get("/api/maintenance/actions", async (req: Request, res: Response) => {
     try {
       const actions = await storage.getMaintenanceActions();
       res.json(actions);
@@ -6447,7 +6447,7 @@ COMMIT;
     }
   });
 
-  app.get("/api/maintenance-actions/request/:requestId", async (req: Request, res: Response) => {
+  app.get("/api/maintenance/actions/request/:requestId", async (req: Request, res: Response) => {
     try {
       const requestId = parseInt(req.params.requestId);
       if (isNaN(requestId)) {
@@ -6462,7 +6462,7 @@ COMMIT;
     }
   });
 
-  app.post("/api/maintenance-actions", async (req: Request, res: Response) => {
+  app.post("/api/maintenance/actions", async (req: Request, res: Response) => {
     try {
       const actionData = {
         requestId: parseInt(req.body.requestId),
@@ -6499,6 +6499,59 @@ COMMIT;
     } catch (error) {
       console.error('Error creating maintenance action:', error);
       res.status(500).json({ error: 'Failed to create maintenance action' });
+    }
+  });
+
+  app.put("/api/maintenance/actions/:id", async (req: Request, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ error: "Invalid action ID" });
+      }
+      
+      const actionData = {
+        requestId: parseInt(req.body.requestId),
+        machineId: req.body.machineId,
+        actionType: Array.isArray(req.body.actionsTaken) && req.body.actionsTaken.length > 0 ? req.body.actionsTaken.join(', ') : 'General Maintenance',
+        description: req.body.description,
+        performedBy: req.body.actionBy || req.user?.id?.toString(),
+        hours: parseFloat(req.body.laborHours) || 0,
+        cost: parseFloat(req.body.partsCost) || 0,
+        status: 'completed',
+        partReplaced: req.body.partReplaced || null,
+        partId: req.body.partId || null,
+      };
+      
+      const action = await storage.updateMaintenanceAction(id, actionData);
+      
+      if (!action) {
+        return res.status(404).json({ error: "Maintenance action not found" });
+      }
+      
+      res.json(action);
+    } catch (error) {
+      console.error('Error updating maintenance action:', error);
+      res.status(500).json({ error: 'Failed to update maintenance action' });
+    }
+  });
+
+  app.delete("/api/maintenance/actions/:id", async (req: Request, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ error: "Invalid action ID" });
+      }
+      
+      const success = await storage.deleteMaintenanceAction(id);
+      
+      if (!success) {
+        return res.status(404).json({ error: "Maintenance action not found" });
+      }
+      
+      res.status(204).send();
+    } catch (error) {
+      console.error('Error deleting maintenance action:', error);
+      res.status(500).json({ error: 'Failed to delete maintenance action' });
     }
   });
 
