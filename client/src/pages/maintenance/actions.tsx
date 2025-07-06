@@ -155,7 +155,7 @@ function CreateActionForm({ requests, onSubmit, onCancel, isLoading }) {
           <SelectContent>
             {requests.map((request) => (
               <SelectItem key={request.id} value={request.id.toString()}>
-                {request.requestNumber} - {request.machineName}
+                {request.requestNumber} - {request.machineId} ({request.damageType})
               </SelectItem>
             ))}
           </SelectContent>
@@ -295,7 +295,7 @@ function EditActionForm({ action, requests, onSubmit, onCancel, isLoading }) {
           <SelectContent>
             {requests.map((request) => (
               <SelectItem key={request.id} value={request.id.toString()}>
-                {request.requestNumber} - {request.machineName}
+                {request.requestNumber} - {request.machineId} ({request.damageType})
               </SelectItem>
             ))}
           </SelectContent>
@@ -488,16 +488,12 @@ export default function MaintenanceActionsPage() {
 
   // Fetch maintenance requests
   const { data: allRequests = [] } = useQuery({
-    queryKey: ['/api/maintenance/requests'],
-    queryFn: () => apiRequest('GET', '/api/maintenance/requests')
+    queryKey: ['/api/maintenance-requests'],
+    queryFn: () => apiRequest('GET', '/api/maintenance-requests')
   });
 
   // Filter requests to show only uncompleted ones for the create form
   const uncompletedRequests = allRequests.filter(request => request.status !== 'completed');
-  
-  // Debug logging
-  console.log('All requests:', allRequests);
-  console.log('Uncompleted requests:', uncompletedRequests);
 
   // Create maintenance action mutation
   const createActionMutation = useMutation({
