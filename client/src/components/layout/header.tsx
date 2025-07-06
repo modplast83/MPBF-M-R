@@ -1,4 +1,4 @@
-import { useLocation } from "wouter";
+import { useLocation, Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -13,10 +13,11 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth-v2";
 import { useLanguage } from "@/hooks/use-language";
 import { useTranslation } from "react-i18next";
-import { Loader2, Menu, HelpCircle } from "lucide-react";
+import { Loader2, Menu, HelpCircle, Building2 } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { AuthenticationButton } from "@/components/authentication-button";
 import { NotificationBell } from "@/components/notifications/notification-bell";
+import AnimatedLanguageToggle from "@/components/ui/animated-language-toggle";
 
 interface HeaderProps {
   mobileMenuOpen?: boolean;
@@ -95,7 +96,7 @@ export default function Header({
         <div className="mr-4 hidden md:flex">
           <Link to="/" className="mr-6 flex items-center space-x-2 group">
             <div className="p-2 rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors duration-300">
-              <Factory className="h-6 w-6 text-primary group-hover:scale-110 transition-transform duration-300" />
+              <Building2 className="h-6 w-6 text-primary group-hover:scale-110 transition-transform duration-300" />
             </div>
             <span className="hidden font-bold sm:inline-block text-lg bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
               {t("app.title")}
