@@ -187,7 +187,15 @@
                 "trainings": "Trainings",
                 "maintenance": "Maintenance",
                 "overview": "Overview"
-            }
+            },
+            "break_started": "Break started successfully",
+            "break_ended": "Break ended successfully",
+            "failed_to_start_break": "Failed to start break",
+            "failed_to_end_break": "Failed to end break",
+            "checked_in_successfully": "Checked in successfully",
+            "checked_out_successfully": "Checked out successfully",
+            "failed_to_check_in": "Failed to check in",
+            "failed_to_check_out": "Failed to check out"
         },
             
 

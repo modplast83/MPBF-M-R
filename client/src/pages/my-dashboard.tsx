@@ -223,7 +223,10 @@ export default function MyDashboard() {
   // Break start mutation
   const breakStartMutation = useMutation({
     mutationFn: () => apiRequest('POST', '/api/hr/break-start', {
-      userId: user?.id
+      userId: user?.id,
+      latitude: 0,
+      longitude: 0,
+      manualEntry: true
     }),
     onSuccess: () => {
       toast({
@@ -231,13 +234,23 @@ export default function MyDashboard() {
         description: t('my_dashboard.break_started')
       });
       queryClient.invalidateQueries({ queryKey: ['/api/hr/time-attendance'] });
+    },
+    onError: (error: any) => {
+      toast({
+        title: t('common.error'),
+        description: error.message || t('my_dashboard.failed_to_start_break'),
+        variant: "destructive"
+      });
     }
   });
 
   // Break end mutation
   const breakEndMutation = useMutation({
     mutationFn: () => apiRequest('POST', '/api/hr/break-end', {
-      userId: user?.id
+      userId: user?.id,
+      latitude: 0,
+      longitude: 0,
+      manualEntry: true
     }),
     onSuccess: () => {
       toast({
@@ -245,6 +258,13 @@ export default function MyDashboard() {
         description: t('my_dashboard.break_ended')
       });
       queryClient.invalidateQueries({ queryKey: ['/api/hr/time-attendance'] });
+    },
+    onError: (error: any) => {
+      toast({
+        title: t('common.error'),
+        description: error.message || t('my_dashboard.failed_to_end_break'),
+        variant: "destructive"
+      });
     }
   });
 

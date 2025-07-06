@@ -103,6 +103,12 @@ This is a comprehensive production management system built with React, TypeScrip
 - Health check endpoints for monitoring
 
 ## Recent Changes
+- July 6, 2025: Fixed critical bugs in Take Break functionality and Maintenance Actions API:
+  - Fixed Break Start/End API calls - Added required location data (latitude: 0, longitude: 0) and manualEntry: true flag
+  - Fixed geofence validation bypass for manual break entries to prevent "factory area" errors
+  - Added missing translation keys (failed_to_start_break, failed_to_end_break) for proper error handling
+  - Enhanced break mutations with proper error handling and user feedback
+  - Break functionality now works correctly with proper validation and user notifications
 - July 6, 2025: Fixed Maintenance Actions "add action" functionality:
   - Fixed API endpoint mismatch by updating server routes from /api/maintenance-actions to /api/maintenance/actions
   - Added missing PUT and DELETE routes for maintenance actions CRUD operations
