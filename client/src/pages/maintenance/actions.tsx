@@ -494,6 +494,10 @@ export default function MaintenanceActionsPage() {
 
   // Filter requests to show only uncompleted ones for the create form
   const uncompletedRequests = allRequests.filter(request => request.status !== 'completed');
+  
+  // Debug logging
+  console.log('All requests:', allRequests);
+  console.log('Uncompleted requests:', uncompletedRequests);
 
   // Create maintenance action mutation
   const createActionMutation = useMutation({
