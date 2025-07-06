@@ -307,6 +307,7 @@
                 "description": "Manage customer information and relationships",
                 "id": "ID",
                 "code": "Code",
+                "add_customer": "Add Customer",
                 "name": "Name",
                 "name_ar": "Name (Arabic)",
                 "arabic_name": "Customer (Arabic)",
@@ -314,6 +315,7 @@
                 "sales_person": "Sales Person",
                 "plate_drawer_code": "Plate Drawer Code",
                 "actions": "Actions",
+                "add_new": "Add New Customer",
                 "add_new": "Add New Customer"
             },
             "items": {
