@@ -103,6 +103,13 @@ This is a comprehensive production management system built with React, TypeScrip
 - Health check endpoints for monitoring
 
 ## Recent Changes
+- July 6, 2025: Added comprehensive translation keys for Customer Form to support internationalization:
+  - Added 14 new translation keys for customer form fields in English and Arabic
+  - Added translations for Customer ID, Customer Code, Customer Name, Arabic Name, Sales Person, Plate Drawer Code
+  - Added help text and placeholder translations for better user experience
+  - Updated CustomerForm component to use useTranslation hook and all new translation keys
+  - Enhanced user interface with proper bilingual support for customer creation and editing
+  - All form labels, placeholders, help text, and buttons now fully support language switching
 - July 6, 2025: Fixed critical bugs in Take Break functionality and Maintenance Actions API:
   - Fixed Break Start/End API calls - Added required location data (latitude: 0, longitude: 0) and manualEntry: true flag
   - Fixed geofence validation bypass for manual break entries to prevent "factory area" errors

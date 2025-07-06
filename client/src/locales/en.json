@@ -316,7 +316,20 @@
                 "plate_drawer_code": "Plate Drawer Code",
                 "actions": "Actions",
                 "add_new": "Add New Customer",
-                "add_new": "Add New Customer"
+                "customer_id": "Customer ID",
+                "customer_id_help": "generated automatically if empty",
+                "customer_id_placeholder": "Leave empty for auto-generation",
+                "customer_code": "Customer Code",
+                "customer_code_help": "uses ID if empty",
+                "customer_code_placeholder": "Enter customer code",
+                "customer_name": "Customer Name",
+                "customer_name_placeholder": "Enter customer name",
+                "arabic_name_optional": "Arabic Name (Optional)",
+                "arabic_name_placeholder": "Enter Arabic name",
+                "none": "None",
+                "enter_plate_drawer_code": "Enter plate drawer code",
+                "cancel": "Cancel",
+                "create_customer": "Create Customer"
             },
             "items": {
                 "title": "Items",

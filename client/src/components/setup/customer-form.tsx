@@ -23,6 +23,7 @@ import { toast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { API_ENDPOINTS } from "@/lib/constants";
 import { insertCustomerSchema, Customer, User } from "@shared/schema";
+import { useTranslation } from "react-i18next";
 
 interface CustomerFormProps {
   customer?: Customer;
@@ -30,6 +31,7 @@ interface CustomerFormProps {
 }
 
 export function CustomerForm({ customer, onSuccess }: CustomerFormProps) {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const isEditing = !!customer;
   
@@ -124,11 +126,11 @@ export function CustomerForm({ customer, onSuccess }: CustomerFormProps) {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>
-                  Customer ID {!isEditing && <span className="text-muted-foreground text-xs font-normal">(generated automatically if empty)</span>}
+                  {t("setup.customers.customer_id")} {!isEditing && <span className="text-muted-foreground text-xs font-normal">({t("setup.customers.customer_id_help")})</span>}
                 </FormLabel>
                 <FormControl>
                   <Input 
-                    placeholder={isEditing ? "Customer ID" : "Leave empty for auto-generation"} 
+                    placeholder={isEditing ? t("setup.customers.customer_id") : t("setup.customers.customer_id_placeholder")} 
                     {...field} 
                     disabled={isEditing}
                   />
@@ -144,10 +146,10 @@ export function CustomerForm({ customer, onSuccess }: CustomerFormProps) {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>
-                  Customer Code {!isEditing && <span className="text-muted-foreground text-xs font-normal">(uses ID if empty)</span>}
+                  {t("setup.customers.customer_code")} {!isEditing && <span className="text-muted-foreground text-xs font-normal">({t("setup.customers.customer_code_help")})</span>}
                 </FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter customer code" {...field} />
+                  <Input placeholder={t("setup.customers.customer_code_placeholder")} {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -161,9 +163,9 @@ export function CustomerForm({ customer, onSuccess }: CustomerFormProps) {
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Customer Name</FormLabel>
+                <FormLabel>{t("setup.customers.customer_name")}</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter customer name" {...field} />
+                  <Input placeholder={t("setup.customers.customer_name_placeholder")} {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -175,10 +177,10 @@ export function CustomerForm({ customer, onSuccess }: CustomerFormProps) {
             name="nameAr"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Arabic Name (Optional)</FormLabel>
+                <FormLabel>{t("setup.customers.arabic_name_optional")}</FormLabel>
                 <FormControl>
                   <Input 
-                    placeholder="Enter Arabic name" 
+                    placeholder={t("setup.customers.arabic_name_placeholder")} 
                     {...field}
                     value={field.value || ""}
                     onChange={(e) => field.onChange(e.target.value || "")}
@@ -196,7 +198,7 @@ export function CustomerForm({ customer, onSuccess }: CustomerFormProps) {
             name="userId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Sales Person</FormLabel>
+                <FormLabel>{t("setup.customers.sales_person")}</FormLabel>
                 <Select
                   onValueChange={(value) => field.onChange(value === "null" ? null : value)}
                   value={field.value || "null"}
@@ -204,11 +206,11 @@ export function CustomerForm({ customer, onSuccess }: CustomerFormProps) {
                 >
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select sales person" />
+                      <SelectValue placeholder={t("setup.customers.sales_person")} />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="null">None</SelectItem>
+                    <SelectItem value="null">{t("setup.customers.none")}</SelectItem>
                     {users?.map((user) => (
                       <SelectItem key={user.id} value={user.id}>
                         {user.firstName || user.username || user.id}
@@ -226,10 +228,10 @@ export function CustomerForm({ customer, onSuccess }: CustomerFormProps) {
             name="plateDrawerCode"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Plate Drawer Code</FormLabel>
+                <FormLabel>{t("setup.customers.plate_drawer_code")}</FormLabel>
                 <FormControl>
                   <Input 
-                    placeholder="Enter plate drawer code" 
+                    placeholder={t("setup.customers.enter_plate_drawer_code")} 
                     {...field}
                     value={field.value || ""}
                     onChange={(e) => field.onChange(e.target.value || "")}
@@ -248,7 +250,7 @@ export function CustomerForm({ customer, onSuccess }: CustomerFormProps) {
               variant="outline"
               onClick={onSuccess}
             >
-              Cancel
+              {t("setup.customers.cancel")}
             </Button>
           )}
           <Button
@@ -256,8 +258,8 @@ export function CustomerForm({ customer, onSuccess }: CustomerFormProps) {
             disabled={mutation.isPending}
           >
             {mutation.isPending
-              ? isEditing ? "Updating..." : "Creating..."
-              : isEditing ? "Update Customer" : "Create Customer"
+              ? isEditing ? t("common.updating") : t("common.creating")
+              : isEditing ? t("common.update") : t("setup.customers.create_customer")
             }
           </Button>
         </div>
