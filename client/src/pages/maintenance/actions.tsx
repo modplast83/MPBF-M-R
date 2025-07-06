@@ -617,9 +617,9 @@ export default function MaintenanceActionsPage() {
                 <tr><td>Damage Type</td><td>${action.damageType}</td></tr>
                 <tr><td>Description</td><td>${action.description}</td></tr>
                 <tr><td>Performed By</td><td>${action.performedBy}</td></tr>
-                <tr><td>Parts Cost</td><td>$${action.partsCost.toFixed(2)}</td></tr>
-                <tr><td>Labor Cost</td><td>$${action.laborCost.toFixed(2)}</td></tr>
-                <tr><td>Total Cost</td><td>$${action.totalCost.toFixed(2)}</td></tr>
+                <tr><td>Parts Cost</td><td>$${(action.partsCost || action.cost || 0).toFixed(2)}</td></tr>
+                <tr><td>Labor Hours</td><td>${action.hours || 0} hours</td></tr>
+                <tr><td>Total Cost</td><td>$${(action.totalCost || action.cost || 0).toFixed(2)}</td></tr>
                 <tr><td>Status</td><td>${action.status}</td></tr>
                 <tr><td>Completed Date</td><td>${action.completedDate ? formatDate(action.completedDate) : 'Not completed'}</td></tr>
                 <tr><td>Notes</td><td>${action.notes || 'No notes'}</td></tr>
