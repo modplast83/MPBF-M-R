@@ -2336,7 +2336,25 @@ export class DatabaseStorage implements IStorage {
 
   // Maintenance Actions methods
   async getMaintenanceActions(): Promise<MaintenanceAction[]> {
-    return await db.select().from(maintenanceActions).orderBy(desc(maintenanceActions.actionDate));
+    const actions = await db.select({
+      id: maintenanceActions.id,
+      requestId: maintenanceActions.requestId,
+      machineId: maintenanceActions.machineId,
+      actionDate: maintenanceActions.actionDate,
+      actionType: maintenanceActions.actionType,
+      description: maintenanceActions.description,
+      performedBy: users.firstName,
+      hours: maintenanceActions.hours,
+      cost: maintenanceActions.cost,
+      status: maintenanceActions.status,
+      partReplaced: maintenanceActions.partReplaced,
+      partId: maintenanceActions.partId
+    })
+    .from(maintenanceActions)
+    .leftJoin(users, eq(maintenanceActions.performedBy, users.id))
+    .orderBy(desc(maintenanceActions.actionDate));
+    
+    return actions;
   }
 
   async getMaintenanceAction(id: number): Promise<MaintenanceAction | undefined> {

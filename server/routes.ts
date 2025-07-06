@@ -6472,7 +6472,7 @@ COMMIT;
         performedBy: req.body.actionBy || req.user?.id?.toString(),
         hours: parseFloat(req.body.laborHours) || 0,
         cost: parseFloat(req.body.partsCost) || 0,
-        status: 'completed',
+        status: req.body.readyToWork ? 'completed' : 'in_progress',
         partReplaced: req.body.partReplaced || null,
         partId: req.body.partId || null,
       };
@@ -6517,7 +6517,7 @@ COMMIT;
         performedBy: req.body.actionBy || req.user?.id?.toString(),
         hours: parseFloat(req.body.laborHours) || 0,
         cost: parseFloat(req.body.partsCost) || 0,
-        status: 'completed',
+        status: req.body.readyToWork ? 'completed' : 'in_progress',
         partReplaced: req.body.partReplaced || null,
         partId: req.body.partId || null,
       };
