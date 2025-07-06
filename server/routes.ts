@@ -6464,18 +6464,32 @@ COMMIT;
 
   app.post("/api/maintenance/actions", async (req: Request, res: Response) => {
     try {
+      // Validate required fields
+      if (!req.body.requestId || !req.body.machineId || !req.body.description) {
+        return res.status(400).json({ error: 'Missing required fields: requestId, machineId, description' });
+      }
+
+      // Ensure we have a valid user ID for performedBy
+      const performedBy = req.body.actionBy || req.user?.id?.toString() || 'admin';
+      
+      if (!performedBy) {
+        return res.status(400).json({ error: 'Unable to determine who performed the action' });
+      }
+
       const actionData = {
         requestId: parseInt(req.body.requestId),
         machineId: req.body.machineId,
         actionType: Array.isArray(req.body.actionsTaken) && req.body.actionsTaken.length > 0 ? req.body.actionsTaken.join(', ') : 'General Maintenance',
         description: req.body.description,
-        performedBy: req.body.actionBy || req.user?.id?.toString(),
+        performedBy: performedBy,
         hours: parseFloat(req.body.laborHours) || 0,
         cost: parseFloat(req.body.partsCost) || 0,
         status: req.body.readyToWork ? 'completed' : 'in_progress',
         partReplaced: req.body.partReplaced || null,
         partId: req.body.partId || null,
       };
+
+      console.log('Creating maintenance action with data:', actionData);
       
       const action = await storage.createMaintenanceAction(actionData);
       
@@ -6508,13 +6522,25 @@ COMMIT;
       if (isNaN(id)) {
         return res.status(400).json({ error: "Invalid action ID" });
       }
+
+      // Validate required fields
+      if (!req.body.requestId || !req.body.machineId || !req.body.description) {
+        return res.status(400).json({ error: 'Missing required fields: requestId, machineId, description' });
+      }
+
+      // Ensure we have a valid user ID for performedBy
+      const performedBy = req.body.actionBy || req.user?.id?.toString() || 'admin';
+      
+      if (!performedBy) {
+        return res.status(400).json({ error: 'Unable to determine who performed the action' });
+      }
       
       const actionData = {
         requestId: parseInt(req.body.requestId),
         machineId: req.body.machineId,
         actionType: Array.isArray(req.body.actionsTaken) && req.body.actionsTaken.length > 0 ? req.body.actionsTaken.join(', ') : 'General Maintenance',
         description: req.body.description,
-        performedBy: req.body.actionBy || req.user?.id?.toString(),
+        performedBy: performedBy,
         hours: parseFloat(req.body.laborHours) || 0,
         cost: parseFloat(req.body.partsCost) || 0,
         status: req.body.readyToWork ? 'completed' : 'in_progress',
