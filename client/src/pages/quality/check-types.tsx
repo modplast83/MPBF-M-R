@@ -17,6 +17,7 @@ import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -320,6 +321,11 @@ export default function QualityCheckTypes() {
                   ? t("quality.edit_check_type", "Edit Check Type")
                   : t("quality.create_check_type", "Create Check Type")}
               </DialogTitle>
+              <DialogDescription>
+                {editingType
+                  ? "Update the quality check type configuration and parameters"
+                  : "Define a new quality check type with verification parameters"}
+              </DialogDescription>
             </DialogHeader>
 
             <Form {...form}>

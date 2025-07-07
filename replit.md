@@ -118,6 +118,12 @@ This is a comprehensive production management system built with React, TypeScrip
 
 ## Recent Changes
 
+- July 7, 2025: Fixed critical Dialog accessibility bugs causing console warnings:
+  - Added missing DialogDescription components to quality/check-types.tsx and permissions-section-based.tsx
+  - Fixed DialogContent accessibility compliance warnings for screen reader users
+  - All Dialog components now properly include DialogTitle and DialogDescription for WCAG accessibility guidelines
+  - Resolved React accessibility warnings: "Missing `Description` or `aria-describedby={undefined}` for {DialogContent}"
+  - Application continues to run stably on port 5000 with improved accessibility compliance
 - July 7, 2025: Fixed mobile navigation sidebar menu functionality and completed comprehensive mobile optimization:
   - Added mobile menu button (hamburger icon) to header that appears only on mobile screens
   - Fixed mobile sidebar navigation to properly open/close with touch interactions

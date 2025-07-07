@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogFooter,
@@ -665,6 +666,11 @@ function PermissionDialog({
           <DialogTitle>
             {permission ? "Edit Permission" : "Add Permission"}
           </DialogTitle>
+          <DialogDescription>
+            {permission 
+              ? "Update the permission settings for this section and module" 
+              : "Create a new permission for a specific section and module"}
+          </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
