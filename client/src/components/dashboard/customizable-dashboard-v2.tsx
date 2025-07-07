@@ -133,6 +133,7 @@ interface DashboardStats {
 }
 
 function StatsOverviewWidget() {
+  const isMobile = useIsMobile();
   const {
     data: stats,
     isLoading,
@@ -145,12 +146,12 @@ function StatsOverviewWidget() {
   if (isLoading) {
     return (
       <div>
-        <h3 className="font-semibold mb-3">Statistics Overview</h3>
-        <div className="grid grid-cols-2 gap-3">
+        <h3 className={`font-semibold mb-3 ${isMobile ? "text-sm" : ""}`}>Statistics Overview</h3>
+        <div className={`grid grid-cols-2 ${isMobile ? "gap-2" : "gap-3"}`}>
           {[...Array(4)].map((_, i) => (
-            <div key={i} className="text-center p-2 bg-gray-50 rounded">
-              <div className="h-4 w-4 bg-gray-200 rounded mx-auto mb-1 animate-pulse"></div>
-              <div className="h-6 bg-gray-200 rounded mb-1 animate-pulse"></div>
+            <div key={i} className={`text-center ${isMobile ? "p-1.5" : "p-2"} bg-gray-50 rounded`}>
+              <div className={`${isMobile ? "h-3 w-3" : "h-4 w-4"} bg-gray-200 rounded mx-auto mb-1 animate-pulse`}></div>
+              <div className={`${isMobile ? "h-5" : "h-6"} bg-gray-200 rounded mb-1 animate-pulse`}></div>
               <div className="h-3 bg-gray-200 rounded animate-pulse"></div>
             </div>
           ))}
@@ -162,7 +163,7 @@ function StatsOverviewWidget() {
   if (error) {
     return (
       <div>
-        <h3 className="font-semibold mb-3">Statistics Overview</h3>
+        <h3 className={`font-semibold mb-3 ${isMobile ? "text-sm" : ""}`}>Statistics Overview</h3>
         <div className="text-center py-4 text-muted-foreground">
           Unable to load statistics
         </div>
@@ -177,8 +178,6 @@ function StatsOverviewWidget() {
     pendingOrders: Number(stats?.pendingOrders) || 0,
     qualityIssues: Number(stats?.qualityIssues) || 0,
   };
-
-  const isMobile = useIsMobile();
 
   return (
     <div>
