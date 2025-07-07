@@ -23,7 +23,7 @@ import { ProductForm } from "@/components/setup/product-form";
 import { API_ENDPOINTS } from "@/lib/constants";
 import { apiRequest } from "@/lib/queryClient";
 import { toast } from "@/hooks/use-toast";
-import { CustomerProduct, Customer, Item, Category } from "@shared/schema";
+import { CustomerProduct, Customer, Item, Category, MasterBatch } from "@shared/schema";
 import {
   Select,
   SelectContent,
@@ -65,6 +65,10 @@ export default function Products() {
 
   const { data: categories } = useQuery<Category[]>({
     queryKey: [API_ENDPOINTS.CATEGORIES],
+  });
+
+  const { data: masterBatches } = useQuery<MasterBatch[]>({
+    queryKey: ["/api/master-batches"],
   });
 
   // Filter customers by search query
@@ -158,6 +162,11 @@ export default function Products() {
     return categories?.find((c) => c.id === categoryId)?.name || "Unknown";
   };
 
+  const getMasterBatchName = (masterBatchId: string | null) => {
+    if (!masterBatchId) return "-";
+    return masterBatches?.find((mb) => mb.id === masterBatchId)?.name || "Unknown";
+  };
+
   // Print function to generate A4 PDF
   const handlePrintProducts = () => {
     if (!selectedCustomerId || !products || products.length === 0) {
@@ -195,6 +204,8 @@ export default function Products() {
         product.id.toString(),
         getCategoryName(product.categoryId),
         getItemName(product.itemId),
+        getMasterBatchName(product.masterBatchId),
+        product.rawMaterial || "-",
         product.sizeCaption || "-",
         product.thickness ? product.thickness.toString() : "-",
         lengthDisplay,
@@ -211,6 +222,8 @@ export default function Products() {
           "ID",
           "Category",
           "Item",
+          "Master Batch",
+          "Material Type",
           "Size Caption",
           "Thickness",
           "Length (cm)",
@@ -234,15 +247,17 @@ export default function Products() {
       },
       margin: { left: 10, right: 10 },
       columnStyles: {
-        0: { cellWidth: 15 }, // S/N
-        1: { cellWidth: 20 }, // ID
-        2: { cellWidth: 25 }, // Category
-        3: { cellWidth: 25 }, // Item
-        4: { cellWidth: 25 }, // Size Caption
-        5: { cellWidth: 20 }, // Thickness
-        6: { cellWidth: 25 }, // Length
-        7: { cellWidth: 25 }, // Width
-        8: { cellWidth: 20 }, // Unit Weight
+        0: { cellWidth: 12 }, // S/N
+        1: { cellWidth: 15 }, // ID
+        2: { cellWidth: 20 }, // Category
+        3: { cellWidth: 20 }, // Item
+        4: { cellWidth: 20 }, // Master Batch
+        5: { cellWidth: 18 }, // Material Type
+        6: { cellWidth: 18 }, // Size Caption
+        7: { cellWidth: 15 }, // Thickness
+        8: { cellWidth: 18 }, // Length
+        9: { cellWidth: 15 }, // Width
+        10: { cellWidth: 18 }, // Unit Weight
       },
     });
 
@@ -293,6 +308,16 @@ export default function Products() {
       header: t("common.item"),
       id: "itemName",
       cell: (row: CustomerProduct) => getItemName(row.itemId),
+    },
+    {
+      header: "Master Batch",
+      id: "masterBatchName",
+      cell: (row: CustomerProduct) => getMasterBatchName(row.masterBatchId),
+    },
+    {
+      header: "Material Type",
+      id: "rawMaterial",
+      cell: (row: CustomerProduct) => row.rawMaterial || "-",
     },
     {
       header: t("setup.products.size"),
