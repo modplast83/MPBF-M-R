@@ -79,7 +79,9 @@ export default function MainLayout({ children }: MainLayoutProps) {
             setMobileMenuOpen={handleMobileMenuToggle}
           />
         )}
-        <main className="flex-1 overflow-auto bg-gradient-to-br from-slate-50 via-gray-50 to-blue-50 p-2 sm:p-4 lg:p-6 pl-[3px] pr-[3px]">
+        <main className={`flex-1 overflow-auto bg-gradient-to-br from-slate-50 via-gray-50 to-blue-50 ${
+          isMobile ? "p-1" : "p-2 sm:p-4 lg:p-6"
+        } pl-[3px] pr-[3px]`}>
           <div className="max-w-full mx-auto h-full">{children}</div>
         </main>
       </div>

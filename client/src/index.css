@@ -148,6 +148,57 @@
     .customer-form-container {
       padding: 1rem;
     }
+  }
+
+  /* Mobile dashboard optimizations */
+  @media (max-width: 768px) {
+    /* Touch-friendly interactions */
+    .dashboard-widget {
+      min-height: 200px;
+      padding: 0.75rem;
+    }
+
+    /* Better scrolling on mobile */
+    .dashboard-grid {
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    /* Optimized button sizes for touch */
+    .dashboard-controls button {
+      min-height: 44px;
+      min-width: 44px;
+    }
+
+    /* Compact stats cards */
+    .stats-card {
+      padding: 0.5rem;
+      border-radius: 0.5rem;
+    }
+
+    /* Mobile-optimized modals */
+    .mobile-modal {
+      margin: 0.5rem;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    /* Improved text readability */
+    .mobile-text-sm {
+      font-size: 0.75rem;
+      line-height: 1.2;
+    }
+
+    /* Better spacing for mobile */
+    .mobile-spacing {
+      gap: 0.5rem;
+    }
+
+    /* Optimize card layouts */
+    .mobile-card {
+      border-radius: 0.5rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
 
     .customer-form-input input,
     .customer-form-input select {
