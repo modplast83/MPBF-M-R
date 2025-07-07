@@ -113,7 +113,7 @@ export default function Items() {
       cell: (row: Item) => (
         <div className="flex space-x-2">
           <Button
-            variant={"ghost" as any}
+            {...({ variant: "ghost" } as any)}
             size="icon"
             onClick={() => handleEdit(row)}
             className="text-primary-500 hover:text-primary-700"
@@ -121,7 +121,7 @@ export default function Items() {
             <span className="material-icons text-sm">edit</span>
           </Button>
           <Button
-            variant={"ghost" as any}
+            {...({ variant: "ghost" } as any)}
             size="icon"
             onClick={() => handleDelete(row)}
             className="text-red-500 hover:text-red-700"
