@@ -13,8 +13,6 @@ import { QualityPenaltiesManagement } from "@/components/quality/enhanced-penalt
 import { QualityCorrectiveActions } from "@/components/quality/enhanced-corrective-actions";
 import { IntegratedQualityChecksManagement } from "@/components/quality/integrated-quality-check-form";
 import {
-  PieChart,
-  BarChart,
   ClipboardCheck,
   AlertTriangle,
   ShieldAlert,
@@ -24,8 +22,6 @@ import {
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { Progress } from "@/components/ui/progress";
-import { QualityBadge } from "@/components/quality/quality-badge";
-import { cn } from "@/lib/utils";
 
 export default function UnifiedQualityDashboard() {
   const { t } = useTranslation();

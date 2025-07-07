@@ -33,7 +33,6 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-// @ts-ignore
 import { useTranslation } from "react-i18next";
 import { useLanguage } from "@/hooks/use-language";
 import {

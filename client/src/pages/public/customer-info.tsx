@@ -17,7 +17,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, CheckCircle } from "lucide-react";
 
-import FactoryLogoHPNGW_Green from "@assets/FactoryLogoHPNGWg_1750292727900.png";
+import FactoryLogoHPNGW_Green from "@assets/FactoryLogoHPNGW Green.png";
 
 // Customer information form schema
 const customerInfoSchema = z

@@ -41,9 +41,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth-v2";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useLocation } from "wouter";
-// @ts-ignore - Date-fns import compatibility
 import { format } from "date-fns";
-// @ts-ignore - Type assertion for react-i18next
 import { useTranslation } from "react-i18next";
 import {
   Clock,

@@ -24,7 +24,6 @@ import { API_ENDPOINTS } from "@/lib/constants";
 import { apiRequest } from "@/lib/queryClient";
 import { toast } from "@/hooks/use-toast";
 import { Item, Category } from "@shared/schema";
-// @ts-ignore
 import { useTranslation } from "react-i18next";
 
 export default function Items() {

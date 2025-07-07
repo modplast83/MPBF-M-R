@@ -28,7 +28,7 @@ import {
   Shield,
   HelpCircle,
 } from "lucide-react";
-import companyLogo from "@assets/FactoryLogoHPNGWg_1750292727900.png";
+import companyLogo from "@assets/FactoryLogoHPNGW Green.png";
 // import factoryLogo from "@assets/FactoryLogoHPNGW Green.png";
 
 interface SidebarProps {
