@@ -1,11 +1,18 @@
 import { MailService } from "@sendgrid/mail";
 
-if (!process.env.SENDGRID_API_KEY) {
-  throw new Error("SENDGRID_API_KEY environment variable must be set");
-}
+let mailService: MailService | null = null;
 
-const mailService = new MailService();
-mailService.setApiKey(process.env.SENDGRID_API_KEY);
+if (!process.env.SENDGRID_API_KEY) {
+  console.warn("SendGrid API key not configured - email notifications will be disabled");
+} else {
+  try {
+    mailService = new MailService();
+    mailService.setApiKey(process.env.SENDGRID_API_KEY);
+    console.log("SendGrid email service initialized successfully");
+  } catch (error) {
+    console.error("Failed to initialize SendGrid:", error);
+  }
+}
 
 interface CustomerFormData {
   commercialNameAr: string;
@@ -26,6 +33,11 @@ interface CustomerFormData {
 export async function sendCustomerFormNotification(
   customerData: CustomerFormData,
 ): Promise<boolean> {
+  if (!mailService) {
+    console.log("Email service not configured - skipping email notification");
+    return false;
+  }
+
   try {
     const emailHtml = `
     <!DOCTYPE html>
