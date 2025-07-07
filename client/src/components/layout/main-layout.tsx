@@ -6,6 +6,12 @@ import { useAuth } from "@/hooks/use-auth-v2";
 import { useLanguage } from "@/hooks/use-language";
 import { useLocation } from "wouter";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { 
+  SidebarProvider, 
+  SidebarInset,
+  SidebarTrigger,
+  useSidebar as useSidebarContext
+} from "@/components/ui/sidebar";
 import {
   Sheet,
   SheetContent,

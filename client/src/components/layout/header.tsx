@@ -93,6 +93,18 @@ export default function Header({
   return (
     <header className="sticky top-0 z-50 w-full border-b glass backdrop-blur-xl supports-[backdrop-filter]:bg-background/60 animate-slide-in">
       <div className="container flex h-16 items-center">
+        {/* Mobile menu button */}
+        {isMobile && (
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={toggleMobileSidebar}
+            className="mr-2 md:hidden"
+          >
+            <Menu className="h-5 w-5" />
+          </Button>
+        )}
+        
         <div className="mr-4 hidden md:flex">
           <Link to="/" className="mr-6 flex items-center space-x-2 group">
             <div className="p-2 rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors duration-300">
@@ -103,6 +115,19 @@ export default function Header({
             </span>
           </Link>
         </div>
+        
+        {/* Mobile logo */}
+        {isMobile && (
+          <Link to="/" className="mr-auto flex items-center space-x-2 group">
+            <div className="p-2 rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors duration-300">
+              <Building2 className="h-5 w-5 text-primary group-hover:scale-110 transition-transform duration-300" />
+            </div>
+            <span className="font-bold text-sm bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+              {t("app.title")}
+            </span>
+          </Link>
+        )}
+        
         <div
           className={`flex items-center ${isRTL ? "space-x-reverse" : ""} space-x-2 sm:space-x-4`}
         >
