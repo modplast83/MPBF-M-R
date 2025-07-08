@@ -515,7 +515,7 @@ export function OrderForm() {
             </Card>
 
             {/* Order Details Card */}
-            <Card className="mobile-card lg:col-span-2">
+            <Card className="rounded-xl border border-slate-200/80 bg-white/90 backdrop-blur-sm text-card-foreground shadow-lg shadow-slate-900/5 hover:shadow-xl hover:shadow-slate-900/10 transition-all duration-300 hover:scale-[1.02] hover:border-slate-300/80 mobile-card lg:col-span-2 pt-[2px] pb-[2px] pl-[0px] pr-[0px] ml-[113px] mr-[113px]">
               <CardHeader className="pb-4">
                 <CardTitle className="flex items-center gap-2">
                   <FileText className="h-5 w-5 text-primary" />
