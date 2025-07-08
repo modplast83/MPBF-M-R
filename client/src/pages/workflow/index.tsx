@@ -105,7 +105,7 @@ export default function WorkflowIndex() {
           </Button>
         </div>
       </div>
-      <Card className="mobile-card overflow-hidden">
+      <Card className="rounded-xl border border-slate-200/80 bg-white/90 backdrop-blur-sm text-card-foreground shadow-lg shadow-slate-900/5 hover:shadow-xl hover:shadow-slate-900/10 transition-all duration-300 hover:scale-[1.02] hover:border-slate-300/80 mobile-card overflow-hidden pl-[0px] pr-[0px] ml-[-31px] mr-[-31px] pt-[11px] pb-[11px]"></Card>
         <CardHeader className="mobile-header border-b border-slate-200/50">
           <CardTitle className="text-lg sm:text-xl lg:text-2xl font-semibold text-slate-900">
             {t("production.roll_management.title")}
