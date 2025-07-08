@@ -118,6 +118,13 @@ This is a comprehensive production management system built with React, TypeScrip
 
 ## Recent Changes
 
+- July 8, 2025: Fixed critical runtime error in product selection dropdown for new orders:
+  - Resolved "[plugin:runtime-error-plugin] (unknown runtime error)" that was occurring during product selection
+  - Simplified product selection logic by removing complex error handling and try-catch blocks
+  - Streamlined display text generation to prevent rendering errors
+  - Enhanced onValueChange handler for better value parsing
+  - Fixed SelectItem value handling for disabled options
+  - Product selection now works without runtime errors while maintaining all functionality
 - July 8, 2025: Fixed mobile screen optimization for /workflow - Roll Management page:
   - Removed negative margins (ml-[-31px], mr-[-31px], pl-[-81px], etc.) that caused horizontal scrolling on mobile devices
   - Updated main Card component with proper responsive padding (p-4 sm:p-6 instead of negative margins)

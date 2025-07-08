@@ -541,20 +541,8 @@ export function OrderForm() {
                               <FormLabel>{t("orders.product")}</FormLabel>
                               <Select
                                 onValueChange={(value) => {
-                                  // Handle the disabled option
-                                  if (value === "no-products") {
-                                    return;
-                                  }
-                                  
-                                  try {
-                                    const parsed = parseInt(value);
-                                    if (!isNaN(parsed) && parsed > 0) {
-                                      field.onChange(parsed);
-                                    } else {
-                                      console.warn("Invalid product ID:", value);
-                                    }
-                                  } catch (error) {
-                                    console.error("Error parsing product ID:", error);
+                                  if (value !== "no-products") {
+                                    field.onChange(parseInt(value));
                                   }
                                 }}
                                 value={field.value ? field.value.toString() : ""}
@@ -568,48 +556,21 @@ export function OrderForm() {
                                   </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
-                                  {customerProducts && customerProducts.length > 0 ? (
-                                    customerProducts.map((product) => {
-                                      // Safety check for product
-                                      if (!product || !product.id) {
-                                        console.warn("Invalid product data:", product);
-                                        return null;
-                                      }
-                                      
-                                      try {
-                                        // Find the corresponding item to get its name
-                                        const item = items?.find(
-                                          (item) => item?.id === product.itemId,
-                                        );
-                                        // Find the corresponding category to get its name
-                                        const category = categories?.find(
-                                          (cat) => cat?.id === product.categoryId,
-                                        );
-                                        
-                                        // Safely build the display text with fallbacks
-                                        const categoryName = category?.name || "Unknown Category";
-                                        const itemName = item?.name || "Unknown Item";
-                                        const sizeText = product.sizeCaption ? ` (${product.sizeCaption})` : "";
-                                        const lengthText = product.lengthCm ? ` - ${product.lengthCm}cm` : "";
-                                        
-                                        const displayText = `${categoryName} - ${itemName}${sizeText}${lengthText}`;
-                                        
-                                        return (
-                                          <SelectItem
-                                            key={product.id}
-                                            value={product.id.toString()}
-                                          >
-                                            {displayText}
-                                          </SelectItem>
-                                        );
-                                      } catch (error) {
-                                        console.error("Error rendering product:", error, product);
-                                        return null;
-                                      }
-                                    }).filter(Boolean)
-                                  ) : (
+                                  {customerProducts?.map((product) => {
+                                    const item = items?.find(i => i.id === product.itemId);
+                                    const category = categories?.find(c => c.id === product.categoryId);
+                                    
+                                    const display = `${category?.name || "Unknown"} - ${item?.name || "Unknown"}${product.sizeCaption ? ` (${product.sizeCaption})` : ""}`;
+                                    
+                                    return (
+                                      <SelectItem key={product.id} value={product.id.toString()}>
+                                        {display}
+                                      </SelectItem>
+                                    );
+                                  })}
+                                  {(!customerProducts || customerProducts.length === 0) && (
                                     <SelectItem value="no-products" disabled>
-                                      {productsLoading ? "Loading products..." : "No products available"}
+                                      {productsLoading ? "Loading..." : "No products"}
                                     </SelectItem>
                                   )}
                                 </SelectContent>
