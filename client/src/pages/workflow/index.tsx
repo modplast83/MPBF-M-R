@@ -239,7 +239,7 @@ export default function WorkflowIndex() {
             {/* Printing Tab Content - Mobile optimized */}
             {showPrintingTab && (
               <TabsContent value="printing" className="space-y-4 sm:space-y-6">
-                <div className="p-4 sm:p-6 bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-200/50 rounded-lg">
+                <div className="p-4 sm:p-6 bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-200/50 rounded-lg pl-[0px] pr-[0px] ml-[-17px] mr-[-17px]">
                   <div className="flex items-start sm:items-center mb-4 sm:mb-6">
                     <div className="rounded-full bg-orange-100 p-3 mr-4 shrink-0">
                       <span className="material-icons text-orange-600 text-xl">
