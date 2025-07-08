@@ -121,11 +121,10 @@ export function OrderForm() {
         return [];
       }
 
-      // If no search query, return all customers
+      // If no search query, return all customers (limit to prevent performance issues)
       const trimmedQuery = searchQuery.trim();
       if (!trimmedQuery) {
-        console.log("No search query, showing all customers:", customers.length);
-        return customers;
+        return customers.slice(0, 50); // Limit to first 50 customers for performance
       }
 
       console.log("Search query:", trimmedQuery);
@@ -347,15 +346,16 @@ export function OrderForm() {
     form.setValue("jobOrders", []);
   };
 
-  // Get filtered customers with error handling
-  const filteredCustomers = (() => {
+  // Get filtered customers with memoization to prevent infinite loops
+  const filteredCustomers = React.useMemo(() => {
     try {
+      if (!customers || customers.length === 0) return [];
       return getFilteredCustomers();
     } catch (error) {
       console.error("Error getting filtered customers:", error);
-      return customers || [];
+      return [];
     }
-  })();
+  }, [customers, searchQuery]);
 
   return (
     <Card>
@@ -406,7 +406,7 @@ export function OrderForm() {
                         </div>
 
                         <div className="max-h-[300px] overflow-y-auto">
-                          {filteredCustomers.length === 0 ? (
+                          {!filteredCustomers || filteredCustomers.length === 0 ? (
                             <div className="py-6 text-center">
                               <span className="material-icons mb-2 text-muted-foreground">
                                 search_off
@@ -418,7 +418,9 @@ export function OrderForm() {
                             </div>
                           ) : (
                             <div className="p-1">
-                              {filteredCustomers.map((customer) => (
+                              {filteredCustomers.map((customer) => {
+                                if (!customer || !customer.id) return null;
+                                return (
                                 <div
                                   key={customer.id}
                                   className={`py-3 px-3 cursor-pointer hover:bg-accent rounded-md ${
@@ -468,7 +470,8 @@ export function OrderForm() {
                                     </div>
                                   </div>
                                 </div>
-                              ))}
+                                );
+                              })}
                             </div>
                           )}
                         </div>
