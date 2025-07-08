@@ -1381,7 +1381,7 @@ export function IntegratedQualityChecksManagement() {
                             <span className="text-muted-foreground">—</span>
                           )}
                         </TableCell>
-                        <TableCell className="text-right">
+                        <TableCell className="px-3 sm:px-6 py-4 align-middle [&:has([role=checkbox])]:pr-0 group-hover:text-foreground transition-colors duration-300 text-sm font-medium text-right pl-[0px] pr-[0px] pt-[0px] pb-[0px]">
                           <div className="flex items-center justify-end gap-2">
                             <Button
                               variant="ghost"
@@ -1401,6 +1401,7 @@ export function IntegratedQualityChecksManagement() {
                               variant="ghost"
                               size="sm"
                               onClick={() => handleEdit(check)}
+                              className="pl-[0px] pr-[0px]"
                             >
                               <Edit className="w-4 h-4" />
                             </Button>
