@@ -160,7 +160,7 @@ export default function WorkflowIndex() {
                   <span className="material-icons text-green-500 text-lg sm:text-lg">
                     content_cut
                   </span>
-                  <span className="text-[10px] sm:text-sm font-medium">
+                  <span className="sm:text-sm text-[17px] font-extrabold">
                     {isMobile ? "Cut" : t("rolls.cutting")}
                   </span>
                   <span className="h-4 w-4 sm:h-6 sm:w-6 flex-shrink-0 rounded-full bg-green-100 text-[10px] sm:text-xs font-bold flex items-center justify-center text-green-700">
