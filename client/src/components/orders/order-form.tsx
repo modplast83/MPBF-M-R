@@ -338,14 +338,8 @@ export function OrderForm() {
     setSelectedCustomerId(value);
     form.setValue("customerId", value);
     
-    // Reset job orders and add one default entry when customer changes
+    // Reset job orders when customer changes
     form.setValue("jobOrders", []);
-    // Add a default product entry after customer selection
-    setTimeout(() => {
-      if (customerProducts && customerProducts.length > 0) {
-        append({ customerProductId: customerProducts[0].id, quantity: 0 });
-      }
-    }, 100);
   };
 
   // Get filtered customers directly
@@ -503,8 +497,13 @@ export function OrderForm() {
                   type="button"
                   variant="outline"
                   size="sm"
-                  onClick={() => append({ customerProductId: customerProducts[0]?.id || 1, quantity: 0 })}
-                  disabled={!selectedCustomerId}
+                  onClick={() => {
+                    const firstProductId = customerProducts?.[0]?.id;
+                    if (firstProductId) {
+                      append({ customerProductId: firstProductId, quantity: 0 });
+                    }
+                  }}
+                  disabled={!selectedCustomerId || !customerProducts?.length}
                 >
                   <span className="material-icons text-sm mr-1">add</span>
                   {t("orders.add_product")}
