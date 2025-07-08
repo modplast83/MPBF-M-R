@@ -8,6 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { QualityViolations } from "@/components/quality/enhanced-violation-management";
 import { QualityPenaltiesManagement } from "@/components/quality/enhanced-penalties-management";
 import { QualityCorrectiveActions } from "@/components/quality/enhanced-corrective-actions";
@@ -390,9 +391,9 @@ export default function UnifiedQualityDashboard() {
                           <span>{t("quality.severity_critical")}</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <QualityBadge variant="destructive">
+                          <Badge variant="destructive">
                             {violationsBySeverity.Critical}
-                          </QualityBadge>
+                          </Badge>
                           <span className="text-muted-foreground text-xs">
                             {violations.length > 0
                               ? Math.round(
@@ -411,9 +412,9 @@ export default function UnifiedQualityDashboard() {
                           <span>{t("quality.severity_major")}</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <QualityBadge variant="warning">
+                          <Badge variant="warning">
                             {violationsBySeverity.Major}
-                          </QualityBadge>
+                          </Badge>
                           <span className="text-muted-foreground text-xs">
                             {violations.length > 0
                               ? Math.round(
@@ -432,9 +433,9 @@ export default function UnifiedQualityDashboard() {
                           <span>{t("quality.severity_minor")}</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <QualityBadge variant="info">
+                          <Badge variant="info">
                             {violationsBySeverity.Minor}
-                          </QualityBadge>
+                          </Badge>
                           <span className="text-muted-foreground text-xs">
                             {violations.length > 0
                               ? Math.round(
@@ -484,7 +485,7 @@ export default function UnifiedQualityDashboard() {
                                   ...
                                 </div>
                                 <div className="flex mt-1">
-                                  <QualityBadge
+                                  <Badge
                                     variant={
                                       violation.severity === "Critical"
                                         ? "destructive"
@@ -494,8 +495,8 @@ export default function UnifiedQualityDashboard() {
                                     }
                                   >
                                     {violation.severity}
-                                  </QualityBadge>
-                                  <QualityBadge
+                                  </Badge>
+                                  <Badge
                                     variant={
                                       violation.status === "Open"
                                         ? "destructive"
@@ -506,7 +507,7 @@ export default function UnifiedQualityDashboard() {
                                     className="ml-2"
                                   >
                                     {violation.status}
-                                  </QualityBadge>
+                                  </Badge>
                                 </div>
                               </div>
                             </div>
@@ -534,7 +535,7 @@ export default function UnifiedQualityDashboard() {
                                     : ""}
                                 </div>
                                 <div className="flex mt-1">
-                                  <QualityBadge
+                                  <Badge
                                     variant={
                                       check.status === "Passed"
                                         ? "success"
@@ -544,7 +545,7 @@ export default function UnifiedQualityDashboard() {
                                     {check.status === "Passed"
                                       ? t("quality.passed")
                                       : t("quality.failed")}
-                                  </QualityBadge>
+                                  </Badge>
                                   <span className="text-xs text-muted-foreground ml-2 mt-0.5">
                                     {check.timestamp
                                       ? new Date(
