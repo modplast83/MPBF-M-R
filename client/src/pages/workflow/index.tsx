@@ -146,7 +146,7 @@ export default function WorkflowIndex() {
                   <span className="sm:text-sm text-[17px] font-extrabold">
                     {isMobile ? "Print" : t("rolls.printing")}
                   </span>
-                  <span className="h-4 w-4 sm:h-6 sm:w-6 flex-shrink-0 rounded-full bg-orange-100 text-[10px] sm:text-xs font-bold flex items-center justify-center text-orange-700">
+                  <span className="h-4 w-4 sm:h-6 sm:w-6 flex-shrink-0 rounded-full bg-orange-100 sm:text-xs font-bold flex items-center justify-center text-orange-700 text-[17px]">
                     {printingLoading ? "-" : printingRolls?.length || 0}
                   </span>
                 </TabsTrigger>
@@ -163,7 +163,7 @@ export default function WorkflowIndex() {
                   <span className="sm:text-sm text-[17px] font-extrabold">
                     {isMobile ? "Cut" : t("rolls.cutting")}
                   </span>
-                  <span className="h-4 w-4 sm:h-6 sm:w-6 flex-shrink-0 rounded-full bg-green-100 text-[10px] sm:text-xs font-bold flex items-center justify-center text-green-700">
+                  <span className="h-4 w-4 sm:h-6 sm:w-6 flex-shrink-0 rounded-full bg-green-100 sm:text-xs font-bold flex items-center justify-center text-green-700 text-[17px]">
                     {cuttingLoading
                       ? "-"
                       : cuttingRolls?.filter(
