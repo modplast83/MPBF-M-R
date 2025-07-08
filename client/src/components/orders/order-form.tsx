@@ -63,10 +63,10 @@ const orderFormSchema = z.object({
   note: z.string().optional(),
   jobOrders: z.array(
     z.object({
-      customerProductId: z.number(),
+      customerProductId: z.number().positive("Product is required"),
       quantity: z.number().positive("Quantity must be positive"),
     }),
-  ),
+  ).min(1, "At least one product is required"),
 });
 
 type OrderFormValues = z.infer<typeof orderFormSchema>;
@@ -246,7 +246,7 @@ export function OrderForm() {
     defaultValues: {
       customerId: "",
       note: "",
-      jobOrders: [{ customerProductId: 0, quantity: 0 }],
+      jobOrders: [],
     },
   });
 
@@ -337,6 +337,15 @@ export function OrderForm() {
   const handleCustomerChange = (value: string) => {
     setSelectedCustomerId(value);
     form.setValue("customerId", value);
+    
+    // Reset job orders and add one default entry when customer changes
+    form.setValue("jobOrders", []);
+    // Add a default product entry after customer selection
+    setTimeout(() => {
+      if (customerProducts && customerProducts.length > 0) {
+        append({ customerProductId: customerProducts[0].id, quantity: 0 });
+      }
+    }, 100);
   };
 
   // Get filtered customers directly
@@ -494,7 +503,7 @@ export function OrderForm() {
                   type="button"
                   variant="outline"
                   size="sm"
-                  onClick={() => append({ customerProductId: 0, quantity: 0 })}
+                  onClick={() => append({ customerProductId: customerProducts[0]?.id || 1, quantity: 0 })}
                   disabled={!selectedCustomerId}
                 >
                   <span className="material-icons text-sm mr-1">add</span>
@@ -520,7 +529,7 @@ export function OrderForm() {
                                 onValueChange={(value) =>
                                   field.onChange(parseInt(value))
                                 }
-                                value={field.value.toString()}
+                                value={field.value ? field.value.toString() : ""}
                                 disabled={productsLoading}
                               >
                                 <FormControl>

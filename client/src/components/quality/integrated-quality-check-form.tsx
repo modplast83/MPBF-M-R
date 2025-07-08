@@ -1395,6 +1395,7 @@ export function IntegratedQualityChecksManagement() {
                               variant="ghost"
                               size="sm"
                               onClick={() => handlePrint(check)}
+                              className="pl-[0px] pr-[0px]"
                             >
                               <Printer className="w-4 h-4" />
                             </Button>
@@ -1411,6 +1412,7 @@ export function IntegratedQualityChecksManagement() {
                               size="sm"
                               onClick={() => deleteMutation.mutate(check.id)}
                               disabled={deleteMutation.isPending}
+                              className="pl-[0px] pr-[0px]"
                             >
                               <Trash2 className="w-4 h-4" />
                             </Button>
