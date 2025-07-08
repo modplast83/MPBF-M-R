@@ -43,7 +43,9 @@ import {
   CardTitle,
   CardFooter,
 } from "@/components/ui/card";
-import { Check, ChevronsUpDown } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { Check, ChevronsUpDown, Plus, Trash2, Package, User, FileText, ShoppingCart } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   insertOrderSchema,
@@ -358,159 +360,207 @@ export function OrderForm() {
   }, [customers, searchQuery]);
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{t("orders.create_new_order")}</CardTitle>
-      </CardHeader>
+    <div className="page-container">
+      <div className="page-header">
+        <div className="flex items-center gap-3">
+          <div className="p-2 bg-primary/10 rounded-lg">
+            <ShoppingCart className="h-6 w-6 text-primary" />
+          </div>
+          <div>
+            <h1 className="page-title">{t("orders.new_order")}</h1>
+            <p className="page-subtitle">Create a new order with products and specifications</p>
+          </div>
+        </div>
+      </div>
+
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
-          <CardContent className="space-y-6">
-            {/* Customer Selection with Search */}
-            <FormField
-              control={form.control}
-              name="customerId"
-              render={({ field }) => (
-                <FormItem className="flex flex-col">
-                  <FormLabel>{t("orders.customer")}</FormLabel>
-                  <div className="relative">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      role="combobox"
-                      aria-expanded={open}
-                      className="w-full justify-between"
-                      disabled={customersLoading}
-                      onClick={() => setOpen(!open)}
-                    >
-                      {field.value
-                        ? customers?.find(
-                            (customer) => customer.id === field.value,
-                          )?.name || t("orders.select_customer")
-                        : t("orders.select_customer")}
-                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                    </Button>
-
-                    {open && (
-                      <div className="absolute z-50 top-full left-0 right-0 w-full bg-popover shadow-md rounded-md border mt-1 overflow-hidden">
-                        <div className="p-2 border-b">
-                          <input
-                            type="text"
-                            className="w-full p-2 border rounded-md"
-                            placeholder={t(
-                              "orders.search_customer_placeholder",
-                            )}
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            autoFocus
-                          />
-                        </div>
-
-                        <div className="max-h-[300px] overflow-y-auto">
-                          {!filteredCustomers || filteredCustomers.length === 0 ? (
-                            <div className="py-6 text-center">
-                              <span className="material-icons mb-2 text-muted-foreground">
-                                search_off
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <div className="grid gap-6 lg:grid-cols-3">
+            {/* Customer Selection Card */}
+            <Card className="mobile-card lg:col-span-1">
+              <CardHeader className="pb-4">
+                <CardTitle className="flex items-center gap-2">
+                  <User className="h-5 w-5 text-primary" />
+                  {t("orders.customer")}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <FormField
+                  control={form.control}
+                  name="customerId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <div className="relative">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          role="combobox"
+                          aria-expanded={open}
+                          className="w-full justify-between h-12 bg-background hover:bg-accent/50 border-2"
+                          onClick={() => setOpen(!open)}
+                        >
+                          {field.value ? (
+                            <div className="flex flex-col items-start">
+                              <span className="font-medium">
+                                {customers.find((customer) => customer.id === field.value)?.name}
                               </span>
-                              <p>{t("orders.no_matching_customer")}</p>
-                              <p className="text-xs text-muted-foreground mt-1">
-                                {t("orders.try_different_search")}
-                              </p>
+                              {customers.find((customer) => customer.id === field.value)?.code && (
+                                <Badge variant="secondary" className="text-xs mt-1">
+                                  #{customers.find((customer) => customer.id === field.value)?.code}
+                                </Badge>
+                              )}
                             </div>
                           ) : (
-                            <div className="p-1">
-                              {filteredCustomers.map((customer) => {
-                                if (!customer || !customer.id) return null;
-                                return (
-                                <div
-                                  key={customer.id}
-                                  className={`py-3 px-3 cursor-pointer hover:bg-accent rounded-md ${
-                                    field.value === customer.id
-                                      ? "bg-accent"
-                                      : ""
-                                  }`}
-                                  onClick={() => {
-                                    handleCustomerChange(customer.id);
-                                    setOpen(false);
-                                    setSearchQuery("");
-                                  }}
-                                >
-                                  <div className="flex items-center">
-                                    <Check
-                                      className={cn(
-                                        "mr-2 h-4 w-4",
-                                        field.value === customer.id
-                                          ? "opacity-100"
-                                          : "opacity-0",
-                                      )}
-                                    />
-                                    <div className="flex flex-col w-full">
-                                      <div className="flex items-center justify-between">
-                                        <span
-                                          className="text-base font-medium"
-                                          dir="auto"
-                                        >
-                                          {customer.name}
-                                        </span>
-                                        {customer.code && (
-                                          <span className="text-xs bg-muted px-2 py-1 rounded-md ml-2">
-                                            #{customer.code}
-                                          </span>
-                                        )}
-                                      </div>
-                                      {customer.nameAr && (
-                                        <div className="border-t mt-2 pt-1 border-dashed border-muted">
-                                          <span
-                                            className="text-sm block text-right"
-                                            dir="rtl"
-                                          >
-                                            {customer.nameAr}
-                                          </span>
-                                        </div>
-                                      )}
-                                    </div>
-                                  </div>
-                                </div>
-                                );
-                              })}
-                            </div>
+                            <span className="text-muted-foreground">
+                              {t("orders.select_customer")}
+                            </span>
                           )}
-                        </div>
+                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        </Button>
+
+                        {open && (
+                          <div className="absolute z-50 top-full left-0 right-0 w-full bg-popover shadow-lg rounded-lg border-2 mt-2 overflow-hidden backdrop-blur-sm bg-background/95">
+                            <div className="p-3 border-b bg-muted/30">
+                              <Input
+                                type="text"
+                                className="border-2"
+                                placeholder={t("orders.search_customer_placeholder")}
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                autoFocus
+                              />
+                            </div>
+
+                            <div className="max-h-[300px] overflow-y-auto">
+                              {!filteredCustomers || filteredCustomers.length === 0 ? (
+                                <div className="py-8 text-center">
+                                  <User className="h-8 w-8 mx-auto mb-3 text-muted-foreground" />
+                                  <p className="font-medium">{t("orders.no_matching_customer")}</p>
+                                  <p className="text-xs text-muted-foreground mt-1">
+                                    {t("orders.try_different_search")}
+                                  </p>
+                                </div>
+                              ) : (
+                                <div className="p-2">
+                                  {filteredCustomers.map((customer) => {
+                                    if (!customer || !customer.id) return null;
+                                    return (
+                                      <div
+                                        key={customer.id}
+                                        className={`p-3 cursor-pointer hover:bg-accent/70 rounded-lg transition-colors border-2 border-transparent mb-2 ${
+                                          field.value === customer.id ? "bg-accent border-primary/20" : ""
+                                        }`}
+                                        onClick={() => {
+                                          handleCustomerChange(customer.id);
+                                          setOpen(false);
+                                          setSearchQuery("");
+                                        }}
+                                      >
+                                        <div className="flex items-center">
+                                          <Check
+                                            className={cn(
+                                              "mr-3 h-4 w-4 text-primary",
+                                              field.value === customer.id ? "opacity-100" : "opacity-0"
+                                            )}
+                                          />
+                                          <div className="flex flex-col w-full">
+                                            <div className="flex items-center justify-between">
+                                              <span className="font-medium" dir="auto">
+                                                {customer.name}
+                                              </span>
+                                              {customer.code && (
+                                                <Badge variant="outline" className="text-xs">
+                                                  #{customer.code}
+                                                </Badge>
+                                              )}
+                                            </div>
+                                            {customer.nameAr && (
+                                              <div className="mt-2 pt-2 border-t border-dashed border-muted">
+                                                <span className="text-sm text-muted-foreground block text-right" dir="rtl">
+                                                  {customer.nameAr}
+                                                </span>
+                                              </div>
+                                            )}
+                                          </div>
+                                        </div>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Customer Info Display */}
+                {selectedCustomerId && (
+                  <div className="mt-4 p-3 bg-muted/30 rounded-lg border">
+                    <div className="text-xs text-muted-foreground mb-1">Selected Customer</div>
+                    <div className="font-medium">
+                      {customers.find(c => c.id === selectedCustomerId)?.name}
+                    </div>
+                    {customers.find(c => c.id === selectedCustomerId)?.nameAr && (
+                      <div className="text-sm text-muted-foreground mt-1" dir="rtl">
+                        {customers.find(c => c.id === selectedCustomerId)?.nameAr}
                       </div>
                     )}
                   </div>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                )}
+              </CardContent>
+            </Card>
 
-            {/* Order Note */}
-            <FormField
-              control={form.control}
-              name="note"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t("orders.order_note")}</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder={t("orders.order_note_placeholder")}
-                      {...field}
-                      value={field.value || ""}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {/* Order Details Card */}
+            <Card className="mobile-card lg:col-span-2">
+              <CardHeader className="pb-4">
+                <CardTitle className="flex items-center gap-2">
+                  <FileText className="h-5 w-5 text-primary" />
+                  {t("orders.order_details")}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <FormField
+                  control={form.control}
+                  name="note"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-base font-medium">{t("orders.order_note")}</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder={t("orders.order_note_placeholder")}
+                          className="min-h-[100px] border-2"
+                          {...field}
+                          value={field.value || ""}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </CardContent>
+            </Card>
+          </div>
 
-            {/* Job Orders */}
-            <div className="space-y-4">
-              <div className="flex justify-between items-center">
-                <h3 className="text-lg font-medium">
-                  {t("orders.add_products")}
-                </h3>
+          {/* Products Section */}
+          <Card className="mobile-card">
+            <CardHeader className="pb-4">
+              <div className="flex items-center justify-between">
+                <CardTitle className="flex items-center gap-2">
+                  <Package className="h-5 w-5 text-primary" />
+                  {t("orders.products")}
+                  {fields.length > 0 && (
+                    <Badge variant="secondary" className="ml-2">
+                      {fields.length} {fields.length === 1 ? 'Product' : 'Products'}
+                    </Badge>
+                  )}
+                </CardTitle>
                 <Button
                   type="button"
-                  variant="outline"
+                  variant="default"
                   size="sm"
                   onClick={() => {
                     const firstProductId = customerProducts?.[0]?.id;
@@ -519,143 +569,185 @@ export function OrderForm() {
                     }
                   }}
                   disabled={!selectedCustomerId || !customerProducts?.length}
+                  className="bg-primary hover:bg-primary/90"
                 >
-                  <span className="material-icons text-sm mr-1">add</span>
+                  <Plus className="h-4 w-4 mr-2" />
                   {t("orders.add_product")}
                 </Button>
               </div>
+            </CardHeader>
+            <CardContent>
 
               {selectedCustomerId ? (
                 fields.length > 0 ? (
                   <div className="space-y-4">
                     {fields.map((field, index) => (
-                      <div
-                        key={field.id}
-                        className="flex gap-4 items-end border p-4 rounded-md"
-                      >
-                        <FormField
-                          control={form.control}
-                          name={`jobOrders.${index}.customerProductId`}
-                          render={({ field }) => (
-                            <FormItem className="flex-1">
-                              <FormLabel>{t("orders.product")}</FormLabel>
-                              <Select
-                                onValueChange={(value) => {
-                                  if (value !== "no-products") {
-                                    field.onChange(parseInt(value));
-                                  }
-                                }}
-                                value={field.value ? field.value.toString() : ""}
-                                disabled={productsLoading}
+                      <Card key={field.id} className="border-2 border-muted hover:border-accent transition-colors">
+                        <CardContent className="p-4">
+                          <div className="grid gap-4 md:grid-cols-12 items-end">
+                            <div className="md:col-span-7">
+                              <FormField
+                                control={form.control}
+                                name={`jobOrders.${index}.customerProductId`}
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel className="text-sm font-medium">
+                                      {t("orders.product")}
+                                    </FormLabel>
+                                    <Select
+                                      onValueChange={(value) => {
+                                        if (value !== "no-products") {
+                                          field.onChange(parseInt(value));
+                                        }
+                                      }}
+                                      value={field.value ? field.value.toString() : ""}
+                                      disabled={productsLoading}
+                                    >
+                                      <FormControl>
+                                        <SelectTrigger className="h-12 border-2">
+                                          <SelectValue placeholder={t("orders.select_product")} />
+                                        </SelectTrigger>
+                                      </FormControl>
+                                      <SelectContent>
+                                        {customerProducts?.map((product) => {
+                                          const item = items?.find(i => i.id === product.itemId);
+                                          const category = categories?.find(c => c.id === product.categoryId);
+                                          
+                                          const display = `${category?.name || "Unknown"} - ${item?.name || "Unknown"}${product.sizeCaption ? ` (${product.sizeCaption})` : ""}`;
+                                          
+                                          return (
+                                            <SelectItem key={product.id} value={product.id.toString()}>
+                                              <div className="flex flex-col">
+                                                <span className="font-medium">{display}</span>
+                                                {product.thickness && (
+                                                  <span className="text-xs text-muted-foreground">
+                                                    Thickness: {product.thickness}μm
+                                                  </span>
+                                                )}
+                                              </div>
+                                            </SelectItem>
+                                          );
+                                        })}
+                                        {(!customerProducts || customerProducts.length === 0) && (
+                                          <SelectItem value="no-products" disabled>
+                                            {productsLoading ? "Loading..." : "No products"}
+                                          </SelectItem>
+                                        )}
+                                      </SelectContent>
+                                    </Select>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                            </div>
+
+                            <div className="md:col-span-4">
+                              <FormField
+                                control={form.control}
+                                name={`jobOrders.${index}.quantity`}
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel className="text-sm font-medium">
+                                      {t("orders.quantity")} (كجم)
+                                    </FormLabel>
+                                    <FormControl>
+                                      <Input
+                                        type="number"
+                                        min="0"
+                                        step="0.01"
+                                        placeholder="0.00"
+                                        className="h-12 border-2 text-center font-medium"
+                                        value={field.value || ""}
+                                        onChange={(e) => {
+                                          const value = e.target.value;
+                                          if (value === "" || value === null) {
+                                            field.onChange(1);
+                                          } else {
+                                            const parsed = parseFloat(value);
+                                            field.onChange(isNaN(parsed) ? 1 : Math.max(0.01, parsed));
+                                          }
+                                        }}
+                                      />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                            </div>
+
+                            <div className="md:col-span-1 flex justify-center">
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => remove(index)}
+                                className="h-12 w-12 text-destructive hover:text-destructive hover:bg-destructive/10"
                               >
-                                <FormControl>
-                                  <SelectTrigger>
-                                    <SelectValue
-                                      placeholder={t("orders.select_product")}
-                                    />
-                                  </SelectTrigger>
-                                </FormControl>
-                                <SelectContent>
-                                  {customerProducts?.map((product) => {
-                                    const item = items?.find(i => i.id === product.itemId);
-                                    const category = categories?.find(c => c.id === product.categoryId);
-                                    
-                                    const display = `${category?.name || "Unknown"} - ${item?.name || "Unknown"}${product.sizeCaption ? ` (${product.sizeCaption})` : ""}`;
-                                    
-                                    return (
-                                      <SelectItem key={product.id} value={product.id.toString()}>
-                                        {display}
-                                      </SelectItem>
-                                    );
-                                  })}
-                                  {(!customerProducts || customerProducts.length === 0) && (
-                                    <SelectItem value="no-products" disabled>
-                                      {productsLoading ? "Loading..." : "No products"}
-                                    </SelectItem>
-                                  )}
-                                </SelectContent>
-                              </Select>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-
-                        <FormField
-                          control={form.control}
-                          name={`jobOrders.${index}.quantity`}
-                          render={({ field }) => (
-                            <FormItem className="flex-1">
-                              <FormLabel>
-                                {t("orders.quantity")} (كجم)
-                              </FormLabel>
-                              <FormControl>
-                                <Input
-                                  type="number"
-                                  min="0"
-                                  step="0.01"
-                                  placeholder={t("orders.enter_quantity")}
-                                  value={field.value || ""}
-                                  onChange={(e) => {
-                                    const value = e.target.value;
-                                    if (value === "" || value === null) {
-                                      field.onChange(1);
-                                    } else {
-                                      const parsed = parseFloat(value);
-                                      field.onChange(isNaN(parsed) ? 1 : Math.max(0.01, parsed));
-                                    }
-                                  }}
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => remove(index)}
-                          className="mb-2 text-red-500 hover:text-red-700"
-                        >
-                          <span className="material-icons">delete</span>
-                        </Button>
-                      </div>
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
                     ))}
                   </div>
                 ) : (
-                  <div className="text-center py-8 text-secondary-400 border border-dashed rounded-md">
-                    <span className="material-icons text-3xl mb-2">
-                      inventory
-                    </span>
-                    <p>{t("orders.add_products_to_order")}</p>
+                  <div className="text-center py-12 border-2 border-dashed border-muted rounded-lg bg-muted/20">
+                    <Package className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+                    <p className="text-lg font-medium text-muted-foreground">
+                      {t("orders.add_products_to_order")}
+                    </p>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Click the "Add Product" button to start building your order
+                    </p>
                   </div>
                 )
               ) : (
-                <div className="text-center py-8 text-secondary-400 border border-dashed rounded-md">
-                  <span className="material-icons text-3xl mb-2">person</span>
-                  <p>{t("orders.select_customer_first")}</p>
+                <div className="text-center py-12 border-2 border-dashed border-muted rounded-lg bg-muted/20">
+                  <User className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+                  <p className="text-lg font-medium text-muted-foreground">
+                    {t("orders.select_customer_first")}
+                  </p>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Please select a customer to view available products
+                  </p>
                 </div>
               )}
-            </div>
-          </CardContent>
+            </CardContent>
+          </Card>
 
-          <CardFooter className="flex justify-end space-x-2">
+          {/* Action Buttons */}
+          <div className="flex justify-end space-x-4 pt-6">
             <Button
               type="button"
               variant="outline"
+              size="lg"
               onClick={() => navigate("/orders")}
+              className="min-w-[120px]"
             >
               {t("orders.cancel")}
             </Button>
-            <Button type="submit" disabled={createOrderMutation.isPending}>
-              {createOrderMutation.isPending
-                ? t("orders.creating")
-                : t("orders.create_order")}
+            <Button 
+              type="submit" 
+              disabled={createOrderMutation.isPending}
+              size="lg"
+              className="min-w-[160px] bg-primary hover:bg-primary/90"
+            >
+              {createOrderMutation.isPending ? (
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  {t("orders.creating")}
+                </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <ShoppingCart className="h-4 w-4" />
+                  {t("orders.create_order")}
+                </div>
+              )}
             </Button>
-          </CardFooter>
+          </div>
         </form>
       </Form>
-    </Card>
+    </div>
   );
 }
