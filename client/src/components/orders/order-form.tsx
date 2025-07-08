@@ -541,8 +541,21 @@ export function OrderForm() {
                               <FormLabel>{t("orders.product")}</FormLabel>
                               <Select
                                 onValueChange={(value) => {
-                                  const parsed = parseInt(value);
-                                  field.onChange(isNaN(parsed) ? 0 : parsed);
+                                  // Handle the disabled option
+                                  if (value === "no-products") {
+                                    return;
+                                  }
+                                  
+                                  try {
+                                    const parsed = parseInt(value);
+                                    if (!isNaN(parsed) && parsed > 0) {
+                                      field.onChange(parsed);
+                                    } else {
+                                      console.warn("Invalid product ID:", value);
+                                    }
+                                  } catch (error) {
+                                    console.error("Error parsing product ID:", error);
+                                  }
                                 }}
                                 value={field.value ? field.value.toString() : ""}
                                 disabled={productsLoading}
@@ -557,34 +570,45 @@ export function OrderForm() {
                                 <SelectContent>
                                   {customerProducts && customerProducts.length > 0 ? (
                                     customerProducts.map((product) => {
-                                      // Find the corresponding item to get its name
-                                      const item = items?.find(
-                                        (item) => item.id === product.itemId,
-                                      );
-                                      // Find the corresponding category to get its name
-                                      const category = categories?.find(
-                                        (cat) => cat.id === product.categoryId,
-                                      );
+                                      // Safety check for product
+                                      if (!product || !product.id) {
+                                        console.warn("Invalid product data:", product);
+                                        return null;
+                                      }
                                       
-                                      // Safely build the display text with fallbacks
-                                      const categoryName = category?.name || "Unknown Category";
-                                      const itemName = item?.name || "Unknown Item";
-                                      const sizeText = product.sizeCaption ? ` (${product.sizeCaption})` : "";
-                                      const lengthText = product.lengthCm ? ` - ${product.lengthCm}cm` : "";
-                                      
-                                      const displayText = `${categoryName} - ${itemName}${sizeText}${lengthText}`;
-                                      
-                                      return (
-                                        <SelectItem
-                                          key={product.id}
-                                          value={product.id.toString()}
-                                        >
-                                          {displayText}
-                                        </SelectItem>
-                                      );
-                                    })
+                                      try {
+                                        // Find the corresponding item to get its name
+                                        const item = items?.find(
+                                          (item) => item?.id === product.itemId,
+                                        );
+                                        // Find the corresponding category to get its name
+                                        const category = categories?.find(
+                                          (cat) => cat?.id === product.categoryId,
+                                        );
+                                        
+                                        // Safely build the display text with fallbacks
+                                        const categoryName = category?.name || "Unknown Category";
+                                        const itemName = item?.name || "Unknown Item";
+                                        const sizeText = product.sizeCaption ? ` (${product.sizeCaption})` : "";
+                                        const lengthText = product.lengthCm ? ` - ${product.lengthCm}cm` : "";
+                                        
+                                        const displayText = `${categoryName} - ${itemName}${sizeText}${lengthText}`;
+                                        
+                                        return (
+                                          <SelectItem
+                                            key={product.id}
+                                            value={product.id.toString()}
+                                          >
+                                            {displayText}
+                                          </SelectItem>
+                                        );
+                                      } catch (error) {
+                                        console.error("Error rendering product:", error, product);
+                                        return null;
+                                      }
+                                    }).filter(Boolean)
                                   ) : (
-                                    <SelectItem value="" disabled>
+                                    <SelectItem value="no-products" disabled>
                                       {productsLoading ? "Loading products..." : "No products available"}
                                     </SelectItem>
                                   )}
