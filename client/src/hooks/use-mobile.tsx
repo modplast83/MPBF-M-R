@@ -8,10 +8,15 @@ export function useIsMobile() {
       setIsMobile(window.innerWidth < 768);
     };
 
-    checkIsMobile();
-    window.addEventListener("resize", checkIsMobile);
+    // Use requestAnimationFrame to prevent ResizeObserver loops
+    const handleResize = () => {
+      requestAnimationFrame(checkIsMobile);
+    };
 
-    return () => window.removeEventListener("resize", checkIsMobile);
+    checkIsMobile();
+    window.addEventListener("resize", handleResize, { passive: true });
+
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   return isMobile;

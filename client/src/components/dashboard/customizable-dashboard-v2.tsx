@@ -133,6 +133,7 @@ interface DashboardStats {
 }
 
 function StatsOverviewWidget() {
+  // Always call hooks at the top level
   const isMobile = useIsMobile();
   const {
     data: stats,
