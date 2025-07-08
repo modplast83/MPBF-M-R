@@ -13,6 +13,7 @@ import { QualityPenaltiesManagement } from "@/components/quality/enhanced-penalt
 import { QualityCorrectiveActions } from "@/components/quality/enhanced-corrective-actions";
 import { IntegratedQualityChecksManagement } from "@/components/quality/integrated-quality-check-form";
 import {
+  PieChart,
   ClipboardCheck,
   AlertTriangle,
   ShieldAlert,
