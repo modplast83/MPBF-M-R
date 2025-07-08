@@ -177,7 +177,7 @@ export default function WorkflowIndex() {
             {/* Extrusion Tab Content - Mobile optimized */}
             {showExtrusionTab && (
               <TabsContent value="extrusion" className="space-y-4 sm:space-y-6">
-                <div className="mobile-card bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200/50">
+                <div className="mobile-card bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200/50 pl-[-81px] pr-[-81px] ml-[-71px] mr-[-71px]">
                   <div className="flex items-start sm:items-center mb-4 sm:mb-6">
                     <div className="rounded-full bg-primary-100 p-3 mr-4 shrink-0">
                       <span className="material-icons text-primary-600 text-xl">
@@ -210,7 +210,7 @@ export default function WorkflowIndex() {
                         </div>
                       ) : extrusionRolls && extrusionRolls.length > 0 ? (
                         // Sort rolls by job order ID first, then by roll ID
-                        [...extrusionRolls]
+                        ([...extrusionRolls]
                           .sort((a, b) => {
                             // First sort by job order ID
                             if (a.jobOrderId !== b.jobOrderId) {
@@ -219,7 +219,7 @@ export default function WorkflowIndex() {
                             // Then sort by roll ID
                             return a.id.localeCompare(b.id);
                           })
-                          .map((roll) => <RollCard key={roll.id} roll={roll} />)
+                          .map((roll) => <RollCard key={roll.id} roll={roll} />))
                       ) : (
                         <div className="py-8 sm:py-12 text-center text-slate-500 bg-white/80 backdrop-blur-sm rounded-xl border border-dashed border-blue-200">
                           <span className="material-icons text-4xl sm:text-5xl mb-3 text-blue-300">
