@@ -64,7 +64,7 @@ const orderFormSchema = z.object({
   jobOrders: z.array(
     z.object({
       customerProductId: z.number().positive("Product is required"),
-      quantity: z.number().positive("Quantity must be positive"),
+      quantity: z.number().min(0.01, "Quantity must be greater than 0"),
     }),
   ).min(1, "At least one product is required"),
 });
@@ -500,7 +500,7 @@ export function OrderForm() {
                   onClick={() => {
                     const firstProductId = customerProducts?.[0]?.id;
                     if (firstProductId) {
-                      append({ customerProductId: firstProductId, quantity: 0 });
+                      append({ customerProductId: firstProductId, quantity: 1 });
                     }
                   }}
                   disabled={!selectedCustomerId || !customerProducts?.length}
@@ -581,11 +581,19 @@ export function OrderForm() {
                               <FormControl>
                                 <Input
                                   type="number"
+                                  min="0"
+                                  step="0.01"
                                   placeholder={t("orders.enter_quantity")}
-                                  {...field}
-                                  onChange={(e) =>
-                                    field.onChange(parseFloat(e.target.value))
-                                  }
+                                  value={field.value || ""}
+                                  onChange={(e) => {
+                                    const value = e.target.value;
+                                    if (value === "" || value === null) {
+                                      field.onChange(1);
+                                    } else {
+                                      const parsed = parseFloat(value);
+                                      field.onChange(isNaN(parsed) ? 1 : Math.max(0.01, parsed));
+                                    }
+                                  }}
                                 />
                               </FormControl>
                               <FormMessage />
