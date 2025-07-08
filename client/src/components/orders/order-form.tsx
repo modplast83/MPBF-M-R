@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -96,35 +96,40 @@ export function OrderForm() {
   // When customers data is loaded, initialize Fuse
   useEffect(() => {
     console.log("Customers data:", customers);
-    if (customers && customers.length > 0) {
-      // Enhanced Fuse.js configuration for bilingual search
-      fuseRef.current = new Fuse(customers, {
-        keys: ["name", "nameAr", "code"],
-        threshold: 0.4, // Balanced matching
-        includeScore: true,
-        ignoreLocation: true,
-        useExtendedSearch: true,
-      });
+    try {
+      if (customers && customers.length > 0) {
+        // Enhanced Fuse.js configuration for bilingual search
+        fuseRef.current = new Fuse(customers, {
+          keys: ["name", "nameAr", "code"],
+          threshold: 0.4, // Balanced matching
+          includeScore: true,
+          ignoreLocation: true,
+          useExtendedSearch: true,
+        });
+      }
+    } catch (error) {
+      console.error("Error initializing Fuse:", error);
+      fuseRef.current = null;
     }
   }, [customers]);
 
   // Advanced search function to handle both Arabic and English inputs
   const getFilteredCustomers = (): Customer[] => {
-    if (!customers || !customers.length) {
-      console.log("No customers available");
-      return [];
-    }
-
-    // If no search query, return all customers
-    const trimmedQuery = searchQuery.trim();
-    if (!trimmedQuery) {
-      console.log("No search query, showing all customers:", customers.length);
-      return customers;
-    }
-
-    console.log("Search query:", trimmedQuery);
-
     try {
+      if (!customers || !customers.length) {
+        console.log("No customers available");
+        return [];
+      }
+
+      // If no search query, return all customers
+      const trimmedQuery = searchQuery.trim();
+      if (!trimmedQuery) {
+        console.log("No search query, showing all customers:", customers.length);
+        return customers;
+      }
+
+      console.log("Search query:", trimmedQuery);
+
       // Enhanced bilingual search for both Arabic and English
       if (trimmedQuery.length === 1) {
         // For single character searches, match start of words in both languages
@@ -216,7 +221,7 @@ export function OrderForm() {
       return filteredCustomers;
     } catch (error) {
       console.error("Error in customer filtering:", error);
-      return customers;
+      return customers || [];
     }
   };
 
@@ -342,8 +347,15 @@ export function OrderForm() {
     form.setValue("jobOrders", []);
   };
 
-  // Get filtered customers directly
-  const filteredCustomers = getFilteredCustomers();
+  // Get filtered customers with error handling
+  const filteredCustomers = (() => {
+    try {
+      return getFilteredCustomers();
+    } catch (error) {
+      console.error("Error getting filtered customers:", error);
+      return customers || [];
+    }
+  })();
 
   return (
     <Card>
@@ -525,9 +537,10 @@ export function OrderForm() {
                             <FormItem className="flex-1">
                               <FormLabel>{t("orders.product")}</FormLabel>
                               <Select
-                                onValueChange={(value) =>
-                                  field.onChange(parseInt(value))
-                                }
+                                onValueChange={(value) => {
+                                  const parsed = parseInt(value);
+                                  field.onChange(isNaN(parsed) ? 0 : parsed);
+                                }}
                                 value={field.value ? field.value.toString() : ""}
                                 disabled={productsLoading}
                               >
