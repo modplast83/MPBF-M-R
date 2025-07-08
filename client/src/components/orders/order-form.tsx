@@ -419,7 +419,7 @@ export function OrderForm() {
                         </Button>
 
                         {open && (
-                          <div className="absolute z-50 top-full left-0 right-0 w-full bg-popover shadow-lg rounded-lg border-2 mt-2 overflow-hidden backdrop-blur-sm bg-background/95">
+                          <div className="absolute z-[9999] top-full left-0 right-0 w-full bg-popover shadow-lg rounded-lg border-2 mt-2 overflow-hidden backdrop-blur-sm bg-background/95">
                             <div className="p-3 border-b bg-muted/30">
                               <Input
                                 type="text"
