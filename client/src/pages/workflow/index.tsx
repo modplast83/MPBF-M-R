@@ -105,7 +105,7 @@ export default function WorkflowIndex() {
           </Button>
         </div>
       </div>
-      <Card className="rounded-xl border border-slate-200/80 bg-white/90 backdrop-blur-sm text-card-foreground shadow-lg shadow-slate-900/5 hover:shadow-xl hover:shadow-slate-900/10 transition-all duration-300 hover:scale-[1.02] hover:border-slate-300/80 mobile-card">
+      <Card className="rounded-xl border border-slate-200/80 bg-white/90 backdrop-blur-sm text-card-foreground shadow-lg shadow-slate-900/5 hover:shadow-xl hover:shadow-slate-900/10 transition-all duration-300 hover:scale-[1.02] hover:border-slate-300/80 mobile-card pl-[32px] pr-[32px] ml-[-26px] mr-[-26px]">
         <CardHeader className="p-4 sm:p-6 border-b border-slate-200/50">
           <CardTitle className="text-lg sm:text-xl lg:text-2xl font-semibold text-slate-900">
             {t("production.roll_management.title")}
