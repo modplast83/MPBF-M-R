@@ -238,7 +238,7 @@ export function GroupedRolls({ rolls, stage }: GroupedRollsProps) {
           <AccordionItem
             key={orderId}
             value={String(orderId)}
-            className="mobile-card bg-white/90 backdrop-blur-sm border border-slate-200/60 overflow-hidden shadow-sm"
+            className="mobile-card bg-white/90 backdrop-blur-sm border border-slate-200/60 overflow-hidden shadow-sm pl-[0px] pr-[0px] ml-[-10px] mr-[-10px]"
           >
             <AccordionTrigger
               onClick={(e) => {
