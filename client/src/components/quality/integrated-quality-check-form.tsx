@@ -1387,6 +1387,7 @@ export function IntegratedQualityChecksManagement() {
                               variant="ghost"
                               size="sm"
                               onClick={() => handleView(check)}
+                              className="pl-[0px] pr-[0px]"
                             >
                               <Eye className="w-4 h-4" />
                             </Button>
