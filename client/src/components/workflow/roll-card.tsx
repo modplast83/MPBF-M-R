@@ -312,13 +312,13 @@ export function RollCard({ roll }: RollCardProps) {
   return (
     <>
       <Card
-        className="mobile-card bg-gradient-to-r from-white to-slate-50/50 border border-slate-200/60 shadow-sm cursor-pointer transition-all duration-200 hover:shadow-md hover:scale-[1.02] active:scale-[0.98]"
+        className="mobile-card bg-gradient-to-r from-white to-slate-50/50 border border-slate-200/60 shadow-sm cursor-pointer transition-all duration-200 hover:shadow-md hover:scale-[1.02] active:scale-[0.98] pl-[65px] pr-[65px] ml-[-2px] mr-[-2px]"
         onClick={openEditDialog}
       >
-        <CardContent className="p-4 sm:p-5 pl-[21px] pr-[21px] ml-[-68px] mr-[-68px]">
+        <CardContent className="p-4 sm:p-5 pl-[21px] pr-[21px]">
           {/* Mobile-optimized header */}
           <div className="mb-3 sm:mb-4">
-            <p className="font-bold text-base sm:text-lg text-slate-900 break-words leading-tight ml-[-55px] mr-[-55px] pl-[15px] pr-[15px]">
+            <p className="font-bold text-base sm:text-lg text-slate-900 break-words leading-tight pl-[15px] pr-[15px]">
               {customer?.name || t("common.loading")}
               {customer?.nameAr && (
                 <span className="text-slate-600 font-medium"> - {customer.nameAr}</span>
