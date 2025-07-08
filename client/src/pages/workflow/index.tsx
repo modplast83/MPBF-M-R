@@ -129,7 +129,7 @@ export default function WorkflowIndex() {
                   <span className="sm:text-sm text-[18px] font-extrabold">
                     {isMobile ? "Extr" : t("rolls.extrusion")}
                   </span>
-                  <span className="h-4 w-4 sm:h-6 sm:w-6 flex-shrink-0 rounded-full bg-primary-100 text-[10px] sm:text-xs font-bold flex items-center justify-center text-primary-700">
+                  <span className="h-4 w-4 sm:h-6 sm:w-6 flex-shrink-0 rounded-full bg-primary-100 sm:text-xs font-bold flex items-center justify-center text-primary-700 text-[17px]">
                     {extrusionLoading ? "-" : extrusionRolls?.length || 0}
                   </span>
                 </TabsTrigger>
