@@ -287,7 +287,7 @@ export default function WorkflowIndex() {
             {/* Cutting Tab Content - Mobile optimized */}
             {showCuttingTab && (
               <TabsContent value="cutting" className="space-y-4 sm:space-y-6">
-                <div className="p-4 sm:p-6 bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200/50 rounded-lg">
+                <div className="p-4 sm:p-6 bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200/50 rounded-lg ml-[-21px] mr-[-21px] pl-[11px] pr-[11px]">
                   <div className="flex items-start sm:items-center mb-4 sm:mb-6">
                     <div className="rounded-full bg-green-100 p-3 mr-4 shrink-0">
                       <span className="material-icons text-green-600 text-xl">
