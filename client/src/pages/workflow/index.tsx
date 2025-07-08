@@ -177,7 +177,7 @@ export default function WorkflowIndex() {
             {/* Extrusion Tab Content - Mobile optimized */}
             {showExtrusionTab && (
               <TabsContent value="extrusion" className="space-y-4 sm:space-y-6">
-                <div className="p-4 sm:p-6 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200/50 rounded-lg">
+                <div className="p-4 sm:p-6 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200/50 rounded-lg pl-[0px] pr-[0px] ml-[-29px] mr-[-29px]">
                   <div className="flex items-start sm:items-center mb-4 sm:mb-6">
                     <div className="rounded-full bg-primary-100 p-3 mr-4 shrink-0">
                       <span className="material-icons text-primary-600 text-xl">
