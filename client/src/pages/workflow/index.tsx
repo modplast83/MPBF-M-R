@@ -105,31 +105,31 @@ export default function WorkflowIndex() {
           </Button>
         </div>
       </div>
-      <Card className="rounded-xl border border-slate-200/80 bg-white/90 backdrop-blur-sm text-card-foreground shadow-lg shadow-slate-900/5 hover:shadow-xl hover:shadow-slate-900/10 transition-all duration-300 hover:scale-[1.02] hover:border-slate-300/80 mobile-card overflow-hidden pl-[0px] pr-[0px] ml-[-31px] mr-[-31px] pt-[11px] pb-[11px]">
-        <CardHeader className="mobile-header border-b border-slate-200/50">
+      <Card className="rounded-xl border border-slate-200/80 bg-white/90 backdrop-blur-sm text-card-foreground shadow-lg shadow-slate-900/5 hover:shadow-xl hover:shadow-slate-900/10 transition-all duration-300 hover:scale-[1.02] hover:border-slate-300/80 mobile-card">
+        <CardHeader className="p-4 sm:p-6 border-b border-slate-200/50">
           <CardTitle className="text-lg sm:text-xl lg:text-2xl font-semibold text-slate-900">
             {t("production.roll_management.title")}
           </CardTitle>
         </CardHeader>
-        <CardContent className="p-4 sm:p-6 lg:p-8">
+        <CardContent className="p-0 sm:p-4 lg:p-6">
           <Tabs
             defaultValue={activeTab || undefined}
             onValueChange={setActiveTab}
           >
             {/* Mobile-optimized TabsList */}
-            <TabsList className="mobile-nav h-auto min-h-[60px] sm:min-h-[50px] items-center justify-center rounded-xl text-muted-foreground w-full flex mb-6 sm:mb-8 p-2 gap-1 sm:gap-2 bg-slate-100/80 overflow-hidden">
+            <TabsList className="h-auto min-h-[48px] sm:min-h-[50px] items-center justify-center rounded-xl text-muted-foreground w-full flex mb-4 sm:mb-6 p-1.5 sm:p-2 gap-1 sm:gap-2 bg-slate-100/80 overflow-x-auto">
               {showExtrusionTab && (
                 <TabsTrigger
                   value="extrusion"
-                  className="flex-1 flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 py-3 sm:py-2 px-2 sm:px-3 rounded-lg transition-all duration-300 data-[state=active]:bg-white data-[state=active]:shadow-md"
+                  className="flex-1 flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-2 py-2 sm:py-2.5 px-1.5 sm:px-3 rounded-lg transition-all duration-300 data-[state=active]:bg-white data-[state=active]:shadow-md min-w-[60px]"
                 >
-                  <span className="material-icons text-primary-500 text-xl sm:text-lg">
+                  <span className="material-icons text-primary-500 text-lg sm:text-lg">
                     merge_type
                   </span>
-                  <span className="text-xs sm:text-sm font-medium">
+                  <span className="text-[10px] sm:text-sm font-medium">
                     {isMobile ? "Extr" : t("rolls.extrusion")}
                   </span>
-                  <span className="h-5 w-5 sm:h-6 sm:w-6 flex-shrink-0 rounded-full bg-primary-100 text-xs font-bold flex items-center justify-center text-primary-700">
+                  <span className="h-4 w-4 sm:h-6 sm:w-6 flex-shrink-0 rounded-full bg-primary-100 text-[10px] sm:text-xs font-bold flex items-center justify-center text-primary-700">
                     {extrusionLoading ? "-" : extrusionRolls?.length || 0}
                   </span>
                 </TabsTrigger>
@@ -138,15 +138,15 @@ export default function WorkflowIndex() {
               {showPrintingTab && (
                 <TabsTrigger
                   value="printing"
-                  className="flex-1 flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 py-3 sm:py-2 px-2 sm:px-3 rounded-lg transition-all duration-300 data-[state=active]:bg-white data-[state=active]:shadow-md"
+                  className="flex-1 flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-2 py-2 sm:py-2.5 px-1.5 sm:px-3 rounded-lg transition-all duration-300 data-[state=active]:bg-white data-[state=active]:shadow-md min-w-[60px]"
                 >
-                  <span className="material-icons text-orange-500 text-xl sm:text-lg">
+                  <span className="material-icons text-orange-500 text-lg sm:text-lg">
                     format_color_fill
                   </span>
-                  <span className="text-xs sm:text-sm font-medium">
+                  <span className="text-[10px] sm:text-sm font-medium">
                     {isMobile ? "Print" : t("rolls.printing")}
                   </span>
-                  <span className="h-5 w-5 sm:h-6 sm:w-6 flex-shrink-0 rounded-full bg-orange-100 text-xs font-bold flex items-center justify-center text-orange-700">
+                  <span className="h-4 w-4 sm:h-6 sm:w-6 flex-shrink-0 rounded-full bg-orange-100 text-[10px] sm:text-xs font-bold flex items-center justify-center text-orange-700">
                     {printingLoading ? "-" : printingRolls?.length || 0}
                   </span>
                 </TabsTrigger>
@@ -155,15 +155,15 @@ export default function WorkflowIndex() {
               {showCuttingTab && (
                 <TabsTrigger
                   value="cutting"
-                  className="flex-1 flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 py-3 sm:py-2 px-2 sm:px-3 rounded-lg transition-all duration-300 data-[state=active]:bg-white data-[state=active]:shadow-md"
+                  className="flex-1 flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-2 py-2 sm:py-2.5 px-1.5 sm:px-3 rounded-lg transition-all duration-300 data-[state=active]:bg-white data-[state=active]:shadow-md min-w-[60px]"
                 >
-                  <span className="material-icons text-green-500 text-xl sm:text-lg">
+                  <span className="material-icons text-green-500 text-lg sm:text-lg">
                     content_cut
                   </span>
-                  <span className="text-xs sm:text-sm font-medium">
+                  <span className="text-[10px] sm:text-sm font-medium">
                     {isMobile ? "Cut" : t("rolls.cutting")}
                   </span>
-                  <span className="h-5 w-5 sm:h-6 sm:w-6 flex-shrink-0 rounded-full bg-green-100 text-xs font-bold flex items-center justify-center text-green-700">
+                  <span className="h-4 w-4 sm:h-6 sm:w-6 flex-shrink-0 rounded-full bg-green-100 text-[10px] sm:text-xs font-bold flex items-center justify-center text-green-700">
                     {cuttingLoading
                       ? "-"
                       : cuttingRolls?.filter(
@@ -177,7 +177,7 @@ export default function WorkflowIndex() {
             {/* Extrusion Tab Content - Mobile optimized */}
             {showExtrusionTab && (
               <TabsContent value="extrusion" className="space-y-4 sm:space-y-6">
-                <div className="mobile-card bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200/50 pl-[-81px] pr-[-81px] ml-[-71px] mr-[-71px]">
+                <div className="p-4 sm:p-6 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200/50 rounded-lg">
                   <div className="flex items-start sm:items-center mb-4 sm:mb-6">
                     <div className="rounded-full bg-primary-100 p-3 mr-4 shrink-0">
                       <span className="material-icons text-primary-600 text-xl">
@@ -239,7 +239,7 @@ export default function WorkflowIndex() {
             {/* Printing Tab Content - Mobile optimized */}
             {showPrintingTab && (
               <TabsContent value="printing" className="space-y-4 sm:space-y-6">
-                <div className="mobile-card bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-200/50">
+                <div className="p-4 sm:p-6 bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-200/50 rounded-lg">
                   <div className="flex items-start sm:items-center mb-4 sm:mb-6">
                     <div className="rounded-full bg-orange-100 p-3 mr-4 shrink-0">
                       <span className="material-icons text-orange-600 text-xl">
@@ -287,7 +287,7 @@ export default function WorkflowIndex() {
             {/* Cutting Tab Content - Mobile optimized */}
             {showCuttingTab && (
               <TabsContent value="cutting" className="space-y-4 sm:space-y-6">
-                <div className="mobile-card bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200/50">
+                <div className="p-4 sm:p-6 bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200/50 rounded-lg">
                   <div className="flex items-start sm:items-center mb-4 sm:mb-6">
                     <div className="rounded-full bg-green-100 p-3 mr-4 shrink-0">
                       <span className="material-icons text-green-600 text-xl">

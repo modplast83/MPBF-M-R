@@ -118,6 +118,15 @@ This is a comprehensive production management system built with React, TypeScrip
 
 ## Recent Changes
 
+- July 8, 2025: Fixed mobile screen optimization for /workflow - Roll Management page:
+  - Removed negative margins (ml-[-31px], mr-[-31px], pl-[-81px], etc.) that caused horizontal scrolling on mobile devices
+  - Updated main Card component with proper responsive padding (p-4 sm:p-6 instead of negative margins)
+  - Fixed TabsContent areas for all three tabs (extrusion, printing, cutting) with proper padding and rounded corners
+  - Made tab triggers more compact on mobile with reduced padding, smaller text (text-[10px]), and smaller icons
+  - Improved TabsList with better mobile-first height and spacing (min-h-[48px] on mobile, reduced padding)
+  - Added proper responsive grid layouts and flex containers for better mobile content flow
+  - Ensured all content stays within viewport boundaries on mobile screens
+  - Workflow page now fully responsive without horizontal scrolling issues
 - July 8, 2025: Completed comprehensive UI rebuild with professional design and mobile optimization:
   - Updated all table components to use center-aligned text as requested
   - Implemented professional gradient backgrounds and glass effects throughout the application
