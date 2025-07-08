@@ -374,17 +374,17 @@ export function OrderForm() {
       </div>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <div className="grid gap-6 lg:grid-cols-3">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 overflow-visible">
+          <div className="grid gap-6 lg:grid-cols-3 overflow-visible">
             {/* Customer Selection Card */}
-            <Card className="mobile-card lg:col-span-2">
+            <Card className="mobile-card lg:col-span-2 overflow-visible">
               <CardHeader className="pb-4">
                 <CardTitle className="flex items-center gap-2">
                   <User className="h-5 w-5 text-primary" />
                   {t("orders.customer")}
                 </CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="overflow-visible">
                 <FormField
                   control={form.control}
                   name="customerId"
