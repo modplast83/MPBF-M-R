@@ -312,125 +312,115 @@ export function RollCard({ roll }: RollCardProps) {
   return (
     <>
       <Card
-        className="bg-white p-2 md:p-3 rounded border border-secondary-200 shadow-sm cursor-pointer transition-shadow hover:shadow-md"
+        className="mobile-card bg-gradient-to-r from-white to-slate-50/50 border border-slate-200/60 shadow-sm cursor-pointer transition-all duration-200 hover:shadow-md hover:scale-[1.02] active:scale-[0.98]"
         onClick={openEditDialog}
       >
-        <CardContent className="p-0">
+        <CardContent className="p-4 sm:p-5">
           {/* Mobile-optimized header */}
-          {/* Customer name at the top in bigger, bold font */}
-          <div className="mb-2 md:mb-3">
-            <p className="font-bold text-base md:text-lg truncate">
-              {customer?.name
-                ? customer.name.length > 35
-                  ? customer.name.substring(0, 35) + "..."
-                  : customer.name
-                : t("common.loading")}
+          <div className="mb-3 sm:mb-4">
+            <p className="font-bold text-base sm:text-lg text-slate-900 break-words leading-tight">
+              {customer?.name || t("common.loading")}
               {customer?.nameAr && (
-                <span className="mr-1 pr-1"> - {customer.nameAr}</span>
+                <span className="text-slate-600 font-medium"> - {customer.nameAr}</span>
               )}
             </p>
           </div>
 
           {/* Job order and status row */}
-          <div className="flex justify-between items-center mb-2 md:mb-3">
-            <span className="font-medium text-sm md:text-base truncate max-w-[65%]">
-              JO #{roll.jobOrderId}-{t("rolls.title")} #{roll.serialNumber}
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+            <span className="font-semibold text-sm sm:text-base text-red-600 break-words">
+              JO #{roll.jobOrderId} - {t("rolls.title")} #{roll.serialNumber}
             </span>
-            <StatusBadge status={roll.status} />
+            <div className="self-start sm:self-center">
+              <StatusBadge status={roll.status} />
+            </div>
           </div>
 
-          {/* Mobile-optimized content with smaller text and tighter spacing */}
-          <div
-            className={`${isMobile ? "text-xs" : "text-sm"} text-secondary-700 space-y-1 md:space-y-1.5`}
-          >
-            <p className="truncate">
-              <span className="font-medium">{t("orders.title")}:</span> #
-              {jobOrder?.orderId}
-            </p>
-            <p className="truncate">
-              <span className="font-medium">{t("orders.product")}:</span>
-              {item?.name || customerProduct?.itemId}
-              <span className="ml-1">({customerProduct?.sizeCaption})</span>
-            </p>
-            <p>
-              <span className="font-medium">{t("orders.quantity")}:</span>{" "}
-              {roll.currentStage === "extrusion"
-                ? roll.extrudingQty
-                : roll.currentStage === "printing"
-                  ? roll.printingQty
-                  : roll.cuttingQty}{" "}
-              Kg
-            </p>
-            {roll.currentStage === "printing" &&
-              customerProduct?.printingCylinder && (
+          {/* Mobile-optimized content grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-sm text-slate-700">
+            <div className="space-y-2">
+              <p className="break-words">
+                <span className="font-semibold text-slate-900">{t("orders.title")}:</span> #{jobOrder?.orderId}
+              </p>
+              <p className="break-words">
+                <span className="font-semibold text-slate-900">{t("orders.product")}:</span>
+                {item?.name || customerProduct?.itemId}
+                <span className="ml-1">({customerProduct?.sizeCaption})</span>
+              </p>
+              <p>
+                <span className="font-semibold text-slate-900">{t("orders.quantity")}:</span>{" "}
+                {roll.currentStage === "extrusion"
+                  ? roll.extrudingQty
+                  : roll.currentStage === "printing"
+                    ? roll.printingQty
+                    : roll.cuttingQty}{" "}
+                Kg
+              </p>
+              {roll.currentStage === "printing" && customerProduct?.printingCylinder && (
                 <p>
-                  <span className="font-medium">
+                  <span className="font-semibold text-slate-900">
                     {t("production.printing_cylinder")}:
                   </span>{" "}
                   {customerProduct.printingCylinder} {t("common.inch")}
                 </p>
               )}
+            </div>
+            
             {/* Operator information section */}
-            <div className="text-secondary-500 text-xs pt-1 space-y-0.5">
-              {/* Extrusion operator (creator) */}
-              <p>
-                {t("production.roll_management.created_by")}:{" "}
-                {creator?.firstName || roll.createdById || t("common.unknown")}
-              </p>
-
-              {/* Printing operator - show only when the printing has been started (printedAt is set) */}
-              {roll.printedAt && roll.printedById && (
+            <div className="bg-slate-50 p-3 rounded-lg space-y-1">
+              <h6 className="font-semibold text-slate-900 text-xs sm:text-sm mb-2">Operators</h6>
+              <div className="text-xs sm:text-sm text-slate-600 space-y-1">
                 <p>
-                  {t("production.roll_management.printed_by")}:{" "}
-                  {printer?.firstName || roll.printedById}
+                  <span className="font-medium">{t("production.roll_management.created_by")}:</span>{" "}
+                  {creator?.firstName || roll.createdById || t("common.unknown")}
                 </p>
-              )}
 
-              {/* Cutting operator - show when cutting has been started (cutAt is set) */}
-              {roll.cutAt && roll.cutById && (
-                <p>
-                  {t("production.roll_management.cut_by")}:{" "}
-                  {cutter?.firstName || roll.cutById}
-                </p>
-              )}
+                {roll.printedAt && roll.printedById && (
+                  <p>
+                    <span className="font-medium">{t("production.roll_management.printed_by")}:</span>{" "}
+                    {printer?.firstName || roll.printedById}
+                  </p>
+                )}
+
+                {roll.cutAt && roll.cutById && (
+                  <p>
+                    <span className="font-medium">{t("production.roll_management.cut_by")}:</span>{" "}
+                    {cutter?.firstName || roll.cutById}
+                  </p>
+                )}
+              </div>
             </div>
           </div>
 
           {/* Mobile-optimized action buttons */}
-          <div className="mt-3 md:mt-4 flex justify-end border-t pt-2 md:pt-3 border-secondary-100">
+          <div className="mt-4 sm:mt-5 flex justify-end border-t pt-3 sm:pt-4 border-slate-200">
             {roll.status === "pending" ? (
               <Button
-                size={isMobile ? "sm" : "default"}
-                variant="link"
-                className="text-primary-500 hover:text-primary-700 text-xs md:text-sm py-1 h-auto"
+                size={isMobile ? "lg" : "default"}
+                variant="default"
+                className="mobile-button bg-green-600 hover:bg-green-700 text-white font-medium"
                 onClick={(e) => {
-                  e.stopPropagation(); // Prevent card click
+                  e.stopPropagation();
                   handleStart();
                 }}
                 disabled={updateRollMutation.isPending}
               >
-                {t(
-                  isMobile
-                    ? "common.start"
-                    : "production.roll_management.start_process",
-                )}
+                <span className="material-icons mr-2 text-sm">play_arrow</span>
+                {t(isMobile ? "common.start" : "production.roll_management.start_process")}
               </Button>
             ) : roll.status === "processing" ? (
               <Button
-                size={isMobile ? "sm" : "default"}
-                variant="link"
-                className="text-primary-500 hover:text-primary-700 text-xs md:text-sm py-1 h-auto"
+                size={isMobile ? "lg" : "default"}
+                variant="default"
+                className="mobile-button bg-blue-600 hover:bg-blue-700 text-white font-medium"
                 onClick={(e) => {
-                  e.stopPropagation(); // Prevent card click
+                  e.stopPropagation();
                   handleComplete();
                 }}
                 disabled={updateRollMutation.isPending}
               >
-                {t(
-                  isMobile
-                    ? "common.complete"
-                    : "production.roll_management.complete_stage",
-                )}
+                <span className="material-icons mr-2 text-sm">check_circle</span>
+                {t(isMobile ? "common.complete" : "production.roll_management.complete_stage")}
               </Button>
             ) : null}
           </div>

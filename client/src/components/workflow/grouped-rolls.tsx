@@ -221,7 +221,7 @@ export function GroupedRolls({ rolls, stage }: GroupedRollsProps) {
     <Accordion
       type="multiple"
       value={expandedOrderIds.map(String)}
-      className="space-y-3"
+      className="space-y-4 sm:space-y-6"
     >
       {orderGroups.map(({ orderId, jobOrders }) => {
         const isExpanded = expandedOrderIds.includes(orderId);
@@ -238,35 +238,35 @@ export function GroupedRolls({ rolls, stage }: GroupedRollsProps) {
           <AccordionItem
             key={orderId}
             value={String(orderId)}
-            className="bg-white rounded-lg border border-secondary-200 overflow-hidden"
+            className="mobile-card bg-white/90 backdrop-blur-sm border border-slate-200/60 overflow-hidden shadow-sm"
           >
             <AccordionTrigger
               onClick={(e) => {
                 e.preventDefault();
                 toggleExpandOrder(orderId);
               }}
-              className="px-4 py-3 hover:bg-secondary-50"
+              className="px-4 sm:px-6 py-4 sm:py-5 hover:bg-slate-50/80 transition-all duration-200"
             >
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between w-full gap-2 sm:gap-0">
-                <div className="flex items-center space-x-3">
-                  <div className="flex h-8 w-8 sm:h-10 sm:w-10 flex-shrink-0 items-center justify-center rounded-full bg-primary-100">
-                    <span className="material-icons text-primary-600 text-sm sm:text-base">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between w-full gap-3 sm:gap-4">
+                <div className="flex items-center space-x-3 sm:space-x-4">
+                  <div className="flex h-10 w-10 sm:h-12 sm:w-12 flex-shrink-0 items-center justify-center rounded-full bg-primary-100">
+                    <span className="material-icons text-primary-600 text-lg sm:text-xl">
                       inventory_2
                     </span>
                   </div>
-                  <div className="text-left">
-                    <h4 className="font-medium text-sm sm:text-base">
-                      <span className="text-[#ff0000] font-extrabold text-[16px]">
+                  <div className="text-left min-w-0 flex-1">
+                    <h4 className="font-semibold text-base sm:text-lg mb-1">
+                      <span className="text-red-600 font-bold">
                         Order #{orderId}
                       </span>
-                      <Badge variant="outline" className="ml-2 text-xs">
+                      <Badge variant="outline" className="ml-2 text-xs sm:text-sm">
                         {jobOrders.length} JO{jobOrders.length > 1 ? "s" : ""}
                       </Badge>
                     </h4>
-                    <p className="text-xs sm:text-sm text-secondary-500 truncate max-w-[200px] sm:max-w-none font-extrabold">
+                    <p className="text-sm sm:text-base text-slate-700 font-medium">
                       {customer?.name}
                       {customer?.nameAr && (
-                        <span className="mr-1 pr-1 font-semibold">
+                        <span className="text-slate-500 font-normal">
                           {" "}
                           - {customer?.nameAr}
                         </span>
@@ -274,9 +274,9 @@ export function GroupedRolls({ rolls, stage }: GroupedRollsProps) {
                     </p>
                   </div>
                 </div>
-                <div className="text-xs sm:text-sm text-secondary-500">
-                  <p>Total Rolls: {totalRolls}</p>
-                  <p>
+                <div className="text-sm sm:text-base text-slate-600 bg-slate-50 px-3 py-2 rounded-lg">
+                  <p className="font-medium">Total Rolls: {totalRolls}</p>
+                  <p className="text-xs sm:text-sm text-slate-500">
                     Date:{" "}
                     {order?.date
                       ? new Date(order.date).toLocaleDateString()
@@ -285,11 +285,11 @@ export function GroupedRolls({ rolls, stage }: GroupedRollsProps) {
                 </div>
               </div>
             </AccordionTrigger>
-            <AccordionContent className="py-2 px-4">
+            <AccordionContent className="py-4 px-4 sm:px-6">
               <Accordion
                 type="multiple"
                 value={expandedGroups.map(String)}
-                className="space-y-2"
+                className="space-y-3 sm:space-y-4"
               >
                 {jobOrders.map(({ jobOrderId, rolls }) => {
                   const isJoExpanded = expandedGroups.includes(jobOrderId);
@@ -298,42 +298,42 @@ export function GroupedRolls({ rolls, stage }: GroupedRollsProps) {
                     <AccordionItem
                       key={jobOrderId}
                       value={String(jobOrderId)}
-                      className="bg-white rounded-lg border border-secondary-100 overflow-hidden"
+                      className="mobile-card bg-gradient-to-r from-slate-50 to-white border border-slate-200/60 overflow-hidden"
                     >
                       <AccordionTrigger
                         onClick={(e) => {
                           e.preventDefault();
                           toggleExpandGroup(jobOrderId);
                         }}
-                        className="px-3 py-2 hover:bg-secondary-50"
+                        className="px-4 sm:px-5 py-3 sm:py-4 hover:bg-slate-50/80 transition-colors duration-200"
                       >
-                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between w-full gap-1 sm:gap-0">
-                          <div className="flex items-center space-x-2">
-                            <div className="flex h-6 w-6 sm:h-8 sm:w-8 flex-shrink-0 items-center justify-center rounded-full bg-secondary-100">
-                              <span className="material-icons text-secondary-600 text-xs sm:text-sm">
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between w-full gap-2 sm:gap-4">
+                          <div className="flex items-center space-x-3">
+                            <div className="flex h-8 w-8 sm:h-10 sm:w-10 flex-shrink-0 items-center justify-center rounded-full bg-slate-100">
+                              <span className="material-icons text-slate-600 text-base sm:text-lg">
                                 description
                               </span>
                             </div>
-                            <div className="text-left">
-                              <h5 className="font-medium text-xs sm:text-sm">
+                            <div className="text-left min-w-0 flex-1">
+                              <h5 className="font-semibold text-sm sm:text-base">
                                 <span className="text-red-600">
                                   JO #{jobOrderId}
                                 </span>
                               </h5>
-                              <p className="text-xs text-secondary-500 truncate max-w-[180px] sm:max-w-none">
+                              <p className="text-xs sm:text-sm text-slate-600 break-words">
                                 {getProductDetails(jobOrderId)}
                               </p>
                             </div>
                           </div>
-                          <div className="text-xs text-secondary-500">
-                            <p className="text-right">
-                              Roll Count: {rolls.length}
+                          <div className="text-sm text-slate-600 bg-slate-100 px-3 py-1 rounded-full">
+                            <p className="font-medium">
+                              {rolls.length} Roll{rolls.length > 1 ? "s" : ""}
                             </p>
                           </div>
                         </div>
                       </AccordionTrigger>
-                      <AccordionContent className="pb-2 px-3">
-                        <div className="space-y-2 pt-1">
+                      <AccordionContent className="pb-3 px-4 sm:px-5">
+                        <div className="space-y-3 sm:space-y-4 pt-2">
                           {rolls
                             .filter((roll) =>
                               stage === "cutting"
