@@ -318,7 +318,7 @@ export function RollCard({ roll }: RollCardProps) {
         <CardContent className="p-4 sm:p-5">
           {/* Mobile-optimized header */}
           <div className="mb-3 sm:mb-4">
-            <p className="font-bold text-base sm:text-lg text-slate-900 break-words leading-tight">
+            <p className="font-bold text-base sm:text-lg text-slate-900 break-words leading-tight ml-[-55px] mr-[-55px] pl-[15px] pr-[15px]">
               {customer?.name || t("common.loading")}
               {customer?.nameAr && (
                 <span className="text-slate-600 font-medium"> - {customer.nameAr}</span>
@@ -426,7 +426,6 @@ export function RollCard({ roll }: RollCardProps) {
           </div>
         </CardContent>
       </Card>
-
       <UpdateRollDialog
         open={isDialogOpen}
         onOpenChange={setIsDialogOpen}
