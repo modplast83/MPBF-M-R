@@ -6,10 +6,10 @@ const Table = React.forwardRef<
   HTMLTableElement,
   React.HTMLAttributes<HTMLTableElement>
 >(({ className, ...props }, ref) => (
-  <div className="relative w-full overflow-auto rounded-lg border border-border/50 bg-white shadow-sm">
+  <div className="relative w-full overflow-auto rounded-xl border border-border/40 bg-white shadow-lg shadow-black/5 backdrop-blur-sm">
     <table
       ref={ref}
-      className={cn("w-full caption-bottom text-sm", className)}
+      className={cn("w-full caption-bottom text-sm text-center", className)}
       {...props}
     />
   </div>
@@ -23,7 +23,7 @@ const TableHeader = React.forwardRef<
   <thead 
     ref={ref} 
     className={cn(
-      "[&_tr]:border-b [&_tr]:bg-muted/30 [&_tr]:backdrop-blur-sm", 
+      "[&_tr]:border-b [&_tr]:bg-gradient-to-r [&_tr]:from-slate-50 [&_tr]:to-slate-100 [&_tr]:backdrop-blur-sm", 
       className
     )} 
     {...props} 
@@ -65,7 +65,7 @@ const TableRow = React.forwardRef<
   <tr
     ref={ref}
     className={cn(
-      "border-b border-border/30 transition-all duration-200 hover:bg-muted/40 hover:shadow-sm data-[state=selected]:bg-primary/5 data-[state=selected]:border-primary/20 group",
+      "border-b border-border/20 transition-all duration-300 hover:bg-slate-50/80 hover:shadow-sm data-[state=selected]:bg-primary/10 data-[state=selected]:border-primary/30 group",
       className,
     )}
     {...props}
@@ -80,7 +80,7 @@ const TableHead = React.forwardRef<
   <th
     ref={ref}
     className={cn(
-      "h-12 px-6 text-left align-middle font-semibold text-foreground/80 tracking-wide text-xs uppercase [&:has([role=checkbox])]:pr-0 bg-gradient-to-r from-muted/50 to-muted/30",
+      "h-12 px-4 sm:px-6 text-center align-middle font-semibold text-foreground/90 tracking-wide text-xs uppercase [&:has([role=checkbox])]:pr-0 bg-gradient-to-r from-slate-100/80 to-slate-200/60",
       className,
     )}
     {...props}
@@ -95,7 +95,7 @@ const TableCell = React.forwardRef<
   <td
     ref={ref}
     className={cn(
-      "px-6 py-4 align-middle [&:has([role=checkbox])]:pr-0 group-hover:text-foreground transition-colors duration-200", 
+      "px-3 sm:px-6 py-4 align-middle text-center [&:has([role=checkbox])]:pr-0 group-hover:text-foreground transition-colors duration-300 text-sm font-medium", 
       className
     )}
     {...props}

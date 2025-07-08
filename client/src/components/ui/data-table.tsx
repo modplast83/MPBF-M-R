@@ -134,15 +134,15 @@ export function DataTable<T>({
 
   return (
     <div
-      className={`space-y-4 ${isRightToLeft ? "rtl" : "ltr"}`}
+      className={`space-y-4 sm:space-y-6 ${isRightToLeft ? "rtl" : "ltr"}`}
       dir={direction}
     >
       {(searchable || actions) && (
         <div
-          className={`flex items-center justify-between ${isRightToLeft ? "flex-row-reverse" : ""}`}
+          className={`flex flex-col sm:flex-row gap-4 sm:gap-0 sm:items-center sm:justify-between ${isRightToLeft ? "sm:flex-row-reverse" : ""}`}
         >
           {searchable && (
-            <div className="relative w-64">
+            <div className="relative w-full sm:w-64">
               <Input
                 placeholder={t("common.search")}
                 value={searchQuery}
@@ -150,7 +150,7 @@ export function DataTable<T>({
                   setSearchQuery(e.target.value);
                   handlePageChange(1);
                 }}
-                className={`text-sm ${isRightToLeft ? "text-right pr-10" : "text-left pl-10"}`}
+                className={`mobile-input text-sm ${isRightToLeft ? "text-right pr-10" : "text-left pl-10"}`}
               />
               <span
                 className={`absolute ${isRightToLeft ? "right-3" : "left-3"} top-1/2 -translate-y-1/2 text-gray-400`}
@@ -159,17 +159,17 @@ export function DataTable<T>({
               </span>
             </div>
           )}
-          {actions && <div>{actions}</div>}
+          {actions && <div className="w-full sm:w-auto">{actions}</div>}
         </div>
       )}
-      <div className="rounded-md border">
+      <div className="mobile-table">
         <Table>
           <TableHeader>
             <TableRow>
               {(isRightToLeft ? [...columns].reverse() : columns)
                 .filter((col) => !col.hidden)
                 .map((col, idx) => (
-                  <TableHead key={idx} className="text-center font-bold">
+                  <TableHead key={idx} className="mobile-table-header">
                     {col.header}
                   </TableHead>
                 ))}
@@ -218,7 +218,7 @@ export function DataTable<T>({
                     {(isRightToLeft ? [...columns].reverse() : columns)
                       .filter((col) => !col.hidden)
                       .map((col, colIndex) => (
-                        <TableCell key={colIndex} className="text-center">
+                        <TableCell key={colIndex} className="mobile-table-cell">
                           {col.cell
                             ? col.cell(row, absIndex)
                             : typeof col.accessorKey === "function"
@@ -237,7 +237,7 @@ export function DataTable<T>({
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className="text-center h-24"
+                  className="mobile-table-cell h-16 sm:h-24"
                 >
                   {t("pagination.no_results")}
                 </TableCell>

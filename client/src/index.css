@@ -62,22 +62,27 @@
 }
 
 @layer components {
+  /* Professional Glass Effect */
   .glass-effect {
     @apply bg-white/10 backdrop-blur-md border border-white/20;
   }
 
+  /* Professional Gradient Background */
   .gradient-bg {
     background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary)) 50%, hsl(var(--accent)) 100%);
   }
 
+  /* Professional Card Hover Effect */
   .card-hover {
     @apply hover:shadow-xl hover:scale-[1.02] transition-all duration-300;
   }
 
+  /* Professional Button Glow */
   .button-glow {
     @apply relative before:absolute before:inset-0 before:rounded-lg before:bg-gradient-to-r before:from-primary/50 before:to-accent/50 before:opacity-0 hover:before:opacity-100 before:transition-opacity before:duration-300 before:-z-10 before:blur-xl;
   }
 
+  /* Professional Text Shimmer */
   .text-shimmer {
     background: linear-gradient(90deg, hsl(var(--foreground)) 0%, hsl(var(--primary)) 50%, hsl(var(--foreground)) 100%);
     background-size: 200% 100%;
@@ -87,6 +92,94 @@
     animation: shimmer 3s ease-in-out infinite;
   }
 
+  /* Professional Border Glow */
+  .border-glow {
+    @apply relative before:absolute before:inset-0 before:rounded-lg before:border before:border-primary/50 before:opacity-0 hover:before:opacity-100 before:transition-opacity before:duration-300;
+  }
+
+  /* Mobile-First Responsive Utilities */
+  .mobile-container {
+    @apply w-full max-w-sm mx-auto px-4 sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl 2xl:max-w-4xl;
+  }
+
+  .mobile-grid {
+    @apply grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8;
+  }
+
+  .mobile-card {
+    @apply p-4 sm:p-6 lg:p-8 rounded-lg sm:rounded-xl bg-white shadow-md sm:shadow-lg lg:shadow-xl border border-slate-200/80 transition-all duration-300 hover:shadow-xl hover:shadow-slate-900/10;
+  }
+
+  .mobile-button {
+    @apply w-full sm:w-auto px-6 py-3 sm:px-8 sm:py-4 text-base sm:text-lg font-medium rounded-lg sm:rounded-xl transition-all duration-300 touch-manipulation;
+  }
+
+  .mobile-input {
+    @apply w-full px-4 py-3 sm:px-6 sm:py-4 text-base sm:text-lg rounded-lg sm:rounded-xl border border-slate-300 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-300;
+  }
+
+  .mobile-table {
+    @apply w-full overflow-x-auto rounded-lg sm:rounded-xl shadow-lg bg-white;
+  }
+
+  .mobile-table-cell {
+    @apply px-3 py-2 sm:px-4 sm:py-3 lg:px-6 lg:py-4 text-sm sm:text-base text-center align-middle;
+  }
+
+  .mobile-table-header {
+    @apply px-3 py-2 sm:px-4 sm:py-3 lg:px-6 lg:py-4 text-xs sm:text-sm font-semibold text-center uppercase tracking-wide bg-slate-100/80;
+  }
+
+  .mobile-nav {
+    @apply flex flex-col sm:flex-row gap-2 sm:gap-4 p-4 sm:p-6 bg-white shadow-lg rounded-lg sm:rounded-xl;
+  }
+
+  .mobile-sidebar {
+    @apply w-full sm:w-80 h-full bg-white shadow-xl border-r border-slate-200/80 overflow-y-auto;
+  }
+
+  .mobile-header {
+    @apply w-full h-16 sm:h-20 bg-white shadow-md border-b border-slate-200/80 flex items-center justify-between px-4 sm:px-6;
+  }
+
+  /* Professional Page Layout */
+  .page-container {
+    @apply min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/40 p-4 sm:p-6 lg:p-8;
+  }
+
+  .page-header {
+    @apply mb-6 sm:mb-8 lg:mb-10 text-center sm:text-left;
+  }
+
+  .page-title {
+    @apply text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 mb-2 sm:mb-4;
+  }
+
+  .page-subtitle {
+    @apply text-base sm:text-lg lg:text-xl text-slate-600 max-w-2xl mx-auto sm:mx-0;
+  }
+
+  /* Professional Form Styling */
+  .form-container {
+    @apply w-full max-w-md sm:max-w-lg lg:max-w-xl xl:max-w-2xl mx-auto space-y-6 sm:space-y-8;
+  }
+
+  .form-group {
+    @apply space-y-2 sm:space-y-3;
+  }
+
+  .form-label {
+    @apply text-sm sm:text-base font-medium text-slate-700 block;
+  }
+
+  .form-input {
+    @apply w-full px-4 py-3 sm:px-6 sm:py-4 text-base sm:text-lg rounded-lg sm:rounded-xl border border-slate-300 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-300 bg-white/80 backdrop-blur-sm;
+  }
+
+  .form-error {
+    @apply text-sm sm:text-base text-red-600 mt-1 sm:mt-2;
+  }
+
   @keyframes shimmer {
     0%, 100% {
       background-position: 200% 0;
@@ -94,10 +187,6 @@
     50% {
       background-position: -200% 0;
     }
-  }
-
-  .border-glow {
-    @apply relative before:absolute before:inset-0 before:rounded-lg before:border before:border-primary/50 before:opacity-0 hover:before:opacity-100 before:transition-opacity before:duration-300;
   }
 }
 

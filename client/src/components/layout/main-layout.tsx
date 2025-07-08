@@ -49,7 +49,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
   };
 
   return (
-    <div className={`flex h-screen overflow-hidden ${isRTL ? "rtl" : "ltr"}`}>
+    <div className={`flex h-screen overflow-hidden ${isRTL ? "rtl" : "ltr"} bg-slate-50`}>
       {/* Desktop sidebar - fixed position */}
       {isAuthenticated && !isMobile && <Sidebar isMobile={false} />}
       {/* Mobile sidebar as a sheet for better mobile experience */}
@@ -85,10 +85,14 @@ export default function MainLayout({ children }: MainLayoutProps) {
             setMobileMenuOpen={handleMobileMenuToggle}
           />
         )}
-        <main className={`flex-1 overflow-auto bg-gradient-to-br from-slate-50 via-gray-50 to-blue-50 ${
-          isMobile ? "p-1" : "p-2 sm:p-4 lg:p-6"
-        } pl-[3px] pr-[3px]`}>
-          <div className="max-w-full mx-auto h-full">{children}</div>
+        <main className={`flex-1 overflow-auto bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/40 ${
+          isMobile ? "p-3 sm:p-4" : "p-4 sm:p-6 lg:p-8"
+        } transition-all duration-300 ease-in-out`}>
+          <div className="max-w-full mx-auto h-full">
+            <div className="space-y-6">
+              {children}
+            </div>
+          </div>
         </main>
       </div>
     </div>
