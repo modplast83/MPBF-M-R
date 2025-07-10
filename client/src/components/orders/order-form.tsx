@@ -405,7 +405,7 @@ export function OrderForm() {
                                 {customers.find((customer) => customer.id === field.value)?.name}
                               </span>
                               {customers.find((customer) => customer.id === field.value)?.code && (
-                                <Badge variant="secondary" className="text-xs mt-1">
+                                <Badge variant={"secondary" as any} className="text-xs mt-1">
                                   #{customers.find((customer) => customer.id === field.value)?.code}
                                 </Badge>
                               )}
@@ -469,7 +469,7 @@ export function OrderForm() {
                                                 {customer.name}
                                               </span>
                                               {customer.code && (
-                                                <Badge variant="outline" className="text-xs">
+                                                <Badge variant={"outline" as any} className="text-xs">
                                                   #{customer.code}
                                                 </Badge>
                                               )}
@@ -553,7 +553,7 @@ export function OrderForm() {
                   <Package className="h-5 w-5 text-primary" />
                   {t("orders.products")}
                   {fields.length > 0 && (
-                    <Badge variant="secondary" className="ml-2">
+                    <Badge variant={"secondary" as any} className="ml-2">
                       {fields.length} {fields.length === 1 ? 'Product' : 'Products'}
                     </Badge>
                   )}
