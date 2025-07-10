@@ -12,6 +12,7 @@ import Users from "@/pages/setup/users";
 import AbaFormulas from "@/pages/setup/aba-formulas";
 import OrdersIndex from "@/pages/orders/index";
 import OrderDetails from "@/pages/orders/[id]";
+import NewOrderPage from "@/pages/orders/new";
 import WorkflowIndex from "@/pages/workflow/index";
 import ProductionIndex from "@/pages/production/index";
 import MixMaterialsPage from "@/pages/production/mix-materials";
@@ -166,6 +167,11 @@ function App() {
                       <ProtectedRoute
                         path="/orders"
                         component={OrdersIndex}
+                        module="Orders"
+                      />
+                      <ProtectedRoute
+                        path="/orders/new"
+                        component={NewOrderPage}
                         module="Orders"
                       />
                       <ProtectedRoute
