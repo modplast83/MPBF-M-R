@@ -149,15 +149,26 @@ export default function NewOrderPage() {
 
   // Update product in order
   const updateProduct = (index: number, field: 'productId' | 'quantity', value: string | number) => {
+    if (index < 0 || index >= products.length) return;
+    
     const updatedProducts = [...products];
-    updatedProducts[index] = { ...updatedProducts[index], [field]: value };
+    if (field === 'productId') {
+      updatedProducts[index] = { ...updatedProducts[index], productId: value as string };
+    } else if (field === 'quantity') {
+      updatedProducts[index] = { ...updatedProducts[index], quantity: value as number };
+    }
     setProducts(updatedProducts);
     form.setValue('products', updatedProducts);
   };
 
   // Get product details
   const getProductDetails = (productId: string) => {
-    return customerProducts.find(p => p.id === productId);
+    try {
+      return customerProducts.find(p => p.id === productId);
+    } catch (error) {
+      console.error('Error getting product details:', error);
+      return null;
+    }
   };
 
   // Submit form
@@ -367,14 +378,7 @@ export default function NewOrderPage() {
                               <SelectContent>
                                 {customerProducts.map((p) => (
                                   <SelectItem key={p.id} value={p.id}>
-                                    <div className="flex items-center gap-2">
-                                      <span className="font-medium">{p.productName}</span>
-                                      {p.size && (
-                                        <Badge variant="secondary" className="text-xs">
-                                          {p.size}
-                                        </Badge>
-                                      )}
-                                    </div>
+                                    {p.productName} {p.size ? `(${p.size})` : ''}
                                   </SelectItem>
                                 ))}
                               </SelectContent>
