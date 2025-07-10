@@ -19,6 +19,57 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Skeleton } from "@/components/ui/skeleton";
 import Fuse from "fuse.js";
+import { safeSync, handleError } from "@/utils/error-boundary-utils";
+
+// Product Details Display Component
+function ProductDetailsDisplay({ productId, getProductDetails, t }: {
+  productId: string;
+  getProductDetails: (id: string) => Product | null;
+  t: (key: string) => string;
+}) {
+  const details = safeSync(() => getProductDetails(productId), null, { productId });
+  
+  if (!details) {
+    return (
+      <div className="mt-4 p-3 bg-muted rounded-md">
+        <p className="text-sm text-muted-foreground">
+          {t('orders.product_details_unavailable')}
+        </p>
+      </div>
+    );
+  }
+  
+  return (
+    <div className="mt-4 p-3 bg-muted rounded-md">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
+        {details.productCode && (
+          <div>
+            <span className="font-medium">{t('common.code')}: </span>
+            {details.productCode}
+          </div>
+        )}
+        {details.category && (
+          <div>
+            <span className="font-medium">{t('common.category')}: </span>
+            {details.category}
+          </div>
+        )}
+        {details.thickness && (
+          <div>
+            <span className="font-medium">{t('setup.products.thickness')}: </span>
+            {details.thickness}
+          </div>
+        )}
+        {details.color && (
+          <div>
+            <span className="font-medium">{t('setup.products.color')}: </span>
+            {details.color}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
 
 // Order form validation schema
 const orderFormSchema = z.object({
@@ -411,39 +462,11 @@ export default function NewOrderPage() {
 
                         {/* Product Details */}
                         {product.productId && (
-                          <div className="mt-4 p-3 bg-muted rounded-md">
-                            {(() => {
-                              const details = getProductDetails(product.productId);
-                              return details ? (
-                                <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
-                                  {details.productCode && (
-                                    <div>
-                                      <span className="font-medium">{t('common.code')}: </span>
-                                      {details.productCode}
-                                    </div>
-                                  )}
-                                  {details.category && (
-                                    <div>
-                                      <span className="font-medium">{t('common.category')}: </span>
-                                      {details.category}
-                                    </div>
-                                  )}
-                                  {details.thickness && (
-                                    <div>
-                                      <span className="font-medium">{t('setup.products.thickness')}: </span>
-                                      {details.thickness}
-                                    </div>
-                                  )}
-                                  {details.color && (
-                                    <div>
-                                      <span className="font-medium">{t('setup.products.color')}: </span>
-                                      {details.color}
-                                    </div>
-                                  )}
-                                </div>
-                              ) : null;
-                            })()}
-                          </div>
+                          <ProductDetailsDisplay 
+                            productId={product.productId} 
+                            getProductDetails={getProductDetails}
+                            t={t}
+                          />
                         )}
                       </Card>
                     ))}
