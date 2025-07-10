@@ -226,7 +226,7 @@ const OrderCard = ({
             <div>
               <p className="font-medium text-gray-900">{customer?.name || 'Unknown Customer'}</p>
               {customer?.nameAr && (
-                <p className="text-sm text-gray-500" dir="rtl">{customer.nameAr}</p>
+                <p className="font-extrabold text-[18px] text-center text-[#000000]" dir="rtl">{customer.nameAr}</p>
               )}
             </div>
           </div>
