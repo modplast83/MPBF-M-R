@@ -360,7 +360,7 @@ export function OrderForm() {
   }, [customers, searchQuery]);
 
   return (
-    <div className="page-container">
+    <div className="page-container form-container-overflow">
       <div className="page-header">
         <div className="flex items-center gap-3">
           <div className="p-2 bg-primary/10 rounded-lg">
@@ -374,8 +374,8 @@ export function OrderForm() {
       </div>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 overflow-visible">
-          <div className="grid gap-6 lg:grid-cols-3 overflow-visible">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 overflow-visible relative">
+          <div className="grid gap-6 lg:grid-cols-3 overflow-visible relative">
             {/* Customer Selection Card */}
             <Card className="mobile-card lg:col-span-2 overflow-visible">
               <CardHeader className="pb-4">
@@ -390,7 +390,7 @@ export function OrderForm() {
                   name="customerId"
                   render={({ field }) => (
                     <FormItem>
-                      <div className="relative">
+                      <div className="relative z-[50]">
                         <Button
                           type="button"
                           variant="outline"
@@ -419,7 +419,7 @@ export function OrderForm() {
                         </Button>
 
                         {open && (
-                          <div className="absolute z-[9999] top-full left-0 right-0 w-full bg-popover shadow-lg rounded-lg border-2 mt-2 overflow-hidden backdrop-blur-sm bg-background/95">
+                          <div className="customer-dropdown absolute top-full left-0 right-0 w-full mt-2 overflow-hidden">
                             <div className="p-3 border-b bg-muted/30">
                               <Input
                                 type="text"
@@ -585,7 +585,7 @@ export function OrderForm() {
                       <Card key={field.id} className="border-2 border-muted hover:border-accent transition-colors relative z-20">
                         <CardContent className="p-4 relative">
                           <div className="grid gap-4 md:grid-cols-12 items-end">
-                            <div className="md:col-span-7">
+                            <div className="md:col-span-7 relative z-[100]">
                               <FormField
                                 control={form.control}
                                 name={`jobOrders.${index}.customerProductId`}
@@ -608,7 +608,7 @@ export function OrderForm() {
                                           <SelectValue placeholder={t("orders.select_product")} />
                                         </SelectTrigger>
                                       </FormControl>
-                                      <SelectContent className="select-content-fix">
+                                      <SelectContent className="dropdown-portal">
                                         {customerProducts?.map((product) => {
                                           const item = items?.find(i => i.id === product.itemId);
                                           const category = categories?.find(c => c.id === product.categoryId);

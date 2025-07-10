@@ -192,7 +192,7 @@
   /* Fix for Select dropdown display issues */
   .select-content-fix {
     z-index: 9999 !important;
-    position: relative !important;
+    position: fixed !important;
   }
 
   /* Ensure proper stacking context for forms */
@@ -205,6 +205,42 @@
   .card-content-fix {
     position: relative;
     z-index: 1;
+  }
+
+  /* Enhanced dropdown positioning */
+  .dropdown-portal {
+    position: fixed !important;
+    z-index: 9999 !important;
+    pointer-events: auto !important;
+    min-width: 200px !important;
+  }
+
+  /* Global Select dropdown fix */
+  [data-radix-select-content] {
+    z-index: 9999 !important;
+    position: fixed !important;
+  }
+
+  /* Ensure form overflow doesn't clip dropdowns */
+  .form-container-overflow {
+    overflow: visible !important;
+  }
+
+  /* Fix any potential z-index stacking issues */
+  .z-max {
+    z-index: 9999 !important;
+  }
+
+  /* Customer dropdown fix */
+  .customer-dropdown {
+    position: fixed !important;
+    z-index: 9999 !important;
+    max-height: 300px !important;
+    overflow-y: auto !important;
+    background: white !important;
+    border: 1px solid hsl(var(--border)) !important;
+    border-radius: 8px !important;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
   }
 }
 
