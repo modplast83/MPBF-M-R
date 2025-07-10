@@ -57,6 +57,7 @@ import {
 import { apiRequest } from "@/lib/queryClient";
 import { API_ENDPOINTS } from "@/lib/constants";
 import { toast } from "@/hooks/use-toast";
+// @ts-ignore
 import { useTranslation } from "react-i18next";
 
 // Extended schema for the form
