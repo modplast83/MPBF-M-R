@@ -224,7 +224,7 @@ const OrderCard = ({
           <div className="flex items-center gap-2">
             <User className="h-4 w-4 text-gray-400" />
             <div>
-              <p className="font-medium text-gray-900">{customer?.name || 'Unknown Customer'}</p>
+              <p className="text-gray-900 text-center font-bold">{customer?.name || 'Unknown Customer'}</p>
               {customer?.nameAr && (
                 <p className="font-extrabold text-[18px] text-center text-[#000000]" dir="rtl">{customer.nameAr}</p>
               )}
