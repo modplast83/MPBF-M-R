@@ -209,7 +209,7 @@ const OrderCard = ({
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-900">#{order.id}</h3>
-                  <p className="text-xs text-gray-500 flex items-center gap-1">
+                  <p className="text-xs text-gray-500 flex items-center gap-1 text-center font-bold">
                     <Calendar className="h-3 w-3" />
                     {formatDateString(order.date)}
                   </p>
