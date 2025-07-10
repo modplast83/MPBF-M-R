@@ -107,7 +107,7 @@
   }
 
   .mobile-card {
-    @apply p-4 sm:p-6 lg:p-8 rounded-lg sm:rounded-xl bg-white shadow-md sm:shadow-lg lg:shadow-xl border border-slate-200/80 transition-all duration-300 hover:shadow-xl hover:shadow-slate-900/10;
+    @apply p-4 sm:p-6 lg:p-8 rounded-lg sm:rounded-xl bg-white shadow-md sm:shadow-lg lg:shadow-xl border border-slate-200/80 transition-all duration-300 hover:shadow-xl hover:shadow-slate-900/10 relative z-10;
   }
 
   .mobile-button {
@@ -187,6 +187,24 @@
     50% {
       background-position: -200% 0;
     }
+  }
+
+  /* Fix for Select dropdown display issues */
+  .select-content-fix {
+    z-index: 9999 !important;
+    position: relative !important;
+  }
+
+  /* Ensure proper stacking context for forms */
+  .form-select-wrapper {
+    position: relative;
+    z-index: 10;
+  }
+
+  /* Card content positioning fix */
+  .card-content-fix {
+    position: relative;
+    z-index: 1;
   }
 }
 

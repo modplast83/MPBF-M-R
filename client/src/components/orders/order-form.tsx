@@ -546,7 +546,7 @@ export function OrderForm() {
           </div>
 
           {/* Products Section */}
-          <Card className="mobile-card">
+          <Card className="mobile-card relative z-10">
             <CardHeader className="pb-4">
               <div className="flex items-center justify-between">
                 <CardTitle className="flex items-center gap-2">
@@ -576,14 +576,14 @@ export function OrderForm() {
                 </Button>
               </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="relative">
 
               {selectedCustomerId ? (
                 fields.length > 0 ? (
                   <div className="space-y-4">
                     {fields.map((field, index) => (
-                      <Card key={field.id} className="border-2 border-muted hover:border-accent transition-colors">
-                        <CardContent className="p-4">
+                      <Card key={field.id} className="border-2 border-muted hover:border-accent transition-colors relative z-20">
+                        <CardContent className="p-4 relative">
                           <div className="grid gap-4 md:grid-cols-12 items-end">
                             <div className="md:col-span-7">
                               <FormField
@@ -608,7 +608,7 @@ export function OrderForm() {
                                           <SelectValue placeholder={t("orders.select_product")} />
                                         </SelectTrigger>
                                       </FormControl>
-                                      <SelectContent>
+                                      <SelectContent className="select-content-fix">
                                         {customerProducts?.map((product) => {
                                           const item = items?.find(i => i.id === product.itemId);
                                           const category = categories?.find(c => c.id === product.categoryId);
