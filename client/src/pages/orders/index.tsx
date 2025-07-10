@@ -204,9 +204,7 @@ const OrderCard = ({
                 className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
               />
               <div className="flex items-center gap-2">
-                <div className="p-2 bg-blue-100 rounded-lg group-hover:bg-blue-200 transition-colors">
-                  <ShoppingCart className="h-4 w-4 text-blue-600" />
-                </div>
+                <div></div>
                 <div>
                   <h3 className="font-semibold text-gray-900">#{order.id}</h3>
                   <p className="text-xs text-gray-500 flex items-center gap-1 text-center font-bold">
