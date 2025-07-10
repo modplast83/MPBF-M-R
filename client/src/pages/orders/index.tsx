@@ -118,7 +118,7 @@ const StatusBadge = ({ status }: { status: string }) => {
   return (
     <Badge 
       variant="secondary" 
-      className={`${config.color} text-xs font-medium border inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full`}
+      className="transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 hover:bg-secondary/80 bg-blue-50 text-blue-700 border-blue-200 text-xs border inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-center font-bold"
     >
       {config.icon}
       {config.label}
