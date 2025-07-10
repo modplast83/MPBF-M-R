@@ -2488,7 +2488,8 @@
       "orders_management": "إدارة الطلبات",
       "orders_statistics": "إحصائيات الطلبات",
       "delete_orders": "حذف الطلبات",
-      "loading_orders": "جاري تحميل الطلبات..."
+      "loading_orders": "جاري تحميل الطلبات...",
+      "product_details_unavailable": "تفاصيل المنتج غير متاحة"
     },
     "job_orders": {
       "title": "أمر إنتاج",

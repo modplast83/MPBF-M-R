@@ -1545,7 +1545,8 @@
       "orders_statistics": "Orders Statistics",
       "description": "Manage and track production orders from creation to delivery",
       "delete_orders": "Delete Orders",
-      "loading_orders": "Loading orders..."
+      "loading_orders": "Loading orders...",
+      "product_details_unavailable": "Product details unavailable"
     },
     "job_orders": {
       "title": "Job Orders",

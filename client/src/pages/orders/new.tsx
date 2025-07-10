@@ -20,6 +20,56 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Skeleton } from "@/components/ui/skeleton";
 import Fuse from "fuse.js";
 import { safeSync, handleError } from "@/utils/error-boundary-utils";
+import React from "react";
+
+// Error Boundary Component for New Order Page
+class NewOrderErrorBoundary extends React.Component<
+  { children: React.ReactNode },
+  { hasError: boolean; error?: Error }
+> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    handleError(error, { 
+      component: 'NewOrderPage',
+      errorInfo: errorInfo.componentStack 
+    });
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="page-container">
+          <Card className="max-w-md mx-auto">
+            <CardHeader>
+              <CardTitle className="text-destructive">Something went wrong</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground mb-4">
+                An error occurred while loading the new order page. Please try refreshing the page.
+              </p>
+              <Button 
+                onClick={() => window.location.reload()}
+                className="w-full"
+              >
+                Refresh Page
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
+}
 
 // Product Details Display Component
 function ProductDetailsDisplay({ productId, getProductDetails, t }: {
@@ -228,24 +278,25 @@ export default function NewOrderPage() {
   };
 
   return (
-    <div className="page-container">
-      <div className="page-header">
-        <div className="flex items-center gap-4">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => navigate('/orders')}
-            className="flex items-center gap-2"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            {t('common.back')}
-          </Button>
-          <div>
-            <h1 className="page-title">{t('orders.new_order')}</h1>
-            <p className="page-subtitle">{t('orders.create_order_description')}</p>
+    <NewOrderErrorBoundary>
+      <div className="page-container">
+        <div className="page-header">
+          <div className="flex items-center gap-4">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => navigate('/orders')}
+              className="flex items-center gap-2"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              {t('common.back')}
+            </Button>
+            <div>
+              <h1 className="page-title">{t('orders.new_order')}</h1>
+              <p className="page-subtitle">{t('orders.create_order_description')}</p>
+            </div>
           </div>
         </div>
-      </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Customer Selection */}
@@ -420,18 +471,29 @@ export default function NewOrderPage() {
                           <div className="md:col-span-2">
                             <Label className="text-sm font-medium">{t('orders.select_product')}</Label>
                             <Select
-                              value={product.productId}
-                              onValueChange={(value) => updateProduct(index, 'productId', value)}
+                              value={product.productId || ""}
+                              onValueChange={(value) => {
+                                if (value && value !== "") {
+                                  updateProduct(index, 'productId', value);
+                                }
+                              }}
                             >
                               <SelectTrigger className="mt-1">
                                 <SelectValue placeholder={t('orders.select_product')} />
                               </SelectTrigger>
-                              <SelectContent>
-                                {customerProducts.map((p) => (
-                                  <SelectItem key={p.id} value={p.id}>
-                                    {p.productName} {p.size ? `(${p.size})` : ''}
-                                  </SelectItem>
-                                ))}
+                              <SelectContent className="max-h-60 overflow-y-auto">
+                                {customerProducts.map((p) => {
+                                  const displayText = safeSync(
+                                    () => `${p.productName}${p.size ? ` (${p.size})` : ''}`,
+                                    p.productName || "Unknown Product",
+                                    { productId: p.id }
+                                  );
+                                  return (
+                                    <SelectItem key={p.id} value={p.id}>
+                                      {displayText}
+                                    </SelectItem>
+                                  );
+                                })}
                               </SelectContent>
                             </Select>
                           </div>
@@ -540,5 +602,6 @@ export default function NewOrderPage() {
         </Card>
       </div>
     </div>
+    </NewOrderErrorBoundary>
   );
 }
