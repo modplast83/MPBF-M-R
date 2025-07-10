@@ -805,9 +805,9 @@ export default function OrdersIndex() {
         <div>
           <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
             <ShoppingCart className="h-7 w-7 text-blue-600" />
-            Order Management
+            {t('orders.order_management')}
           </h1>
-          <p className="text-gray-600 mt-1">Manage and track all your orders</p>
+          <p className="text-gray-600 mt-1">{t('orders.manage_track_orders')}</p>
         </div>
         
         <div className="flex items-center gap-3">
@@ -819,7 +819,7 @@ export default function OrdersIndex() {
             className="gap-2"
           >
             <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
-            Refresh
+            {t('common.refresh')}
           </Button>
           
           <Button
@@ -828,13 +828,13 @@ export default function OrdersIndex() {
             className="gap-2"
           >
             <Download className="h-4 w-4" />
-            Export
+            {t('orders.export')}
           </Button>
           
           <Link href="/orders/new">
             <Button className="gap-2 bg-blue-600 hover:bg-blue-700">
               <Plus className="h-4 w-4" />
-              New Order
+              {t('orders.new_order')}
             </Button>
           </Link>
         </div>
@@ -843,31 +843,31 @@ export default function OrdersIndex() {
       {/* Statistics Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
         <StatsCard 
-          title="Total Orders" 
+          title={t('orders.total_orders')} 
           value={stats.total} 
           icon={<ShoppingCart className="h-5 w-5" />}
           color="blue"
         />
         <StatsCard 
-          title="Pending" 
+          title={t('orders.pending')} 
           value={stats.pending} 
           icon={<Clock className="h-5 w-5" />}
           color="amber"
         />
         <StatsCard 
-          title="Processing" 
+          title={t('orders.processing')} 
           value={stats.processing} 
           icon={<Package className="h-5 w-5" />}
           color="blue"
         />
         <StatsCard 
-          title="Completed" 
+          title={t('orders.completed')} 
           value={stats.completed} 
           icon={<CheckCircle className="h-5 w-5" />}
           color="green"
         />
         <StatsCard 
-          title="On Hold" 
+          title={t('orders.on_hold')} 
           value={stats.hold} 
           icon={<Pause className="h-5 w-5" />}
           color="red"
@@ -879,14 +879,14 @@ export default function OrdersIndex() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Filter className="h-5 w-5" />
-            Search & Filters
+            {t('orders.search_filters')}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex flex-col sm:flex-row gap-4">
             <SmartSearchBox
               onSearch={handleSmartSearch}
-              placeholder="Search orders by ID, customer, or note..."
+              placeholder={t('orders.search_by_id_customer')}
               recentSearches={recentSearches}
               onRecentSearchSelect={handleRecentSearchSelect}
               searchSuggestions={searchSuggestions}
@@ -895,27 +895,27 @@ export default function OrdersIndex() {
             <div className="flex gap-2">
               <Select value={statusFilter} onValueChange={setStatusFilter}>
                 <SelectTrigger className="w-40">
-                  <SelectValue placeholder="Filter by status" />
+                  <SelectValue placeholder={t('orders.filter_by_status')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Status</SelectItem>
-                  <SelectItem value="pending">Pending</SelectItem>
-                  <SelectItem value="processing">Processing</SelectItem>
-                  <SelectItem value="completed">Completed</SelectItem>
-                  <SelectItem value="hold">On Hold</SelectItem>
-                  <SelectItem value="cancelled">Cancelled</SelectItem>
+                  <SelectItem value="all">{t('orders.all_status')}</SelectItem>
+                  <SelectItem value="pending">{t('orders.pending')}</SelectItem>
+                  <SelectItem value="processing">{t('orders.processing')}</SelectItem>
+                  <SelectItem value="completed">{t('orders.completed')}</SelectItem>
+                  <SelectItem value="hold">{t('orders.on_hold')}</SelectItem>
+                  <SelectItem value="cancelled">{t('orders.cancelled')}</SelectItem>
                 </SelectContent>
               </Select>
               
               <Select value={sortBy} onValueChange={setSortBy}>
                 <SelectTrigger className="w-40">
-                  <SelectValue placeholder="Sort by" />
+                  <SelectValue placeholder={t('orders.sort_by')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="date">Date</SelectItem>
-                  <SelectItem value="id">Order ID</SelectItem>
-                  <SelectItem value="customer">Customer</SelectItem>
-                  <SelectItem value="status">Status</SelectItem>
+                  <SelectItem value="date">{t('orders.date')}</SelectItem>
+                  <SelectItem value="id">{t('orders.order_id')}</SelectItem>
+                  <SelectItem value="customer">{t('orders.customer')}</SelectItem>
+                  <SelectItem value="status">{t('orders.status')}</SelectItem>
                 </SelectContent>
               </Select>
               
@@ -926,7 +926,7 @@ export default function OrdersIndex() {
                 className="gap-2"
               >
                 {sortOrder === "asc" ? <ArrowUp className="h-4 w-4" /> : <ArrowDown className="h-4 w-4" />}
-                {sortOrder === "asc" ? "Asc" : "Desc"}
+                {sortOrder === "asc" ? t('orders.asc') : t('orders.desc')}
               </Button>
             </div>
           </div>
@@ -934,31 +934,31 @@ export default function OrdersIndex() {
           {/* Quick Filters */}
           <div className="flex flex-wrap gap-2">
             <QuickFilterButton
-              label="All"
+              label={t('orders.all')}
               count={stats.total}
               isActive={statusFilter === "all"}
               onClick={() => setStatusFilter("all")}
             />
             <QuickFilterButton
-              label="Pending"
+              label={t('orders.pending')}
               count={stats.pending}
               isActive={statusFilter === "pending"}
               onClick={() => setStatusFilter("pending")}
             />
             <QuickFilterButton
-              label="Processing"
+              label={t('orders.processing')}
               count={stats.processing}
               isActive={statusFilter === "processing"}
               onClick={() => setStatusFilter("processing")}
             />
             <QuickFilterButton
-              label="Completed"
+              label={t('orders.completed')}
               count={stats.completed}
               isActive={statusFilter === "completed"}
               onClick={() => setStatusFilter("completed")}
             />
             <QuickFilterButton
-              label="On Hold"
+              label={t('orders.on_hold')}
               count={stats.hold}
               isActive={statusFilter === "hold"}
               onClick={() => setStatusFilter("hold")}
@@ -980,7 +980,7 @@ export default function OrdersIndex() {
                   className="w-4 h-4 text-blue-600 rounded border-gray-300"
                 />
                 <span className="text-blue-700 font-medium">
-                  {selectedOrders.length} order{selectedOrders.length !== 1 ? 's' : ''} selected
+                  {selectedOrders.length} {selectedOrders.length !== 1 ? t('orders.orders') : t('orders.order')} {t('orders.selected')}
                 </span>
               </div>
               
@@ -990,7 +990,7 @@ export default function OrdersIndex() {
                   size="sm"
                   onClick={() => setSelectedOrders([])}
                 >
-                  Clear Selection
+                  {t('orders.clear_selection')}
                 </Button>
                 <Button
                   variant="destructive"
@@ -999,7 +999,7 @@ export default function OrdersIndex() {
                   className="gap-2"
                 >
                   <Trash2 className="h-4 w-4" />
-                  Delete Selected
+                  {t('orders.delete_selected')}
                 </Button>
               </div>
             </div>
@@ -1014,16 +1014,16 @@ export default function OrdersIndex() {
             <CardContent className="py-16">
               <div className="text-center">
                 <ShoppingCart className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No orders found</h3>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">{t('orders.no_orders_found')}</h3>
                 <p className="text-gray-600 mb-4">
                   {searchQuery || statusFilter !== "all" 
-                    ? "No orders match your current filters" 
-                    : "Get started by creating your first order"}
+                    ? t('orders.no_orders_match_filters') 
+                    : t('orders.get_started_create_order')}
                 </p>
                 <Link href="/orders/new">
                   <Button className="gap-2">
                     <Plus className="h-4 w-4" />
-                    Create Order
+                    {t('orders.create_order')}
                   </Button>
                 </Link>
               </div>
@@ -1050,18 +1050,18 @@ export default function OrdersIndex() {
       <AlertDialog open={!!deletingOrder} onOpenChange={() => setDeletingOrder(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Order</AlertDialogTitle>
+            <AlertDialogTitle>{t('orders.delete_order')}</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete order #{deletingOrder?.id}? This action cannot be undone.
+              {t('orders.confirm_delete_order', { id: deletingOrder?.id })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{t('orders.cancel')}</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => deletingOrder && handleDeleteOrder(deletingOrder)}
               className="bg-red-600 hover:bg-red-700"
             >
-              Delete Order
+              {t('orders.delete_order')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -1071,13 +1071,13 @@ export default function OrdersIndex() {
       <AlertDialog open={showBulkDeleteDialog} onOpenChange={setShowBulkDeleteDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Multiple Orders</AlertDialogTitle>
+            <AlertDialogTitle>{t('orders.delete_multiple_orders')}</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete {selectedOrders.length} selected orders? This action cannot be undone.
+              {t('orders.confirm_delete_multiple_orders', { count: selectedOrders.length })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{t('orders.cancel')}</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => {
                 // Implement bulk delete logic here
@@ -1086,7 +1086,7 @@ export default function OrdersIndex() {
               }}
               className="bg-red-600 hover:bg-red-700"
             >
-              Delete Orders
+              {t('orders.delete_orders')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
