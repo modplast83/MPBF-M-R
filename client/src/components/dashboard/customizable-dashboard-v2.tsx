@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import {
   DragDropContext,
   Droppable,
@@ -291,23 +291,26 @@ export function CustomizableDashboardV2() {
   const [widgets, setWidgets] = useState<WidgetItem[]>([]);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
-  // Handle drag end
-  const handleDragEnd = (result: DropResult) => {
+  // Handle drag end with useCallback to prevent unnecessary re-renders
+  const handleDragEnd = useCallback((result: DropResult) => {
     if (!result.destination) return;
 
-    const items = Array.from(widgets);
-    const [reorderedItem] = items.splice(result.source.index, 1);
-    items.splice(result.destination.index, 0, reorderedItem);
+    setWidgets(currentWidgets => {
+      const items = Array.from(currentWidgets);
+      const [reorderedItem] = items.splice(result.source.index, 1);
+      items.splice(result.destination.index, 0, reorderedItem);
 
-    // Update positions
-    const updatedWidgets = items.map((widget, index) => ({
-      ...widget,
-      position: index,
-    }));
+      // Update positions
+      const updatedWidgets = items.map((widget, index) => ({
+        ...widget,
+        position: index,
+      }));
 
-    setWidgets(updatedWidgets);
+      return updatedWidgets;
+    });
+    
     setHasUnsavedChanges(true);
-  };
+  }, []);
 
   // Load saved dashboard layout
   useEffect(() => {
@@ -336,40 +339,43 @@ export function CustomizableDashboardV2() {
     }
   };
 
-  // Add widget
-  const addWidget = (templateId: string) => {
+  // Add widget with useCallback optimization
+  const addWidget = useCallback((templateId: string) => {
     const template = WIDGET_TEMPLATES.find((t) => t.id === templateId);
     if (!template) return;
 
-    const newWidget: WidgetItem = {
-      id: `${template.id}-${Date.now()}`,
-      type: template.type,
-      title: template.name,
-      visible: true,
-      position: widgets.length,
-      config: {},
-    };
+    setWidgets(currentWidgets => {
+      const newWidget: WidgetItem = {
+        id: `${template.id}-${Date.now()}`,
+        type: template.type,
+        title: template.name,
+        visible: true,
+        position: currentWidgets.length,
+        config: {},
+      };
 
-    setWidgets([...widgets, newWidget]);
+      return [...currentWidgets, newWidget];
+    });
+    
     setHasUnsavedChanges(true);
     setShowWidgetLibrary(false);
-  };
+  }, []);
 
-  // Remove widget
-  const removeWidget = (widgetId: string) => {
-    setWidgets(widgets.filter((w) => w.id !== widgetId));
+  // Remove widget with useCallback optimization
+  const removeWidget = useCallback((widgetId: string) => {
+    setWidgets(currentWidgets => currentWidgets.filter((w) => w.id !== widgetId));
     setHasUnsavedChanges(true);
-  };
+  }, []);
 
-  // Toggle widget visibility
-  const toggleWidgetVisibility = (widgetId: string) => {
-    setWidgets(
-      widgets.map((w) =>
+  // Toggle widget visibility with useCallback optimization
+  const toggleWidgetVisibility = useCallback((widgetId: string) => {
+    setWidgets(currentWidgets =>
+      currentWidgets.map((w) =>
         w.id === widgetId ? { ...w, visible: !w.visible } : w,
       ),
     );
     setHasUnsavedChanges(true);
-  };
+  }, []);
 
   // Reset to default
   const resetToDefault = () => {
@@ -386,7 +392,11 @@ export function CustomizableDashboardV2() {
     return <WidgetComponent {...widget.config} />;
   };
 
-  const visibleWidgets = widgets.filter((w) => w.visible || isEditMode);
+  // Memoize visible widgets to prevent unnecessary recalculations
+  const visibleWidgets = useMemo(() => 
+    widgets.filter((w) => w.visible || isEditMode), 
+    [widgets, isEditMode]
+  );
 
   return (
     <div className="space-y-4">

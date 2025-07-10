@@ -7,6 +7,10 @@ import { Toaster } from "@/components/ui/toaster";
 // Import i18n configuration
 import "./lib/i18n";
 import { LanguageProvider } from "@/hooks/use-language";
+import { setupGlobalErrorHandlers } from "./utils/resize-observer-error-handler";
+
+// Setup global error handlers to prevent ResizeObserver loop errors
+setupGlobalErrorHandlers();
 
 createRoot(document.getElementById("root")!).render(
   <QueryClientProvider client={queryClient}>
