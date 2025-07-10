@@ -373,7 +373,6 @@ export function OrderForm() {
           </div>
         </div>
       </div>
-
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 overflow-visible relative">
           <div className="grid gap-6 lg:grid-cols-3 overflow-visible relative">
@@ -407,9 +406,8 @@ export function OrderForm() {
                               </span>
                               {customers.find((customer) => customer.id === field.value)?.code && (
                                 // @ts-ignore
-                                <Badge variant="secondary" className="text-xs mt-1">
-                                  #{customers.find((customer) => customer.id === field.value)?.code}
-                                </Badge>
+                                (<Badge variant="secondary" className="text-xs mt-1">#{customers.find((customer) => customer.id === field.value)?.code}
+                                </Badge>)
                               )}
                             </div>
                           ) : (
@@ -472,9 +470,8 @@ export function OrderForm() {
                                               </span>
                                               {customer.code && (
                                                 // @ts-ignore
-                                                <Badge variant="outline" className="text-xs">
-                                                  #{customer.code}
-                                                </Badge>
+                                                (<Badge variant="outline" className="text-xs">#{customer.code}
+                                                </Badge>)
                                               )}
                                             </div>
                                             {customer.nameAr && (
@@ -549,7 +546,7 @@ export function OrderForm() {
           </div>
 
           {/* Products Section */}
-          <Card className="rounded-xl border border-slate-200/80 bg-white/90 backdrop-blur-sm text-card-foreground shadow-lg shadow-slate-900/5 hover:shadow-xl hover:shadow-slate-900/10 transition-all duration-300 hover:scale-[1.02] hover:border-slate-300/80 mobile-card relative z-10 mt-[281px] mb-[281px] pt-[0px] pb-[0px]">
+          <Card className="rounded-xl border border-slate-200/80 bg-white/90 backdrop-blur-sm text-card-foreground shadow-lg shadow-slate-900/5 hover:shadow-xl hover:shadow-slate-900/10 transition-all duration-300 hover:scale-[1.02] hover:border-slate-300/80 mobile-card relative z-10 pt-[88px] pb-[88px] mt-[140px] mb-[140px]">
             <CardHeader className="pb-4">
               <div className="flex items-center justify-between">
                 <CardTitle className="flex items-center gap-2">
@@ -557,9 +554,9 @@ export function OrderForm() {
                   {t("orders.products")}
                   {fields.length > 0 && (
                     // @ts-ignore
-                    <Badge variant="secondary" className="ml-2">
+                    (<Badge variant="secondary" className="ml-2">
                       {fields.length} {fields.length === 1 ? 'Product' : 'Products'}
-                    </Badge>
+                    </Badge>)
                   )}
                 </CardTitle>
                 <Button
