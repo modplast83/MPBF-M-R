@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
@@ -28,6 +28,19 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { API_ENDPOINTS } from "@/lib/constants";
 import { formatDateString } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
@@ -35,6 +48,7 @@ import { useTranslation } from "react-i18next";
 import { useLanguage } from "@/hooks/use-language";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Order, Customer } from "@shared/schema";
+import Fuse from "fuse.js";
 import { 
   ShoppingCart, 
   Plus, 
@@ -58,7 +72,11 @@ import {
   BarChart3,
   ChevronRight,
   ArrowUp,
-  ArrowDown
+  ArrowDown,
+  History,
+  X,
+  Sparkles,
+  Target
 } from "lucide-react";
 
 // Enhanced Status Badge Component with icons
@@ -294,6 +312,179 @@ const QuickFilterButton = ({
   </Button>
 );
 
+// Smart Search Component with fuzzy matching and recent searches
+const SmartSearchBox = ({ 
+  onSearch, 
+  placeholder = "Search orders...", 
+  recentSearches = [], 
+  onRecentSearchSelect,
+  searchSuggestions = []
+}: {
+  onSearch: (query: string) => void;
+  placeholder?: string;
+  recentSearches?: string[];
+  onRecentSearchSelect?: (query: string) => void;
+  searchSuggestions?: Array<{ text: string; type: 'order' | 'customer' | 'status' }>;
+}) => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+
+  // Debounced search functionality
+  const debouncedSearch = useCallback(
+    debounce((query: string) => {
+      onSearch(query);
+    }, 300),
+    [onSearch]
+  );
+
+  useEffect(() => {
+    debouncedSearch(searchQuery);
+  }, [searchQuery, debouncedSearch]);
+
+  const handleInputChange = (value: string) => {
+    setSearchQuery(value);
+    setShowSuggestions(value.length > 0);
+  };
+
+  const handleSuggestionSelect = (suggestion: string) => {
+    setSearchQuery(suggestion);
+    onSearch(suggestion);
+    setShowSuggestions(false);
+    setIsOpen(false);
+  };
+
+  const handleRecentSelect = (query: string) => {
+    setSearchQuery(query);
+    onSearch(query);
+    if (onRecentSearchSelect) {
+      onRecentSearchSelect(query);
+    }
+    setIsOpen(false);
+  };
+
+  const clearSearch = () => {
+    setSearchQuery("");
+    onSearch("");
+    setShowSuggestions(false);
+  };
+
+  // Filter suggestions based on current query
+  const filteredSuggestions = useMemo(() => {
+    if (!searchQuery) return [];
+    
+    const fuse = new Fuse(searchSuggestions, {
+      keys: ['text'],
+      threshold: 0.4,
+      includeScore: true,
+      includeMatches: true,
+    });
+    
+    return fuse.search(searchQuery).slice(0, 5);
+  }, [searchQuery, searchSuggestions]);
+
+  return (
+    <div className="relative flex-1">
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+        <Input
+          placeholder={placeholder}
+          value={searchQuery}
+          onChange={(e) => handleInputChange(e.target.value)}
+          onFocus={() => setIsOpen(true)}
+          className="pl-10 pr-20"
+        />
+        <div className="absolute right-3 top-1/2 transform -translate-y-1/2 flex items-center gap-2">
+          {searchQuery && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={clearSearch}
+              className="h-6 w-6 p-0 hover:bg-gray-100"
+            >
+              <X className="h-3 w-3" />
+            </Button>
+          )}
+          <Popover open={isOpen} onOpenChange={setIsOpen}>
+            <PopoverTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-6 w-6 p-0 hover:bg-gray-100"
+              >
+                <Sparkles className="h-3 w-3" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-80 p-0" align="start">
+              <Command>
+                <CommandList>
+                  {/* Recent Searches */}
+                  {recentSearches.length > 0 && (
+                    <CommandGroup heading="Recent Searches">
+                      {recentSearches.slice(0, 3).map((search, index) => (
+                        <CommandItem
+                          key={index}
+                          onSelect={() => handleRecentSelect(search)}
+                          className="cursor-pointer"
+                        >
+                          <History className="h-4 w-4 mr-2 text-gray-400" />
+                          {search}
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  )}
+                  
+                  {/* Search Suggestions */}
+                  {filteredSuggestions.length > 0 && (
+                    <CommandGroup heading="Suggestions">
+                      {filteredSuggestions.map((result, index) => (
+                        <CommandItem
+                          key={index}
+                          onSelect={() => handleSuggestionSelect(result.item.text)}
+                          className="cursor-pointer"
+                        >
+                          <div className="flex items-center gap-2">
+                            {result.item.type === 'order' && <Package className="h-4 w-4 text-blue-500" />}
+                            {result.item.type === 'customer' && <User className="h-4 w-4 text-green-500" />}
+                            {result.item.type === 'status' && <Target className="h-4 w-4 text-purple-500" />}
+                            <span>{result.item.text}</span>
+                          </div>
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  )}
+                  
+                  {/* Empty State */}
+                  {recentSearches.length === 0 && filteredSuggestions.length === 0 && (
+                    <CommandEmpty>
+                      <div className="text-center py-4">
+                        <Search className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+                        <p className="text-sm text-gray-500">Start typing to see suggestions</p>
+                      </div>
+                    </CommandEmpty>
+                  )}
+                </CommandList>
+              </Command>
+            </PopoverContent>
+          </Popover>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Debounce utility function
+function debounce<T extends (...args: any[]) => void>(
+  func: T,
+  delay: number
+): T {
+  let timeoutId: NodeJS.Timeout;
+  return ((...args: Parameters<T>) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => func(...args), delay);
+  }) as T;
+}
+
 export default function OrdersIndex() {
   const queryClient = useQueryClient();
   const [deletingOrder, setDeletingOrder] = useState<Order | null>(null);
@@ -304,9 +495,33 @@ export default function OrdersIndex() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [sortBy, setSortBy] = useState("date");
   const [sortOrder, setSortOrder] = useState("desc");
+  const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const { t } = useTranslation();
   const { isRTL } = useLanguage();
   const isMobile = useIsMobile();
+
+  // Load recent searches from localStorage
+  useEffect(() => {
+    const savedSearches = localStorage.getItem('orders-recent-searches');
+    if (savedSearches) {
+      try {
+        setRecentSearches(JSON.parse(savedSearches));
+      } catch (error) {
+        console.error('Error loading recent searches:', error);
+      }
+    }
+  }, []);
+
+  // Save recent searches to localStorage
+  const saveRecentSearch = useCallback((query: string) => {
+    if (!query.trim()) return;
+    
+    setRecentSearches(prev => {
+      const updated = [query, ...prev.filter(s => s !== query)].slice(0, 5);
+      localStorage.setItem('orders-recent-searches', JSON.stringify(updated));
+      return updated;
+    });
+  }, []);
 
   // Fetch orders and customers
   const { data: orders, isLoading, refetch } = useQuery<Order[]>({
@@ -322,29 +537,86 @@ export default function OrdersIndex() {
     return customers?.find(c => c.id === customerId);
   };
 
-  // Filter and sort orders
-  const filteredOrders = orders
-    ?.filter((order) => {
-      // Status filter
-      if (statusFilter !== "all" && order.status !== statusFilter) {
-        return false;
+  // Create search suggestions from orders and customers
+  const searchSuggestions = useMemo(() => {
+    const suggestions: Array<{ text: string; type: 'order' | 'customer' | 'status' }> = [];
+    
+    // Add unique customer names
+    const customerNames = new Set<string>();
+    customers?.forEach(customer => {
+      if (customer.name && !customerNames.has(customer.name)) {
+        customerNames.add(customer.name);
+        suggestions.push({ text: customer.name, type: 'customer' });
       }
-
-      // Search filter
-      if (searchQuery) {
-        const customer = getCustomerById(order.customerId);
-        const searchLower = searchQuery.toLowerCase();
-        return (
-          order.id.toString().includes(searchLower) ||
-          customer?.name.toLowerCase().includes(searchLower) ||
-          customer?.nameAr?.toLowerCase().includes(searchLower) ||
-          order.note?.toLowerCase().includes(searchLower)
-        );
+      if (customer.nameAr && !customerNames.has(customer.nameAr)) {
+        customerNames.add(customer.nameAr);
+        suggestions.push({ text: customer.nameAr, type: 'customer' });
       }
+    });
+    
+    // Add order IDs
+    orders?.forEach(order => {
+      suggestions.push({ text: `#${order.id}`, type: 'order' });
+    });
+    
+    // Add status options
+    ['pending', 'processing', 'completed', 'cancelled', 'hold'].forEach(status => {
+      suggestions.push({ text: status, type: 'status' });
+    });
+    
+    return suggestions;
+  }, [orders, customers]);
 
-      return true;
-    })
-    ?.sort((a, b) => {
+  // Fuzzy search implementation
+  const fuse = useMemo(() => {
+    if (!orders || !customers) return null;
+    
+    const searchableData = orders.map(order => {
+      const customer = getCustomerById(order.customerId);
+      return {
+        ...order,
+        customerName: customer?.name || '',
+        customerNameAr: customer?.nameAr || '',
+        searchText: `${order.id} ${customer?.name || ''} ${customer?.nameAr || ''} ${order.note || ''} ${order.status}`
+      };
+    });
+    
+    return new Fuse(searchableData, {
+      keys: [
+        { name: 'id', weight: 0.3 },
+        { name: 'customerName', weight: 0.25 },
+        { name: 'customerNameAr', weight: 0.25 },
+        { name: 'note', weight: 0.1 },
+        { name: 'status', weight: 0.1 }
+      ],
+      threshold: 0.4,
+      includeScore: true,
+      includeMatches: true
+    });
+  }, [orders, customers]);
+
+  // Filter and sort orders with fuzzy search
+  const filteredOrders = useMemo(() => {
+    if (!orders) return [];
+    
+    let filtered = orders;
+    
+    // Apply fuzzy search if there's a search query
+    if (searchQuery && fuse) {
+      const results = fuse.search(searchQuery);
+      filtered = results.map(result => {
+        const { searchText, ...originalOrder } = result.item;
+        return originalOrder as Order;
+      });
+    }
+    
+    // Apply status filter
+    if (statusFilter !== "all") {
+      filtered = filtered.filter(order => order.status === statusFilter);
+    }
+    
+    // Apply sorting
+    return filtered.sort((a, b) => {
       let aVal, bVal;
       
       switch (sortBy) {
@@ -375,6 +647,7 @@ export default function OrdersIndex() {
         return aVal < bVal ? 1 : -1;
       }
     });
+  }, [orders, searchQuery, statusFilter, sortBy, sortOrder, fuse]);
 
   // Calculate statistics
   const stats = {
@@ -502,6 +775,20 @@ export default function OrdersIndex() {
     setShowBulkDeleteDialog(true);
   };
 
+  // Handle smart search
+  const handleSmartSearch = useCallback((query: string) => {
+    setSearchQuery(query);
+    if (query.trim()) {
+      saveRecentSearch(query.trim());
+    }
+  }, [saveRecentSearch]);
+
+  const handleRecentSearchSelect = useCallback((query: string) => {
+    setSearchQuery(query);
+    // Move selected search to top of recent searches
+    saveRecentSearch(query);
+  }, [saveRecentSearch]);
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-96">
@@ -599,17 +886,13 @@ export default function OrdersIndex() {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex flex-col sm:flex-row gap-4">
-            <div className="flex-1">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                <Input
-                  placeholder="Search orders by ID, customer, or note..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
-            </div>
+            <SmartSearchBox
+              onSearch={handleSmartSearch}
+              placeholder="Search orders by ID, customer, or note..."
+              recentSearches={recentSearches}
+              onRecentSearchSelect={handleRecentSearchSelect}
+              searchSuggestions={searchSuggestions}
+            />
             
             <div className="flex gap-2">
               <Select value={statusFilter} onValueChange={setStatusFilter}>
