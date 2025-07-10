@@ -73,8 +73,8 @@ class NewOrderErrorBoundary extends React.Component<
 
 // Product Details Display Component
 function ProductDetailsDisplay({ productId, getProductDetails, t }: {
-  productId: string;
-  getProductDetails: (id: string) => Product | null;
+  productId: number;
+  getProductDetails: (id: number) => Product | null;
   t: (key: string) => string;
 }) {
   const details = safeSync(() => getProductDetails(productId), null, { productId });
@@ -92,28 +92,40 @@ function ProductDetailsDisplay({ productId, getProductDetails, t }: {
   return (
     <div className="mt-4 p-3 bg-muted rounded-md">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
-        {details.productCode && (
+        {details.sizeCaption && (
           <div>
-            <span className="font-medium">{t('common.code')}: </span>
-            {details.productCode}
+            <span className="font-medium">{t('orders.size')}: </span>
+            {details.sizeCaption}
           </div>
         )}
-        {details.category && (
+        {details.categoryId && (
           <div>
-            <span className="font-medium">{t('common.category')}: </span>
-            {details.category}
+            <span className="font-medium">{t('orders.category')}: </span>
+            {details.categoryId}
           </div>
         )}
         {details.thickness && (
           <div>
-            <span className="font-medium">{t('setup.products.thickness')}: </span>
-            {details.thickness}
+            <span className="font-medium">{t('orders.thickness')}: </span>
+            {details.thickness}mm
           </div>
         )}
-        {details.color && (
+        {details.width && details.lengthCm && (
           <div>
-            <span className="font-medium">{t('setup.products.color')}: </span>
-            {details.color}
+            <span className="font-medium">{t('orders.dimensions')}: </span>
+            {details.width}x{details.lengthCm}cm
+          </div>
+        )}
+        {details.rawMaterial && (
+          <div>
+            <span className="font-medium">{t('orders.raw_material')}: </span>
+            {details.rawMaterial}
+          </div>
+        )}
+        {details.notes && (
+          <div>
+            <span className="font-medium">{t('orders.notes')}: </span>
+            {details.notes}
           </div>
         )}
       </div>
@@ -126,7 +138,7 @@ const orderFormSchema = z.object({
   customerId: z.string().min(1, "Please select a customer"),
   notes: z.string().optional(),
   products: z.array(z.object({
-    productId: z.string().min(1, "Product is required"),
+    productId: z.number().min(1, "Product is required"),
     quantity: z.number().min(1, "Quantity must be at least 1"),
   })).min(1, "At least one product is required"),
 });
@@ -142,17 +154,32 @@ interface Customer {
 }
 
 interface Product {
-  id: string;
-  productName: string;
-  productCode?: string;
-  size?: string;
-  category?: string;
-  thickness?: string;
-  color?: string;
-  length?: number;
+  id: number;
+  customerId: string;
+  categoryId: string;
+  itemId: string;
+  sizeCaption?: string;
   width?: number;
+  leftF?: number;
+  rightF?: number;
+  thickness?: number;
+  thicknessOne?: number;
+  printingCylinder?: number;
+  lengthCm?: number;
+  cuttingLength?: number;
+  rawMaterial?: string;
+  masterBatchId?: string;
+  printed?: string;
   cuttingUnit?: string;
+  unitWeight?: number;
+  unitQty?: number;
   packageKg?: number;
+  packing?: string;
+  punching?: string;
+  cover?: string;
+  volum?: string;
+  knife?: string;
+  notes?: string;
 }
 
 export default function NewOrderPage() {
@@ -162,7 +189,7 @@ export default function NewOrderPage() {
   const queryClient = useQueryClient();
   const [customerSearch, setCustomerSearch] = useState("");
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
-  const [products, setProducts] = useState<{ productId: string; quantity: number }[]>([]);
+  const [products, setProducts] = useState<{ productId: number; quantity: number }[]>([]);
 
   // Initialize form with default values
   const form = useForm<OrderFormValues>({
@@ -181,7 +208,13 @@ export default function NewOrderPage() {
 
   // Fetch products for selected customer
   const { data: customerProducts = [], isLoading: productsLoading } = useQuery<Product[]>({
-    queryKey: ['/api/customer-products', selectedCustomer?.id],
+    queryKey: ['/api/customers', selectedCustomer?.id, 'products'],
+    queryFn: async () => {
+      if (!selectedCustomer?.id) return [];
+      const response = await fetch(`/api/customers/${selectedCustomer.id}/products`);
+      if (!response.ok) throw new Error('Failed to fetch customer products');
+      return response.json();
+    },
     enabled: !!selectedCustomer?.id,
   });
 
@@ -235,7 +268,7 @@ export default function NewOrderPage() {
 
   // Add product to order
   const addProduct = () => {
-    const newProduct = { productId: "", quantity: 1 };
+    const newProduct = { productId: 0, quantity: 1 };
     const updatedProducts = [...products, newProduct];
     setProducts(updatedProducts);
     form.setValue('products', updatedProducts);
@@ -254,7 +287,7 @@ export default function NewOrderPage() {
     
     const updatedProducts = [...products];
     if (field === 'productId') {
-      updatedProducts[index] = { ...updatedProducts[index], productId: value as string };
+      updatedProducts[index] = { ...updatedProducts[index], productId: value as number };
     } else if (field === 'quantity') {
       updatedProducts[index] = { ...updatedProducts[index], quantity: value as number };
     }
@@ -263,7 +296,7 @@ export default function NewOrderPage() {
   };
 
   // Get product details
-  const getProductDetails = (productId: string) => {
+  const getProductDetails = (productId: number) => {
     try {
       return customerProducts.find(p => p.id === productId);
     } catch (error) {
@@ -471,10 +504,10 @@ export default function NewOrderPage() {
                           <div className="md:col-span-2">
                             <Label className="text-sm font-medium">{t('orders.select_product')}</Label>
                             <Select
-                              value={product.productId || ""}
+                              value={product.productId ? product.productId.toString() : ""}
                               onValueChange={(value) => {
                                 if (value && value !== "") {
-                                  updateProduct(index, 'productId', value);
+                                  updateProduct(index, 'productId', parseInt(value));
                                 }
                               }}
                             >
@@ -484,12 +517,12 @@ export default function NewOrderPage() {
                               <SelectContent className="max-h-60 overflow-y-auto">
                                 {customerProducts.map((p) => {
                                   const displayText = safeSync(
-                                    () => `${p.productName}${p.size ? ` (${p.size})` : ''}`,
-                                    p.productName || "Unknown Product",
+                                    () => `${p.sizeCaption || 'Product'}${p.width ? ` (${p.width}x${p.lengthCm})` : ''}`,
+                                    "Unknown Product",
                                     { productId: p.id }
                                   );
                                   return (
-                                    <SelectItem key={p.id} value={p.id}>
+                                    <SelectItem key={p.id} value={p.id.toString()}>
                                       {displayText}
                                     </SelectItem>
                                   );
