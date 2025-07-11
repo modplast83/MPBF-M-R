@@ -20,6 +20,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Skeleton } from "@/components/ui/skeleton";
 import Fuse from "fuse.js";
 import { safeSync, handleError } from "@/utils/error-boundary-utils";
+import { safeParseInt, safeStringAccess, validateFormData, isValidNumber } from "@/utils/type-safety";
 import React from "react";
 
 // Error Boundary Component for New Order Page
