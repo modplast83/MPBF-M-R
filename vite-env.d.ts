@@ -29,3 +29,11 @@ declare module "path" {
     win32
   };
 }
+
+// Extended ImportMeta interface for Node.js compatibility
+interface ImportMeta {
+  url: string;
+  dirname: string;
+  filename: string;
+  resolve?(specifier: string): string;
+}
