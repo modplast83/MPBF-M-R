@@ -4,6 +4,7 @@
     "useDefineForClassFields": true,
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "skipLibCheck": true,
+    "noResolve": false,
     "types": [],
     "typeRoots": [],
     "module": "ESNext",
@@ -32,6 +33,7 @@
   },
   "include": [
     "vite.config.ts",
+    "vite-env.d.ts",
     "client/**/*.ts",
     "client/**/*.tsx",
     "shared/**/*.ts",
