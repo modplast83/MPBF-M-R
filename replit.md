@@ -118,6 +118,12 @@ This is a comprehensive production management system built with React, TypeScrip
 
 ## Recent Changes
 
+- July 11, 2025: Enhanced category display in new order form product details:
+  - Added Category interface and categories data fetching using React Query
+  - Created getCategoryName function to map category IDs to category names
+  - Updated ProductDetailsDisplay component to show category names instead of IDs
+  - Category field now displays proper names like "Roll Trash Bag", "T-Shirt Bag" instead of "CAT001", "CAT002"
+  - Enhanced user experience with more meaningful category information in product details
 - July 11, 2025: Fixed critical product selection issue in new order form:
   - Resolved API endpoint mismatch from `/api/customer-products` to `/api/customers/:customerId/products`
   - Updated Product interface to match backend CustomerProduct schema (ID changed from string to number)

@@ -72,10 +72,11 @@ class NewOrderErrorBoundary extends React.Component<
 }
 
 // Product Details Display Component
-function ProductDetailsDisplay({ productId, getProductDetails, getItemName, t }: {
+function ProductDetailsDisplay({ productId, getProductDetails, getItemName, getCategoryName, t }: {
   productId: number;
   getProductDetails: (id: number) => Product | null;
   getItemName: (itemId: string) => string;
+  getCategoryName: (categoryId: string) => string;
   t: (key: string) => string;
 }) {
   const details = safeSync(() => getProductDetails(productId), null, { productId });
@@ -116,7 +117,7 @@ function ProductDetailsDisplay({ productId, getProductDetails, getItemName, t }:
         {details.categoryId && (
           <div>
             <span className="font-medium">{t('orders.category')}: </span>
-            {details.categoryId}
+            {getCategoryName(details.categoryId)}
           </div>
         )}
         {details.thickness && (
@@ -198,6 +199,12 @@ interface Item {
   fullName: string;
 }
 
+interface Category {
+  id: string;
+  name: string;
+  displayName: string;
+}
+
 export default function NewOrderPage() {
   const { t } = useTranslation();
   const [_, navigate] = useLocation();
@@ -225,6 +232,11 @@ export default function NewOrderPage() {
   // Fetch items for item names
   const { data: items = [] } = useQuery<Item[]>({
     queryKey: ['/api/items'],
+  });
+
+  // Fetch categories for category names
+  const { data: categories = [] } = useQuery<Category[]>({
+    queryKey: ['/api/categories'],
   });
 
   // Fetch products for selected customer
@@ -334,6 +346,17 @@ export default function NewOrderPage() {
     } catch (error) {
       console.error('Error getting item name:', error);
       return itemId || 'Unknown Item';
+    }
+  };
+
+  // Get category name by categoryId
+  const getCategoryName = (categoryId: string) => {
+    try {
+      const category = categories.find(c => c.id === categoryId);
+      return category ? category.name : categoryId;
+    } catch (error) {
+      console.error('Error getting category name:', error);
+      return categoryId || 'Unknown Category';
     }
   };
 
@@ -600,6 +623,7 @@ export default function NewOrderPage() {
                             productId={product.productId} 
                             getProductDetails={getProductDetails}
                             getItemName={getItemName}
+                            getCategoryName={getCategoryName}
                             t={t}
                           />
                         )}
