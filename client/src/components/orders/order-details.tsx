@@ -556,6 +556,15 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
             <div class="info-label">Plate Drawer Code:</div>
             <div>${customer?.plateDrawerCode || "N/A"}</div>
           </div>
+          ${
+            order.notes
+              ? `
+          <div class="info-row">
+            <div class="info-label">Notes:</div>
+            <div>${order.notes}</div>
+          </div>`
+              : ""
+          }
         </div>
         
         <h3>Order Products</h3>
@@ -665,10 +674,18 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
                     {customer?.plateDrawerCode || "N/A"}
                   </span>
                 </p>
-                <p className="flex justify-between py-1.5">
+                <p className="flex justify-between py-1.5 border-b border-secondary-100">
                   <span className="text-secondary-500">Status:</span>
                   <StatusBadge status={order.status} />
                 </p>
+                {order.notes && (
+                  <div className="py-1.5">
+                    <div className="text-secondary-500 mb-1">Notes:</div>
+                    <div className="font-medium text-sm bg-secondary-100 p-2 rounded">
+                      {order.notes}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 

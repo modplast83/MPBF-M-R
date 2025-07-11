@@ -118,6 +118,12 @@ This is a comprehensive production management system built with React, TypeScrip
 
 ## Recent Changes
 
+- July 11, 2025: Added order notes functionality to order viewing and printing:
+  - Enhanced Order Information section to display order notes when they exist
+  - Added conditional notes display with professional styling and background highlighting
+  - Integrated notes into printed order reports with consistent formatting
+  - Notes appear in both order details page and printed documents when available
+  - Improved order information completeness for better order management
 - July 11, 2025: Enhanced category display in new order form product details:
   - Added Category interface and categories data fetching using React Query
   - Created getCategoryName function to map category IDs to category names
