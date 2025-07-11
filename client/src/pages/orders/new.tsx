@@ -123,7 +123,7 @@ function ProductDetailsDisplay({ productId, getProductDetails, getItemName, getC
         {details.thickness && (
           <div>
             <span className="font-medium">{t('orders.thickness')}: </span>
-            {details.thickness}mm
+            {details.thickness}µm
           </div>
         )}
         {details.width && details.lengthCm && (
