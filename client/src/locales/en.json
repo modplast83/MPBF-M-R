@@ -1505,6 +1505,7 @@
       "no_products_description": "This customer has no products configured.",
       "add_first_product": "Add Your First Product",
       "add_first_product_description": "Click the button above to add products to this order.",
+      "select_valid_products": "Please select valid products for all items",
       "create_order_description": "Create a new order with products and specifications",
       "order_management": "Order Management",
       "manage_track_orders": "Manage and track all your orders",

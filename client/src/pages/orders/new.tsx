@@ -265,13 +265,37 @@ export default function NewOrderPage() {
   // Create order mutation
   const createOrderMutation = useMutation({
     mutationFn: async (data: OrderFormValues) => {
-      const response = await fetch('/api/orders', {
+      // First create the order with proper field names
+      const orderResponse = await fetch('/api/orders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
+        body: JSON.stringify({
+          customerId: data.customerId,
+          note: data.notes, // Use 'note' field name as expected by backend
+        }),
       });
-      if (!response.ok) throw new Error('Failed to create order');
-      return response.json();
+      
+      if (!orderResponse.ok) throw new Error('Failed to create order');
+      const order = await orderResponse.json();
+
+      // Then create job orders for each product
+      for (const product of data.products) {
+        const jobOrderResponse = await fetch('/api/job-orders', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            orderId: order.id,
+            customerProductId: product.productId,
+            quantity: product.quantity,
+          }),
+        });
+        
+        if (!jobOrderResponse.ok) {
+          throw new Error('Failed to create job order');
+        }
+      }
+
+      return order;
     },
     onSuccess: (data) => {
       toast({
@@ -362,7 +386,43 @@ export default function NewOrderPage() {
 
   // Submit form
   const onSubmit = (data: OrderFormValues) => {
-    createOrderMutation.mutate(data);
+    // Validate that products are selected
+    if (!selectedCustomer) {
+      toast({
+        title: t('orders.error'),
+        description: t('orders.select_customer_first'),
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (products.length === 0) {
+      toast({
+        title: t('orders.error'),
+        description: t('orders.add_first_product'),
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Check if all products have valid IDs
+    const invalidProducts = products.filter(p => !p.productId || p.productId === 0);
+    if (invalidProducts.length > 0) {
+      toast({
+        title: t('orders.error'),
+        description: t('orders.select_valid_products'),
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Create the order data with products
+    const orderData = {
+      ...data,
+      products: products,
+    };
+
+    createOrderMutation.mutate(orderData);
   };
 
   return (
