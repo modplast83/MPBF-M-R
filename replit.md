@@ -118,6 +118,14 @@ This is a comprehensive production management system built with React, TypeScrip
 
 ## Recent Changes
 
+- July 11, 2025: Fixed critical product selection issue in new order form:
+  - Resolved API endpoint mismatch from `/api/customer-products` to `/api/customers/:customerId/products`
+  - Updated Product interface to match backend CustomerProduct schema (ID changed from string to number)
+  - Fixed all type inconsistencies in form validation, product handling, and selection logic
+  - Updated ProductDetailsDisplay component to properly show product information with correct field mappings
+  - Fixed product selection dropdown to display proper product details (size, dimensions) using sizeCaption and width/lengthCm fields
+  - Resolved "undefined" product display issue by using correct data structure from backend
+  - All product selection functionality now working correctly with proper data mapping and display
 - July 10, 2025: Completed comprehensive Arabic translation implementation for entire order management system:
   - Added complete Arabic translation coverage for all order-related interface elements
   - Enhanced translation keys structure with proper Arabic translations for order management functions
