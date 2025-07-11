@@ -90,7 +90,7 @@ function ProductDetailsDisplay({ productId, getProductDetails, getItemName, t }:
     );
   }
   
-  const itemName = getItemName(details.itemId);
+  const itemName = details.itemId ? getItemName(details.itemId) : 'Unknown Item';
   
   return (
     <div className="mt-4 p-3 bg-muted rounded-md">
@@ -328,8 +328,13 @@ export default function NewOrderPage() {
 
   // Get item name by itemId
   const getItemName = (itemId: string) => {
-    const item = items.find(i => i.id === itemId);
-    return item ? item.name : itemId;
+    try {
+      const item = items.find(i => i.id === itemId);
+      return item ? item.name : itemId;
+    } catch (error) {
+      console.error('Error getting item name:', error);
+      return itemId || 'Unknown Item';
+    }
   };
 
   // Submit form
