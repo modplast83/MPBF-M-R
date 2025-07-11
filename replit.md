@@ -118,6 +118,11 @@ This is a comprehensive production management system built with React, TypeScrip
 
 ## Recent Changes
 
+- July 11, 2025: Fixed Cylinder (Inch) column display logic in order viewing and printing:
+  - Updated both order details table and print function to display maximum value between "Cylinder (Inch)" and "Cutting length" fields
+  - Modified display logic from showing only `product?.printingCylinder` to `Math.max(Number(product?.printingCylinder) || 0, Number(product?.cuttingLength) || 0)`
+  - Applied consistent logic to both order details page view and printed order reports
+  - Ensures cylinder measurements show the highest value between printing cylinder and cutting length for accurate production specifications
 - July 11, 2025: Fixed order notes display issue in order viewing and printing:
   - Corrected field name mismatch from `order.notes` to `order.note` in order details component
   - Fixed both order view display and print functionality to show order notes properly

@@ -382,7 +382,10 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
           <td>${masterBatch?.name || "N/A"}</td>
           <td>${jobOrder.quantity}</td>
           <td>${printedValue}</td>
-          <td>${product?.printingCylinder || "0"}</td>
+          <td>${Math.max(
+            Number(product?.printingCylinder) || 0,
+            Number(product?.cuttingLength) || 0
+          )}</td>
           <td>${product?.punching || "None"}</td>
           <td>${product?.lengthCm ? Math.round(product.lengthCm) : "0"}</td>
           <td>${product?.cuttingUnit || "Kg."}</td>
@@ -919,7 +922,10 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
                             {product?.printed || "N/A"}
                           </td>
                           <td className="py-3 px-4">
-                            {product?.printingCylinder || "0"}
+                            {Math.max(
+                              Number(product?.printingCylinder) || 0,
+                              Number(product?.cuttingLength) || 0
+                            )}
                           </td>
                           <td className="py-3 px-4 flex space-x-2">
                             <Button
