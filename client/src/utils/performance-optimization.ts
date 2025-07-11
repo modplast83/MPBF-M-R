@@ -1,166 +1,167 @@
-// Performance optimization utilities for the production management system
+import { useCallback, useMemo, useRef, useEffect, useState } from 'react';
 
-export const debounce = <T extends (...args: any[]) => any>(
-  func: T,
-  wait: number,
-  immediate?: boolean
-): ((...args: Parameters<T>) => void) => {
-  let timeout: NodeJS.Timeout | null;
-  
-  return function executedFunction(...args: Parameters<T>) {
-    const later = () => {
-      timeout = null;
-      if (!immediate) func(...args);
+// Debounce hook for expensive operations
+export function useDebounce<T>(value: T, delay: number): T {
+  const [debouncedValue, setDebouncedValue] = useState<T>(value);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    return () => {
+      clearTimeout(handler);
     };
-    
-    const callNow = immediate && !timeout;
-    
-    if (timeout) clearTimeout(timeout);
-    timeout = setTimeout(later, wait);
-    
-    if (callNow) func(...args);
-  };
-};
+  }, [value, delay]);
 
-export const throttle = <T extends (...args: any[]) => any>(
-  func: T,
-  limit: number
-): ((...args: Parameters<T>) => void) => {
-  let inThrottle: boolean;
-  
-  return function executedFunction(...args: Parameters<T>) {
-    if (!inThrottle) {
-      func.apply(this, args);
-      inThrottle = true;
-      setTimeout(() => inThrottle = false, limit);
-    }
-  };
-};
+  return debouncedValue;
+}
 
-// Optimized resize observer with error handling
-export const createOptimizedResizeObserver = (
-  callback: (entries: ResizeObserverEntry[]) => void,
-  options?: ResizeObserverOptions
-): ResizeObserver => {
-  const debouncedCallback = debounce(callback, 100);
-  
-  return new ResizeObserver((entries) => {
-    try {
-      // Use requestAnimationFrame to prevent loops
-      requestAnimationFrame(() => {
-        debouncedCallback(entries);
-      });
-    } catch (error) {
-      // Silently handle ResizeObserver errors
-      if (!(error instanceof Error) || !error.message.includes('ResizeObserver loop')) {
-        console.error('ResizeObserver error:', error);
+// Throttle hook for frequent events
+export function useThrottle<T extends (...args: any[]) => any>(
+  callback: T,
+  delay: number
+): T {
+  const lastRan = useRef<number>(0);
+  const handler = useRef<NodeJS.Timeout>();
+
+  return useCallback(
+    (...args: Parameters<T>) => {
+      if (Date.now() - lastRan.current >= delay) {
+        callback(...args);
+        lastRan.current = Date.now();
+      } else {
+        clearTimeout(handler.current);
+        handler.current = setTimeout(() => {
+          callback(...args);
+          lastRan.current = Date.now();
+        }, delay);
+      }
+    },
+    [callback, delay]
+  ) as T;
+}
+
+// Memoized selector hook
+export function useMemoizedSelector<T, R>(
+  data: T[],
+  selector: (item: T) => R,
+  deps: React.DependencyList = []
+): R[] {
+  return useMemo(() => {
+    return data.map(selector);
+  }, [data, ...deps]);
+}
+
+// Performance monitoring hook
+export function usePerformanceMonitor(componentName: string) {
+  const renderCount = useRef(0);
+  const startTime = useRef<number>();
+
+  useEffect(() => {
+    startTime.current = performance.now();
+    renderCount.current++;
+  });
+
+  useEffect(() => {
+    if (startTime.current) {
+      const endTime = performance.now();
+      const renderTime = endTime - startTime.current;
+      
+      if (renderTime > 16) { // 60fps threshold
+        console.warn(`[Performance] ${componentName} render took ${renderTime.toFixed(2)}ms (render #${renderCount.current})`);
       }
     }
   });
-};
 
-// Memoization utility for expensive computations
-export const memoize = <T extends (...args: any[]) => any>(
-  fn: T,
-  keyGenerator?: (...args: Parameters<T>) => string
-): T => {
-  const cache = new Map<string, ReturnType<T>>();
-  
-  return ((...args: Parameters<T>): ReturnType<T> => {
-    const key = keyGenerator ? keyGenerator(...args) : JSON.stringify(args);
-    
-    if (cache.has(key)) {
-      return cache.get(key)!;
-    }
-    
-    const result = fn(...args);
-    cache.set(key, result);
-    
-    return result;
-  }) as T;
-};
-
-// Optimized intersection observer for lazy loading
-export const createOptimizedIntersectionObserver = (
-  callback: (entries: IntersectionObserverEntry[]) => void,
-  options?: IntersectionObserverInit
-): IntersectionObserver => {
-  const throttledCallback = throttle(callback, 100);
-  
-  return new IntersectionObserver((entries) => {
-    try {
-      throttledCallback(entries);
-    } catch (error) {
-      console.error('IntersectionObserver error:', error);
-    }
-  }, options);
-};
-
-// Utility to batch DOM updates
-export const batchUpdates = (updates: (() => void)[]): void => {
-  requestAnimationFrame(() => {
-    updates.forEach(update => {
-      try {
-        update();
-      } catch (error) {
-        console.error('Batch update error:', error);
+  return {
+    renderCount: renderCount.current,
+    logPerformance: (operation: string, duration: number) => {
+      if (duration > 100) {
+        console.warn(`[Performance] ${componentName} - ${operation} took ${duration.toFixed(2)}ms`);
       }
-    });
-  });
-};
-
-// Memory efficient array operations
-export const chunkArray = <T>(array: T[], chunkSize: number): T[][] => {
-  const chunks: T[][] = [];
-  for (let i = 0; i < array.length; i += chunkSize) {
-    chunks.push(array.slice(i, i + chunkSize));
-  }
-  return chunks;
-};
-
-// Optimized deep comparison for React dependencies
-export const shallowEqual = (obj1: any, obj2: any): boolean => {
-  const keys1 = Object.keys(obj1);
-  const keys2 = Object.keys(obj2);
-  
-  if (keys1.length !== keys2.length) {
-    return false;
-  }
-  
-  for (let key of keys1) {
-    if (obj1[key] !== obj2[key]) {
-      return false;
     }
-  }
-  
-  return true;
-};
+  };
+}
 
-// Performance monitoring utilities
-export const measurePerformance = (name: string, fn: () => any): any => {
-  const start = performance.now();
-  const result = fn();
-  const end = performance.now();
-  
-  if (process.env.NODE_ENV === 'development') {
-    console.log(`${name} took ${end - start} milliseconds`);
-  }
-  
-  return result;
-};
+// Intersection Observer hook for lazy loading
+export function useIntersectionObserver(
+  ref: React.RefObject<Element>,
+  options: IntersectionObserverInit = {}
+) {
+  const [isIntersecting, setIsIntersecting] = useState(false);
 
-// Async performance monitoring
-export const measureAsyncPerformance = async (
-  name: string, 
-  fn: () => Promise<any>
-): Promise<any> => {
-  const start = performance.now();
-  const result = await fn();
-  const end = performance.now();
-  
-  if (process.env.NODE_ENV === 'development') {
-    console.log(`${name} took ${end - start} milliseconds`);
-  }
-  
-  return result;
-};
+  useEffect(() => {
+    const element = ref.current;
+    if (!element) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsIntersecting(entry.isIntersecting);
+      },
+      options
+    );
+
+    observer.observe(element);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [ref, options]);
+
+  return isIntersecting;
+}
+
+// Optimized list rendering hook
+export function useVirtualizedList<T>(
+  items: T[],
+  containerHeight: number,
+  itemHeight: number,
+  buffer: number = 5
+) {
+  const [scrollTop, setScrollTop] = useState(0);
+
+  const visibleItems = useMemo(() => {
+    const containerItemCount = Math.ceil(containerHeight / itemHeight);
+    const startIndex = Math.max(0, Math.floor(scrollTop / itemHeight) - buffer);
+    const endIndex = Math.min(
+      items.length,
+      startIndex + containerItemCount + buffer * 2
+    );
+
+    return {
+      items: items.slice(startIndex, endIndex),
+      startIndex,
+      endIndex,
+      totalHeight: items.length * itemHeight,
+      offsetY: startIndex * itemHeight,
+    };
+  }, [items, scrollTop, containerHeight, itemHeight, buffer]);
+
+  const handleScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {
+    setScrollTop(e.currentTarget.scrollTop);
+  }, []);
+
+  return {
+    visibleItems,
+    handleScroll,
+    totalHeight: visibleItems.totalHeight,
+    offsetY: visibleItems.offsetY,
+  };
+}
+
+// Memory usage monitoring
+export function useMemoryMonitor(componentName: string) {
+  useEffect(() => {
+    if ('memory' in performance) {
+      const memoryInfo = (performance as any).memory;
+      const usedMB = Math.round(memoryInfo.usedJSHeapSize / 1048576);
+      const totalMB = Math.round(memoryInfo.totalJSHeapSize / 1048576);
+      
+      if (usedMB > 50) { // Alert if using more than 50MB
+        console.warn(`[Memory] ${componentName} - High memory usage: ${usedMB}MB / ${totalMB}MB`);
+      }
+    }
+  }, [componentName]);
+}
+

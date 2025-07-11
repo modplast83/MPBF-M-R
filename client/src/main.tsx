@@ -8,9 +8,13 @@ import { Toaster } from "@/components/ui/toaster";
 import "./lib/i18n";
 import { LanguageProvider } from "@/hooks/use-language";
 import { setupGlobalErrorHandlers } from "./utils/resize-observer-error-handler";
+import { setupGlobalErrorHandling } from "./utils/console-error-filter";
 
 // Setup global error handlers to prevent ResizeObserver loop errors
 setupGlobalErrorHandlers();
+
+// Setup enhanced console error filtering
+setupGlobalErrorHandling();
 
 createRoot(document.getElementById("root")!).render(
   <QueryClientProvider client={queryClient}>

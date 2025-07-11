@@ -21,6 +21,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import Fuse from "fuse.js";
 import { safeSync, handleError } from "@/utils/error-boundary-utils";
 import { safeParseInt, safeStringAccess, validateFormData, isValidNumber } from "@/utils/type-safety";
+import { FormValidator } from "@/utils/form-validation";
+import { ApiErrorHandler } from "@/utils/api-error-handler";
 import React from "react";
 
 // Error Boundary Component for New Order Page
@@ -324,12 +326,34 @@ export default function NewOrderPage() {
     form.setValue('products', []);
   };
 
-  // Add product to order
+  // Add product to order with validation
   const addProduct = () => {
-    const newProduct = { productId: 0, quantity: 1 };
-    const updatedProducts = [...products, newProduct];
-    setProducts(updatedProducts);
-    form.setValue('products', updatedProducts);
+    try {
+      if (!selectedCustomer) {
+        toast({
+          title: t('orders.error'),
+          description: t('orders.select_customer_first'),
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (customerProducts.length === 0) {
+        toast({
+          title: t('orders.error'),
+          description: t('orders.no_products_available'),
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const newProduct = { productId: 0, quantity: 1 };
+      const updatedProducts = [...products, newProduct];
+      setProducts(updatedProducts);
+      form.setValue('products', updatedProducts);
+    } catch (error) {
+      handleError(error, 'Failed to add product');
+    }
   };
 
   // Remove product from order
@@ -339,18 +363,28 @@ export default function NewOrderPage() {
     form.setValue('products', updatedProducts);
   };
 
-  // Update product in order
+  // Update product in order with validation
   const updateProduct = (index: number, field: 'productId' | 'quantity', value: string | number) => {
-    if (index < 0 || index >= products.length) return;
-    
-    const updatedProducts = [...products];
-    if (field === 'productId') {
-      updatedProducts[index] = { ...updatedProducts[index], productId: value as number };
-    } else if (field === 'quantity') {
-      updatedProducts[index] = { ...updatedProducts[index], quantity: value as number };
+    try {
+      if (index < 0 || index >= products.length) return;
+      
+      const updatedProducts = [...products];
+      if (field === 'productId') {
+        const productId = safeParseInt(value);
+        if (productId > 0) {
+          updatedProducts[index] = { ...updatedProducts[index], productId };
+        }
+      } else if (field === 'quantity') {
+        const quantity = safeParseInt(value, 1);
+        if (quantity > 0) {
+          updatedProducts[index] = { ...updatedProducts[index], quantity };
+        }
+      }
+      setProducts(updatedProducts);
+      form.setValue('products', updatedProducts);
+    } catch (error) {
+      handleError(error, 'Failed to update product');
     }
-    setProducts(updatedProducts);
-    form.setValue('products', updatedProducts);
   };
 
   // Get product details
@@ -387,43 +421,80 @@ export default function NewOrderPage() {
 
   // Submit form
   const onSubmit = (data: OrderFormValues) => {
-    // Validate that products are selected
-    if (!selectedCustomer) {
+    try {
+      // Validate that products are selected
+      if (!selectedCustomer) {
+        toast({
+          title: t('orders.error'),
+          description: t('orders.select_customer_first'),
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (products.length === 0) {
+        toast({
+          title: t('orders.error'),
+          description: t('orders.add_first_product'),
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Enhanced validation with type safety
+      const invalidProducts = products.filter(p => 
+        !p.productId || 
+        !isValidNumber(p.productId) || 
+        p.productId === 0 ||
+        !isValidNumber(p.quantity) ||
+        p.quantity <= 0
+      );
+
+      if (invalidProducts.length > 0) {
+        toast({
+          title: t('orders.error'),
+          description: t('orders.select_valid_products'),
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Enhanced form validation
+      const orderValidation = FormValidator.validateOrderForm({
+        customerId: selectedCustomer.id,
+        products: products,
+        notes: data.notes,
+      });
+      
+      if (!orderValidation.isValid) {
+        const errorMessages = Object.values(orderValidation.errors).join(', ');
+        toast({
+          title: t('orders.error'),
+          description: errorMessages,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Create the order data with products (sanitized)
+      const orderData = FormValidator.sanitizeFormData({
+        ...data,
+        customerId: selectedCustomer.id,
+        products: products.map(p => ({
+          productId: safeParseInt(p.productId),
+          quantity: safeParseInt(p.quantity, 1)
+        })),
+      });
+
+      createOrderMutation.mutate(orderData);
+    } catch (error) {
+      handleError(error, 'Failed to submit order');
       toast({
         title: t('orders.error'),
-        description: t('orders.select_customer_first'),
+        description: 'An unexpected error occurred while submitting the order',
         variant: "destructive",
       });
-      return;
     }
-
-    if (products.length === 0) {
-      toast({
-        title: t('orders.error'),
-        description: t('orders.add_first_product'),
-        variant: "destructive",
-      });
-      return;
-    }
-
-    // Check if all products have valid IDs
-    const invalidProducts = products.filter(p => !p.productId || p.productId === 0);
-    if (invalidProducts.length > 0) {
-      toast({
-        title: t('orders.error'),
-        description: t('orders.select_valid_products'),
-        variant: "destructive",
-      });
-      return;
-    }
-
-    // Create the order data with products
-    const orderData = {
-      ...data,
-      products: products,
-    };
-
-    createOrderMutation.mutate(orderData);
   };
 
   return (
@@ -635,7 +706,12 @@ export default function NewOrderPage() {
                                   const itemName = getItemName(p.itemId);
                                   const rawMaterial = p.rawMaterial || '';
                                   const displayText = safeSync(
-                                    () => `${p.sizeCaption || 'Product'}${p.width ? ` (${p.width}x${p.lengthCm})` : ''}`,
+                                    () => {
+                                      const sizeCaption = safeStringAccess(p, 'sizeCaption', 'Product');
+                                      const width = safeStringAccess(p, 'width', '');
+                                      const lengthCm = safeStringAccess(p, 'lengthCm', '');
+                                      return `${sizeCaption}${width ? ` (${width}x${lengthCm})` : ''}`;
+                                    },
                                     "Unknown Product",
                                     { productId: p.id }
                                   );

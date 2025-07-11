@@ -16,7 +16,7 @@ import {
 import { Line, Bar } from "react-chartjs-2";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { CHART_COLORS } from "@/lib/constants";
-import { debounce } from "@/utils/performance-optimization";
+import { useDebounce } from "@/utils/performance-optimization";
 
 ChartJS.register(
   CategoryScale,
@@ -50,12 +50,7 @@ export function ProductionChart({ className }: ProductionChartProps) {
   });
 
   // Debounced data update to prevent excessive re-renders
-  const debouncedUpdateData = useMemo(() => 
-    debounce(() => {
-      updateChartData();
-    }, 300), 
-    [isMobile]
-  );
+  const debouncedTab = useDebounce(tab, 300);
 
   const updateChartData = useCallback(() => {
     // Generate sample daily data (last 7 days)
