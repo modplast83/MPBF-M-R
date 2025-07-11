@@ -557,11 +557,11 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
             <div>${customer?.plateDrawerCode || "N/A"}</div>
           </div>
           ${
-            order.notes
+            order.note
               ? `
           <div class="info-row">
             <div class="info-label">Notes:</div>
-            <div>${order.notes}</div>
+            <div>${order.note}</div>
           </div>`
               : ""
           }
@@ -678,11 +678,11 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
                   <span className="text-secondary-500">Status:</span>
                   <StatusBadge status={order.status} />
                 </p>
-                {order.notes && (
+                {order.note && (
                   <div className="py-1.5">
                     <div className="text-secondary-500 mb-1">Notes:</div>
                     <div className="font-medium text-sm bg-secondary-100 p-2 rounded">
-                      {order.notes}
+                      {order.note}
                     </div>
                   </div>
                 )}

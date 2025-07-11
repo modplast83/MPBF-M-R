@@ -118,6 +118,11 @@ This is a comprehensive production management system built with React, TypeScrip
 
 ## Recent Changes
 
+- July 11, 2025: Fixed order notes display issue in order viewing and printing:
+  - Corrected field name mismatch from `order.notes` to `order.note` in order details component
+  - Fixed both order view display and print functionality to show order notes properly
+  - Order notes now appear in both the Order Information section and printed reports
+  - Notes display with proper styling and background highlighting when available
 - July 11, 2025: Added order notes functionality to order viewing and printing:
   - Enhanced Order Information section to display order notes when they exist
   - Added conditional notes display with professional styling and background highlighting
