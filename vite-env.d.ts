@@ -37,3 +37,24 @@ interface ImportMeta {
   filename: string;
   resolve?(specifier: string): string;
 }
+
+// Node.js process global type definitions
+declare global {
+  namespace NodeJS {
+    interface ProcessEnv {
+      NODE_ENV?: 'development' | 'production' | 'test';
+      PORT?: string;
+      DATABASE_URL?: string;
+      [key: string]: string | undefined;
+    }
+  }
+  
+  var process: {
+    env: NodeJS.ProcessEnv;
+    argv: string[];
+    cwd(): string;
+    exit(code?: number): never;
+    platform: string;
+    version: string;
+  };
+}
