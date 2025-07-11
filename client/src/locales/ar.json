@@ -91,6 +91,7 @@
       "customer": "العميل",
       "quantity": "الكمية",
       "raw_material": "المادة الخام",
+      "item_name": "اسم العنصر",
       "required": "المطلوب",
       "manage": "إدارة",
       "access": "الوصول",

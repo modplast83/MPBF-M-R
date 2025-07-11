@@ -90,6 +90,7 @@
       "customer": "Customer",
       "quantity": "Quantity",
       "raw_material": "Raw Material",
+      "item_name": "Item Name",
       "required": "Required",
       "unauthorized": "Unauthorized",
       "roll_information": "Roll information and processing details",

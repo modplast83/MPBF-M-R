@@ -72,9 +72,10 @@ class NewOrderErrorBoundary extends React.Component<
 }
 
 // Product Details Display Component
-function ProductDetailsDisplay({ productId, getProductDetails, t }: {
+function ProductDetailsDisplay({ productId, getProductDetails, getItemName, t }: {
   productId: number;
   getProductDetails: (id: number) => Product | null;
+  getItemName: (itemId: string) => string;
   t: (key: string) => string;
 }) {
   const details = safeSync(() => getProductDetails(productId), null, { productId });
@@ -89,6 +90,8 @@ function ProductDetailsDisplay({ productId, getProductDetails, t }: {
     );
   }
   
+  const itemName = getItemName(details.itemId);
+  
   return (
     <div className="mt-4 p-3 bg-muted rounded-md">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
@@ -96,6 +99,18 @@ function ProductDetailsDisplay({ productId, getProductDetails, t }: {
           <div>
             <span className="font-medium">{t('orders.size')}: </span>
             {details.sizeCaption}
+          </div>
+        )}
+        {details.itemId && (
+          <div>
+            <span className="font-medium">{t('orders.item_name')}: </span>
+            {itemName}
+          </div>
+        )}
+        {details.rawMaterial && (
+          <div>
+            <span className="font-medium">{t('orders.raw_material')}: </span>
+            {details.rawMaterial}
           </div>
         )}
         {details.categoryId && (
@@ -114,12 +129,6 @@ function ProductDetailsDisplay({ productId, getProductDetails, t }: {
           <div>
             <span className="font-medium">{t('orders.dimensions')}: </span>
             {details.width}x{details.lengthCm}cm
-          </div>
-        )}
-        {details.rawMaterial && (
-          <div>
-            <span className="font-medium">{t('orders.raw_material')}: </span>
-            {details.rawMaterial}
           </div>
         )}
         {details.notes && (
@@ -182,6 +191,13 @@ interface Product {
   notes?: string;
 }
 
+interface Item {
+  id: string;
+  categoryId: string;
+  name: string;
+  fullName: string;
+}
+
 export default function NewOrderPage() {
   const { t } = useTranslation();
   const [_, navigate] = useLocation();
@@ -204,6 +220,11 @@ export default function NewOrderPage() {
   // Fetch customers
   const { data: customers = [], isLoading: customersLoading } = useQuery<Customer[]>({
     queryKey: ['/api/customers'],
+  });
+
+  // Fetch items for item names
+  const { data: items = [] } = useQuery<Item[]>({
+    queryKey: ['/api/items'],
   });
 
   // Fetch products for selected customer
@@ -303,6 +324,12 @@ export default function NewOrderPage() {
       console.error('Error getting product details:', error);
       return null;
     }
+  };
+
+  // Get item name by itemId
+  const getItemName = (itemId: string) => {
+    const item = items.find(i => i.id === itemId);
+    return item ? item.name : itemId;
   };
 
   // Submit form
@@ -516,6 +543,8 @@ export default function NewOrderPage() {
                               </SelectTrigger>
                               <SelectContent className="max-h-60 overflow-y-auto">
                                 {customerProducts.map((p) => {
+                                  const itemName = getItemName(p.itemId);
+                                  const rawMaterial = p.rawMaterial || '';
                                   const displayText = safeSync(
                                     () => `${p.sizeCaption || 'Product'}${p.width ? ` (${p.width}x${p.lengthCm})` : ''}`,
                                     "Unknown Product",
@@ -523,7 +552,12 @@ export default function NewOrderPage() {
                                   );
                                   return (
                                     <SelectItem key={p.id} value={p.id.toString()}>
-                                      {displayText}
+                                      <div className="flex flex-col gap-1 py-1">
+                                        <div className="font-medium">{displayText}</div>
+                                        <div className="text-sm text-muted-foreground">
+                                          {itemName}{rawMaterial && ` • ${rawMaterial}`}
+                                        </div>
+                                      </div>
                                     </SelectItem>
                                   );
                                 })}
@@ -560,6 +594,7 @@ export default function NewOrderPage() {
                           <ProductDetailsDisplay 
                             productId={product.productId} 
                             getProductDetails={getProductDetails}
+                            getItemName={getItemName}
                             t={t}
                           />
                         )}
