@@ -1,0 +1,31 @@
+[vite] connecting...
+[vite] connected.
+i18next resources loaded: 
+Object {en: true, ar: true, ml: true, ur: true}
+Warning: Connect(Droppable): Support for defaultProps will be removed from memo components in a future major release. Use JavaScript default parameters instead.
+    at Provider (https://011969c2-0d61-458f-be12-a650c28c1ec4-00-1hnxwefdzf33k.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/react-beautiful-dnd.js?v=28751762:911:20)
+    at App (https://011969c2-0d61-458f-be12-a650c28c1ec4-00-1hnxwefdzf33k.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/react-beautiful-dnd.js?v=28751762:7428:25)
+    at ErrorBoundary2 (https://011969c2-0d61-458f-be12-a650c28c1ec4-00-1hnxwefdzf33k.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/react-beautiful-dnd.js?v=28751762:1925:35)
+    at DragDropContext (https://011969c2-0d61-458f-be12-a650c28c1ec4-00-1hnxwefdzf33k.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/react-beautiful-dnd.js?v=28751762:7548:19)
+    at div
+    at CustomizableDashboardV2 (https://011969c2-0d61-458f-be12-a650c28c1ec4-00-1hnxwefdzf33k.sisko.replit.dev/src/components/dashboard/customizable-dashboard-v2.tsx:432:20)
+    at div
+    at Dashboard (https://011969c2-0d61-458f-be12-a650c28c1ec4-00-1hnxwefdzf33k.sisko.replit.dev/src/pages/dashboard.tsx:27:35)
+    at Route (https://011969c2-0d61-458f-be12-a650c28c1ec4-00-1hnxwefdzf33k.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=28751762:191:16)
+    at ProtectedRoute (https://011969c2-0d61-458f-be12-a650c28c1ec4-00-1hnxwefdzf33k.sisko.replit.dev/src/components/auth/protected-route-v2.tsx:24:3)
+    at Switch (https://011969c2-0d61-458f-be12-a650c28c1ec4-00-1hnxwefdzf33k.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=28751762:247:17)
+    at div
+    at div
+    at main
+    at div
+    at div
+    at MainLayout (https://011969c2-0d61-458f-be12-a650c28c1ec4-00-1hnxwefdzf33k.sisko.replit.dev/src/components/layout/main-layout.tsx:31:38)
+    at Route (https://011969c2-0d61-458f-be12-a650c28c1ec4-00-1hnxwefdzf33k.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=28751762:191:16)
+    at Switch (https://011969c2-0d61-458f-be12-a650c28c1ec4-00-1hnxwefdzf33k.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=28751762:247:17)
+    at div
+    at PermissionsProvider (https://011969c2-0d61-458f-be12-a650c28c1ec4-00-1hnxwefdzf33k.sisko.replit.dev/src/hooks/use-permissions.tsx:30:3)
+    at AuthProvider (https://011969c2-0d61-458f-be12-a650c28c1ec4-00-1hnxwefdzf33k.sisko.replit.dev/src/hooks/use-auth-v2.tsx:29:3)
+    at ErrorBoundary (https://011969c2-0d61-458f-be12-a650c28c1ec4-00-1hnxwefdzf33k.sisko.replit.dev/src/components/ui/error-boundary.tsx:14:8)
+    at App (https://011969c2-0d61-458f-be12-a650c28c1ec4-00-1hnxwefdzf33k.sisko.replit.dev/src/App.tsx?v=I0Yai4ABcr-IYdB6_eTsG:104:3)
+    at LanguageProvider (https://011969c2-0d61-458f-be12-a650c28c1ec4-00-1hnxwefdzf33k.sisko.replit.dev/src/hooks/use-language.tsx:23:36)
+    at QueryClientProvider (https://011969c2-0d61-458f-be12-a650c28c1ec4-00-1hnxwefdzf33k.sisko.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=28751762:2805:3)
