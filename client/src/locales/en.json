@@ -1555,6 +1555,9 @@
       "orders_statistics": "Orders Statistics",
       "description": "Manage and track production orders from creation to delivery",
       "delete_orders": "Delete Orders",
+      "bulk_delete_completed": "Bulk Delete Completed",
+      "bulk_delete_success": "Successfully deleted {{successful}} of {{total}} orders",
+      "bulk_delete_error": "Error occurred during bulk delete operation",
       "loading_orders": "Loading orders...",
       "product_details_unavailable": "Product details unavailable"
     },

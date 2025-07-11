@@ -49,6 +49,8 @@ import { useLanguage } from "@/hooks/use-language";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Order, Customer } from "@shared/schema";
 import Fuse from "fuse.js";
+import { ApiErrorHandler } from "@/utils/api-error-handler";
+import { isValidNumber } from "@/utils/type-safety";
 import { 
   ShoppingCart, 
   Plus, 
@@ -710,9 +712,14 @@ export default function OrdersIndex() {
     updateStatusMutation.mutate({ id: order.id, status: newStatus });
   };
 
-  // Delete mutation
+  // Delete mutation with enhanced error handling
   const deleteMutation = useMutation({
     mutationFn: async (id: number) => {
+      // Validate the order ID
+      if (!id || !isValidNumber(id)) {
+        throw new Error("Invalid order ID");
+      }
+
       const response = await fetch(`${API_ENDPOINTS.ORDERS}/${id}`, {
         method: "DELETE",
         credentials: "include",
@@ -721,6 +728,12 @@ export default function OrdersIndex() {
       const data = await response.json();
 
       if (!response.ok) {
+        // Use ApiErrorHandler for proper error handling
+        ApiErrorHandler.handleError(
+          data.message || `Failed to delete order (${response.status})`,
+          response.status,
+          data
+        );
         throw new Error(
           data.message || `Failed to delete order (${response.status})`,
         );
@@ -730,26 +743,33 @@ export default function OrdersIndex() {
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: [API_ENDPOINTS.ORDERS] });
-      const message = data?.message || "Order deleted successfully";
+      const message = data?.message || t('orders.order_deleted_successfully');
       toast({
-        title: "Order Deleted",
+        title: t('orders.order_deleted'),
         description: message,
       });
       setDeletingOrder(null);
     },
     onError: (error: any) => {
       console.error("Delete error:", error);
-      const errorMessage = error?.message || "Failed to delete order";
+      const errorMessage = error?.message || t('orders.failed_to_delete_order');
       toast({
-        title: "Error",
+        title: t('orders.error'),
         description: errorMessage,
         variant: "destructive",
       });
+      setDeletingOrder(null); // Reset state on error
     },
   });
 
   const handleDeleteOrder = (order: Order) => {
-    deleteMutation.mutate(order.id);
+    setDeletingOrder(order);
+  };
+
+  const confirmDeleteOrder = () => {
+    if (deletingOrder) {
+      deleteMutation.mutate(deletingOrder.id);
+    }
   };
 
   const handleSelectOrder = (orderId: number) => {
@@ -769,8 +789,57 @@ export default function OrdersIndex() {
   };
 
   const handleBulkDelete = () => {
-    // Implementation for bulk delete
     setShowBulkDeleteDialog(true);
+  };
+
+  // Bulk delete mutation
+  const bulkDeleteMutation = useMutation({
+    mutationFn: async (orderIds: number[]) => {
+      const results = await Promise.allSettled(
+        orderIds.map(id => 
+          fetch(`${API_ENDPOINTS.ORDERS}/${id}`, {
+            method: "DELETE",
+            credentials: "include",
+          }).then(response => {
+            if (!response.ok) {
+              throw new Error(`Failed to delete order ${id}`);
+            }
+            return response.json();
+          })
+        )
+      );
+      
+      const successful = results.filter(r => r.status === 'fulfilled').length;
+      const failed = results.filter(r => r.status === 'rejected').length;
+      
+      return { successful, failed, total: orderIds.length };
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: [API_ENDPOINTS.ORDERS] });
+      toast({
+        title: t('orders.bulk_delete_completed'),
+        description: t('orders.bulk_delete_success', { 
+          successful: data.successful, 
+          total: data.total 
+        }),
+      });
+      setSelectedOrders([]);
+      setShowBulkDeleteDialog(false);
+    },
+    onError: (error: any) => {
+      console.error("Bulk delete error:", error);
+      toast({
+        title: t('orders.error'),
+        description: t('orders.bulk_delete_error'),
+        variant: "destructive",
+      });
+    },
+  });
+
+  const confirmBulkDelete = () => {
+    if (selectedOrders.length > 0) {
+      bulkDeleteMutation.mutate(selectedOrders);
+    }
   };
 
   // Handle smart search
@@ -1058,7 +1127,7 @@ export default function OrdersIndex() {
           <AlertDialogFooter>
             <AlertDialogCancel>{t('orders.cancel')}</AlertDialogCancel>
             <AlertDialogAction
-              onClick={() => deletingOrder && handleDeleteOrder(deletingOrder)}
+              onClick={confirmDeleteOrder}
               className="bg-red-600 hover:bg-red-700"
             >
               {t('orders.delete_order')}
@@ -1079,11 +1148,8 @@ export default function OrdersIndex() {
           <AlertDialogFooter>
             <AlertDialogCancel>{t('orders.cancel')}</AlertDialogCancel>
             <AlertDialogAction
-              onClick={() => {
-                // Implement bulk delete logic here
-                setShowBulkDeleteDialog(false);
-                setSelectedOrders([]);
-              }}
+              onClick={confirmBulkDelete}
+              disabled={bulkDeleteMutation.isPending}
               className="bg-red-600 hover:bg-red-700"
             >
               {t('orders.delete_orders')}

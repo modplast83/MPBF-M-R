@@ -2517,6 +2517,9 @@
       "orders_management": "إدارة الطلبات",
       "orders_statistics": "إحصائيات الطلبات",
       "delete_orders": "حذف الطلبات",
+      "bulk_delete_completed": "تم إنجاز الحذف المتعدد",
+      "bulk_delete_success": "تم حذف {{successful}} من {{total}} طلبات بنجاح",
+      "bulk_delete_error": "حدث خطأ أثناء عملية الحذف المتعدد",
       "loading_orders": "جاري تحميل الطلبات...",
       "product_details_unavailable": "تفاصيل المنتج غير متاحة"
     },
