@@ -1,4 +1,5 @@
 /// <reference types="vite/client" />
+/// <reference types="node" />
 
 // Vite module type definitions
 declare module "vite" {
@@ -122,6 +123,7 @@ declare global {
       NODE_ENV?: 'development' | 'production' | 'test';
       PORT?: string;
       DATABASE_URL?: string;
+      REPL_ID?: string;
       [key: string]: string | undefined;
     }
   }
@@ -135,3 +137,19 @@ declare global {
     version: string;
   };
 }
+
+// Also declare process for module scope (needed for vite.config.ts)
+declare var process: {
+  env: {
+    NODE_ENV?: 'development' | 'production' | 'test';
+    PORT?: string;
+    DATABASE_URL?: string;
+    REPL_ID?: string;
+    [key: string]: string | undefined;
+  };
+  argv: string[];
+  cwd(): string;
+  exit(code?: number): never;
+  platform: string;
+  version: string;
+};
