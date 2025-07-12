@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Trash2, Calculator, Eye, Printer } from "lucide-react";
+import { Plus, Trash2, Calculator, Eye, Printer, Factory, FlaskConical, Users, Package, Beaker, CheckCircle, AlertCircle, Filter, Search, BarChart3, Layers, Hash, Weight, Zap } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -642,279 +642,335 @@ export default function JoMixPage() {
 
         <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
           <DialogTrigger asChild>
-            <Button>
-              <Plus className="h-4 w-4 mr-2" />
+            <Button size="lg" className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-lg">
+              <FlaskConical className="h-5 w-5 mr-2" />
               Create JO Mix
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle>Create New JO Mix</DialogTitle>
-              <DialogDescription>
-                Create a new JO mix by selecting job orders and ABA formula for
-                material mixing.
-              </DialogDescription>
-            </DialogHeader>
-
-            <div className="space-y-6">
-              {/* Formula Selection */}
-              <div className="space-y-2">
-                <Label htmlFor="formula">ABA Formula *</Label>
-                <Select
-                  value={selectedFormula?.toString() || ""}
-                  onValueChange={(value) => setSelectedFormula(parseInt(value))}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select ABA Formula" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {abaFormulas.map((formula) => (
-                      <SelectItem
-                        key={formula.id}
-                        value={formula.id.toString()}
-                      >
-                        {formula.name} (A:B ={" "}
-                        {parseFloat(formula.abRatio.split(":")[0]).toFixed(2)}:
-                        {parseFloat(formula.abRatio.split(":")[1]).toFixed(2)})
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <Separator />
-
-              {/* Job Orders Selection */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold">Select Job Orders</h3>
-
-                {/* Filters */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-gray-50 rounded-lg">
-                  <div className="space-y-2">
-                    <Label htmlFor="customer-filter">Filter by Customer</Label>
-                    <Select
-                      value={filterCustomer}
-                      onValueChange={setFilterCustomer}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="All Customers" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">All Customers</SelectItem>
-                        {uniqueCustomers.map((customer) => (
-                          <SelectItem key={customer} value={customer}>
-                            {customer}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+          <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto p-0">
+            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 border-b">
+              <DialogHeader>
+                <DialogTitle className="text-2xl font-bold text-gray-800 flex items-center gap-3">
+                  <div className="p-2 bg-blue-100 rounded-lg">
+                    <Beaker className="h-6 w-6 text-blue-600" />
                   </div>
+                  Create New JO Mix
+                </DialogTitle>
+                <DialogDescription className="text-gray-600 mt-2">
+                  Select job orders and ABA formula to create optimized material mixing batches for production.
+                </DialogDescription>
+              </DialogHeader>
+            </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="material-filter">
-                      Filter by Raw Material
+            <div className="p-6 space-y-8">
+              {/* Formula Selection Section */}
+              <Card className="border-2 border-blue-100 bg-blue-50/30">
+                <CardHeader className="pb-4">
+                  <CardTitle className="text-lg flex items-center gap-2 text-blue-800">
+                    <FlaskConical className="h-5 w-5" />
+                    ABA Formula Selection
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    <Label htmlFor="formula" className="text-sm font-semibold text-gray-700">
+                      Select Formula *
                     </Label>
                     <Select
-                      value={filterMaterial}
-                      onValueChange={setFilterMaterial}
+                      value={selectedFormula?.toString() || ""}
+                      onValueChange={(value) => setSelectedFormula(parseInt(value))}
                     >
-                      <SelectTrigger>
-                        <SelectValue placeholder="All Materials" />
+                      <SelectTrigger className="h-12 bg-white border-2 border-blue-200 hover:border-blue-300 transition-colors">
+                        <SelectValue placeholder="Choose an ABA formula for mixing..." />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="all">All Materials</SelectItem>
-                        {uniqueMaterials.map((material) => (
-                          <SelectItem key={material} value={material}>
-                            {material}
+                        {abaFormulas.map((formula) => (
+                          <SelectItem
+                            key={formula.id}
+                            value={formula.id.toString()}
+                            className="py-3"
+                          >
+                            <div className="flex items-center justify-between w-full">
+                              <span className="font-medium">{formula.name}</span>
+                              <Badge variant="outline" className="ml-2">
+                                A:B = {parseFloat(formula.abRatio.split(":")[0]).toFixed(2)}:
+                                {parseFloat(formula.abRatio.split(":")[1]).toFixed(2)}
+                              </Badge>
+                            </div>
                           </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
                   </div>
+                </CardContent>
+              </Card>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="status-filter">Filter by Status</Label>
-                    <Select
-                      value={filterStatus}
-                      onValueChange={setFilterStatus}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="All Statuses" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">All Statuses</SelectItem>
-                        {uniqueStatuses.map((status) => (
-                          <SelectItem key={status} value={status}>
-                            {status}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+              {/* Job Orders Selection Section */}
+              <Card className="border-2 border-green-100 bg-green-50/30">
+                <CardHeader className="pb-4">
+                  <CardTitle className="text-lg flex items-center gap-2 text-green-800">
+                    <Factory className="h-5 w-5" />
+                    Job Orders Selection
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {/* Enhanced Filters */}
+                  <div className="mb-6 p-4 bg-white rounded-lg border border-gray-200 shadow-sm">
+                    <div className="flex items-center gap-2 mb-4">
+                      <Filter className="h-4 w-4 text-gray-500" />
+                      <h4 className="font-medium text-gray-700">Filter Job Orders</h4>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div className="space-y-2">
+                        <Label className="text-sm font-medium flex items-center gap-2">
+                          <Users className="h-4 w-4" />
+                          Customer
+                        </Label>
+                        <Select value={filterCustomer} onValueChange={setFilterCustomer}>
+                          <SelectTrigger className="bg-white">
+                            <SelectValue placeholder="All Customers" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="all">All Customers</SelectItem>
+                            {uniqueCustomers.map((customer) => (
+                              <SelectItem key={customer} value={customer}>
+                                {customer}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label className="text-sm font-medium flex items-center gap-2">
+                          <Package className="h-4 w-4" />
+                          Raw Material
+                        </Label>
+                        <Select value={filterMaterial} onValueChange={setFilterMaterial}>
+                          <SelectTrigger className="bg-white">
+                            <SelectValue placeholder="All Materials" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="all">All Materials</SelectItem>
+                            {uniqueMaterials.map((material) => (
+                              <SelectItem key={material} value={material}>
+                                {material}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label className="text-sm font-medium flex items-center gap-2">
+                          <AlertCircle className="h-4 w-4" />
+                          Status
+                        </Label>
+                        <Select value={filterStatus} onValueChange={setFilterStatus}>
+                          <SelectTrigger className="bg-white">
+                            <SelectValue placeholder="All Statuses" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="all">All Statuses</SelectItem>
+                            {uniqueStatuses.map((status) => (
+                              <SelectItem key={status} value={status}>
+                                {status}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
                   </div>
-                </div>
 
-                <div className="border rounded-lg p-4 max-h-96 overflow-y-auto">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead className="w-12 text-center"></TableHead>
-                        <TableHead
-                          className="text-center cursor-pointer hover:bg-gray-100"
-                          onClick={() => handleSort("id")}
-                        >
-                          JO #{" "}
-                          {sortField === "id" &&
-                            (sortDirection === "asc" ? "↑" : "↓")}
-                        </TableHead>
-                        <TableHead
-                          className="text-center cursor-pointer hover:bg-gray-100"
-                          onClick={() => handleSort("orderId")}
-                        >
-                          Order #{" "}
-                          {sortField === "orderId" &&
-                            (sortDirection === "asc" ? "↑" : "↓")}
-                        </TableHead>
-                        <TableHead
-                          className="text-center cursor-pointer hover:bg-gray-100"
-                          onClick={() => handleSort("customerName")}
-                        >
-                          Customer Name{" "}
-                          {sortField === "customerName" &&
-                            (sortDirection === "asc" ? "↑" : "↓")}
-                        </TableHead>
-                        <TableHead
-                          className="text-center cursor-pointer hover:bg-gray-100"
-                          onClick={() => handleSort("masterBatch")}
-                        >
-                          Master Batch{" "}
-                          {sortField === "masterBatch" &&
-                            (sortDirection === "asc" ? "↑" : "↓")}
-                        </TableHead>
-                        <TableHead
-                          className="text-center cursor-pointer hover:bg-gray-100"
-                          onClick={() => handleSort("rawMaterial")}
-                        >
-                          Raw Material{" "}
-                          {sortField === "rawMaterial" &&
-                            (sortDirection === "asc" ? "↑" : "↓")}
-                        </TableHead>
-                        <TableHead
-                          className="text-center cursor-pointer hover:bg-gray-100"
-                          onClick={() => handleSort("itemName")}
-                        >
-                          Material{" "}
-                          {sortField === "itemName" &&
-                            (sortDirection === "asc" ? "↑" : "↓")}
-                        </TableHead>
-                        <TableHead
-                          className="text-center cursor-pointer hover:bg-gray-100"
-                          onClick={() => handleSort("size")}
-                        >
-                          Size{" "}
-                          {sortField === "size" &&
-                            (sortDirection === "asc" ? "↑" : "↓")}
-                        </TableHead>
-                        <TableHead
-                          className="text-center cursor-pointer hover:bg-gray-100"
-                          onClick={() => handleSort("quantity")}
-                        >
-                          Original Qty (kg){" "}
-                          {sortField === "quantity" &&
-                            (sortDirection === "asc" ? "↑" : "↓")}
-                        </TableHead>
-                        <TableHead className="text-center">
-                          Mix Qty (kg)
-                        </TableHead>
-                        <TableHead className="text-center">Status</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {pendingJobOrders.map((jobOrder) => (
-                        <TableRow key={jobOrder.id}>
-                          <TableCell className="text-center">
-                            <Checkbox
-                              checked={selectedJobOrders.has(jobOrder.id)}
-                              onCheckedChange={(checked) =>
-                                handleJobOrderSelection(
-                                  jobOrder.id,
-                                  checked as boolean,
-                                )
-                              }
-                            />
-                          </TableCell>
-                          <TableCell className="text-center">
-                            JO #{jobOrder.id}
-                          </TableCell>
-                          <TableCell className="text-center">
-                            #{jobOrder.orderId}
-                          </TableCell>
-                          <TableCell className="text-center">
-                            {jobOrder.customerName || "N/A"}
-                          </TableCell>
-                          <TableCell className="text-center">
-                            {jobOrder.masterBatch || "N/A"}
-                          </TableCell>
-                          <TableCell className="text-center">
-                            {jobOrder.rawMaterial || "N/A"}
-                          </TableCell>
-                          <TableCell className="text-center">
-                            {jobOrder.itemName || "N/A"}
-                          </TableCell>
-                          <TableCell className="text-center">
-                            {jobOrder.size || "N/A"}
-                          </TableCell>
-                          <TableCell className="text-center">
-                            {jobOrder.quantity.toLocaleString()}
-                          </TableCell>
-                          <TableCell className="text-center">
-                            {selectedJobOrders.has(jobOrder.id) ? (
-                              <Input
-                                type="number"
-                                value={jobOrderQuantities[jobOrder.id] || ""}
-                                onChange={(e) =>
-                                  handleQuantityChange(
-                                    jobOrder.id,
-                                    parseFloat(e.target.value) || 0,
-                                  )
-                                }
-                                className="w-24"
-                                min="0"
-                                step="0.1"
+                  {/* Job Orders Table */}
+                  <div className="border rounded-lg bg-white shadow-sm">
+                    <div className="p-4 border-b bg-gray-50">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Hash className="h-4 w-4 text-gray-500" />
+                          <span className="font-medium text-gray-700">Available Job Orders</span>
+                        </div>
+                        <Badge variant="outline" className="bg-white">
+                          {pendingJobOrders.length} orders
+                        </Badge>
+                      </div>
+                    </div>
+                    <div className="max-h-96 overflow-y-auto">
+                      <Table>
+                        <TableHeader className="sticky top-0 bg-white shadow-sm">
+                          <TableRow>
+                            <TableHead className="w-12 text-center">
+                              <Checkbox
+                                checked={selectedJobOrders.size === pendingJobOrders.length && pendingJobOrders.length > 0}
+                                onCheckedChange={(checked) => {
+                                  if (checked) {
+                                    const newSelected = new Set(pendingJobOrders.map(jo => jo.id));
+                                    setSelectedJobOrders(newSelected);
+                                    const newQuantities = {};
+                                    pendingJobOrders.forEach(jo => {
+                                      newQuantities[jo.id] = jo.quantity;
+                                    });
+                                    setJobOrderQuantities(newQuantities);
+                                  } else {
+                                    setSelectedJobOrders(new Set());
+                                    setJobOrderQuantities({});
+                                  }
+                                }}
                               />
-                            ) : (
-                              "-"
-                            )}
-                          </TableCell>
-                          <TableCell className="text-center">
-                            {getStatusBadge(jobOrder.status)}
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
-              </div>
+                            </TableHead>
+                            <TableHead className="text-center cursor-pointer hover:bg-gray-50" onClick={() => handleSort("id")}>
+                              <div className="flex items-center justify-center gap-1">
+                                <Hash className="h-4 w-4" />
+                                JO # {sortField === "id" && (sortDirection === "asc" ? "↑" : "↓")}
+                              </div>
+                            </TableHead>
+                            <TableHead className="text-center cursor-pointer hover:bg-gray-50" onClick={() => handleSort("orderId")}>
+                              <div className="flex items-center justify-center gap-1">
+                                <Hash className="h-4 w-4" />
+                                Order # {sortField === "orderId" && (sortDirection === "asc" ? "↑" : "↓")}
+                              </div>
+                            </TableHead>
+                            <TableHead className="text-center cursor-pointer hover:bg-gray-50" onClick={() => handleSort("customerName")}>
+                              <div className="flex items-center justify-center gap-1">
+                                <Users className="h-4 w-4" />
+                                Customer {sortField === "customerName" && (sortDirection === "asc" ? "↑" : "↓")}
+                              </div>
+                            </TableHead>
+                            <TableHead className="text-center cursor-pointer hover:bg-gray-50" onClick={() => handleSort("masterBatch")}>
+                              <div className="flex items-center justify-center gap-1">
+                                <Beaker className="h-4 w-4" />
+                                Master Batch {sortField === "masterBatch" && (sortDirection === "asc" ? "↑" : "↓")}
+                              </div>
+                            </TableHead>
+                            <TableHead className="text-center cursor-pointer hover:bg-gray-50" onClick={() => handleSort("rawMaterial")}>
+                              <div className="flex items-center justify-center gap-1">
+                                <Package className="h-4 w-4" />
+                                Raw Material {sortField === "rawMaterial" && (sortDirection === "asc" ? "↑" : "↓")}
+                              </div>
+                            </TableHead>
+                            <TableHead className="text-center cursor-pointer hover:bg-gray-50" onClick={() => handleSort("itemName")}>
+                              <div className="flex items-center justify-center gap-1">
+                                <Factory className="h-4 w-4" />
+                                Material {sortField === "itemName" && (sortDirection === "asc" ? "↑" : "↓")}
+                              </div>
+                            </TableHead>
+                            <TableHead className="text-center cursor-pointer hover:bg-gray-50" onClick={() => handleSort("size")}>
+                              <div className="flex items-center justify-center gap-1">
+                                <Layers className="h-4 w-4" />
+                                Size {sortField === "size" && (sortDirection === "asc" ? "↑" : "↓")}
+                              </div>
+                            </TableHead>
+                            <TableHead className="text-center cursor-pointer hover:bg-gray-50" onClick={() => handleSort("quantity")}>
+                              <div className="flex items-center justify-center gap-1">
+                                <Weight className="h-4 w-4" />
+                                Original Qty (kg) {sortField === "quantity" && (sortDirection === "asc" ? "↑" : "↓")}
+                              </div>
+                            </TableHead>
+                            <TableHead className="text-center">
+                              <div className="flex items-center justify-center gap-1">
+                                <Zap className="h-4 w-4" />
+                                Mix Qty (kg)
+                              </div>
+                            </TableHead>
+                            <TableHead className="text-center">
+                              <div className="flex items-center justify-center gap-1">
+                                <AlertCircle className="h-4 w-4" />
+                                Status
+                              </div>
+                            </TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {pendingJobOrders.map((jobOrder) => (
+                            <TableRow key={jobOrder.id} className={`hover:bg-gray-50 transition-colors ${selectedJobOrders.has(jobOrder.id) ? 'bg-blue-50 border-l-4 border-blue-500' : ''}`}>
+                              <TableCell className="text-center">
+                                <Checkbox
+                                  checked={selectedJobOrders.has(jobOrder.id)}
+                                  onCheckedChange={(checked) =>
+                                    handleJobOrderSelection(
+                                      jobOrder.id,
+                                      checked as boolean,
+                                    )
+                                  }
+                                />
+                              </TableCell>
+                              <TableCell className="text-center font-medium">
+                                <Badge variant="outline">JO #{jobOrder.id}</Badge>
+                              </TableCell>
+                              <TableCell className="text-center font-medium">
+                                #{jobOrder.orderId}
+                              </TableCell>
+                              <TableCell className="text-center">
+                                {jobOrder.customerName || "N/A"}
+                              </TableCell>
+                              <TableCell className="text-center">
+                                <Badge variant="secondary">
+                                  {jobOrder.masterBatch || "N/A"}
+                                </Badge>
+                              </TableCell>
+                              <TableCell className="text-center">
+                                {jobOrder.rawMaterial || "N/A"}
+                              </TableCell>
+                              <TableCell className="text-center">
+                                {jobOrder.itemName || "N/A"}
+                              </TableCell>
+                              <TableCell className="text-center">
+                                {jobOrder.size || "N/A"}
+                              </TableCell>
+                              <TableCell className="text-center font-medium">
+                                {jobOrder.quantity.toLocaleString()} kg
+                              </TableCell>
+                              <TableCell className="text-center">
+                                {selectedJobOrders.has(jobOrder.id) ? (
+                                  <Input
+                                    type="number"
+                                    value={jobOrderQuantities[jobOrder.id] || ""}
+                                    onChange={(e) =>
+                                      handleQuantityChange(
+                                        jobOrder.id,
+                                        parseFloat(e.target.value) || 0,
+                                      )
+                                    }
+                                    className="w-20 text-center bg-white border-2 border-blue-200 focus:border-blue-400"
+                                    min="0"
+                                    step="0.1"
+                                    placeholder="0"
+                                  />
+                                ) : (
+                                  <span className="text-gray-400">-</span>
+                                )}
+                              </TableCell>
+                              <TableCell className="text-center">
+                                {getStatusBadge(jobOrder.status)}
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
 
-              {/* Summary */}
+              {/* Mix Preview Section */}
               {selectedJobOrders.size > 0 && selectedFormula && (
-                <>
-                  <Separator />
-                  <div className="space-y-2">
-                    <h3 className="text-lg font-semibold">Mix Preview</h3>
+                <Card className="border-2 border-purple-100 bg-purple-50/30">
+                  <CardHeader className="pb-4">
+                    <CardTitle className="text-lg flex items-center gap-2 text-purple-800">
+                      <BarChart3 className="h-5 w-5" />
+                      Mix Preview & Calculations
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
                     {(() => {
-                      const formula = abaFormulas.find(
-                        (f) => f.id === selectedFormula,
-                      );
-                      const totalQuantity = Array.from(
-                        selectedJobOrders,
-                      ).reduce(
+                      const formula = abaFormulas.find(f => f.id === selectedFormula);
+                      const totalQuantity = Array.from(selectedJobOrders).reduce(
                         (sum, id) => sum + (jobOrderQuantities[id] || 0),
                         0,
                       );
                       if (formula) {
-                        const [aRatio, bRatio] = formula.abRatio
-                          .split(":")
-                          .map(Number);
+                        const [aRatio, bRatio] = formula.abRatio.split(":").map(Number);
                         const totalRatio = aRatio + bRatio;
                         const aQuantity = (totalQuantity * aRatio) / totalRatio;
                         const bQuantity = (totalQuantity * bRatio) / totalRatio;
@@ -922,48 +978,76 @@ export default function JoMixPage() {
                         const bMixes = Math.ceil(bQuantity / 600);
 
                         return (
-                          <div className="bg-gray-50 p-4 rounded-lg space-y-2">
-                            <p>
-                              <strong>Formula:</strong> {formula.name} (
-                              {parseFloat(
-                                formula.abRatio.split(":")[0],
-                              ).toFixed(2)}
-                              :
-                              {parseFloat(
-                                formula.abRatio.split(":")[1],
-                              ).toFixed(2)}
-                              )
-                            </p>
-                            <p>
-                              <strong>Total Quantity:</strong>{" "}
-                              {totalQuantity.toLocaleString()} kg
-                            </p>
-                            <p>
-                              <strong>A Screw Total:</strong>{" "}
-                              {aQuantity.toLocaleString()} kg ({aMixes} mix
-                              {aMixes !== 1 ? "es" : ""})
-                            </p>
-                            <p>
-                              <strong>B Screw Total:</strong>{" "}
-                              {bQuantity.toLocaleString()} kg ({bMixes} mix
-                              {bMixes !== 1 ? "es" : ""})
-                            </p>
-                            <p>
-                              <strong>Total Mixes:</strong> {aMixes + bMixes}
-                            </p>
+                          <div className="bg-white p-6 rounded-lg border border-purple-200 shadow-sm">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                              <div className="space-y-4">
+                                <div className="flex items-center gap-2 text-purple-800">
+                                  <FlaskConical className="h-5 w-5" />
+                                  <h4 className="font-semibold">Formula Details</h4>
+                                </div>
+                                <div className="space-y-2">
+                                  <div className="flex justify-between">
+                                    <span className="text-gray-600">Formula:</span>
+                                    <span className="font-medium">{formula.name}</span>
+                                  </div>
+                                  <div className="flex justify-between">
+                                    <span className="text-gray-600">A:B Ratio:</span>
+                                    <Badge variant="outline" className="bg-purple-50">
+                                      {parseFloat(formula.abRatio.split(":")[0]).toFixed(2)}:
+                                      {parseFloat(formula.abRatio.split(":")[1]).toFixed(2)}
+                                    </Badge>
+                                  </div>
+                                  <div className="flex justify-between">
+                                    <span className="text-gray-600">Total Quantity:</span>
+                                    <span className="font-semibold text-purple-600">
+                                      {totalQuantity.toLocaleString()} kg
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                              
+                              <div className="space-y-4">
+                                <div className="flex items-center gap-2 text-purple-800">
+                                  <Zap className="h-5 w-5" />
+                                  <h4 className="font-semibold">Mix Breakdown</h4>
+                                </div>
+                                <div className="space-y-2">
+                                  <div className="flex justify-between">
+                                    <span className="text-gray-600">A Screw Total:</span>
+                                    <span className="font-medium">
+                                      {aQuantity.toLocaleString()} kg ({aMixes} mix{aMixes !== 1 ? 'es' : ''})
+                                    </span>
+                                  </div>
+                                  <div className="flex justify-between">
+                                    <span className="text-gray-600">B Screw Total:</span>
+                                    <span className="font-medium">
+                                      {bQuantity.toLocaleString()} kg ({bMixes} mix{bMixes !== 1 ? 'es' : ''})
+                                    </span>
+                                  </div>
+                                  <div className="flex justify-between pt-2 border-t">
+                                    <span className="text-gray-600 font-medium">Total Mixes:</span>
+                                    <Badge className="bg-purple-600">
+                                      {aMixes + bMixes} mixes
+                                    </Badge>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
                           </div>
                         );
                       }
                       return null;
                     })()}
-                  </div>
-                </>
+                  </CardContent>
+                </Card>
               )}
 
-              <div className="flex justify-end space-x-2">
+              {/* Action Buttons */}
+              <div className="flex justify-end gap-4 pt-4 border-t">
                 <Button
                   variant="outline"
                   onClick={() => setIsCreateDialogOpen(false)}
+                  className="px-8"
                 >
                   Cancel
                 </Button>
@@ -974,9 +1058,19 @@ export default function JoMixPage() {
                     selectedJobOrders.size === 0 ||
                     !selectedFormula
                   }
+                  className="px-8 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800"
                 >
-                  <Calculator className="h-4 w-4 mr-2" />
-                  {createJoMixMutation.isPending ? "Creating..." : "Create Mix"}
+                  {createJoMixMutation.isPending ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                      Creating...
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle className="h-4 w-4 mr-2" />
+                      Create Mix
+                    </>
+                  )}
                 </Button>
               </div>
             </div>
