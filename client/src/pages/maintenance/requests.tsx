@@ -38,7 +38,7 @@ import {
 } from "@/components/ui/table";
 import { PageHeader } from "@/components/ui/page-header";
 import { useToast } from "@/hooks/use-toast";
-// import { useTranslation } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import { useIsMobile } from "@/hooks/use-mobile";
 // import { format } from "date-fns";
 
@@ -60,48 +60,7 @@ const formatDate = (date: Date | string, formatStr: string = "dd/MM/yyyy") => {
   return d.toLocaleDateString();
 };
 
-// Simple translation function
-const t = (key: string): string => {
-  // Basic English fallbacks for common terms
-  const translations: Record<string, string> = {
-    "maintenance.requests": "Maintenance Requests",
-    "maintenance.add_request": "Add Request",
-    "maintenance.request_number": "Request Number",
-    "maintenance.machine": "Machine",
-    "maintenance.description": "Description",
-    "maintenance.priority": "Priority",
-    "maintenance.status": "Status",
-    "maintenance.actions": "Actions",
-    "maintenance.pending": "Pending",
-    "maintenance.progress": "In Progress",
-    "maintenance.completed": "Completed",
-    "maintenance.high": "High",
-    "maintenance.normal": "Normal",
-    "maintenance.low": "Low",
-    "maintenance.requests.machine": "Machine",
-    "maintenance.requests.damageType": "Damage Type",
-    "maintenance.requests.severity": "Severity",
-    "maintenance.requests.description": "Description",
-    // Damage type translations
-    "maintenance.damage_types.motor": "Motor Issue",
-    "maintenance.damage_types.bearing": "Bearing Problem",
-    "maintenance.damage_types.belt": "Belt Issue",
-    "maintenance.damage_types.electrical": "Electrical Problem",
-    "maintenance.damage_types.hydraulic": "Hydraulic Issue",
-    "maintenance.damage_types.mechanical": "Mechanical Problem",
-    "maintenance.damage_types.cooling": "Cooling System Issue",
-    "maintenance.damage_types.heating": "Heating System Issue",
-    "maintenance.damage_types.control": "Control System Problem",
-    "maintenance.damage_types.safety": "Safety System Issue",
-    "maintenance.damage_types.other": "Other Issue",
-    "common.save": "Save",
-    "common.cancel": "Cancel",
-    "common.edit": "Edit",
-    "common.delete": "Delete",
-    "common.print": "Print",
-  };
-  return translations[key] || key.split(".").pop() || key;
-};
+// Using React i18next translation system
 import { QuickActions } from "@/components/ui/quick-actions";
 import {
   Plus,
@@ -193,7 +152,7 @@ interface User {
 }
 
 export default function MaintenanceRequestsPage() {
-  // const { t } = useTranslation();
+  const { t } = useTranslation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const isMobile = useIsMobile();

@@ -40,6 +40,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { PageHeader } from "@/components/ui/page-header";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useTranslation } from "react-i18next";
 import { QuickActions } from "@/components/ui/quick-actions";
 import {
   Plus,
@@ -629,6 +630,7 @@ function ViewActionDetails({ action }) {
 export default function MaintenanceActionsPage() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const { t } = useTranslation();
   const isMobile = useIsMobile();
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -669,14 +671,14 @@ export default function MaintenanceActionsPage() {
       queryClient.invalidateQueries({ queryKey: ["/api/maintenance/actions"] });
       setIsCreateDialogOpen(false);
       toast({
-        title: "Success",
-        description: "Maintenance action created successfully",
+        title: t("common.success"),
+        description: t("maintenance.actions.create_success"),
       });
     },
     onError: (error: any) => {
       toast({
-        title: "Error",
-        description: error.message || "Failed to create maintenance action",
+        title: t("common.error"),
+        description: error.message || t("maintenance.actions.create_error"),
         variant: "destructive",
       });
     },
@@ -691,14 +693,14 @@ export default function MaintenanceActionsPage() {
       setIsEditDialogOpen(false);
       setSelectedAction(null);
       toast({
-        title: "Success",
-        description: "Maintenance action updated successfully",
+        title: t("common.success"),
+        description: t("maintenance.actions.update_success"),
       });
     },
     onError: (error: any) => {
       toast({
-        title: "Error",
-        description: error.message || "Failed to update maintenance action",
+        title: t("common.error"),
+        description: error.message || t("maintenance.actions.update_error"),
         variant: "destructive",
       });
     },
@@ -711,14 +713,14 @@ export default function MaintenanceActionsPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/maintenance/actions"] });
       toast({
-        title: "Success",
-        description: "Maintenance action deleted successfully",
+        title: t("common.success"),
+        description: t("maintenance.actions.delete_success"),
       });
     },
     onError: (error: any) => {
       toast({
-        title: "Error",
-        description: error.message || "Failed to delete maintenance action",
+        title: t("common.error"),
+        description: error.message || t("maintenance.actions.delete_error"),
         variant: "destructive",
       });
     },

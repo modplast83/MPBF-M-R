@@ -71,6 +71,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth-v2";
+import { useTranslation } from "react-i18next";
 import type { HrViolation, HrComplaint, User } from "@shared/schema";
 
 // Professional violation types configuration
@@ -185,6 +186,7 @@ type ViolationFormData = z.infer<typeof violationFormSchema>;
 export default function ViolationsComplaints() {
   const { user } = useAuth();
   const { toast } = useToast();
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
 
   const [selectedViolation, setSelectedViolation] =
@@ -513,26 +515,24 @@ export default function ViolationsComplaints() {
       <div className="flex justify-between items-start">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">
-            Violations & Complaints
+            {t("hr_violations.title")}
           </h1>
           <p className="text-muted-foreground mt-2">
-            Professional employee violation management system with comprehensive
-            tracking
+            {t("hr_violations.description")}
           </p>
         </div>
         <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
           <DialogTrigger asChild>
             <Button>
               <Plus className="h-4 w-4 mr-2" />
-              Report Violation
+              {t("hr_violations.report_violation")}
             </Button>
           </DialogTrigger>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>Report Employee Violation</DialogTitle>
+              <DialogTitle>{t("hr_violations.report_violation")}</DialogTitle>
               <DialogDescription>
-                Document a professional violation with comprehensive details and
-                tracking
+                {t("hr_violations.report_violation_description")}
               </DialogDescription>
             </DialogHeader>
             <Form {...form}>
@@ -546,14 +546,14 @@ export default function ViolationsComplaints() {
                     name="userId"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Employee</FormLabel>
+                        <FormLabel>{t("hr_violations.employee")}</FormLabel>
                         <Select
                           onValueChange={field.onChange}
                           defaultValue={field.value}
                         >
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder="Select employee" />
+                              <SelectValue placeholder={t("hr_violations.employee")} />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
