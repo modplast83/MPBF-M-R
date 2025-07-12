@@ -49,6 +49,7 @@ import SmsIndex from "@/pages/system/sms/index";
 import AuthPage from "@/pages/AuthPage";
 import NotFound from "@/pages/not-found";
 import CustomerInfoPage from "@/pages/public/customer-info";
+import NotificationsPage from "@/pages/notifications";
 import MainLayout from "@/components/layout/main-layout";
 import { AuthProvider } from "@/hooks/use-auth-v2";
 import { PermissionsProvider } from "@/hooks/use-permissions";
@@ -313,6 +314,11 @@ function App() {
                         path="/system/sms"
                         component={SmsIndex}
                         module="SMS Management"
+                      />
+                      <ProtectedRoute
+                        path="/notifications"
+                        component={NotificationsPage}
+                        module="Notifications"
                       />
                       <ProtectedRoute
                         path="/system/email-config"

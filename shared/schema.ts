@@ -308,6 +308,28 @@ export const insertJobOrderSchema = createInsertSchema(jobOrders).omit({
 export type InsertJobOrder = z.infer<typeof insertJobOrderSchema>;
 export type JobOrder = typeof jobOrders.$inferSelect;
 
+// Job Order Updates for Desktop Notifications
+export const jobOrderUpdates = pgTable("job_order_updates", {
+  id: serial("id").primaryKey(),
+  jobOrderId: integer("job_order_id")
+    .notNull()
+    .references(() => jobOrders.id),
+  updateType: text("update_type").notNull(), // 'status_change', 'priority_change', 'assigned', 'completed', 'delayed', 'quality_issue'
+  title: text("title").notNull(),
+  message: text("message").notNull(),
+  priority: text("priority").notNull().default("medium"), // 'low', 'medium', 'high', 'urgent', 'critical'
+  metadata: jsonb("metadata"), // Additional data for the update
+  createdBy: text("created_by").references(() => users.id),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const insertJobOrderUpdateSchema = createInsertSchema(jobOrderUpdates).omit({
+  id: true,
+  createdAt: true,
+});
+export type InsertJobOrderUpdate = z.infer<typeof insertJobOrderUpdateSchema>;
+export type JobOrderUpdate = typeof jobOrderUpdates.$inferSelect;
+
 // Rolls table
 export const rolls = pgTable("rolls", {
   id: text("id").primaryKey(), // ID
