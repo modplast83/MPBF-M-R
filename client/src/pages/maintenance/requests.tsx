@@ -753,7 +753,7 @@ export default function MaintenanceRequestsPage() {
           <div className="relative flex-1 max-w-sm">
             <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
             <Input
-              placeholder={t("maintenance.requests.searchPlaceholder")}
+              placeholder={t("maintenance.requests.search_requests")}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-10"
@@ -762,7 +762,7 @@ export default function MaintenanceRequestsPage() {
           <Select value={statusFilter} onValueChange={setStatusFilter}>
             <SelectTrigger className="w-40">
               <SelectValue
-                placeholder={t("maintenance.requests.filterByStatus")}
+                placeholder={t("maintenance.requests.filter_by_status")}
               />
             </SelectTrigger>
             <SelectContent>

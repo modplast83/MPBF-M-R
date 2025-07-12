@@ -553,7 +553,7 @@ export default function ViolationsComplaints() {
                         >
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder={t("hr_violations.employee")} />
+                              <SelectValue placeholder={t("hr_violations.select_employee")} />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
@@ -574,14 +574,14 @@ export default function ViolationsComplaints() {
                     name="violationType"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Violation Type</FormLabel>
+                        <FormLabel>{t("hr_violations.violation_type")}</FormLabel>
                         <Select
                           onValueChange={field.onChange}
                           defaultValue={field.value}
                         >
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder="Select violation type" />
+                              <SelectValue placeholder={t("hr_violations.select_violation_type")} />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
@@ -606,14 +606,14 @@ export default function ViolationsComplaints() {
                     name="violationSubtype"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Specific Violation</FormLabel>
+                        <FormLabel>{t("hr_violations.specific_violation")}</FormLabel>
                         <Select
                           onValueChange={field.onChange}
                           defaultValue={field.value}
                         >
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder="Select specific violation" />
+                              <SelectValue placeholder={t("hr_violations.select_specific_violation")} />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
@@ -640,14 +640,14 @@ export default function ViolationsComplaints() {
                     name="severity"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Severity Level</FormLabel>
+                        <FormLabel>{t("hr_violations.severity_level")}</FormLabel>
                         <Select
                           onValueChange={field.onChange}
                           defaultValue={field.value}
                         >
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder="Select severity" />
+                              <SelectValue placeholder={t("hr_violations.select_severity")} />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
@@ -668,7 +668,7 @@ export default function ViolationsComplaints() {
                     name="incidentDate"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Incident Date</FormLabel>
+                        <FormLabel>{t("hr_violations.incident_date")}</FormLabel>
                         <FormControl>
                           <Input type="datetime-local" {...field} />
                         </FormControl>
@@ -683,10 +683,10 @@ export default function ViolationsComplaints() {
                   name="title"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Violation Title</FormLabel>
+                      <FormLabel>{t("hr_violations.violation_title")}</FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="Brief description of the violation"
+                          placeholder={t("hr_violations.violation_title_placeholder")}
                           {...field}
                         />
                       </FormControl>
@@ -700,10 +700,10 @@ export default function ViolationsComplaints() {
                   name="description"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Detailed Description</FormLabel>
+                      <FormLabel>{t("hr_violations.detailed_description")}</FormLabel>
                       <FormControl>
                         <Textarea
-                          placeholder="Provide comprehensive details about the violation, including circumstances, witnesses, and evidence"
+                          placeholder={t("hr_violations.detailed_description_placeholder")}
                           rows={4}
                           {...field}
                         />
@@ -718,14 +718,14 @@ export default function ViolationsComplaints() {
                   name="actionTaken"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Action Taken</FormLabel>
+                      <FormLabel>{t("hr_violations.action_taken")}</FormLabel>
                       <Select
                         onValueChange={field.onChange}
                         defaultValue={field.value}
                       >
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Select action taken" />
+                            <SelectValue placeholder={t("hr_violations.select_action")} />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
