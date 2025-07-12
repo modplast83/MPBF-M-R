@@ -44,6 +44,9 @@ import {
   Ruler,
   Weight,
   RefreshCw,
+  Clock,
+  Zap,
+  Beaker,
 } from "lucide-react";
 import type {
   JobOrder,
@@ -585,6 +588,118 @@ export default function JobOrdersPage() {
                   ))}
                 </SelectContent>
               </Select>
+            </div>
+          </div>
+
+          {/* Quick Filter Presets */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <Zap className="h-4 w-4 text-blue-600" />
+              <label className="text-sm font-medium text-gray-700">
+                Quick Filters
+              </label>
+            </div>
+            
+            <div className="flex flex-wrap gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setSearchTerm("");
+                  setCustomerFilter("all");
+                  setMaterialFilter("all");
+                  setMasterbatchFilter("all");
+                  setProductFilter("all");
+                }}
+                className="text-xs sm:text-sm px-3 py-1.5 bg-gray-50 hover:bg-gray-100 border-gray-200"
+              >
+                <RefreshCw className="h-3 w-3 mr-1" />
+                All Orders
+              </Button>
+              
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setSearchTerm("");
+                  setCustomerFilter("all");
+                  setMaterialFilter("Roll Trash Bag");
+                  setMasterbatchFilter("all");
+                  setProductFilter("all");
+                }}
+                className="text-xs sm:text-sm px-3 py-1.5 bg-green-50 hover:bg-green-100 border-green-200 text-green-800"
+              >
+                <Package className="h-3 w-3 mr-1" />
+                Trash Bags
+              </Button>
+              
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setSearchTerm("");
+                  setCustomerFilter("all");
+                  setMaterialFilter("T-Shirt Bag");
+                  setMasterbatchFilter("all");
+                  setProductFilter("all");
+                }}
+                className="text-xs sm:text-sm px-3 py-1.5 bg-blue-50 hover:bg-blue-100 border-blue-200 text-blue-800"
+              >
+                <Layers className="h-3 w-3 mr-1" />
+                T-Shirt Bags
+              </Button>
+              
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setSearchTerm("");
+                  setCustomerFilter("all");
+                  setMaterialFilter("all");
+                  setMasterbatchFilter("White EP11105W");
+                  setProductFilter("all");
+                }}
+                className="text-xs sm:text-sm px-3 py-1.5 bg-purple-50 hover:bg-purple-100 border-purple-200 text-purple-800"
+              >
+                <Beaker className="h-3 w-3 mr-1" />
+                White Batch
+              </Button>
+              
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setSearchTerm("");
+                  setCustomerFilter("all");
+                  setMaterialFilter("all");
+                  setMasterbatchFilter("all");
+                  setProductFilter("all");
+                  setSortField("quantity");
+                  setSortDirection("desc");
+                }}
+                className="text-xs sm:text-sm px-3 py-1.5 bg-orange-50 hover:bg-orange-100 border-orange-200 text-orange-800"
+              >
+                <Weight className="h-3 w-3 mr-1" />
+                High Volume
+              </Button>
+              
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setSearchTerm("");
+                  setCustomerFilter("all");
+                  setMaterialFilter("all");
+                  setMasterbatchFilter("all");
+                  setProductFilter("all");
+                  setSortField("orderId");
+                  setSortDirection("desc");
+                }}
+                className="text-xs sm:text-sm px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 border-indigo-200 text-indigo-800"
+              >
+                <Clock className="h-3 w-3 mr-1" />
+                Latest Orders
+              </Button>
             </div>
           </div>
 

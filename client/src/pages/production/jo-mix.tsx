@@ -781,6 +781,104 @@ export default function JoMixPage() {
                         </Select>
                       </div>
                     </div>
+                    
+                    {/* Quick Filter Presets */}
+                    <div className="mt-4 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200">
+                      <div className="flex items-center gap-2 mb-3">
+                        <Zap className="h-4 w-4 text-blue-600" />
+                        <h4 className="font-medium text-blue-800">Quick Filters</h4>
+                      </div>
+                      
+                      <div className="flex flex-wrap gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            setFilterCustomer("all");
+                            setFilterMaterial("all");
+                            setFilterStatus("all");
+                          }}
+                          className="text-xs px-3 py-1.5 bg-white hover:bg-gray-50 border-gray-300"
+                        >
+                          <CheckCircle className="h-3 w-3 mr-1" />
+                          All Available
+                        </Button>
+                        
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            setFilterCustomer("all");
+                            setFilterMaterial("Roll Trash Bag");
+                            setFilterStatus("all");
+                          }}
+                          className="text-xs px-3 py-1.5 bg-green-50 hover:bg-green-100 border-green-300 text-green-700"
+                        >
+                          <Package className="h-3 w-3 mr-1" />
+                          Trash Bags Only
+                        </Button>
+                        
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            setFilterCustomer("all");
+                            setFilterMaterial("T-Shirt Bag");
+                            setFilterStatus("all");
+                          }}
+                          className="text-xs px-3 py-1.5 bg-blue-50 hover:bg-blue-100 border-blue-300 text-blue-700"
+                        >
+                          <Layers className="h-3 w-3 mr-1" />
+                          T-Shirts Only
+                        </Button>
+                        
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            setFilterCustomer("all");
+                            setFilterMaterial("all");
+                            setFilterStatus("pending");
+                          }}
+                          className="text-xs px-3 py-1.5 bg-yellow-50 hover:bg-yellow-100 border-yellow-300 text-yellow-700"
+                        >
+                          <AlertCircle className="h-3 w-3 mr-1" />
+                          Pending Only
+                        </Button>
+                        
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            setFilterCustomer("all");
+                            setFilterMaterial("all");
+                            setFilterStatus("all");
+                            setSortField("quantity");
+                            setSortDirection("desc");
+                          }}
+                          className="text-xs px-3 py-1.5 bg-orange-50 hover:bg-orange-100 border-orange-300 text-orange-700"
+                        >
+                          <Weight className="h-3 w-3 mr-1" />
+                          High Volume
+                        </Button>
+                        
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            setFilterCustomer("all");
+                            setFilterMaterial("all");
+                            setFilterStatus("all");
+                            setSortField("orderId");
+                            setSortDirection("desc");
+                          }}
+                          className="text-xs px-3 py-1.5 bg-purple-50 hover:bg-purple-100 border-purple-300 text-purple-700"
+                        >
+                          <Hash className="h-3 w-3 mr-1" />
+                          Latest Orders
+                        </Button>
+                      </div>
+                    </div>
                   </div>
 
                   {/* Job Orders Table */}

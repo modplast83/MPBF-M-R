@@ -73,6 +73,9 @@ import {
   Trash2,
   BarChart3,
   ChevronRight,
+  Hash,
+  Zap,
+  Factory,
   ArrowUp,
   ArrowDown,
   History,
@@ -1042,6 +1045,102 @@ export default function OrdersIndex() {
               isActive={statusFilter === "hold"}
               onClick={() => setStatusFilter("hold")}
             />
+          </div>
+
+          {/* Production Quick Filters */}
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <Zap className="h-4 w-4 text-blue-600" />
+              <label className="text-sm font-medium text-gray-700">
+                Production Presets
+              </label>
+            </div>
+            
+            <div className="flex flex-wrap gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setStatusFilter("processing");
+                  setSortBy("date");
+                  setSortOrder("desc");
+                }}
+                className="text-xs px-3 py-1.5 bg-blue-50 hover:bg-blue-100 border-blue-200 text-blue-800"
+              >
+                <Factory className="h-3 w-3 mr-1" />
+                Ready for Production
+              </Button>
+              
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setStatusFilter("pending");
+                  setSortBy("date");
+                  setSortOrder("asc");
+                }}
+                className="text-xs px-3 py-1.5 bg-yellow-50 hover:bg-yellow-100 border-yellow-200 text-yellow-800"
+              >
+                <Clock className="h-3 w-3 mr-1" />
+                Urgent Orders
+              </Button>
+              
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setStatusFilter("all");
+                  setSortBy("date");
+                  setSortOrder("desc");
+                }}
+                className="text-xs px-3 py-1.5 bg-green-50 hover:bg-green-100 border-green-200 text-green-800"
+              >
+                <Calendar className="h-3 w-3 mr-1" />
+                Latest Orders
+              </Button>
+              
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setStatusFilter("completed");
+                  setSortBy("date");
+                  setSortOrder("desc");
+                }}
+                className="text-xs px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 border-emerald-200 text-emerald-800"
+              >
+                <CheckCircle className="h-3 w-3 mr-1" />
+                Recent Completed
+              </Button>
+              
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setStatusFilter("hold");
+                  setSortBy("date");
+                  setSortOrder("desc");
+                }}
+                className="text-xs px-3 py-1.5 bg-red-50 hover:bg-red-100 border-red-200 text-red-800"
+              >
+                <AlertCircle className="h-3 w-3 mr-1" />
+                Issues & Hold
+              </Button>
+              
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setStatusFilter("all");
+                  setSortBy("id");
+                  setSortOrder("desc");
+                }}
+                className="text-xs px-3 py-1.5 bg-purple-50 hover:bg-purple-100 border-purple-200 text-purple-800"
+              >
+                <Hash className="h-3 w-3 mr-1" />
+                By Order Number
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>
