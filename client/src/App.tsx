@@ -87,8 +87,6 @@ import BottleneckDashboard from "@/pages/production/bottleneck-dashboard";
 import MetricsInputPage from "@/pages/production/metrics-input";
 import IoTMonitor from "@/pages/production/iot-monitor";
 
-import NotificationsPage from "@/pages/notifications";
-
 import EmployeeDashboard from "@/pages/employee-dashboard";
 import ServerRestart from "@/pages/system/server-restart";
 import EmailConfiguration from "@/pages/system/email-config";
