@@ -2,6 +2,7 @@ import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { useLanguage } from "@/hooks/use-language";
+import { useIsMobile } from "@/hooks/use-mobile";
 import {
   Card,
   CardContent,
@@ -38,6 +39,11 @@ import {
   Factory,
   Users,
   Layers,
+  Hash,
+  Grid3x3,
+  Ruler,
+  Weight,
+  RefreshCw,
 } from "lucide-react";
 import type {
   JobOrder,
@@ -59,9 +65,126 @@ interface JobOrderWithDetails extends JobOrder {
   masterBatch?: MasterBatch;
 }
 
+// Mobile-optimized Job Order Card Component
+const JobOrderCard = ({ 
+  jobOrder, 
+  onSelect, 
+  isSelected 
+}: { 
+  jobOrder: JobOrderWithDetails; 
+  onSelect: (id: number) => void; 
+  isSelected: boolean; 
+}) => {
+  const { t } = useTranslation();
+  
+  return (
+    <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 border-0 shadow-sm bg-white hover:bg-gray-50/50">
+      <CardContent className="p-0">
+        <div className="p-3 sm:p-4 bg-gradient-to-r from-blue-50 to-white border-b border-gray-100">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+              <Checkbox
+                checked={isSelected}
+                onCheckedChange={() => onSelect(jobOrder.id)}
+                className="flex-shrink-0"
+              />
+              <div className="flex items-center gap-2 flex-1 min-w-0">
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Hash className="h-3 w-3 text-blue-600" />
+                    <h3 className="font-semibold text-gray-900 text-sm sm:text-base">#{jobOrder.orderId}</h3>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Grid3x3 className="h-3 w-3 text-gray-500" />
+                    <Badge variant="outline" className="text-xs">JO-{jobOrder.id}</Badge>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="flex-shrink-0">
+              <Badge variant="default" className="bg-blue-600 text-white">
+                {t("job_orders.for_production")}
+              </Badge>
+            </div>
+          </div>
+        </div>
+        
+        <div className="p-3 sm:p-4 space-y-3">
+          {/* Customer */}
+          <div className="flex items-center gap-2">
+            <Users className="h-4 w-4 text-gray-400 flex-shrink-0" />
+            <div className="flex-1 min-w-0">
+              <p className="text-gray-900 font-medium text-sm sm:text-base truncate">
+                {jobOrder.customer?.name || t("common.unknown")}
+              </p>
+            </div>
+          </div>
+          
+          {/* Product */}
+          <div className="flex items-center gap-2">
+            <Factory className="h-4 w-4 text-gray-400 flex-shrink-0" />
+            <div className="flex-1 min-w-0">
+              <p className="text-gray-700 text-sm sm:text-base truncate">
+                {jobOrder.item?.name || t("common.unknown")}
+              </p>
+            </div>
+          </div>
+          
+          {/* Size and Material Row */}
+          <div className="grid grid-cols-2 gap-4">
+            <div className="flex items-center gap-2">
+              <Ruler className="h-4 w-4 text-gray-400 flex-shrink-0" />
+              <div className="flex-1 min-w-0">
+                <p className="text-xs text-gray-500 mb-1">Size</p>
+                <p className="text-sm font-medium truncate">
+                  {jobOrder.customerProduct?.sizeCaption || "-"}
+                </p>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-2">
+              <Layers className="h-4 w-4 text-gray-400 flex-shrink-0" />
+              <div className="flex-1 min-w-0">
+                <p className="text-xs text-gray-500 mb-1">Material</p>
+                <p className="text-sm font-medium truncate">
+                  {jobOrder.customerProduct?.rawMaterial || "-"}
+                </p>
+              </div>
+            </div>
+          </div>
+          
+          {/* Batch and Quantity Row */}
+          <div className="grid grid-cols-2 gap-4">
+            <div className="flex items-center gap-2">
+              <Package className="h-4 w-4 text-gray-400 flex-shrink-0" />
+              <div className="flex-1 min-w-0">
+                <p className="text-xs text-gray-500 mb-1">Batch</p>
+                <Badge variant="secondary" className="text-xs">
+                  {jobOrder.masterBatch?.name || "-"}
+                </Badge>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-2">
+              <Weight className="h-4 w-4 text-gray-400 flex-shrink-0" />
+              <div className="flex-1 min-w-0">
+                <p className="text-xs text-gray-500 mb-1">Quantity</p>
+                <p className="text-sm font-bold text-blue-600">
+                  {jobOrder.quantity.toLocaleString()} kg
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
 export default function JobOrdersPage() {
   const { t } = useTranslation();
   const { isRTL } = useLanguage();
+  const isMobile = useIsMobile();
 
   const [searchTerm, setSearchTerm] = useState("");
   const [customerFilter, setCustomerFilter] = useState("all");
@@ -315,7 +438,7 @@ export default function JobOrdersPage() {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+          <RefreshCw className="h-8 w-8 animate-spin text-blue-600 mx-auto mb-4" />
           <p className="mt-2 text-muted-foreground">{t("common.loading")}</p>
         </div>
       </div>
@@ -323,59 +446,62 @@ export default function JobOrdersPage() {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">
-            {t("job_orders.title")}
-          </h1>
-          <p className="text-muted-foreground">
-            {t(
-              "job_orders.description",
-              "Manage job orders for production scheduling and tracking",
-            )}
-          </p>
-        </div>
-
-        {selectedJobOrders.size > 0 && (
-          <div className="flex items-center gap-2">
-            <Badge variant="outline" className="bg-primary/10">
-              {selectedJobOrders.size} {t("common.selected")}
-            </Badge>
-            <Button variant="outline" size="sm">
-              {t("common.actions")}
-            </Button>
+    <div className="space-y-4 sm:space-y-6 px-2 sm:px-0">
+      {/* Header - Mobile Optimized */}
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight">
+              {t("job_orders.title")}
+            </h1>
+            <p className="text-sm sm:text-base text-muted-foreground">
+              {t(
+                "job_orders.description",
+                "Manage job orders for production scheduling and tracking",
+              )}
+            </p>
           </div>
-        )}
+
+          {selectedJobOrders.size > 0 && (
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+              <Badge variant="outline" className="bg-primary/10 justify-center">
+                {selectedJobOrders.size} {t("common.selected")}
+              </Badge>
+              <Button variant="outline" size="sm" className="w-full sm:w-auto">
+                {t("common.actions")}
+              </Button>
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* Filters */}
+      {/* Filters - Mobile Optimized */}
       <Card>
-        <CardHeader className="pb-4">
-          <CardTitle className="text-lg flex items-center gap-2">
-            <Filter className="h-5 w-5" />
+        <CardHeader className="pb-3 sm:pb-4">
+          <CardTitle className="text-base sm:text-lg flex items-center gap-2">
+            <Filter className="h-4 w-4 sm:h-5 sm:w-5" />
             {t("common.filters")}
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-            {/* Order No Search */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium">
-                {t("orders.order_no")}
-              </label>
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder={t("common.search_placeholder")}
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
+        <CardContent className="space-y-4">
+          {/* Search Row */}
+          <div className="space-y-2">
+            <label className="text-sm font-medium">
+              {t("orders.order_no")}
+            </label>
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder={t("common.search_placeholder")}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
+              />
             </div>
+          </div>
 
+          {/* Filters Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* Customer Filter */}
             <div className="space-y-2">
               <label className="text-sm font-medium">
@@ -468,7 +594,7 @@ export default function JobOrdersPage() {
             materialFilter !== "all" ||
             masterbatchFilter !== "all" ||
             productFilter !== "all") && (
-            <div className="flex justify-end mt-4">
+            <div className="flex justify-center sm:justify-end mt-4">
               <Button
                 variant="outline"
                 size="sm"
@@ -479,6 +605,7 @@ export default function JobOrdersPage() {
                   setMasterbatchFilter("all");
                   setProductFilter("all");
                 }}
+                className="w-full sm:w-auto"
               >
                 {t("common.clear_filters")}
               </Button>
@@ -487,128 +614,171 @@ export default function JobOrdersPage() {
         </CardContent>
       </Card>
 
-      {/* Job Orders Table */}
-      <Card>
-        <CardHeader className="pb-4">
-          <div className="flex items-center justify-between">
+      {/* Job Orders Display */}
+      <div className="space-y-4">
+        {/* Header with selection controls */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+            <Package className="h-5 w-5 text-blue-600" />
             <div>
-              <CardTitle className="flex items-center gap-2">
-                <Package className="h-5 w-5" />
+              <h2 className="text-lg sm:text-xl font-semibold">
                 {t("job_orders.for_production")}
-              </CardTitle>
-              <CardDescription>
+              </h2>
+              <p className="text-sm text-muted-foreground">
                 {filteredAndSortedJobOrders.length} {t("common.total_records")}
-              </CardDescription>
+              </p>
             </div>
           </div>
-        </CardHeader>
-        <CardContent>
-          <div className="rounded-md border">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-12">
-                    <Checkbox
-                      checked={
-                        selectedJobOrders.size ===
-                          filteredAndSortedJobOrders.length &&
-                        filteredAndSortedJobOrders.length > 0
-                      }
-                      onCheckedChange={handleSelectAll}
-                    />
-                  </TableHead>
-                  <TableHead className="pl-[0px] pr-[0px]">
-                    <SortButton field="orderId">
-                      {t("orders.order_id")}
-                    </SortButton>
-                  </TableHead>
-                  <TableHead>
-                    <SortButton field="id">{t("job_orders.jo_id")}</SortButton>
-                  </TableHead>
-                  <TableHead>
-                    <SortButton field="customerName">
-                      {t("setup.customers.name")}
-                    </SortButton>
-                  </TableHead>
-                  <TableHead>
-                    <SortButton field="productName">
-                      {t("orders.product")}
-                    </SortButton>
-                  </TableHead>
-                  <TableHead>{t("orders.size")}</TableHead>
-                  <TableHead>{t("orders.material")}</TableHead>
-                  <TableHead>{t("common.batch")}</TableHead>
-                  <TableHead>
-                    <SortButton field="quantity">
-                      {t("job_orders.jo_qty")}
-                    </SortButton>
-                  </TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredAndSortedJobOrders.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={9} className="text-center py-8">
-                      <div className="flex flex-col items-center gap-2 text-muted-foreground">
-                        <Package className="h-8 w-8" />
-                        <p>{t("job_orders.no_production_orders")}</p>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  filteredAndSortedJobOrders.map((jobOrder) => (
-                    <TableRow key={jobOrder.id} className="hover:bg-muted/50">
-                      <TableCell>
-                        <Checkbox
-                          checked={selectedJobOrders.has(jobOrder.id)}
-                          onCheckedChange={() =>
-                            handleSelectJobOrder(jobOrder.id)
-                          }
-                        />
-                      </TableCell>
-                      <TableCell className="font-medium">
-                        #{jobOrder.orderId}
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant="outline">JO-{jobOrder.id}</Badge>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          <Users className="h-4 w-4 text-muted-foreground" />
-                          {jobOrder.customer?.name || t("common.unknown")}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          <Factory className="h-4 w-4 text-muted-foreground" />
-                          {jobOrder.item?.name || t("common.unknown")}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        {jobOrder.customerProduct?.sizeCaption || "-"}
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          <Layers className="h-4 w-4 text-muted-foreground" />
-                          {jobOrder.customerProduct?.rawMaterial || "-"}
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-center">
-                        <Badge variant="secondary">
-                          {jobOrder.masterBatch?.name || "-"}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="font-medium">
-                        {jobOrder.quantity.toLocaleString()} kg
-                      </TableCell>
-                    </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
+          
+          {/* Select All Controls */}
+          {filteredAndSortedJobOrders.length > 0 && (
+            <div className="flex items-center gap-2 w-full sm:w-auto">
+              <Checkbox
+                checked={
+                  selectedJobOrders.size === filteredAndSortedJobOrders.length &&
+                  filteredAndSortedJobOrders.length > 0
+                }
+                onCheckedChange={handleSelectAll}
+              />
+              <label className="text-sm font-medium cursor-pointer" onClick={handleSelectAll}>
+                {t("common.select_all")}
+              </label>
+            </div>
+          )}
+        </div>
+        
+        {/* Job Orders Grid */}
+        {filteredAndSortedJobOrders.length === 0 ? (
+          <Card>
+            <CardContent className="py-12 sm:py-16">
+              <div className="text-center">
+                <Package className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                  {t("job_orders.no_production_orders")}
+                </h3>
+                <p className="text-gray-600">
+                  {t("job_orders.no_production_orders_description", "No job orders found for production")}
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="space-y-3 sm:space-y-4">
+            {/* Desktop Table - Hidden on mobile */}
+            <div className="hidden lg:block">
+              <Card>
+                <CardContent className="p-0">
+                  <div className="rounded-md border">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead className="w-12">
+                            <Checkbox
+                              checked={
+                                selectedJobOrders.size ===
+                                  filteredAndSortedJobOrders.length &&
+                                filteredAndSortedJobOrders.length > 0
+                              }
+                              onCheckedChange={handleSelectAll}
+                            />
+                          </TableHead>
+                          <TableHead className="pl-[0px] pr-[0px]">
+                            <SortButton field="orderId">
+                              {t("orders.order_id")}
+                            </SortButton>
+                          </TableHead>
+                          <TableHead>
+                            <SortButton field="id">{t("job_orders.jo_id")}</SortButton>
+                          </TableHead>
+                          <TableHead>
+                            <SortButton field="customerName">
+                              {t("setup.customers.name")}
+                            </SortButton>
+                          </TableHead>
+                          <TableHead>
+                            <SortButton field="productName">
+                              {t("orders.product")}
+                            </SortButton>
+                          </TableHead>
+                          <TableHead>{t("orders.size")}</TableHead>
+                          <TableHead>{t("orders.material")}</TableHead>
+                          <TableHead>{t("common.batch")}</TableHead>
+                          <TableHead>
+                            <SortButton field="quantity">
+                              {t("job_orders.jo_qty")}
+                            </SortButton>
+                          </TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {filteredAndSortedJobOrders.map((jobOrder) => (
+                          <TableRow key={jobOrder.id} className="hover:bg-muted/50">
+                            <TableCell>
+                              <Checkbox
+                                checked={selectedJobOrders.has(jobOrder.id)}
+                                onCheckedChange={() =>
+                                  handleSelectJobOrder(jobOrder.id)
+                                }
+                              />
+                            </TableCell>
+                            <TableCell className="font-medium">
+                              #{jobOrder.orderId}
+                            </TableCell>
+                            <TableCell>
+                              <Badge variant="outline">JO-{jobOrder.id}</Badge>
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex items-center gap-2">
+                                <Users className="h-4 w-4 text-muted-foreground" />
+                                {jobOrder.customer?.name || t("common.unknown")}
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex items-center gap-2">
+                                <Factory className="h-4 w-4 text-muted-foreground" />
+                                {jobOrder.item?.name || t("common.unknown")}
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              {jobOrder.customerProduct?.sizeCaption || "-"}
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex items-center gap-2">
+                                <Layers className="h-4 w-4 text-muted-foreground" />
+                                {jobOrder.customerProduct?.rawMaterial || "-"}
+                              </div>
+                            </TableCell>
+                            <TableCell className="text-center">
+                              <Badge variant="secondary">
+                                {jobOrder.masterBatch?.name || "-"}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="font-medium">
+                              {jobOrder.quantity.toLocaleString()} kg
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+            
+            {/* Mobile Cards - Hidden on desktop */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:hidden gap-3 sm:gap-4">
+              {filteredAndSortedJobOrders.map((jobOrder) => (
+                <JobOrderCard
+                  key={jobOrder.id}
+                  jobOrder={jobOrder}
+                  onSelect={handleSelectJobOrder}
+                  isSelected={selectedJobOrders.has(jobOrder.id)}
+                />
+              ))}
+            </div>
           </div>
-        </CardContent>
-      </Card>
+        )}
+      </div>
     </div>
   );
 }

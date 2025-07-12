@@ -152,11 +152,11 @@ const StatsCard = ({
 
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 border-0 shadow-sm">
-      <CardContent className="p-6">
+      <CardContent className="p-3 sm:p-6">
         <div className="flex items-center justify-between">
-          <div>
-            <p className="text-sm font-medium text-gray-600 mb-1">{title}</p>
-            <p className="text-2xl font-bold text-gray-900">{value}</p>
+          <div className="flex-1 min-w-0">
+            <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1 truncate">{title}</p>
+            <p className="text-lg sm:text-2xl font-bold text-gray-900">{value}</p>
             {trend && (
               <p className={`text-xs font-medium mt-1 flex items-center gap-1 ${trend.positive ? 'text-emerald-600' : 'text-red-600'}`}>
                 {trend.positive ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />}
@@ -164,7 +164,7 @@ const StatsCard = ({
               </p>
             )}
           </div>
-          <div className={`p-3 rounded-full bg-gradient-to-r ${colorConfig[color]}`}>
+          <div className={`p-2 sm:p-3 rounded-full bg-gradient-to-r ${colorConfig[color]} flex-shrink-0`}>
             <div className="text-white">
               {icon}
             </div>
@@ -196,57 +196,58 @@ const OrderCard = ({
   return (
     <Card className="group overflow-hidden hover:shadow-lg transition-all duration-300 border-0 shadow-sm bg-white hover:bg-gray-50/50">
       <CardContent className="p-0">
-        <div className="p-4 bg-gradient-to-r from-gray-50 to-white border-b border-gray-100">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
+        <div className="p-3 sm:p-4 bg-gradient-to-r from-gray-50 to-white border-b border-gray-100">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
               <input
                 type="checkbox"
                 checked={isSelected}
                 onChange={() => onSelect(order.id)}
-                className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500 flex-shrink-0"
               />
-              <div className="flex items-center gap-2">
-                <div></div>
-                <div>
-                  <h3 className="font-semibold text-gray-900">#{order.id}</h3>
-                  <p className="text-xs text-gray-500 flex items-center gap-1 text-center font-bold">
-                    <Calendar className="h-3 w-3" />
-                    {formatDateString(order.date)}
+              <div className="flex items-center gap-2 flex-1 min-w-0">
+                <div className="min-w-0">
+                  <h3 className="font-semibold text-gray-900 text-sm sm:text-base">#{order.id}</h3>
+                  <p className="text-xs text-gray-500 flex items-center gap-1 font-bold">
+                    <Calendar className="h-3 w-3 flex-shrink-0" />
+                    <span className="truncate">{formatDateString(order.date)}</span>
                   </p>
                 </div>
               </div>
             </div>
-            <StatusBadge status={order.status} />
+            <div className="flex-shrink-0">
+              <StatusBadge status={order.status} />
+            </div>
           </div>
         </div>
         
-        <div className="p-4 space-y-3">
+        <div className="p-3 sm:p-4 space-y-3">
           <div className="flex items-center gap-2">
-            <User className="h-4 w-4 text-gray-400" />
-            <div>
-              <p className="text-gray-900 text-center font-bold">{customer?.name || 'Unknown Customer'}</p>
+            <User className="h-4 w-4 text-gray-400 flex-shrink-0" />
+            <div className="flex-1 min-w-0">
+              <p className="text-gray-900 font-bold text-sm sm:text-base truncate">{customer?.name || 'Unknown Customer'}</p>
               {customer?.nameAr && (
-                <p className="font-extrabold text-[18px] text-center text-[#000000]" dir="rtl">{customer.nameAr}</p>
+                <p className="font-extrabold text-base sm:text-lg text-[#000000] truncate" dir="rtl">{customer.nameAr}</p>
               )}
             </div>
           </div>
           
           {order.note && (
             <div className="flex items-start gap-2">
-              <FileText className="h-4 w-4 text-gray-400 mt-0.5" />
-              <p className="text-sm text-gray-600 flex-1">{order.note}</p>
+              <FileText className="h-4 w-4 text-gray-400 mt-0.5 flex-shrink-0" />
+              <p className="text-sm text-gray-600 flex-1 line-clamp-2">{order.note}</p>
             </div>
           )}
           
-          <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-            <Link href={`/orders/${order.id}`}>
-              <Button variant="outline" size="sm" className="gap-2 hover:bg-blue-50 hover:text-blue-600">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 sm:gap-0 pt-3 border-t border-gray-100">
+            <Link href={`/orders/${order.id}`} className="w-full sm:w-auto">
+              <Button variant="outline" size="sm" className="gap-2 hover:bg-blue-50 hover:text-blue-600 w-full sm:w-auto">
                 <Eye className="h-4 w-4" />
-                View Details
+                <span className="sm:inline">View Details</span>
               </Button>
             </Link>
             
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 justify-end">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="sm" className="hover:bg-gray-100">
@@ -287,7 +288,7 @@ const OrderCard = ({
   );
 };
 
-// Quick Filter Button Component
+// Quick Filter Button Component - Mobile Optimized
 const QuickFilterButton = ({ 
   label, 
   count, 
@@ -303,10 +304,10 @@ const QuickFilterButton = ({
     variant={isActive ? "default" : "outline"}
     size="sm"
     onClick={onClick}
-    className={`gap-2 ${isActive ? 'bg-blue-600 hover:bg-blue-700' : 'hover:bg-gray-50'}`}
+    className={`gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3 py-1 sm:py-2 ${isActive ? 'bg-blue-600 hover:bg-blue-700' : 'hover:bg-gray-50'}`}
   >
-    {label}
-    <Badge variant="secondary" className="ml-1 bg-white/20 text-current">
+    <span className="truncate">{label}</span>
+    <Badge variant="secondary" className="ml-1 bg-white/20 text-current text-xs px-1">
       {count}
     </Badge>
   </Button>
@@ -868,91 +869,97 @@ export default function OrdersIndex() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6 px-2 sm:px-0">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-            <ShoppingCart className="h-7 w-7 text-blue-600" />
-            {t('orders.order_management')}
-          </h1>
-          <p className="text-gray-600 mt-1">{t('orders.manage_track_orders')}</p>
-        </div>
-        
-        <div className="flex items-center gap-3">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => refetch()}
-            disabled={isLoading}
-            className="gap-2"
-          >
-            <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
-            {t('common.refresh')}
-          </Button>
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-900 flex items-center gap-2">
+              <ShoppingCart className="h-6 w-6 sm:h-7 sm:w-7 text-blue-600" />
+              {t('orders.order_management')}
+            </h1>
+            <p className="text-sm sm:text-base text-gray-600 mt-1">{t('orders.manage_track_orders')}</p>
+          </div>
           
-          <Button
-            variant="outline"
-            size="sm"
-            className="gap-2"
-          >
-            <Download className="h-4 w-4" />
-            {t('orders.export')}
-          </Button>
-          
-          <Link href="/orders/new">
-            <Button className="gap-2 bg-blue-600 hover:bg-blue-700">
-              <Plus className="h-4 w-4" />
-              {t('orders.new_order')}
-            </Button>
-          </Link>
+          {/* Mobile-first action buttons */}
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => refetch()}
+                disabled={isLoading}
+                className="gap-2 flex-1 sm:flex-initial"
+              >
+                <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+                <span className="hidden sm:inline">{t('common.refresh')}</span>
+              </Button>
+              
+              <Button
+                variant="outline"
+                size="sm"
+                className="gap-2 flex-1 sm:flex-initial"
+              >
+                <Download className="h-4 w-4" />
+                <span className="hidden sm:inline">{t('orders.export')}</span>
+              </Button>
+            </div>
+            
+            <Link href="/orders/new" className="w-full sm:w-auto">
+              <Button className="gap-2 bg-blue-600 hover:bg-blue-700 w-full sm:w-auto">
+                <Plus className="h-4 w-4" />
+                {t('orders.new_order')}
+              </Button>
+            </Link>
+          </div>
         </div>
       </div>
 
-      {/* Statistics Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+      {/* Statistics Cards - Mobile Optimized */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-4">
         <StatsCard 
           title={t('orders.total_orders')} 
           value={stats.total} 
-          icon={<ShoppingCart className="h-5 w-5" />}
+          icon={<ShoppingCart className="h-4 w-4 sm:h-5 sm:w-5" />}
           color="blue"
         />
         <StatsCard 
           title={t('orders.pending')} 
           value={stats.pending} 
-          icon={<Clock className="h-5 w-5" />}
+          icon={<Clock className="h-4 w-4 sm:h-5 sm:w-5" />}
           color="amber"
         />
         <StatsCard 
           title={t('orders.processing')} 
           value={stats.processing} 
-          icon={<Package className="h-5 w-5" />}
+          icon={<Package className="h-4 w-4 sm:h-5 sm:w-5" />}
           color="blue"
         />
         <StatsCard 
           title={t('orders.completed')} 
           value={stats.completed} 
-          icon={<CheckCircle className="h-5 w-5" />}
+          icon={<CheckCircle className="h-4 w-4 sm:h-5 sm:w-5" />}
           color="green"
         />
         <StatsCard 
           title={t('orders.on_hold')} 
           value={stats.hold} 
-          icon={<Pause className="h-5 w-5" />}
+          icon={<Pause className="h-4 w-4 sm:h-5 sm:w-5" />}
           color="red"
         />
       </div>
 
-      {/* Search and Filters */}
+      {/* Search and Filters - Mobile Optimized */}
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Filter className="h-5 w-5" />
+        <CardHeader className="pb-3">
+          <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
+            <Filter className="h-4 w-4 sm:h-5 sm:w-5" />
             {t('orders.search_filters')}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="flex flex-col sm:flex-row gap-4">
+          {/* Search Bar */}
+          <div className="w-full">
             <SmartSearchBox
               onSearch={handleSmartSearch}
               placeholder={t('orders.search_by_id_customer')}
@@ -960,10 +967,13 @@ export default function OrdersIndex() {
               onRecentSearchSelect={handleRecentSearchSelect}
               searchSuggestions={searchSuggestions}
             />
-            
-            <div className="flex gap-2">
+          </div>
+          
+          {/* Filters Row - Mobile Stack */}
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-2 flex-1">
               <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-40">
+                <SelectTrigger className="w-full sm:w-40">
                   <SelectValue placeholder={t('orders.filter_by_status')} />
                 </SelectTrigger>
                 <SelectContent>
@@ -977,7 +987,7 @@ export default function OrdersIndex() {
               </Select>
               
               <Select value={sortBy} onValueChange={setSortBy}>
-                <SelectTrigger className="w-40">
+                <SelectTrigger className="w-full sm:w-40">
                   <SelectValue placeholder={t('orders.sort_by')} />
                 </SelectTrigger>
                 <SelectContent>
@@ -992,10 +1002,10 @@ export default function OrdersIndex() {
                 variant="outline"
                 size="sm"
                 onClick={() => setSortOrder(sortOrder === "asc" ? "desc" : "asc")}
-                className="gap-2"
+                className="gap-2 flex-shrink-0"
               >
                 {sortOrder === "asc" ? <ArrowUp className="h-4 w-4" /> : <ArrowDown className="h-4 w-4" />}
-                {sortOrder === "asc" ? t('orders.asc') : t('orders.desc')}
+                <span className="hidden sm:inline">{sortOrder === "asc" ? t('orders.asc') : t('orders.desc')}</span>
               </Button>
             </div>
           </div>
@@ -1036,28 +1046,29 @@ export default function OrdersIndex() {
         </CardContent>
       </Card>
 
-      {/* Bulk Actions */}
+      {/* Bulk Actions - Mobile Optimized */}
       {selectedOrders.length > 0 && (
         <Card className="bg-blue-50 border-blue-200">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
+          <CardContent className="p-3 sm:p-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
+              <div className="flex items-center gap-2 flex-1">
                 <input
                   type="checkbox"
                   checked={selectedOrders.length === filteredOrders?.length}
                   onChange={handleSelectAll}
-                  className="w-4 h-4 text-blue-600 rounded border-gray-300"
+                  className="w-4 h-4 text-blue-600 rounded border-gray-300 flex-shrink-0"
                 />
-                <span className="text-blue-700 font-medium">
+                <span className="text-blue-700 font-medium text-sm sm:text-base">
                   {selectedOrders.length} {selectedOrders.length !== 1 ? t('orders.orders') : t('orders.order')} {t('orders.selected')}
                 </span>
               </div>
               
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 w-full sm:w-auto">
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => setSelectedOrders([])}
+                  className="flex-1 sm:flex-initial"
                 >
                   {t('orders.clear_selection')}
                 </Button>
@@ -1065,10 +1076,11 @@ export default function OrdersIndex() {
                   variant="destructive"
                   size="sm"
                   onClick={handleBulkDelete}
-                  className="gap-2"
+                  className="gap-2 flex-1 sm:flex-initial"
                 >
                   <Trash2 className="h-4 w-4" />
-                  {t('orders.delete_selected')}
+                  <span className="hidden sm:inline">{t('orders.delete_selected')}</span>
+                  <span className="sm:hidden">Delete</span>
                 </Button>
               </div>
             </div>
@@ -1076,21 +1088,21 @@ export default function OrdersIndex() {
         </Card>
       )}
 
-      {/* Orders Grid */}
-      <div className="space-y-4">
+      {/* Orders Grid - Mobile Optimized */}
+      <div className="space-y-3 sm:space-y-4">
         {!filteredOrders || filteredOrders.length === 0 ? (
           <Card>
-            <CardContent className="py-16">
+            <CardContent className="py-12 sm:py-16 px-4">
               <div className="text-center">
-                <ShoppingCart className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">{t('orders.no_orders_found')}</h3>
-                <p className="text-gray-600 mb-4">
+                <ShoppingCart className="h-10 w-10 sm:h-12 sm:w-12 text-gray-400 mx-auto mb-4" />
+                <h3 className="text-base sm:text-lg font-medium text-gray-900 mb-2">{t('orders.no_orders_found')}</h3>
+                <p className="text-sm sm:text-base text-gray-600 mb-4">
                   {searchQuery || statusFilter !== "all" 
                     ? t('orders.no_orders_match_filters') 
                     : t('orders.get_started_create_order')}
                 </p>
                 <Link href="/orders/new">
-                  <Button className="gap-2">
+                  <Button className="gap-2 w-full sm:w-auto">
                     <Plus className="h-4 w-4" />
                     {t('orders.create_order')}
                   </Button>
@@ -1099,7 +1111,7 @@ export default function OrdersIndex() {
             </CardContent>
           </Card>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
             {filteredOrders.map((order) => (
               <OrderCard
                 key={order.id}
