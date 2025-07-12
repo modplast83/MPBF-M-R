@@ -31,7 +31,7 @@ export const ButtonPulse = ({
       onClick={handleClick}
       whileTap={{ scale: 0.95 }}
       // Explicitly cast props to avoid type conflicts with motion props
-      {...(props as any)}
+      {...(props as React.ButtonHTMLAttributes<HTMLButtonElement>)}
     >
       {isPulsing && (
         <motion.span

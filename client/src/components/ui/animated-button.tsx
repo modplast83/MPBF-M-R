@@ -10,7 +10,9 @@ export const AnimatedButton = ({
   onClick,
   className = "",
   ...props
-}: React.ComponentProps<typeof Button>) => {
+}: React.ComponentProps<typeof Button> & {
+  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
+}) => {
   const [isPulsing, setIsPulsing] = useState(false);
 
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
