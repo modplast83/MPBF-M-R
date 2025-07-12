@@ -3870,6 +3870,7 @@
         "follow_all_requests": "تتبع جميع طلبات الصيانة",
         "no_maintenance_request": "لا توجد طلبات صيانة",
         "type": "النوع",
+        "REQUEST_ID": "معرف الطلب",
         "action_count": "عدد الإجراءات",
         "action": "إجراء",
         "actions_plural": "إجراءات",
@@ -3924,7 +3925,12 @@
         "actions": "الإجراءات",
         "view_details": "عرض التفاصيل",
         "print_request": "طباعة الطلب",
-        "damage_ty"
+        "damage_types":{
+          "damage_types_Motor": "مشكلة في المحرك",
+          "Motor Issue": "مشكلة في المحرك",
+          "Other Issue": "مشكلة أخرى",
+          "Bearing Problem": "مشكلة في المحامل"
+        },
         "damage_types_Belt": "مشكلة في السير",
         "damage_types_Bearing": "مشكلة في المحامل",
         "damage_types_Control_panel": "مشكلة في لوحة التحكم",
