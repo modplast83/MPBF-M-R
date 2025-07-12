@@ -55,7 +55,7 @@ export const API_ENDPOINTS = {
 
   // Maintenance Module
   MAINTENANCE_REQUESTS: "/api/maintenance-requests",
-  MAINTENANCE_ACTIONS: "/api/maintenance-actions",
+  MAINTENANCE_ACTIONS: "/api/maintenance/actions",
   MAINTENANCE_SCHEDULE: "/api/maintenance-schedule",
 };
 

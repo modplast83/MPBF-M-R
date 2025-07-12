@@ -7771,6 +7771,17 @@ COMMIT;
     }
   });
 
+  // Fallback route for old endpoint (backward compatibility)
+  app.get("/api/maintenance-actions", async (req: Request, res: Response) => {
+    try {
+      const actions = await storage.getMaintenanceActions();
+      res.json(actions);
+    } catch (error) {
+      console.error("Error fetching maintenance actions:", error);
+      res.status(500).json({ error: "Failed to fetch maintenance actions" });
+    }
+  });
+
   app.get(
     "/api/maintenance/actions/request/:requestId",
     async (req: Request, res: Response) => {
