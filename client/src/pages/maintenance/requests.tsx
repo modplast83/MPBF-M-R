@@ -925,15 +925,15 @@ export default function MaintenanceRequestsPage() {
       {/* Requests Table */}
       <Card>
         <CardHeader className="flex flex-col space-y-1.5 p-6 pl-[20px] pr-[20px]">
-          <CardTitle>Maintenance Requests</CardTitle>
-          <CardDescription>Follow All Maintenance Requests</CardDescription>
+          <CardTitle>{t("maintenance.requests.maintenance_requests")}</CardTitle>
+          <CardDescription>{t("maintenance.requests.follow_all_requests")}</CardDescription>
         </CardHeader>
         <CardContent>
           {requestsLoading ? (
             <div className="text-center py-4">{t("common.loading")}</div>
           ) : filteredRequests.length === 0 ? (
             <div className="text-center py-4 text-gray-500">
-              No maintenance Request found
+              {t("maintenance.requests.no_maintenance_request")}
             </div>
           ) : isMobile ? (
             <div className="space-y-3">
@@ -949,31 +949,30 @@ export default function MaintenanceRequestsPage() {
 
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Machine:</span>
+                      <span className="text-gray-600">{t("maintenance.requests.machine")}:</span>
                       <span className="font-medium">
                         {getMachineName(request.machineId)}
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Type:</span>
-                      <span>{t(request.damageType)}</span>
+                      <span className="text-gray-600">{t("maintenance.requests.type")}:</span>
+                      <span>{t(`maintenance.requests.damage_types.${request.damageType}`) || request.damageType}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Date:</span>
+                      <span className="text-gray-600">{t("maintenance.requests.date")}:</span>
                       <span>{formatDate(new Date(request.createdAt))}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Reported by:</span>
+                      <span className="text-gray-600">{t("maintenance.requests.reported_by")}:</span>
                       <span>{getUserName(request.reportedBy)}</span>
                     </div>
                   </div>
 
                   <div className="mt-3 pt-3 border-t">
                     <div className="flex justify-between items-center mb-2">
-                      <p className="text-sm font-medium">Actions:</p>
+                      <p className="text-sm font-medium">{t("maintenance.requests.actions")}:</p>
                       <Badge variant="outline" className="text-xs">
-                        {getActionCount(request.id)} action
-                        {getActionCount(request.id) !== 1 ? "s" : ""}
+                        {getActionCount(request.id)} {getActionCount(request.id) === 1 ? t("maintenance.requests.action") : t("maintenance.requests.actions_plural")}
                       </Badge>
                     </div>
                     <p
@@ -990,7 +989,7 @@ export default function MaintenanceRequestsPage() {
                         size="sm"
                         variant="outline"
                         onClick={() => handleViewRequest(request)}
-                        title="View Details"
+                        title={t("maintenance.requests.view_details")}
                       >
                         <Eye className="h-4 w-4" />
                       </Button>
@@ -998,7 +997,7 @@ export default function MaintenanceRequestsPage() {
                         size="sm"
                         variant="outline"
                         onClick={() => handlePrint(request)}
-                        title="Print Request"
+                        title={t("maintenance.requests.print_request")}
                       >
                         <Printer className="h-4 w-4" />
                       </Button>
@@ -1006,7 +1005,7 @@ export default function MaintenanceRequestsPage() {
                         size={"sm" as const}
                         variant="outline"
                         onClick={() => handleEditRequest(request)}
-                        title="Edit Request"
+                        title={t("maintenance.requests.edit_request")}
                       >
                         <Edit className="h-4 w-4" />
                       </Button>
@@ -1014,7 +1013,7 @@ export default function MaintenanceRequestsPage() {
                         size={"sm" as const}
                         variant="outline"
                         onClick={() => handleChangeStatus(request)}
-                        title="Change Status"
+                        title={t("maintenance.requests.change_status")}
                       >
                         <Settings className="h-4 w-4" />
                       </Button>
@@ -1022,7 +1021,7 @@ export default function MaintenanceRequestsPage() {
                         size="sm"
                         variant="outline"
                         onClick={() => handleAddMaintenanceAction(request)}
-                        title="Add New Maintenance Action (Multiple actions allowed)"
+                        title={t("maintenance.requests.add_action")}
                       >
                         <Wrench className="h-4 w-4" />
                       </Button>
@@ -1030,7 +1029,7 @@ export default function MaintenanceRequestsPage() {
                         size="sm"
                         variant="outline"
                         onClick={() => handleDeleteRequest(request.id)}
-                        title="Delete Request"
+                        title={t("maintenance.requests.delete_request")}
                         className="text-red-600 hover:text-red-700"
                       >
                         <Trash2 className="h-4 w-4" />
@@ -1045,22 +1044,22 @@ export default function MaintenanceRequestsPage() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="text-center">Request ID</TableHead>
+                    <TableHead className="text-center">{t("maintenance.requests.request_id")}</TableHead>
                     <TableHead className="text-center">
                       {t("maintenance.requests.date")}
                     </TableHead>
                     <TableHead className="text-center">
                       {t("maintenance.requests.machine")}
                     </TableHead>
-                    <TableHead className="text-center">Type</TableHead>
+                    <TableHead className="text-center">{t("maintenance.requests.type")}</TableHead>
                     <TableHead className="text-center">
                       {t("maintenance.requests.severity")}
                     </TableHead>
                     <TableHead className="text-center">
                       {t("maintenance.requests.status")}
                     </TableHead>
-                    <TableHead className="text-center">Reported By</TableHead>
-                    <TableHead className="text-center">Actions</TableHead>
+                    <TableHead className="text-center">{t("maintenance.requests.reported_by")}</TableHead>
+                    <TableHead className="text-center">{t("maintenance.requests.actions")}</TableHead>
                     <TableHead className="text-center">
                       {t("maintenance.requests.description")}
                     </TableHead>
@@ -1079,7 +1078,7 @@ export default function MaintenanceRequestsPage() {
                         {formatDate(new Date(request.createdAt))}
                       </TableCell>
                       <TableCell>{getMachineName(request.machineId)}</TableCell>
-                      <TableCell>{t(request.damageType)}</TableCell>
+                      <TableCell>{t(`maintenance.requests.damage_types.${request.damageType}`) || request.damageType}</TableCell>
                       <TableCell>
                         {getSeverityBadge(request.severity)}
                       </TableCell>
@@ -1087,8 +1086,7 @@ export default function MaintenanceRequestsPage() {
                       <TableCell>{getUserName(request.reportedBy)}</TableCell>
                       <TableCell className="text-center">
                         <Badge variant="outline" className="text-xs">
-                          {getActionCount(request.id)} action
-                          {getActionCount(request.id) !== 1 ? "s" : ""}
+                          {getActionCount(request.id)} {getActionCount(request.id) === 1 ? t("maintenance.requests.action") : t("maintenance.requests.actions_plural")}
                         </Badge>
                       </TableCell>
                       <TableCell
@@ -1103,7 +1101,7 @@ export default function MaintenanceRequestsPage() {
                             size="sm"
                             variant="outline"
                             onClick={() => handleViewRequest(request)}
-                            title="View Details"
+                            title={t("maintenance.requests.view_details")}
                           >
                             <Eye className="h-4 w-4" />
                           </Button>
@@ -1111,7 +1109,7 @@ export default function MaintenanceRequestsPage() {
                             size="sm"
                             variant="outline"
                             onClick={() => handlePrint(request)}
-                            title="Print Request"
+                            title={t("maintenance.requests.print_request")}
                           >
                             <Printer className="h-4 w-4" />
                           </Button>
@@ -1119,7 +1117,7 @@ export default function MaintenanceRequestsPage() {
                             size="sm"
                             variant="outline"
                             onClick={() => handleEditRequest(request)}
-                            title="Edit Request"
+                            title={t("maintenance.requests.edit_request")}
                           >
                             <Edit className="h-4 w-4" />
                           </Button>
@@ -1127,7 +1125,7 @@ export default function MaintenanceRequestsPage() {
                             size="sm"
                             variant="outline"
                             onClick={() => handleChangeStatus(request)}
-                            title="Change Status"
+                            title={t("maintenance.requests.change_status")}
                           >
                             <Settings className="h-4 w-4" />
                           </Button>
@@ -1135,7 +1133,7 @@ export default function MaintenanceRequestsPage() {
                             size="sm"
                             variant="outline"
                             onClick={() => handleAddMaintenanceAction(request)}
-                            title="Add New Maintenance Action (Multiple actions allowed)"
+                            title={t("maintenance.requests.add_action")}
                           >
                             <Wrench className="h-4 w-4" />
                           </Button>
@@ -1143,7 +1141,7 @@ export default function MaintenanceRequestsPage() {
                             size="sm"
                             variant="outline"
                             onClick={() => handleDeleteRequest(request.id)}
-                            title="Delete Request"
+                            title={t("maintenance.requests.delete_request")}
                             className="text-red-600 hover:text-red-700"
                           >
                             <Trash2 className="h-4 w-4" />
@@ -1163,20 +1161,20 @@ export default function MaintenanceRequestsPage() {
       <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Maintenance Request Details</DialogTitle>
+            <DialogTitle>{t("maintenance.requests.maintenance_request_details")}</DialogTitle>
             <DialogDescription>
-              View complete information about this maintenance request
+              {t("maintenance.requests.view_complete_information")}
             </DialogDescription>
           </DialogHeader>
           {selectedRequest && (
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label className="font-semibold">Request ID:</Label>
+                  <Label className="font-semibold">{t("maintenance.requests.request_id")}:</Label>
                   <p>#{selectedRequest.id}</p>
                 </div>
                 <div>
-                  <Label className="font-semibold">Date Created:</Label>
+                  <Label className="font-semibold">{t("maintenance.requests.date_created")}:</Label>
                   <p>
                     {formatDate(
                       new Date(selectedRequest.createdAt),
@@ -1185,42 +1183,42 @@ export default function MaintenanceRequestsPage() {
                   </p>
                 </div>
                 <div>
-                  <Label className="font-semibold">Machine:</Label>
+                  <Label className="font-semibold">{t("maintenance.requests.machine")}:</Label>
                   <p>{getMachineName(selectedRequest.machineId)}</p>
                 </div>
                 <div>
-                  <Label className="font-semibold">Damage Type:</Label>
-                  <p>{t(selectedRequest.damageType)}</p>
+                  <Label className="font-semibold">{t("maintenance.requests.damage_type")}:</Label>
+                  <p>{t(`maintenance.requests.damage_types.${selectedRequest.damageType}`) || selectedRequest.damageType}</p>
                 </div>
                 <div>
-                  <Label className="font-semibold">Severity:</Label>
+                  <Label className="font-semibold">{t("maintenance.requests.severity")}:</Label>
                   <div className="mt-1">
                     {getSeverityBadge(selectedRequest.severity)}
                   </div>
                 </div>
                 <div>
-                  <Label className="font-semibold">Status:</Label>
+                  <Label className="font-semibold">{t("maintenance.requests.status")}:</Label>
                   <div className="mt-1">
                     {getStatusBadge(selectedRequest.status)}
                   </div>
                 </div>
                 <div>
-                  <Label className="font-semibold">Reported By:</Label>
+                  <Label className="font-semibold">{t("maintenance.requests.reported_by")}:</Label>
                   <p>{getUserName(selectedRequest.reportedBy)}</p>
                 </div>
                 <div>
-                  <Label className="font-semibold">Priority:</Label>
+                  <Label className="font-semibold">{t("maintenance.requests.priority")}:</Label>
                   <p>
                     {selectedRequest.priority === 1
-                      ? "High"
+                      ? t("maintenance.requests.high_priority")
                       : selectedRequest.priority === 2
-                        ? "Normal"
-                        : "Low"}
+                        ? t("maintenance.requests.normal_priority")
+                        : t("maintenance.requests.low_priority")}
                   </p>
                 </div>
               </div>
               <div>
-                <Label className="font-semibold">Description:</Label>
+                <Label className="font-semibold">{t("maintenance.requests.description")}:</Label>
                 <p className="mt-1 p-3 bg-gray-50 rounded border">
                   {selectedRequest.description}
                 </p>
