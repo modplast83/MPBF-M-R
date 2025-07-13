@@ -12,23 +12,23 @@ export function StatusBadge({ status, className }: StatusBadgeProps) {
     switch (status.toLowerCase()) {
       case "pending":
         return {
-          classes: "bg-amber-50 text-amber-700 border-amber-200",
+          classes: "bg-yellow-100 text-yellow-800 border-yellow-300",
           icon: "hourglass_empty",
         };
       case "processing":
         return {
-          classes: "bg-blue-50 text-blue-700 border-blue-200",
+          classes: "bg-blue-100 text-blue-800 border-blue-300",
           icon: "sync",
         };
       case "completed":
         return {
-          classes: "bg-emerald-50 text-emerald-700 border-emerald-200",
+          classes: "bg-green-100 text-green-800 border-green-300",
           icon: "check_circle",
         };
       case "cancelled":
       case "rejected":
         return {
-          classes: "bg-red-50 text-red-700 border-red-200",
+          classes: "bg-red-100 text-red-800 border-red-300",
           icon: "cancel",
         };
       case "extrusion":
@@ -48,7 +48,7 @@ export function StatusBadge({ status, className }: StatusBadgeProps) {
         };
       case "hold":
         return {
-          classes: "bg-orange-50 text-orange-700 border-orange-200",
+          classes: "bg-orange-100 text-orange-800 border-orange-300",
           icon: "pause_circle",
         };
       case "in stock":

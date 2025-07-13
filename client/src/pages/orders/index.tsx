@@ -89,27 +89,27 @@ const StatusBadge = ({ status }: { status: string }) => {
   const statusConfig = {
     pending: { 
       label: "Pending", 
-      color: "bg-amber-50 text-amber-700 border-amber-200", 
+      color: "bg-yellow-100 text-yellow-800 border-yellow-300", 
       icon: <Clock className="h-3 w-3" />,
     },
     processing: { 
       label: "For Production", 
-      color: "bg-blue-50 text-blue-700 border-blue-200", 
+      color: "bg-blue-100 text-blue-800 border-blue-300", 
       icon: <Package className="h-3 w-3" />,
     },
     completed: { 
       label: "Completed", 
-      color: "bg-emerald-50 text-emerald-700 border-emerald-200", 
+      color: "bg-green-100 text-green-800 border-green-300", 
       icon: <CheckCircle className="h-3 w-3" />,
     },
     cancelled: { 
       label: "Cancelled", 
-      color: "bg-red-50 text-red-700 border-red-200", 
+      color: "bg-red-100 text-red-800 border-red-300", 
       icon: <XCircle className="h-3 w-3" />,
     },
     hold: { 
       label: "On Hold", 
-      color: "bg-orange-50 text-orange-700 border-orange-200", 
+      color: "bg-orange-100 text-orange-800 border-orange-300", 
       icon: <Pause className="h-3 w-3" />,
     },
   };
@@ -123,7 +123,7 @@ const StatusBadge = ({ status }: { status: string }) => {
   return (
     <Badge 
       variant="secondary" 
-      className="transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 hover:bg-secondary/80 bg-blue-50 text-blue-700 border-blue-200 text-xs border inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-center font-bold"
+      className={`transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 hover:bg-secondary/80 ${config.color} text-xs border inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-center font-bold`}
     >
       {config.icon}
       {config.label}
