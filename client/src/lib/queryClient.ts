@@ -76,7 +76,18 @@ export async function apiRequest(
     return result;
   } catch (error) {
     console.error(`API Request error for ${method} ${endpoint}:`, error);
-    throw error;
+    
+    // Handle network errors specifically
+    if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
+      throw new Error(`Network error: Unable to connect to server. Please check your connection and try again.`);
+    }
+    
+    // Handle other common errors
+    if (error instanceof Error) {
+      throw error;
+    }
+    
+    throw new Error(`Unexpected error: ${String(error)}`);
   }
 }
 
@@ -111,7 +122,8 @@ export const queryClient = new QueryClient({
       refetchInterval: false,
       refetchOnWindowFocus: true,
       staleTime: 300000, // 5 minutes instead of Infinity
-      retry: false,
+      retry: 1,
+      retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
     },
     mutations: {
       retry: false,

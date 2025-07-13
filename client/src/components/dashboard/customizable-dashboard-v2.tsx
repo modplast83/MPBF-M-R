@@ -462,7 +462,11 @@ export function CustomizableDashboardV2() {
 
       {/* Dashboard Grid - Mobile Optimized */}
       <DragDropContext onDragEnd={handleDragEnd}>
-        <Droppable droppableId="dashboard-widgets" direction="vertical">
+        <Droppable 
+          droppableId="dashboard-widgets" 
+          direction="vertical"
+          isDropDisabled={Boolean(!isEditMode)}
+        >
           {(provided, snapshot) => (
             <div
               {...provided.droppableProps}
@@ -484,7 +488,7 @@ export function CustomizableDashboardV2() {
                   key={widget.id}
                   draggableId={widget.id}
                   index={index}
-                  isDragDisabled={!isEditMode}
+                  isDragDisabled={Boolean(!isEditMode)}
                 >
                   {(provided, snapshot) => (
                     <div

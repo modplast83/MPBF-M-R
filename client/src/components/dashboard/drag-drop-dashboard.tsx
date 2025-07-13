@@ -248,7 +248,11 @@ export function DragDropDashboard({
 
       {/* Dashboard Grid */}
       <DragDropContext onDragEnd={handleDragEnd}>
-        <Droppable droppableId="dashboard-grid" direction="horizontal">
+        <Droppable 
+          droppableId="dashboard-grid" 
+          direction="horizontal"
+          isDropDisabled={Boolean(!isEditMode)}
+        >
           {(provided, snapshot) => (
             <div
               {...provided.droppableProps}
@@ -268,7 +272,7 @@ export function DragDropDashboard({
                     key={widget.id}
                     draggableId={widget.id.toString()}
                     index={index}
-                    isDragDisabled={!isEditMode}
+                    isDragDisabled={Boolean(!isEditMode)}
                   >
                     {(provided, snapshot) => (
                       <div
