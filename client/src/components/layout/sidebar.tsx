@@ -189,11 +189,13 @@ export default function Sidebar({
   return (
     <aside
       className={cn(
-        "bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white h-full min-h-screen flex flex-col transition-all duration-300 shadow-2xl overflow-hidden border-r border-slate-700/30",
+        "bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white h-full min-h-screen flex flex-col transition-all duration-300 shadow-2xl overflow-hidden border-slate-700/30",
         expanded ? "w-[280px]" : "w-[80px]",
         isMobile ? "static w-full" : "fixed top-0 z-50",
         !isMobile && (isRTL ? "right-0" : "left-0"),
+        isRTL ? "border-l" : "border-r"
       )}
+      dir={isRTL ? "rtl" : "ltr"}
     >
       {/* Header with Logo */}
       <div
@@ -268,8 +270,9 @@ export default function Sidebar({
         <div className="px-4 py-3 border-b border-slate-700/50">
           <div className="relative">
             <div className={cn(
-              "absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none transition-all duration-200",
-              isSearchFocused ? "text-blue-400" : "text-slate-400"
+              "absolute inset-y-0 flex items-center pointer-events-none transition-all duration-200",
+              isSearchFocused ? "text-blue-400" : "text-slate-400",
+              isRTL ? "right-0 pr-3" : "left-0 pl-3"
             )}>
               <Search className="h-4 w-4" />
             </div>
@@ -281,14 +284,18 @@ export default function Sidebar({
               onFocus={() => setIsSearchFocused(true)}
               onBlur={() => setIsSearchFocused(false)}
               className={cn(
-                "pl-10 pr-8 py-2 bg-slate-800/50 border-slate-700/50 text-white placeholder-slate-400 focus:bg-slate-800/80 focus:border-blue-400 focus:ring-1 focus:ring-blue-400 transition-all duration-200 rounded-lg",
-                isSearchFocused && "shadow-lg shadow-blue-500/20"
+                "py-2 bg-slate-800/50 border-slate-700/50 text-white placeholder-slate-400 focus:bg-slate-800/80 focus:border-blue-400 focus:ring-1 focus:ring-blue-400 transition-all duration-200 rounded-lg",
+                isSearchFocused && "shadow-lg shadow-blue-500/20",
+                isRTL ? "pr-10 pl-8" : "pl-10 pr-8"
               )}
             />
             {searchTerm && (
               <button
                 onClick={() => setSearchTerm("")}
-                className="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-white transition-colors duration-200"
+                className={cn(
+                  "absolute inset-y-0 flex items-center text-slate-400 hover:text-white transition-colors duration-200",
+                  isRTL ? "left-0 pl-3" : "right-0 pr-3"
+                )}
               >
                 <X className="h-4 w-4" />
               </button>
@@ -304,7 +311,10 @@ export default function Sidebar({
             section.items.length > 0 && (
               <div key={sectionIndex} className="space-y-2">
                 {expanded && (
-                  <div className="px-3 py-2 text-slate-400 uppercase tracking-widest text-xs font-bold border-b border-slate-700/30 mb-3">
+                  <div className={cn(
+                    "px-3 py-2 text-slate-400 uppercase tracking-widest text-xs font-bold border-b border-slate-700/30 mb-3",
+                    isRTL ? "text-right" : "text-left"
+                  )}>
                     {t(`sidebar.${section.title.toLowerCase()}`)}
                   </div>
                 )}
@@ -326,7 +336,10 @@ export default function Sidebar({
                                 "w-full justify-start text-slate-300 hover:text-white hover:bg-gradient-to-r hover:from-blue-600/20 hover:to-indigo-600/20 transition-all duration-300 group rounded-lg h-11 font-medium",
                                 isRTL && "flex-row-reverse",
                                 isActive(item.path) &&
-                                  "bg-gradient-to-r from-blue-600/30 to-indigo-600/30 text-white border-l-3 border-blue-400 shadow-lg",
+                                  cn(
+                                    "bg-gradient-to-r from-blue-600/30 to-indigo-600/30 text-white shadow-lg",
+                                    isRTL ? "border-r-3 border-blue-400" : "border-l-3 border-blue-400"
+                                  ),
                               )}
                             >
                               <div className={cn(
@@ -338,7 +351,10 @@ export default function Sidebar({
                               </div>
                               {expanded && (
                                 <>
-                                  <span className="flex-1 text-left text-sm">
+                                  <span className={cn(
+                                    "flex-1 text-sm",
+                                    isRTL ? "text-right" : "text-left"
+                                  )}>
                                     {t(
                                       `sidebar.${item.title.toLowerCase().replace(/ /g, "_")}`,
                                     )}
@@ -371,7 +387,10 @@ export default function Sidebar({
                                       "w-full justify-start text-slate-400 hover:text-white hover:bg-gradient-to-r hover:from-slate-700/30 hover:to-slate-600/30 transition-all duration-300 ml-8 rounded-lg h-10",
                                       isRTL && "flex-row-reverse mr-8 ml-0",
                                       isActive(subItem.path) &&
-                                        "bg-gradient-to-r from-blue-600/40 to-indigo-600/40 text-blue-200 border-l-3 border-blue-400 shadow-md",
+                                        cn(
+                                          "bg-gradient-to-r from-blue-600/40 to-indigo-600/40 text-blue-200 shadow-md",
+                                          isRTL ? "border-r-3 border-blue-400" : "border-l-3 border-blue-400"
+                                        ),
                                     )}
                                   >
                                     <div
@@ -403,7 +422,10 @@ export default function Sidebar({
                               "w-full justify-start text-slate-300 hover:text-white hover:bg-gradient-to-r hover:from-blue-600/20 hover:to-indigo-600/20 transition-all duration-300 group rounded-lg h-11 font-medium",
                               isRTL && "flex-row-reverse",
                               isActive(item.path) &&
-                                "bg-gradient-to-r from-blue-600/30 to-indigo-600/30 text-white border-l-3 border-blue-400 shadow-lg",
+                                cn(
+                                  "bg-gradient-to-r from-blue-600/30 to-indigo-600/30 text-white shadow-lg",
+                                  isRTL ? "border-r-3 border-blue-400" : "border-l-3 border-blue-400"
+                                ),
                             )}
                           >
                             <div className={cn(
@@ -435,7 +457,10 @@ export default function Sidebar({
         {expanded ? (
           <div className="space-y-3">
             {/* User Profile */}
-            <div className="flex items-center space-x-3 p-3 rounded-lg bg-slate-800/50 hover:bg-slate-800/80 transition-all duration-300">
+            <div className={cn(
+              "flex items-center p-3 rounded-lg bg-slate-800/50 hover:bg-slate-800/80 transition-all duration-300",
+              isRTL ? "space-x-reverse space-x-3" : "space-x-3"
+            )}>
               <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white font-bold text-sm">
                 {user?.username?.charAt(0).toUpperCase() || 'U'}
               </div>
