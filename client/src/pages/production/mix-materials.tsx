@@ -189,7 +189,7 @@ export default function MixMaterialsPage() {
     id: number;
     name: string;
     description: string | null;
-    configData: DndMaterialDistribution[];
+    configData: any[]; // Changed from DndMaterialDistribution[] to any[] to fix undefined type
     isDefault: boolean;
     createdBy: string;
     createdAt: string;

@@ -49,8 +49,7 @@ import { useAuth } from "@/hooks/use-auth-v2";
 // Badge variants for success/warning states
 const badgeVariants = {
   success: "bg-green-500 text-white hover:bg-green-600",
-  destructive:
-    "bg-destructive text-destructive-foreground hover:bg-destructive/80",
+  destructive: "bg-red-500 text-white hover:bg-red-600",
 };
 
 export function QualityChecksManagement() {
