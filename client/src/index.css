@@ -72,6 +72,41 @@
     background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary)) 50%, hsl(var(--accent)) 100%);
   }
 
+  /* Professional Scrollbar */
+  .scrollbar-hide {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Professional Sidebar Scrollbar */
+  .sidebar-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(71, 85, 105, 0.5) rgba(51, 65, 85, 0.2);
+  }
+
+  .sidebar-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .sidebar-scrollbar::-webkit-scrollbar-track {
+    background: rgba(51, 65, 85, 0.2);
+    border-radius: 10px;
+  }
+
+  .sidebar-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(71, 85, 105, 0.5);
+    border-radius: 10px;
+    transition: background 0.3s ease;
+  }
+
+  .sidebar-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(71, 85, 105, 0.8);
+  }
+
   /* Professional Card Hover Effect */
   .card-hover {
     @apply hover:shadow-xl hover:scale-[1.02] transition-all duration-300;

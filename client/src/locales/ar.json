@@ -935,7 +935,10 @@
       "user_dashboard": "لوحة تحكم المستخدم",
       "server_management": "إدارة الخادم",
       "user": "المستخدم",
-      "role": "الدور"
+      "role": "الدور",
+      "search_placeholder": "البحث في القائمة...",
+      "admin": "مدير النظام",
+      "user": "مستخدم"
     },
     "quick_actions": {
       "title": "الإجراءات السريعة",

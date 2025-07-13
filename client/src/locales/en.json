@@ -521,7 +521,10 @@
       "my_employee_ranks_management": "My Employee Ranks Management",
       "user_dashboard": "User Dashboard",
       "employee": "Employee",
-      "server_management": "Server Management"
+      "server_management": "Server Management",
+      "search_placeholder": "Search navigation...",
+      "admin": "Administrator",
+      "user": "User"
     },
 
     "quick_actions": {
