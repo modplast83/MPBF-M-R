@@ -18,6 +18,7 @@ import { Separator } from "@/components/ui/separator";
 import { Progress } from "@/components/ui/progress";
 import jsPDF from "jspdf";
 import { useMutation } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import {
   ChevronLeft,
   ChevronRight,
@@ -210,6 +211,7 @@ export default function OrderDesignPage() {
   const [textSize, setTextSize] = useState(16);
 
   const { toast } = useToast();
+  const { t } = useTranslation();
 
   // Email quote request mutation
   const emailQuoteMutation = useMutation({
@@ -224,27 +226,27 @@ export default function OrderDesignPage() {
     },
     onSuccess: () => {
       toast({
-        title: "Quote Request Sent",
-        description: "Your quote request has been emailed to management.",
+        title: t("tools.order_design.review.quote_submitted"),
+        description: t("tools.order_design.review.quote_submitted_desc"),
       });
     },
     onError: () => {
       toast({
-        title: "Email Failed",
-        description: "Failed to send quote request. Please try again.",
+        title: t("tools.order_design.validation.invalid_file_type"),
+        description: t("tools.order_design.validation.invalid_file_type_desc"),
         variant: "destructive",
       });
     },
   });
 
   const steps = [
-    "Product Selection",
-    "Specifications",
-    "Material & Color",
-    "Design Upload",
-    "Design Editor",
-    "Customer Info",
-    "Review & Quote",
+    t("tools.order_design.steps.product_selection"),
+    t("tools.order_design.steps.specifications"),
+    t("tools.order_design.steps.material_color"),
+    t("tools.order_design.steps.design_upload"),
+    t("tools.order_design.steps.design_editor"),
+    t("tools.order_design.steps.customer_info"),
+    t("tools.order_design.steps.review_quote"),
   ];
 
   // Calculate estimated cost based on specifications
@@ -657,8 +659,8 @@ export default function OrderDesignPage() {
     ];
     if (!validTypes.includes(file.type)) {
       toast({
-        title: "Invalid file type",
-        description: "Please upload PNG, JPG, PDF, or SVG files only.",
+        title: t("tools.order_design.validation.invalid_file_type"),
+        description: t("tools.order_design.validation.invalid_file_type_desc"),
         variant: "destructive",
       });
       return;
@@ -666,8 +668,8 @@ export default function OrderDesignPage() {
 
     if (file.size > 10 * 1024 * 1024) {
       toast({
-        title: "File too large",
-        description: "Please upload files smaller than 10MB.",
+        title: t("tools.order_design.validation.file_too_large"),
+        description: t("tools.order_design.validation.file_too_large_desc"),
         variant: "destructive",
       });
       return;
@@ -692,9 +694,8 @@ export default function OrderDesignPage() {
   const addDesignColor = (color: string) => {
     if (customization.designColors.length >= 4) {
       toast({
-        title: "Maximum colors reached",
-        description:
-          "You can use up to 4 colors in your design for optimal printing quality.",
+        title: t("tools.order_design.validation.max_colors_reached"),
+        description: t("tools.order_design.validation.max_colors_reached_desc"),
         variant: "destructive",
       });
       return;
@@ -1177,21 +1178,20 @@ export default function OrderDesignPage() {
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">
-              Professional Order Design
+              {t("tools.order_design.title")}
             </h1>
             <p className="text-gray-600 mt-2">
-              Design and customize your packaging solution with our advanced
-              wizard
+              {t("tools.order_design.description")}
             </p>
           </div>
           <div className="flex space-x-2">
             <Button variant="outline" size="sm">
               <Save className="h-4 w-4 mr-2" />
-              Save Draft
+              {t("tools.order_design.save_draft")}
             </Button>
             <Button variant="outline" size="sm">
               <Share className="h-4 w-4 mr-2" />
-              Share
+              {t("tools.order_design.share")}
             </Button>
           </div>
         </div>
@@ -1629,7 +1629,7 @@ export default function OrderDesignPage() {
                 <div className="space-y-8">
                   <div>
                     <Label className="text-lg font-semibold mb-6 block">
-                      Design Editor (Optional)
+                      {t("tools.order_design.design.design_editor_title")}
                     </Label>
 
                     {/* Enhanced Tool Selection */}
@@ -1643,7 +1643,7 @@ export default function OrderDesignPage() {
                         onClick={() => setSelectedTool("rectangle")}
                         className="flex-1"
                       >
-                        <Square className="h-4 w-4 mr-2" /> Rectangle
+                        <Square className="h-4 w-4 mr-2" /> {t("tools.order_design.design.tools.rectangle")}
                       </Button>
                       <Button
                         variant={
@@ -1654,7 +1654,7 @@ export default function OrderDesignPage() {
                         onClick={() => setSelectedTool("circle")}
                         className="flex-1"
                       >
-                        <Circle className="h-4 w-4 mr-2" /> Circle
+                        <Circle className="h-4 w-4 mr-2" /> {t("tools.order_design.design.tools.circle")}
                       </Button>
                       <Button
                         variant={
@@ -1665,7 +1665,7 @@ export default function OrderDesignPage() {
                         onClick={() => setSelectedTool("text")}
                         className="flex-1"
                       >
-                        <Type className="h-4 w-4 mr-2" /> Text
+                        <Type className="h-4 w-4 mr-2" /> {t("tools.order_design.design.tools.text")}
                       </Button>
                       <Button
                         variant={
@@ -1676,7 +1676,7 @@ export default function OrderDesignPage() {
                         onClick={() => setSelectedTool("move")}
                         className="flex-1"
                       >
-                        <Move className="h-4 w-4 mr-2" /> Move
+                        <Move className="h-4 w-4 mr-2" /> {t("tools.order_design.design.tools.move")}
                       </Button>
                     </div>
 
@@ -1684,7 +1684,7 @@ export default function OrderDesignPage() {
                     {selectedTool === "text" && (
                       <div className="mb-6 p-4 bg-gray-50 rounded-lg">
                         <Label className="text-sm font-medium mb-3 block">
-                          Text Size: {textSize}px
+                          {t("tools.order_design.design.text_settings.text_size")}: {textSize}px
                         </Label>
                         <Slider
                           value={[textSize]}
@@ -1700,7 +1700,7 @@ export default function OrderDesignPage() {
                     {/* Enhanced Color Palette */}
                     <div className="mb-6">
                       <Label className="text-base font-semibold mb-4 block">
-                        Design Colors (Maximum 4 for optimal printing)
+                        {t("tools.order_design.design.colors_title")}
                       </Label>
                       <div className="flex space-x-3 mb-4">
                         {DESIGN_COLORS.map((color) => (
@@ -1724,7 +1724,7 @@ export default function OrderDesignPage() {
                       {customization.designColors.length > 0 && (
                         <div className="flex space-x-3 items-center">
                           <span className="text-sm font-medium text-gray-700">
-                            Selected colors:
+                            {t("tools.order_design.design.selected_colors")}:
                           </span>
                           {customization.designColors.map((color) => (
                             <Badge
@@ -1755,14 +1755,14 @@ export default function OrderDesignPage() {
                     <div className="border-2 rounded-xl p-6 bg-white shadow-sm">
                       <div className="flex justify-between items-center mb-4">
                         <Label className="text-base font-semibold">
-                          Design Canvas
+                          {t("tools.order_design.design.canvas_title")}
                         </Label>
                         <Button
                           variant="outline"
                           onClick={clearCanvas}
                           className="flex items-center"
                         >
-                          <RotateCcw className="h-4 w-4 mr-2" /> Clear Canvas
+                          <RotateCcw className="h-4 w-4 mr-2" /> {t("tools.order_design.design.clear_canvas")}
                         </Button>
                       </div>
                       <div className="bg-gray-50 p-4 rounded-lg">
@@ -1790,11 +1790,11 @@ export default function OrderDesignPage() {
                       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                         <div className="bg-white p-6 rounded-lg max-w-md w-full mx-4">
                           <h3 className="text-lg font-semibold mb-4">
-                            Add Text
+                            {t("tools.order_design.design.text_settings.add_text")}
                           </h3>
                           <Input
                             type="text"
-                            placeholder="Enter your text..."
+                            placeholder={t("tools.order_design.design.text_settings.text_placeholder")}
                             value={textInput}
                             onChange={(e) => setTextInput(e.target.value)}
                             className="mb-4"
@@ -1802,7 +1802,7 @@ export default function OrderDesignPage() {
                           />
                           <div className="mb-4">
                             <Label className="text-sm font-medium mb-2 block">
-                              Font Size: {textSize}px
+                              {t("tools.order_design.design.text_settings.font_size")}: {textSize}px
                             </Label>
                             <Slider
                               value={[textSize]}
@@ -1819,7 +1819,7 @@ export default function OrderDesignPage() {
                               disabled={!textInput.trim()}
                               className="flex-1"
                             >
-                              Add Text
+                              {t("tools.order_design.design.text_settings.add_text")}
                             </Button>
                             <Button
                               variant={"outline" as any}
@@ -1829,7 +1829,7 @@ export default function OrderDesignPage() {
                               }}
                               className="flex-1"
                             >
-                              Cancel
+                              {t("tools.order_design.common.cancel")}
                             </Button>
                           </div>
                         </div>
@@ -1841,7 +1841,7 @@ export default function OrderDesignPage() {
                       canvasElements[selectedElement] && (
                         <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
                           <h4 className="text-sm font-semibold mb-3 text-blue-800">
-                            Selected Element Controls
+                            {t("tools.order_design.design.text_settings.element_selected")}
                           </h4>
                           <div className="flex space-x-3">
                             <Button
@@ -1857,7 +1857,7 @@ export default function OrderDesignPage() {
                               size={"sm" as any}
                               className="flex-1"
                             >
-                              Delete Element
+                              {t("tools.order_design.design.text_settings.delete_element")}
                             </Button>
                             <Button
                               onClick={() => setSelectedElement(null)}
@@ -1865,7 +1865,7 @@ export default function OrderDesignPage() {
                               size={"sm" as any}
                               className="flex-1"
                             >
-                              Deselect
+                              {t("tools.order_design.design.text_settings.deselect")}
                             </Button>
                           </div>
                           {canvasElements[selectedElement]?.type === "text" && (
@@ -1906,12 +1906,12 @@ export default function OrderDesignPage() {
                 <div className="space-y-8">
                   <div>
                     <Label className="text-lg font-semibold mb-6 block">
-                      Customer Information
+                      {t("tools.order_design.customer.title")}
                     </Label>
                     <div className="grid grid-cols-1 gap-6">
                       <div className="space-y-2">
                         <Label htmlFor="customerName" className="font-medium">
-                          Full Name *
+                          {t("tools.order_design.customer.full_name")} *
                         </Label>
                         <Input
                           id="customerName"
@@ -1926,14 +1926,14 @@ export default function OrderDesignPage() {
                               },
                             }))
                           }
-                          placeholder="Enter full name"
+                          placeholder={t("tools.order_design.customer.name_placeholder")}
                           className="text-lg"
                           required
                         />
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="customerEmail" className="font-medium">
-                          Email Address *
+                          {t("tools.order_design.customer.email")} *
                         </Label>
                         <Input
                           id="customerEmail"
@@ -1948,14 +1948,14 @@ export default function OrderDesignPage() {
                               },
                             }))
                           }
-                          placeholder="Enter email address"
+                          placeholder={t("tools.order_design.customer.email_placeholder")}
                           className="text-lg"
                           required
                         />
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="customerPhone" className="font-medium">
-                          Phone Number
+                          {t("tools.order_design.customer.phone")}
                         </Label>
                         <Input
                           id="customerPhone"
@@ -1970,13 +1970,13 @@ export default function OrderDesignPage() {
                               },
                             }))
                           }
-                          placeholder="Enter phone number"
+                          placeholder={t("tools.order_design.customer.phone_placeholder")}
                           className="text-lg"
                         />
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="notes" className="font-medium">
-                          Additional Notes
+                          {t("tools.order_design.customer.notes")}
                         </Label>
                         <textarea
                           id="notes"
@@ -1987,7 +1987,7 @@ export default function OrderDesignPage() {
                               notes: e.target.value,
                             }))
                           }
-                          placeholder="Any special requirements or notes..."
+                          placeholder={t("tools.order_design.customer.notes_placeholder")}
                           className="w-full p-3 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                           rows={4}
                         />
@@ -2002,7 +2002,7 @@ export default function OrderDesignPage() {
                 <div className="space-y-8">
                   <div className="text-center">
                     <h3 className="text-2xl font-bold mb-6 text-gray-900">
-                      Order Summary & Quote
+                      {t("tools.order_design.quote.title")}
                     </h3>
 
                     {/* Enhanced Product Preview */}
@@ -2018,11 +2018,11 @@ export default function OrderDesignPage() {
                         <div className="space-y-3">
                           <div className="bg-white p-4 rounded-lg shadow-sm">
                             <strong className="text-gray-700 block mb-2">
-                              Product Details
+                              {t("tools.order_design.quote.product_details")}
                             </strong>
                             <div className="space-y-1 text-sm">
                               <div>
-                                Type:{" "}
+                                {t("tools.order_design.quote.type")}:{" "}
                                 {
                                   PRODUCT_TYPES.find(
                                     (p) => p.id === customization.productType,
@@ -2030,7 +2030,7 @@ export default function OrderDesignPage() {
                                 }
                               </div>
                               <div>
-                                Template:{" "}
+                                {t("tools.order_design.quote.template")}:{" "}
                                 {
                                   TEMPLATES.find(
                                     (t) => t.id === customization.template,
@@ -2038,7 +2038,7 @@ export default function OrderDesignPage() {
                                 }
                               </div>
                               <div>
-                                Material:{" "}
+                                {t("tools.order_design.quote.material")}:{" "}
                                 {
                                   MATERIAL_COLORS.find(
                                     (c) => c.id === customization.materialColor,
@@ -2046,8 +2046,8 @@ export default function OrderDesignPage() {
                                 }
                               </div>
                               <div>
-                                Quantity:{" "}
-                                {customization.quantity.toLocaleString()} pieces
+                                {t("tools.order_design.quote.quantity")}:{" "}
+                                {customization.quantity.toLocaleString()} {t("tools.order_design.quote.pieces")}
                               </div>
                             </div>
                           </div>
@@ -2055,20 +2055,20 @@ export default function OrderDesignPage() {
                         <div className="space-y-3">
                           <div className="bg-white p-4 rounded-lg shadow-sm">
                             <strong className="text-gray-700 block mb-2">
-                              Specifications
+                              {t("tools.order_design.quote.specifications")}
                             </strong>
                             <div className="space-y-1 text-sm">
                               <div>
-                                Width: {customization.dimensions.width} cm
+                                {t("tools.order_design.quote.width")}: {customization.dimensions.width} cm
                               </div>
                               <div>
-                                Length: {customization.dimensions.length} cm
+                                {t("tools.order_design.quote.length")}: {customization.dimensions.length} cm
                               </div>
                               <div>
-                                Gusset: {customization.dimensions.gusset} cm
+                                {t("tools.order_design.quote.gusset")}: {customization.dimensions.gusset} cm
                               </div>
                               <div>
-                                Thickness: {customization.dimensions.thickness}{" "}
+                                {t("tools.order_design.quote.thickness")}: {customization.dimensions.thickness}{" "}
                                 mm
                               </div>
                             </div>
@@ -2089,7 +2089,7 @@ export default function OrderDesignPage() {
                                   style={{ backgroundColor: color }}
                                 />
                                 <span className="text-xs text-gray-600">
-                                  Color {index + 1}
+                                  {t("tools.order_design.design.color")} {index + 1}
                                 </span>
                               </div>
                             ))}
@@ -2100,13 +2100,13 @@ export default function OrderDesignPage() {
                       {/* Customer Information */}
                       <div className="mt-6 bg-white p-4 rounded-lg shadow-sm">
                         <strong className="text-gray-700 block mb-2">
-                          Customer Information
+                          {t("tools.order_design.quote.customer_info")}
                         </strong>
                         <div className="text-sm space-y-1">
-                          <div>Name: {customization.customerInfo.name}</div>
-                          <div>Email: {customization.customerInfo.email}</div>
+                          <div>{t("tools.order_design.quote.name")}: {customization.customerInfo.name}</div>
+                          <div>{t("tools.order_design.quote.email")}: {customization.customerInfo.email}</div>
                           {customization.customerInfo.phone && (
-                            <div>Phone: {customization.customerInfo.phone}</div>
+                            <div>{t("tools.order_design.quote.phone")}: {customization.customerInfo.phone}</div>
                           )}
                         </div>
                       </div>
@@ -2116,7 +2116,7 @@ export default function OrderDesignPage() {
                         <div className="flex items-center justify-center mb-4">
                           <Zap className="h-6 w-6 text-blue-600 mr-2" />
                           <strong className="text-xl text-blue-900">
-                            Estimated Quote
+                            {t("tools.order_design.quote.estimated_quote")}
                           </strong>
                         </div>
                         <div className="space-y-4">
@@ -2124,7 +2124,7 @@ export default function OrderDesignPage() {
                           <div className="space-y-3 text-left">
                             <div className="flex justify-between items-center p-3 bg-white rounded-lg">
                               <span className="text-gray-700">
-                                1. Clichés Cost:
+                                1. {t("tools.order_design.quote.cliches_cost")}:
                               </span>
                               <span className="font-semibold text-blue-600">
                                 {clichesCost.toLocaleString()} SR
@@ -2134,12 +2134,12 @@ export default function OrderDesignPage() {
                               ({customization.dimensions.width} ×{" "}
                               {customization.dimensions.length} cm² ×{" "}
                               {Math.max(customization.designColors.length, 1)}{" "}
-                              colors × 0.5 SR)
+                              {t("tools.order_design.quote.colors")} × 0.5 SR)
                             </div>
 
                             <div className="flex justify-between items-center p-3 bg-white rounded-lg">
                               <span className="text-gray-700">
-                                2. Bags Cost:
+                                2. {t("tools.order_design.quote.bags_cost")}:
                               </span>
                               <span className="font-semibold text-blue-600">
                                 {bagsCost.toLocaleString()} SR
@@ -2148,7 +2148,7 @@ export default function OrderDesignPage() {
                             <div className="text-xs text-gray-500 pl-3">
                               (Min. {minimumKg} kg × 10 SR/kg for{" "}
                               {Math.max(customization.designColors.length, 1)}{" "}
-                              color
+                              {t("tools.order_design.quote.color")}
                               {Math.max(customization.designColors.length, 1) >
                               1
                                 ? "s"
@@ -2161,18 +2161,17 @@ export default function OrderDesignPage() {
                           <div className="border-t border-blue-200 pt-4">
                             <div className="text-center">
                               <div className="text-2xl font-bold text-blue-600 mb-2">
-                                Total: {estimatedCost.toLocaleString()} SR
+                                {t("tools.order_design.quote.total")}: {estimatedCost.toLocaleString()} SR
                               </div>
                               <div className="text-sm text-blue-700">
-                                Unit Price:{" "}
+                                {t("tools.order_design.quote.unit_price")}:{" "}
                                 {(
                                   estimatedCost / customization.quantity
                                 ).toFixed(3)}{" "}
-                                SR per piece
+                                SR {t("tools.order_design.quote.per_piece")}
                               </div>
                               <div className="text-xs text-blue-600 mt-2">
-                                *Final pricing may vary based on design
-                                complexity and material availability
+                                *{t("tools.order_design.quote.pricing_note")}
                               </div>
                             </div>
                           </div>
@@ -2188,7 +2187,7 @@ export default function OrderDesignPage() {
                         className="px-8"
                       >
                         <Download className="h-5 w-5 mr-2" />
-                        Download Quote
+                        {t("tools.order_design.quote.download_quote")}
                       </Button>
                       <Button
                         onClick={handleSendQuoteRequest}
@@ -2198,8 +2197,8 @@ export default function OrderDesignPage() {
                       >
                         <FileText className="h-5 w-5 mr-2" />
                         {emailQuoteMutation.isPending
-                          ? "Sending..."
-                          : "Submit Quote Request"}
+                          ? t("tools.order_design.quote.sending")
+                          : t("tools.order_design.quote.submit_quote_request")}
                       </Button>
                     </div>
                   </div>
@@ -2218,7 +2217,7 @@ export default function OrderDesignPage() {
               className="px-8"
             >
               <ChevronLeft className="h-5 w-5 mr-2" />
-              Previous
+              {t("tools.order_design.navigation.previous")}
             </Button>
 
             <Button
@@ -2230,11 +2229,11 @@ export default function OrderDesignPage() {
               {currentStep === steps.length - 1 ? (
                 <>
                   <FileText className="h-5 w-5 mr-2" />
-                  Complete Order
+                  {t("tools.order_design.navigation.complete_order")}
                 </>
               ) : (
                 <>
-                  Next Step
+                  {t("tools.order_design.navigation.next")}
                   <ChevronRight className="h-5 w-5 ml-2" />
                 </>
               )}
@@ -2249,7 +2248,7 @@ export default function OrderDesignPage() {
             <CardHeader className="bg-gray-50">
               <CardTitle className="flex items-center text-lg">
                 <Eye className="h-5 w-5 mr-2" />
-                Live Preview
+                {t("tools.order_design.sidebar.live_preview")}
               </CardTitle>
             </CardHeader>
             <CardContent className="p-6">

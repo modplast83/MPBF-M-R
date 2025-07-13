@@ -4112,6 +4112,186 @@
         "integration": "تكامل الأنظمة",
         "integration_desc": "التكامل مع أنظمة الإنتاج"
       }
+    },
+    "tools": {
+      "title": "الأدوات",
+      "description": "أدوات النظام والمساعدات",
+      "order_design": {
+        "title": "تصميم الطلبات الاحترافي",
+        "description": "أنشئ تصاميم مخصصة لطلبات الأكياس البلاستيكية مع قوالب ومواصفات احترافية",
+        "save_draft": "حفظ المسودة",
+        "share": "مشاركة",
+        "steps": {
+          "product_selection": "اختيار المنتج",
+          "specifications": "المواصفات",
+          "material_color": "المادة واللون",
+          "design_upload": "رفع التصميم",
+          "design_editor": "محرر التصميم",
+          "customer_info": "معلومات العميل",
+          "review_quote": "مراجعة وعرض السعر"
+        },
+        "product_types": {
+          "shopping_bag": "كيس التسوق",
+          "shopping_bag_desc": "أكياس التيشرت والمقابض المقطوعة",
+          "table_cover": "غطاء الطاولة",
+          "table_cover_desc": "أغطية الطاولات الواقية",
+          "packing_bags": "أكياس التعبئة",
+          "packing_bags_desc": "حلول التعبئة الصناعية",
+          "garbage_bags": "أكياس القمامة",
+          "garbage_bags_desc": "أكياس إدارة النفايات"
+        },
+        "templates": {
+          "t_shirt": "كيس التيشرت",
+          "t_shirt_desc": "كيس التسوق التقليدي بالمقابض",
+          "t_shirt_hook": "تيشرت مع خطاف",
+          "t_shirt_hook_desc": "كيس التسوق مع ميزة الخطاف المعلق",
+          "d_cut": "مقبض على شكل حرف D",
+          "d_cut_desc": "تصميم مقبض احترافي على شكل حرف D",
+          "non_cut": "كيس مسطح",
+          "non_cut_desc": "كيس مسطح بسيط بدون مقابض",
+          "sheet": "غطاء الورقة",
+          "sheet_desc": "مادة واقية كبيرة",
+          "zipper_pouch": "كيس بسحاب",
+          "zipper_pouch_desc": "كيس آمن بإغلاق سحاب",
+          "features": {
+            "handle_cutouts": "قطع المقابض",
+            "reinforced_edges": "حواف معززة",
+            "custom_sizing": "مقاس مخصص",
+            "hanging_hook": "خطاف معلق",
+            "display_ready": "جاهز للعرض",
+            "d_shaped_handles": "مقابض على شكل حرف D",
+            "premium_finish": "تشطيب متميز",
+            "heavy_duty": "للخدمة الشاقة",
+            "flat_design": "تصميم مسطح",
+            "heat_sealed": "مغلق بالحرارة",
+            "multi_purpose": "متعدد الأغراض",
+            "zipper_closure": "إغلاق بسحاب",
+            "secure_storage": "تخزين آمن",
+            "tear_resistant": "مقاوم للتمزق"
+          }
+        },
+        "dimensions": {
+          "configure": "تكوين الأبعاد",
+          "width": "العرض (سم)",
+          "length": "الطول (سم)",
+          "gusset": "الجانب (سم)",
+          "thickness": "السماكة (ميكرون)",
+          "size_optimization": "تحسين الحجم",
+          "surface_area": "المساحة السطحية:",
+          "aspect_ratio": "نسبة الأبعاد:",
+          "recommended_ranges": "النطاقات الموصى بها",
+          "optimal_size": "الحجم الأمثل"
+        },
+        "material": {
+          "select_color": "اختر لون المادة",
+          "colors": {
+            "clear": "شفاف",
+            "clear_desc": "يمكن الرؤية من خلاله",
+            "white": "أبيض",
+            "black": "أسود",
+            "red": "أحمر",
+            "blue": "أزرق",
+            "green": "أخضر",
+            "yellow": "أصفر",
+            "orange": "برتقالي",
+            "purple": "بنفسجي",
+            "brown": "بني",
+            "gray": "رمادي",
+            "pink": "وردي",
+            "custom": "لون مخصص"
+          }
+        },
+        "design": {
+          "upload_title": "رفع الشعار أو التصميم (اختياري)",
+          "upload_description": "رفع ملف التصميم",
+          "supported_formats": "الأنواع المدعومة: AI, EPS, PDF, PNG, JPG, SVG (حد أقصى 10 ميجابايت)",
+          "choose_file": "اختر ملف",
+          "upload_success": "تم رفع التصميم بنجاح وسيتم تحويله إلى متجهات لجودة طباعة مثلى",
+          "design_preview": "معاينة التصميم",
+          "design_editor_title": "محرر التصميم",
+          "design_canvas": "لوحة التصميم",
+          "tools": {
+            "rectangle": "مستطيل",
+            "circle": "دائرة",
+            "text": "نص",
+            "move": "تحريك",
+            "clear": "مسح اللوحة"
+          },
+          "colors": {
+            "black": "أسود",
+            "red": "أحمر",
+            "blue": "أزرق",
+            "green": "أخضر",
+            "yellow": "أصفر",
+            "purple": "بنفسجي",
+            "orange": "برتقالي",
+            "gray": "رمادي"
+          },
+          "text_settings": {
+            "add_text": "إضافة نص",
+            "font_size": "حجم الخط",
+            "element_selected": "عنصر محدد",
+            "delete_element": "حذف العنصر",
+            "deselect": "إلغاء التحديد"
+          }
+        },
+        "customer": {
+          "details": "تفاصيل العميل",
+          "name": "اسم العميل",
+          "name_placeholder": "أدخل اسم العميل",
+          "email": "عنوان البريد الإلكتروني",
+          "email_placeholder": "أدخل عنوان البريد الإلكتروني",
+          "phone": "رقم الهاتف",
+          "phone_placeholder": "أدخل رقم الهاتف",
+          "quantity": "الكمية",
+          "quantity_placeholder": "أدخل الكمية",
+          "notes": "ملاحظات خاصة",
+          "notes_placeholder": "أي متطلبات خاصة أو ملاحظات"
+        },
+        "review": {
+          "title": "المراجعة النهائية",
+          "order_summary": "ملخص الطلب",
+          "product_type": "نوع المنتج:",
+          "template": "القالب:",
+          "dimensions": "الأبعاد:",
+          "material_color": "لون المادة:",
+          "quantity": "الكمية:",
+          "customer_info": "معلومات العميل:",
+          "estimated_total": "المجموع المقدر",
+          "download_quote": "تنزيل عرض السعر",
+          "submit_quote": "إرسال طلب عرض السعر",
+          "quote_submitted": "تم إرسال طلب عرض السعر",
+          "quote_submitted_desc": "سنتواصل معك في غضون 24 ساعة مع السعر النهائي والجدول الزمني للإنتاج."
+        },
+        "live_preview": {
+          "title": "معاينة مباشرة",
+          "dimensions_info": "الأبعاد: {{width}}سم × {{length}}سم",
+          "aspect_ratio_info": "نسبة الأبعاد: {{ratio}}",
+          "material_info": "المادة: {{material}}",
+          "template_info": "القالب: {{template}}"
+        },
+        "navigation": {
+          "next": "التالي",
+          "previous": "السابق",
+          "finish": "إنهاء"
+        },
+        "validation": {
+          "invalid_file_type": "نوع ملف غير صالح",
+          "invalid_file_type_desc": "يرجى رفع ملفات PNG أو JPG أو PDF أو SVG فقط.",
+          "file_too_large": "الملف كبير جداً",
+          "file_too_large_desc": "يرجى رفع ملفات أصغر من 10 ميجابايت.",
+          "max_colors_reached": "تم الوصول إلى الحد الأقصى من الألوان",
+          "max_colors_reached_desc": "يمكنك استخدام حتى 4 ألوان في تصميمك للحصول على جودة طباعة مثلى.",
+          "required_field": "هذا الحقل مطلوب",
+          "invalid_email": "يرجى إدخال عنوان بريد إلكتروني صالح",
+          "invalid_phone": "يرجى إدخال رقم هاتف صالح"
+        },
+        "pdf": {
+          "pricing_disclaimer": "*قد تختلف الأسعار النهائية بناءً على تعقيد التصميم وتوفر المواد",
+          "quote_title": "عرض سعر المنتج",
+          "generated_on": "تم إنشاؤه في: {{date}}"
+        }
+      }
     }
   }
 }

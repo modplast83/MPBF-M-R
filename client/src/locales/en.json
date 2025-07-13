@@ -2701,6 +2701,186 @@
           "Other Issue": "Other Issue"
         }
       }
+    },
+    "tools": {
+      "title": "Tools",
+      "description": "System tools and utilities",
+      "order_design": {
+        "title": "Professional Order Design",
+        "description": "Create custom designs for your plastic bag orders with professional templates and specifications",
+        "save_draft": "Save Draft",
+        "share": "Share",
+        "steps": {
+          "product_selection": "Product Selection",
+          "specifications": "Specifications", 
+          "material_color": "Material & Color",
+          "design_upload": "Design Upload",
+          "design_editor": "Design Editor",
+          "customer_info": "Customer Info",
+          "review_quote": "Review & Quote"
+        },
+        "product_types": {
+          "shopping_bag": "Shopping Bag",
+          "shopping_bag_desc": "T-shirt and D-cut handle bags",
+          "table_cover": "Table Cover",
+          "table_cover_desc": "Protective table coverings",
+          "packing_bags": "Packing Bags",
+          "packing_bags_desc": "Industrial packaging solutions",
+          "garbage_bags": "Garbage Bags",
+          "garbage_bags_desc": "Waste management bags"
+        },
+        "templates": {
+          "t_shirt": "T-Shirt Bag",
+          "t_shirt_desc": "Classic retail shopping bag with handles",
+          "t_shirt_hook": "T-Shirt with Hook",
+          "t_shirt_hook_desc": "Shopping bag with hanging hook feature",
+          "d_cut": "D-Cut Handle",
+          "d_cut_desc": "Professional D-shaped handle design",
+          "non_cut": "Flat Bag",
+          "non_cut_desc": "Simple flat bag without handles",
+          "sheet": "Sheet Cover",
+          "sheet_desc": "Large protective sheet material",
+          "zipper_pouch": "Zipper Pouch",
+          "zipper_pouch_desc": "Secure bag with zipper closure",
+          "features": {
+            "handle_cutouts": "Handle cutouts",
+            "reinforced_edges": "Reinforced edges",
+            "custom_sizing": "Custom sizing",
+            "hanging_hook": "Hanging hook",
+            "display_ready": "Display ready",
+            "d_shaped_handles": "D-shaped handles",
+            "premium_finish": "Premium finish",
+            "heavy_duty": "Heavy duty",
+            "flat_design": "Flat design",
+            "heat_sealed": "Heat sealed",
+            "multi_purpose": "Multi-purpose",
+            "zipper_closure": "Zipper closure",
+            "secure_storage": "Secure storage",
+            "tear_resistant": "Tear resistant"
+          }
+        },
+        "dimensions": {
+          "configure": "Configure Dimensions",
+          "width": "Width (cm)",
+          "length": "Length (cm)",
+          "gusset": "Gusset (cm)",
+          "thickness": "Thickness (microns)",
+          "size_optimization": "Size Optimization",
+          "surface_area": "Surface Area:",
+          "aspect_ratio": "Aspect Ratio:",
+          "recommended_ranges": "Recommended Ranges",
+          "optimal_size": "Optimal Size"
+        },
+        "material": {
+          "select_color": "Select Material Color",
+          "colors": {
+            "clear": "Clear",
+            "clear_desc": "See-through",
+            "white": "White",
+            "black": "Black",
+            "red": "Red",
+            "blue": "Blue",
+            "green": "Green",
+            "yellow": "Yellow",
+            "orange": "Orange",
+            "purple": "Purple",
+            "brown": "Brown",
+            "gray": "Gray",
+            "pink": "Pink",
+            "custom": "Custom Color"
+          }
+        },
+        "design": {
+          "upload_title": "Upload Logo or Design (Optional)",
+          "upload_description": "Upload your design file",
+          "supported_formats": "Supports: AI, EPS, PDF, PNG, JPG, SVG (Max 10MB)",
+          "choose_file": "Choose File",
+          "upload_success": "Design uploaded successfully and will be vectorized for optimal printing quality",
+          "design_preview": "Design Preview",
+          "design_editor_title": "Design Editor",
+          "design_canvas": "Design Canvas",
+          "tools": {
+            "rectangle": "Rectangle",
+            "circle": "Circle",
+            "text": "Text",
+            "move": "Move",
+            "clear": "Clear Canvas"
+          },
+          "colors": {
+            "black": "Black",
+            "red": "Red",
+            "blue": "Blue",
+            "green": "Green",
+            "yellow": "Yellow",
+            "purple": "Purple",
+            "orange": "Orange",
+            "gray": "Gray"
+          },
+          "text_settings": {
+            "add_text": "Add Text",
+            "font_size": "Font Size",
+            "element_selected": "Element Selected",
+            "delete_element": "Delete Element",
+            "deselect": "Deselect"
+          }
+        },
+        "customer": {
+          "details": "Customer Details",
+          "name": "Customer Name",
+          "name_placeholder": "Enter customer name",
+          "email": "Email Address",
+          "email_placeholder": "Enter email address",
+          "phone": "Phone Number",
+          "phone_placeholder": "Enter phone number",
+          "quantity": "Quantity",
+          "quantity_placeholder": "Enter quantity",
+          "notes": "Special Notes",
+          "notes_placeholder": "Any special requirements or notes"
+        },
+        "review": {
+          "title": "Final Review",
+          "order_summary": "Order Summary",
+          "product_type": "Product Type:",
+          "template": "Template:",
+          "dimensions": "Dimensions:",
+          "material_color": "Material Color:",
+          "quantity": "Quantity:",
+          "customer_info": "Customer Information:",
+          "estimated_total": "Estimated Total",
+          "download_quote": "Download Quote",
+          "submit_quote": "Submit Quote Request",
+          "quote_submitted": "Quote Request Submitted",
+          "quote_submitted_desc": "We'll contact you within 24 hours with final pricing and production timeline."
+        },
+        "live_preview": {
+          "title": "Live Preview",
+          "dimensions_info": "Dimensions: {{width}}cm × {{length}}cm",
+          "aspect_ratio_info": "Aspect Ratio: {{ratio}}",
+          "material_info": "Material: {{material}}",
+          "template_info": "Template: {{template}}"
+        },
+        "navigation": {
+          "next": "Next",
+          "previous": "Previous",
+          "finish": "Finish"
+        },
+        "validation": {
+          "invalid_file_type": "Invalid file type",
+          "invalid_file_type_desc": "Please upload PNG, JPG, PDF, or SVG files only.",
+          "file_too_large": "File too large",
+          "file_too_large_desc": "Please upload files smaller than 10MB.",
+          "max_colors_reached": "Maximum colors reached",
+          "max_colors_reached_desc": "You can use up to 4 colors in your design for optimal printing quality.",
+          "required_field": "This field is required",
+          "invalid_email": "Please enter a valid email address",
+          "invalid_phone": "Please enter a valid phone number"
+        },
+        "pdf": {
+          "pricing_disclaimer": "*Final pricing may vary based on design complexity and material availability",
+          "quote_title": "Product Quote",
+          "generated_on": "Generated on: {{date}}"
+        }
+      }
     }
   }
 }
