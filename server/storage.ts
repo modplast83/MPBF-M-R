@@ -70,6 +70,7 @@ import {
   InsertCustomerInformation,
 } from "../shared/schema";
 import session from "express-session";
+import MemoryStore from "memorystore";
 
 // Interface for storage operations
 export interface IStorage {
@@ -519,8 +520,8 @@ export class MemStorage {
 
   constructor() {
     // Initialize session store
-    const MemoryStore = require("memorystore")(session);
-    this.sessionStore = new MemoryStore({
+    const MemoryStoreSession = MemoryStore(session);
+    this.sessionStore = new MemoryStoreSession({
       checkPeriod: 86400000, // Prune expired entries every 24h
     });
 
