@@ -401,7 +401,10 @@ export default function Sidebar({
                                       )}
                                     />
                                     {expanded && (
-                                      <span className="text-sm font-medium">
+                                      <span className={cn(
+                                        "text-sm font-medium",
+                                        isRTL ? "text-right" : "text-left"
+                                      )}>
                                         {t(
                                           `sidebar.${subItem.title.toLowerCase().replace(/ /g, "_")}`,
                                         )}
@@ -436,7 +439,10 @@ export default function Sidebar({
                               <IconComponent className="h-4 w-4" />
                             </div>
                             {expanded && (
-                              <span className="text-sm font-medium">
+                              <span className={cn(
+                                "text-sm font-medium",
+                                isRTL ? "text-right" : "text-left"
+                              )}>
                                 {t(
                                   `sidebar.${item.title.toLowerCase().replace(/ /g, "_")}`,
                                 )}
