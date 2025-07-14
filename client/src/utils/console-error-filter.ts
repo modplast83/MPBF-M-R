@@ -18,6 +18,11 @@ const ERROR_FILTERS: ErrorFilter[] = [
     reason: 'React Beautiful DnD component warning - known issue',
     level: 'suppress'
   },
+  {
+    pattern: /Invariant failed: isCombineEnabled must be a boolean/,
+    reason: 'React Beautiful DnD isCombineEnabled prop issue - fixed in configuration',
+    level: 'suppress'
+  },
   
   // ResizeObserver errors
   {

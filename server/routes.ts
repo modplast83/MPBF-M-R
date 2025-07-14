@@ -47,6 +47,68 @@ import {
   insertNotificationSchema,
   insertNotificationTemplateSchema,
   InsertNotification,
+
+  // Server health monitoring endpoint
+  app.get("/api/system/server-status", async (_req: Request, res: Response) => {
+    try {
+      const uptime = process.uptime();
+      const memUsage = process.memoryUsage();
+      const cpuUsage = process.cpuUsage();
+      
+      const status = {
+        status: "running",
+        uptime: Math.floor(uptime),
+        memoryUsage: {
+          used: Math.round(memUsage.heapUsed / 1024 / 1024),
+          total: Math.round(memUsage.heapTotal / 1024 / 1024),
+          percentage: Math.round((memUsage.heapUsed / memUsage.heapTotal) * 100)
+        },
+        processId: process.pid,
+        activeConnections: 0, // This would need to be tracked separately
+        lastRestart: new Date().toISOString(),
+        nodeVersion: process.version
+      };
+      
+      res.json(status);
+    } catch (error) {
+      console.error("Error getting server status:", error);
+      res.status(500).json({ 
+        status: "error", 
+        message: "Failed to get server status" 
+      });
+    }
+  });
+
+  // Server restart history endpoint (mock data for now)
+  app.get("/api/system/restart-history", async (_req: Request, res: Response) => {
+    try {
+      const history = [
+        {
+          id: 1,
+          timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
+          reason: "Manual restart",
+          initiatedBy: "admin",
+          status: "completed",
+          duration: 15000
+        },
+        {
+          id: 2,
+          timestamp: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+          reason: "System update",
+          initiatedBy: "system",
+          status: "completed",
+          duration: 12000
+        }
+      ];
+      
+      res.json(history);
+    } catch (error) {
+      console.error("Error getting restart history:", error);
+      res.status(500).json({ message: "Failed to get restart history" });
+    }
+  });
+
+
   InsertNotificationTemplate,
   InsertCategory,
   InsertCustomer,

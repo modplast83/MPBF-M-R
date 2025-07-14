@@ -24,12 +24,13 @@ declare global {
 export function setupAuth(app: Express) {
   const sessionSettings: session.SessionOptions = {
     secret: process.env.SESSION_SECRET || "mpbf_session_secret",
-    resave: true,
-    saveUninitialized: true,
+    resave: false, // Don't save session if unmodified
+    saveUninitialized: false, // Don't create session until something stored
     store: storage.sessionStore,
+    rolling: true, // Reset expiration on activity
     cookie: {
       maxAge: 7 * 24 * 60 * 60 * 1000, // 1 week
-      secure: process.env.NODE_ENV === "production", // Only secure in production
+      secure: process.env.NODE_ENV === "production",
       httpOnly: true,
       sameSite: "lax",
       path: "/",
