@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -28,6 +28,17 @@ import {
   FormItem,
   FormLabel,
 } from "@/components/ui/form";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useForm } from "react-hook-form";
@@ -35,17 +46,28 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useTranslation } from "react-i18next";
 import { useLanguage } from "@/hooks/use-language";
+import GeofenceMap from "@/components/hr/geofence-map";
 import {
   MapPin,
   Plus,
   Edit,
   Trash2,
   Map,
-  Users,
   CheckCircle,
   AlertCircle,
-  MousePointer,
+  Eye,
+  Navigation,
+  MoreHorizontal,
+  Shield,
 } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const geofenceSchema = z.object({
   name: z.string().min(1, "Geofence name is required"),
@@ -56,107 +78,11 @@ const geofenceSchema = z.object({
     .min(10, "Minimum radius is 10 meters")
     .max(1000, "Maximum radius is 1000 meters"),
   sectionIds: z.array(z.string()).optional(),
+  geofenceType: z.string().default("factory"),
+  description: z.string().optional(),
 });
 
 type GeofenceForm = z.infer<typeof geofenceSchema>;
-
-// Simple interactive map component for location selection
-const InteractiveMap = ({
-  centerLat,
-  centerLng,
-  radius,
-  onLocationSelect,
-}: {
-  centerLat: number;
-  centerLng: number;
-  radius: number;
-  onLocationSelect: (lat: number, lng: number) => void;
-}) => {
-  const mapRef = useRef<HTMLDivElement>(null);
-  const [mapCenter, setMapCenter] = useState({
-    lat: centerLat,
-    lng: centerLng,
-  });
-  const [isSelecting, setIsSelecting] = useState(false);
-
-  const handleMapClick = (e: React.MouseEvent) => {
-    if (!isSelecting || !mapRef.current) return;
-
-    const rect = mapRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-
-    // Simple coordinate mapping (for demo - in production would use proper mapping)
-    const lat = mapCenter.lat + (y - 200) / 1000; // Approximate scaling
-    const lng = mapCenter.lng + (x - 200) / 1000;
-
-    onLocationSelect(lat, lng);
-    setIsSelecting(false);
-  };
-
-  return (
-    <div className="border rounded-lg overflow-hidden">
-      <div className="bg-gray-50 p-3 border-b">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Map className="h-4 w-4 text-blue-600" />
-            <span className="text-sm font-medium">Interactive Map</span>
-          </div>
-          <Button
-            size={"sm" as any}
-            variant={isSelecting ? ("default" as any) : ("outline" as any)}
-            onClick={() => setIsSelecting(!isSelecting)}
-          >
-            <MousePointer className="h-3 w-3 mr-1" />
-            {isSelecting ? "Click to Select" : "Select Location"}
-          </Button>
-        </div>
-      </div>
-      <div
-        ref={mapRef}
-        className={`h-64 bg-gradient-to-br from-green-100 to-blue-100 relative ${isSelecting ? "cursor-crosshair" : "cursor-default"}`}
-        onClick={handleMapClick}
-      >
-        {/* Map representation */}
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="text-center">
-            <div
-              className="w-4 h-4 bg-red-500 rounded-full mx-auto mb-2"
-              style={{
-                position: "absolute",
-                left: "50%",
-                top: "50%",
-                transform: "translate(-50%, -50%)",
-              }}
-            />
-            <div
-              className="border-2 border-blue-500 rounded-full opacity-30"
-              style={{
-                width: `${radius / 2}px`,
-                height: `${radius / 2}px`,
-                position: "absolute",
-                left: "50%",
-                top: "50%",
-                transform: "translate(-50%, -50%)",
-              }}
-            />
-          </div>
-        </div>
-        <div className="absolute bottom-2 left-2 bg-white bg-opacity-75 p-2 rounded text-xs">
-          Center: {centerLat.toFixed(6)}, {centerLng.toFixed(6)}
-        </div>
-        <div className="absolute bottom-2 right-2 bg-white bg-opacity-75 p-2 rounded text-xs">
-          Radius: {radius}m
-        </div>
-        {isSelecting && (
-          <div className="absolute top-2 left-2 right-2 bg-blue-500 text-white p-2 rounded text-sm text-center">
-            Click on the map to select a new center location
-          </div>
-        )}
-      </div>
-    </div>
-  );
-};
 
 export default function GeofenceManagement() {
   const { t } = useTranslation();
@@ -164,6 +90,8 @@ export default function GeofenceManagement() {
   const { toast } = useToast();
   const [selectedGeofence, setSelectedGeofence] = useState<any>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
+  const [viewGeofence, setViewGeofence] = useState<any>(null);
 
   // Fetch geofences
   const { data: geofences = [], isLoading } = useQuery({
@@ -183,6 +111,9 @@ export default function GeofenceManagement() {
     defaultValues: {
       radius: 100,
       sectionIds: [],
+      centerLatitude: 26.4011776, // Default to Bahrain coordinates
+      centerLongitude: 50.069504,
+      geofenceType: "factory",
     },
   });
 
@@ -231,6 +162,26 @@ export default function GeofenceManagement() {
     },
   });
 
+  // Delete geofence mutation
+  const deleteGeofenceMutation = useMutation({
+    mutationFn: (id: number) =>
+      apiRequest("DELETE", `/api/hr/geofences/${id}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/hr/geofences"] });
+      toast({
+        title: "Success",
+        description: "Geofence deleted successfully",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to delete geofence",
+        variant: "destructive",
+      });
+    },
+  });
+
   const handleSubmit = (data: GeofenceForm) => {
     if (selectedGeofence) {
       updateGeofenceMutation.mutate({ id: selectedGeofence.id, data });
@@ -247,8 +198,19 @@ export default function GeofenceManagement() {
       centerLongitude: geofence.centerLongitude,
       radius: geofence.radius,
       sectionIds: geofence.sectionIds || [],
+      geofenceType: geofence.geofenceType || "factory",
+      description: geofence.description || "",
     });
     setIsDialogOpen(true);
+  };
+
+  const handleView = (geofence: any) => {
+    setViewGeofence(geofence);
+    setIsViewDialogOpen(true);
+  };
+
+  const handleDelete = (id: number) => {
+    deleteGeofenceMutation.mutate(id);
   };
 
   const handleGetCurrentLocation = () => {
@@ -270,6 +232,11 @@ export default function GeofenceManagement() {
             variant: "destructive",
           });
         },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 60000,
+        }
       );
     } else {
       toast({
@@ -320,40 +287,71 @@ export default function GeofenceManagement() {
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(handleSubmit)}
-                className="space-y-4 sm:space-y-6"
+                className="space-y-6"
               >
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Geofence Name</FormLabel>
+                        <FormControl>
+                          <Input {...field} placeholder="Factory Main Building" />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="geofenceType"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Type</FormLabel>
+                        <FormControl>
+                          <Input {...field} placeholder="factory" />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
                 <FormField
                   control={form.control}
-                  name="name"
+                  name="description"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Geofence Name</FormLabel>
+                      <FormLabel>Description (Optional)</FormLabel>
                       <FormControl>
-                        <Input {...field} placeholder="Factory Main Building" />
+                        <Input {...field} placeholder="Brief description of this geofence..." />
                       </FormControl>
                     </FormItem>
                   )}
                 />
 
-                {/* Interactive Map for Location Selection */}
+                {/* Google Maps Integration */}
                 <div className="space-y-4">
                   <Label>Location Selection</Label>
-                  <InteractiveMap
-                    centerLat={form.watch("centerLatitude") || 24.7136}
-                    centerLng={form.watch("centerLongitude") || 46.6753}
+                  <GeofenceMap
+                    latitude={form.watch("centerLatitude") || 26.4011776}
+                    longitude={form.watch("centerLongitude") || 50.069504}
                     radius={form.watch("radius") || 100}
                     onLocationSelect={(lat: number, lng: number) => {
                       form.setValue("centerLatitude", lat);
                       form.setValue("centerLongitude", lng);
-                      toast({
-                        title: "Location Updated",
-                        description: `New center: ${lat.toFixed(6)}, ${lng.toFixed(6)}`,
-                      });
                     }}
+                    onRadiusChange={(radius: number) => {
+                      form.setValue("radius", radius);
+                    }}
+                    height="450px"
+                    interactive={true}
+                    showCurrentLocation={true}
+                    existingGeofences={geofences.filter(g => !selectedGeofence || g.id !== selectedGeofence.id)}
                   />
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
                   <FormField
                     control={form.control}
                     name="centerLatitude"
@@ -366,9 +364,9 @@ export default function GeofenceManagement() {
                             step="0.000001"
                             {...field}
                             onChange={(e) =>
-                              field.onChange(parseFloat(e.target.value))
+                              field.onChange(parseFloat(e.target.value) || 0)
                             }
-                            placeholder="24.7136"
+                            placeholder="26.4011776"
                           />
                         </FormControl>
                       </FormItem>
@@ -387,9 +385,31 @@ export default function GeofenceManagement() {
                             step="0.000001"
                             {...field}
                             onChange={(e) =>
-                              field.onChange(parseFloat(e.target.value))
+                              field.onChange(parseFloat(e.target.value) || 0)
                             }
-                            placeholder="46.6753"
+                            placeholder="50.069504"
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="radius"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Radius (meters)</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            min="10"
+                            max="1000"
+                            {...field}
+                            onChange={(e) =>
+                              field.onChange(parseInt(e.target.value) || 100)
+                            }
+                            placeholder="100"
                           />
                         </FormControl>
                       </FormItem>
@@ -400,41 +420,24 @@ export default function GeofenceManagement() {
                 <div className="flex justify-center">
                   <Button
                     type="button"
-                    variant={"outline" as any}
+                    variant="outline"
                     onClick={handleGetCurrentLocation}
                     className="w-full"
                   >
-                    <MapPin className="h-4 w-4 mr-2" />
-                    Use Current Location
+                    <Navigation className="h-4 w-4 mr-2" />
+                    Use My Current Location
                   </Button>
                 </div>
-
-                <FormField
-                  control={form.control}
-                  name="radius"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Radius (meters)</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="number"
-                          min="10"
-                          max="1000"
-                          {...field}
-                          onChange={(e) =>
-                            field.onChange(parseInt(e.target.value))
-                          }
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
 
                 <div className="flex justify-end space-x-4 pt-4 border-t">
                   <Button
                     type="button"
-                    variant={"outline" as any}
-                    onClick={() => setIsDialogOpen(false)}
+                    variant="outline"
+                    onClick={() => {
+                      setIsDialogOpen(false);
+                      setSelectedGeofence(null);
+                      form.reset();
+                    }}
                   >
                     Cancel
                   </Button>
@@ -448,7 +451,7 @@ export default function GeofenceManagement() {
                     {createGeofenceMutation.isPending ||
                     updateGeofenceMutation.isPending
                       ? "Saving..."
-                      : "Save"}
+                      : selectedGeofence ? "Update Geofence" : "Create Geofence"}
                   </Button>
                 </div>
               </form>
@@ -566,36 +569,85 @@ export default function GeofenceManagement() {
                           {(
                             (Math.PI * Math.pow(geofence.radius, 2)) /
                             1000000
-                          ).toFixed(2)}{" "}
-                          km²
+                          ).toFixed(3)} km²
                         </div>
                       </TableCell>
                       <TableCell>
                         <Badge
-                          className={
-                            geofence.isActive
-                              ? "bg-green-100 text-green-800"
-                              : "bg-red-100 text-red-800"
-                          }
+                          variant={geofence.isActive ? "default" : "secondary"}
+                          className={geofence.isActive ? "bg-green-100 text-green-800" : ""}
                         >
                           {geofence.isActive ? "Active" : "Inactive"}
                         </Badge>
                       </TableCell>
                       <TableCell>
-                        <div className="text-sm text-gray-500">
-                          Factory perimeter detection
+                        <div className="text-sm">
+                          <div className="font-medium">
+                            {(
+                              (Math.PI * Math.pow(geofence.radius, 2)) /
+                              1000000
+                            ).toFixed(3)} km²
+                          </div>
+                          <div className="text-gray-500">
+                            Coverage Area
+                          </div>
                         </div>
                       </TableCell>
                       <TableCell>
-                        <div className="flex space-x-2">
-                          <Button
-                            size={"sm" as any}
-                            variant={"outline" as any}
-                            onClick={() => handleEdit(geofence)}
-                          >
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                        </div>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className="h-8 w-8 p-0">
+                              <span className="sr-only">Open menu</span>
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                            <DropdownMenuItem
+                              onClick={() => handleView(geofence)}
+                            >
+                              <Eye className="mr-2 h-4 w-4" />
+                              View Details
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() => handleEdit(geofence)}
+                            >
+                              <Edit className="mr-2 h-4 w-4" />
+                              Edit
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <AlertDialog>
+                              <AlertDialogTrigger asChild>
+                                <DropdownMenuItem
+                                  onSelect={(e) => e.preventDefault()}
+                                  className="text-red-600"
+                                >
+                                  <Trash2 className="mr-2 h-4 w-4" />
+                                  Delete
+                                </DropdownMenuItem>
+                              </AlertDialogTrigger>
+                              <AlertDialogContent>
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                                  <AlertDialogDescription>
+                                    This action cannot be undone. This will permanently delete the
+                                    geofence "{geofence.name}" and remove all associated location
+                                    validation rules.
+                                  </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                  <AlertDialogAction
+                                    onClick={() => handleDelete(geofence.id)}
+                                    className="bg-red-600 hover:bg-red-700"
+                                  >
+                                    Delete
+                                  </AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -605,6 +657,121 @@ export default function GeofenceManagement() {
           )}
         </CardContent>
       </Card>
+
+      {/* View Geofence Dialog */}
+      <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
+        <DialogContent className="max-w-4xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Shield className="h-5 w-5 text-blue-600" />
+              Geofence Details: {viewGeofence?.name}
+            </DialogTitle>
+            <DialogDescription>
+              Complete information and location map for this geofence
+            </DialogDescription>
+          </DialogHeader>
+
+          {viewGeofence && (
+            <div className="space-y-6">
+              {/* Basic Information */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg">Basic Information</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div>
+                      <Label className="text-sm font-medium text-gray-600">Name</Label>
+                      <p className="text-lg font-semibold">{viewGeofence.name}</p>
+                    </div>
+                    <div>
+                      <Label className="text-sm font-medium text-gray-600">Type</Label>
+                      <p className="text-sm">{viewGeofence.geofenceType || "factory"}</p>
+                    </div>
+                    <div>
+                      <Label className="text-sm font-medium text-gray-600">Status</Label>
+                      <Badge
+                        variant={viewGeofence.isActive ? "default" : "secondary"}
+                        className={viewGeofence.isActive ? "bg-green-100 text-green-800" : ""}
+                      >
+                        {viewGeofence.isActive ? "Active" : "Inactive"}
+                      </Badge>
+                    </div>
+                    {viewGeofence.description && (
+                      <div>
+                        <Label className="text-sm font-medium text-gray-600">Description</Label>
+                        <p className="text-sm">{viewGeofence.description}</p>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg">Location Details</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div>
+                      <Label className="text-sm font-medium text-gray-600">Center Coordinates</Label>
+                      <p className="text-sm font-mono">
+                        {viewGeofence.centerLatitude.toFixed(6)}, {viewGeofence.centerLongitude.toFixed(6)}
+                      </p>
+                    </div>
+                    <div>
+                      <Label className="text-sm font-medium text-gray-600">Radius</Label>
+                      <p className="text-lg font-semibold">{viewGeofence.radius} meters</p>
+                    </div>
+                    <div>
+                      <Label className="text-sm font-medium text-gray-600">Coverage Area</Label>
+                      <p className="text-lg font-semibold">
+                        {((Math.PI * Math.pow(viewGeofence.radius, 2)) / 1000000).toFixed(3)} km²
+                      </p>
+                    </div>
+                    <div>
+                      <Label className="text-sm font-medium text-gray-600">Created</Label>
+                      <p className="text-sm">
+                        {new Date(viewGeofence.createdAt).toLocaleDateString()} at{" "}
+                        {new Date(viewGeofence.createdAt).toLocaleTimeString()}
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Location Map */}
+              <GeofenceMap
+                latitude={viewGeofence.centerLatitude}
+                longitude={viewGeofence.centerLongitude}
+                radius={viewGeofence.radius}
+                onLocationSelect={() => {}} // Not interactive in view mode
+                height="400px"
+                interactive={false}
+                showCurrentLocation={true}
+                existingGeofences={geofences.filter(g => g.id !== viewGeofence.id)}
+              />
+
+              <div className="flex justify-end space-x-4 pt-4 border-t">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setIsViewDialogOpen(false);
+                    handleEdit(viewGeofence);
+                  }}
+                >
+                  <Edit className="h-4 w-4 mr-2" />
+                  Edit Geofence
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => setIsViewDialogOpen(false)}
+                >
+                  Close
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
 
       {/* Information Card */}
       <Card className="mt-6">

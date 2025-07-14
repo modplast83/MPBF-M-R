@@ -39,6 +39,20 @@ export function setupHRRoutes(app: Express) {
     }
   });
 
+  app.delete("/api/hr/geofences/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const deleted = await storage.deleteGeofence(id);
+      if (!deleted) {
+        return res.status(404).json({ error: "Geofence not found" });
+      }
+      res.json({ message: "Geofence deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting geofence:", error);
+      res.status(500).json({ error: "Failed to delete geofence" });
+    }
+  });
+
   // Geofence checking endpoint
   app.post("/api/hr/check-geofence", async (req, res) => {
     try {
