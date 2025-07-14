@@ -82,9 +82,10 @@ export function CustomerForm({ customer, onSuccess }: CustomerFormProps) {
       if (onSuccess) onSuccess();
     },
     onError: (error) => {
+      const errorMessage = error instanceof Error ? error.message : String(error);
       toast({
         title: "Error",
-        description: `Failed to ${isEditing ? "update" : "create"} customer: ${error}`,
+        description: `Failed to ${isEditing ? "update" : "create"} customer: ${errorMessage}`,
         variant: "destructive",
       });
     },

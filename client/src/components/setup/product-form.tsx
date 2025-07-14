@@ -362,9 +362,10 @@ export function ProductForm({
         actionType = "update";
       }
 
+      const errorMessage = error instanceof Error ? error.message : String(error);
       toast({
         title: "Error",
-        description: `Failed to ${actionType} product: ${error}`,
+        description: `Failed to ${actionType} product: ${errorMessage}`,
         variant: "destructive",
       });
     },
