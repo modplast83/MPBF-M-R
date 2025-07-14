@@ -384,8 +384,8 @@ export default function Sidebar({
                                     variant="ghost"
                                     onClick={onNavItemClick}
                                     className={cn(
-                                      "inline-flex items-center whitespace-nowrap text-sm font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden group w-full justify-start hover:text-white hover:bg-gradient-to-r hover:from-slate-700/30 hover:to-slate-600/30 transition-all duration-300 rounded-lg h-10 flex-row-reverse bg-gradient-to-r from-blue-600/40 to-indigo-600/40 text-blue-200 shadow-md border-r-3 border-blue-400 text-center ml-[0px] mr-[0px]",
-                                      isRTL && "flex-row-reverse mr-8 ml-0",
+                                      "group inline-flex items-center whitespace-nowrap text-sm font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden group w-full justify-start hover:text-white hover:bg-gradient-to-r hover:from-slate-700/30 hover:to-slate-600/30 transition-all duration-300 rounded-lg h-10 text-center flex-row-reverse bg-gradient-to-r from-blue-600/40 to-indigo-600/40 text-blue-200 shadow-md border-r-3 border-blue-400 ml-[0px] mr-[0px]",
+                                      isRTL && "flex-row-reverse",
                                       isActive(subItem.path) &&
                                         cn(
                                           "bg-gradient-to-r from-blue-600/40 to-indigo-600/40 text-blue-200 shadow-md",
