@@ -118,6 +118,18 @@ This is a comprehensive production management system built with React, TypeScrip
 
 ## Recent Changes
 
+- July 14, 2025: **ZOD DEPLOYMENT DEPENDENCY CONFLICT RESOLVED** - Fixed critical NPM dependency resolution conflict for deployment:
+  - ✅ **Resolved NPM Dependency Conflict**: Fixed deployment build failure caused by zod@4.0.5 and drizzle-zod@0.8.2 version incompatibility
+  - ✅ **Confirmed Compatible Versions**: Verified zod@3.25.76 and drizzle-zod@0.7.1 are properly installed and working together
+  - ✅ **Cleaned Dependencies**: Removed node_modules and package-lock.json, then reinstalled all dependencies for fresh build
+  - ✅ **Downgraded Tailwind CSS**: Changed from Tailwind CSS v4 to v3.4.0 to resolve `bg-background` utility class build errors
+  - ✅ **Updated PostCSS Configuration**: Changed from @tailwindcss/postcss to standard tailwindcss plugin for better compatibility
+  - ✅ **Maintained Legacy Peer Dependencies**: Kept .npmrc with legacy-peer-deps=true for React Beautiful DnD compatibility
+  - ✅ **Verified createInsertSchema Functionality**: Confirmed drizzle-zod createInsertSchema function working correctly across all modules
+  - All zod validation schemas and drizzle-zod insert schemas functioning properly without conflicts
+  - Dependencies now properly resolved for deployment builds with compatible versions
+  - Application ready for successful deployment with all dependency conflicts resolved
+
 - July 14, 2025: **EXPRESS VERSION COMPATIBILITY ISSUE RESOLVED** - Fixed critical Express 5.x path-to-regexp compatibility issue:
   - ✅ **Downgraded Express Version**: Successfully downgraded from Express 5.1.0 to Express 4.19.2 to resolve path-to-regexp errors
   - ✅ **Fixed Path-to-Regexp Error**: Resolved "Missing parameter name" error that was preventing server startup
