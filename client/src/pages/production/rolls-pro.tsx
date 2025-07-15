@@ -204,12 +204,12 @@ function RollCard({ roll, jobOrder, customer, customerProduct, item, users }: Ro
                 className="h-7 px-2 text-xs hover:bg-blue-50"
               >
                 <History className="h-3 w-3 mr-1" />
-                Timeline
+                {t('rolls.timeline')}
               </Button>
             </DialogTrigger>
             <DialogContent className="max-w-2xl">
               <DialogHeader>
-                <DialogTitle>Roll Lifecycle Timeline</DialogTitle>
+                <DialogTitle>{t('rolls.roll_lifecycle_timeline')}</DialogTitle>
               </DialogHeader>
               <RollTimeline roll={roll} users={users} />
             </DialogContent>
@@ -373,7 +373,7 @@ export default function RollsProPage() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Filter className="h-5 w-5" />
-            Filters & Search
+            {t('rolls.filters_search')}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -381,7 +381,7 @@ export default function RollsProPage() {
             <div className="relative">
               <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
               <Input
-                placeholder="Search rolls..."
+                placeholder={t('rolls.search_placeholder')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10"
@@ -392,10 +392,10 @@ export default function RollsProPage() {
                 <SelectValue placeholder="Filter by status" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Status</SelectItem>
-                <SelectItem value="pending">Pending</SelectItem>
-                <SelectItem value="processing">Processing</SelectItem>
-                <SelectItem value="completed">Completed</SelectItem>
+                <SelectItem value="all">{t('rolls.all_statuses')}</SelectItem>
+                <SelectItem value="pending">{t('rolls.pending')}</SelectItem>
+                <SelectItem value="processing">{t('rolls.processing')}</SelectItem>
+                <SelectItem value="completed">{t('rolls.completed')}</SelectItem>
                 <SelectItem value="hold">On Hold</SelectItem>
               </SelectContent>
             </Select>
@@ -404,11 +404,11 @@ export default function RollsProPage() {
                 <SelectValue placeholder="Filter by stage" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Stages</SelectItem>
-                <SelectItem value="extrusion">Extrusion</SelectItem>
-                <SelectItem value="printing">Printing</SelectItem>
-                <SelectItem value="cutting">Cutting</SelectItem>
-                <SelectItem value="completed">Completed</SelectItem>
+                <SelectItem value="all">{t('rolls.all_stages')}</SelectItem>
+                <SelectItem value="extrusion">{t('rolls.extrusion')}</SelectItem>
+                <SelectItem value="printing">{t('rolls.printing')}</SelectItem>
+                <SelectItem value="cutting">{t('rolls.cutting')}</SelectItem>
+                <SelectItem value="completed">{t('rolls.completed')}</SelectItem>
               </SelectContent>
             </Select>
             <Button 
@@ -495,7 +495,7 @@ export default function RollsProPage() {
                 ) : (
                   <div className="text-center py-8 text-gray-500">
                     <Package className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-                    <p>No rolls found matching your criteria</p>
+                    <p>{t('rolls.no_rolls_found')}</p>
                   </div>
                 )}
               </div>

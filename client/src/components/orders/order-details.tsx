@@ -1000,7 +1000,7 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
 
           {/* Rolls */}
           <div>
-            <h4 className="font-medium text-lg mb-4">Roll Status</h4>
+            <h4 className="font-medium text-lg mb-4">{t('rolls.roll_status')}</h4>
 
             {isMobile ? (
               // Mobile view - card layout
@@ -1029,27 +1029,27 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
 
                         <div className="grid grid-cols-2 gap-2 text-sm">
                           <div>
-                            <p className="text-secondary-500">Product:</p>
+                            <p className="text-secondary-500">{t('rolls.product')}:</p>
                             <p className="font-medium">{item?.name || "N/A"}</p>
                           </div>
                           <div>
-                            <p className="text-secondary-500">Stage:</p>
+                            <p className="text-secondary-500">{t('rolls.current_stage')}:</p>
                             <StatusBadge status={roll.currentStage} />
                           </div>
                           <div>
-                            <p className="text-secondary-500">Extrusion Qty:</p>
+                            <p className="text-secondary-500">{t('rolls.extrusion_qty')}:</p>
                             <p className="font-medium">
                               {roll.extrudingQty || 0}
                             </p>
                           </div>
                           <div>
-                            <p className="text-secondary-500">Printing Qty:</p>
+                            <p className="text-secondary-500">{t('rolls.printing_qty')}:</p>
                             <p className="font-medium">
                               {roll.printingQty || 0}
                             </p>
                           </div>
                           <div>
-                            <p className="text-secondary-500">Cutting Qty:</p>
+                            <p className="text-secondary-500">{t('rolls.cutting_qty')}:</p>
                             <p className="font-medium">
                               {roll.cuttingQty || 0}
                             </p>
@@ -1070,13 +1070,13 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
                 <table className="w-full text-sm">
                   <thead className="bg-secondary-50 text-secondary-600 border-b border-secondary-100">
                     <tr>
-                      <th className="py-3 px-4 text-left">Roll ID</th>
-                      <th className="py-3 px-4 text-left">Product</th>
-                      <th className="py-3 px-4 text-left">Extrusion Qty</th>
-                      <th className="py-3 px-4 text-left">Printing Qty</th>
-                      <th className="py-3 px-4 text-left">Cutting Qty</th>
-                      <th className="py-3 px-4 text-left">Current Stage</th>
-                      <th className="py-3 px-4 text-left">Status</th>
+                      <th className="py-3 px-4 text-center">{t('rolls.roll_id')}</th>
+                      <th className="py-3 px-4 text-center">{t('rolls.product')}</th>
+                      <th className="py-3 px-4 text-center">{t('rolls.extrusion_qty')}</th>
+                      <th className="py-3 px-4 text-center">{t('rolls.printing_qty')}</th>
+                      <th className="py-3 px-4 text-center">{t('rolls.cutting_qty')}</th>
+                      <th className="py-3 px-4 text-center">{t('rolls.current_stage')}</th>
+                      <th className="py-3 px-4 text-center">{t('rolls.status')}</th>
                     </tr>
                   </thead>
                   <tbody className="text-secondary-800">

@@ -118,6 +118,17 @@ This is a comprehensive production management system built with React, TypeScrip
 
 ## Recent Changes
 
+- July 15, 2025: **ROLL STATUS TABLE ARABIC TRANSLATIONS** - Added comprehensive Arabic translations for roll status table headers and interface elements:
+  - ✅ **Roll Status Table Headers**: Added Arabic translations for all table columns (Roll ID, Product, Extrusion Qty, Printing Qty, Cutting Qty, Current Stage, Status)
+  - ✅ **English Translation Keys**: Added matching English translation keys for consistency and maintainability
+  - ✅ **Order Details Page**: Updated roll status section in order details page to use translation keys for both desktop table and mobile card views
+  - ✅ **Rolls-Pro Page**: Updated production rolls page with Arabic translations for filters, search, timeline, and interface elements
+  - ✅ **Mobile View Labels**: Applied translations to mobile card view labels for better user experience
+  - ✅ **Filter Options**: Added Arabic translations for filter dropdowns (All Stages, All Statuses, stage names, status names)
+  - ✅ **Search Functionality**: Updated search placeholders and filter labels with proper Arabic translations
+  - ✅ **Timeline Features**: Added Arabic translations for timeline button and dialog headers
+  - Roll status functionality now provides complete bilingual support across all production management interfaces
+
 - July 15, 2025: **ARABIC TRANSLATIONS FOR DROPDOWN MENU ITEMS** - Added comprehensive Arabic translations for orders index page dropdown menu:
   - ✅ **Dropdown Menu Translations**: Added Arabic translations for all dropdown menu items (Set to Pending, Set to Processing, Set to Completed, Put on Hold, Delete)
   - ✅ **Translation Keys**: Updated orders section in Arabic locale file with proper translation keys
