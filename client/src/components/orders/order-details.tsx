@@ -1174,7 +1174,7 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
                 Print Order
               </Button>
               <Button
-                className="bg-slate-700 hover:bg-slate-800 text-white border-slate-700 hover:border-slate-800 pt-[7px] pb-[7px] pl-[11px] pr-[11px] ml-[10px] mr-[10px]"
+                className="hover:bg-slate-800 text-white border-slate-700 hover:border-slate-800 pl-[35px] pr-[35px] ml-[71px] mr-[71px] mt-[0px] mb-[0px] pt-[9px] pb-[9px] bg-[#46e314]"
                 onClick={() => updateOrderMutation.mutate("completed")}
                 disabled={
                   updateOrderMutation.isPending || order.status === "completed"
