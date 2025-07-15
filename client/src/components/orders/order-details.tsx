@@ -1184,7 +1184,7 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
                 Mark as Completed
               </Button>
               <Link href="/orders">
-                <Button className="bg-slate-600 hover:bg-slate-700 text-white border-slate-600 hover:border-slate-700">
+                <Button className="hover:bg-slate-800 text-white border-slate-700 hover:border-slate-800 pt-[7px] pb-[7px] pl-[9px] pr-[9px] ml-[82px] mr-[82px] bg-[#204b91]">
                   <ArrowLeft className="h-4 w-4 mr-2" />
                   Back to Orders
                 </Button>
