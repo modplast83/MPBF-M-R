@@ -118,6 +118,16 @@ This is a comprehensive production management system built with React, TypeScrip
 
 ## Recent Changes
 
+- July 15, 2025: **AUTOMATIC QUANTITY ADJUSTMENT IMPLEMENTED** - Added intelligent quantity adjustment feature for new orders:
+  - ✅ **Automatic Quantity Adjustment**: Implemented smart quantity adjustment based on customer product punching type
+  - ✅ **Punching Type Rules**: Added 20% adjustment for "T-Shirt w/Hook" or "T-Shirt", 10% for "Banana", 5% for all other punching types
+  - ✅ **Toggle Control**: Added user-controlled switch to enable/disable auto-adjustment feature
+  - ✅ **Visual Feedback**: Added informative text showing adjustment percentage and punching type
+  - ✅ **Product Selection Integration**: Quantity automatically adjusts when product is selected or changed
+  - ✅ **Manual Override**: Users can manually adjust quantities while auto-adjustment is enabled
+  - ✅ **Real-time Calculation**: Adjustments applied immediately when products are selected or quantities modified
+  - New orders now automatically calculate optimal quantities based on production requirements and punching specifications
+
 - July 15, 2025: **ROLLS-PRO PAGE IMPLEMENTED** - Created new comprehensive production roll management page:
   - ✅ **Created Rolls-Pro Page**: Built advanced production roll tracking page with workflow status monitoring
   - ✅ **Enhanced Roll Cards**: Added detailed roll cards showing customer info, product details, and workflow stages

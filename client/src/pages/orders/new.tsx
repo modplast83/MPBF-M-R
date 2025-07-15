@@ -18,6 +18,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Switch } from "@/components/ui/switch";
 import Fuse from "fuse.js";
 import { safeSync, handleError } from "@/utils/error-boundary-utils";
 import { safeParseInt, safeStringAccess, validateFormData, isValidNumber } from "@/utils/type-safety";
@@ -216,6 +217,7 @@ export default function NewOrderPage() {
   const [customerSearch, setCustomerSearch] = useState("");
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
   const [products, setProducts] = useState<{ productId: number; quantity: number }[]>([]);
+  const [autoAdjustQuantity, setAutoAdjustQuantity] = useState(true);
 
   // Initialize form with default values
   const form = useForm<OrderFormValues>({
@@ -326,6 +328,23 @@ export default function NewOrderPage() {
     form.setValue('products', []);
   };
 
+  // Calculate adjusted quantity based on punching type
+  const calculateAdjustedQuantity = (baseQuantity: number, punching?: string): number => {
+    if (!punching) return baseQuantity;
+    
+    let adjustmentPercentage = 0;
+    
+    if (punching === "T-Shirt w/Hook" || punching === "T-Shirt") {
+      adjustmentPercentage = 20; // 20% increase
+    } else if (punching === "Banana") {
+      adjustmentPercentage = 10; // 10% increase
+    } else {
+      adjustmentPercentage = 5; // 5% increase for all other values
+    }
+    
+    return Math.round(baseQuantity * (1 + adjustmentPercentage / 100));
+  };
+
   // Add product to order with validation
   const addProduct = () => {
     try {
@@ -364,7 +383,7 @@ export default function NewOrderPage() {
   };
 
   // Update product in order with validation
-  const updateProduct = (index: number, field: 'productId' | 'quantity', value: string | number) => {
+  const updateProduct = (index: number, field: 'productId' | 'quantity', value: string | number, applyAdjustment = autoAdjustQuantity) => {
     try {
       if (index < 0 || index >= products.length) return;
       
@@ -373,11 +392,32 @@ export default function NewOrderPage() {
         const productId = safeParseInt(value);
         if (productId > 0) {
           updatedProducts[index] = { ...updatedProducts[index], productId };
+          
+          // Auto-adjust quantity when product is selected
+          if (applyAdjustment) {
+            const selectedProduct = customerProducts.find(p => p.id === productId);
+            if (selectedProduct) {
+              const currentQuantity = updatedProducts[index].quantity || 1;
+              const adjustedQuantity = calculateAdjustedQuantity(currentQuantity, selectedProduct.punching);
+              updatedProducts[index] = { ...updatedProducts[index], quantity: adjustedQuantity };
+            }
+          }
         }
       } else if (field === 'quantity') {
         const quantity = safeParseInt(value, 1);
         if (quantity > 0) {
-          updatedProducts[index] = { ...updatedProducts[index], quantity };
+          // If auto-adjustment is enabled and product is selected, apply adjustment
+          if (applyAdjustment && updatedProducts[index].productId) {
+            const selectedProduct = customerProducts.find(p => p.id === updatedProducts[index].productId);
+            if (selectedProduct) {
+              const adjustedQuantity = calculateAdjustedQuantity(quantity, selectedProduct.punching);
+              updatedProducts[index] = { ...updatedProducts[index], quantity: adjustedQuantity };
+            } else {
+              updatedProducts[index] = { ...updatedProducts[index], quantity };
+            }
+          } else {
+            updatedProducts[index] = { ...updatedProducts[index], quantity };
+          }
         }
       }
       setProducts(updatedProducts);
@@ -660,9 +700,21 @@ export default function NewOrderPage() {
             ) : (
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
-                  <p className="text-sm text-muted-foreground">
-                    {t('orders.loading_products')}
-                  </p>
+                  <div className="flex items-center gap-4">
+                    <p className="text-sm text-muted-foreground">
+                      {t('orders.loading_products')}
+                    </p>
+                    <div className="flex items-center gap-2">
+                      <Switch
+                        id="auto-adjust"
+                        checked={autoAdjustQuantity}
+                        onCheckedChange={setAutoAdjustQuantity}
+                      />
+                      <Label htmlFor="auto-adjust" className="text-sm">
+                        Auto-adjust quantities
+                      </Label>
+                    </div>
+                  </div>
                   <Button
                     type="button"
                     variant="outline"
@@ -741,6 +793,23 @@ export default function NewOrderPage() {
                                 className="mt-1"
                                 placeholder={t('orders.enter_quantity')}
                               />
+                              {/* Show adjustment info if product is selected */}
+                              {product.productId && (() => {
+                                const selectedProduct = customerProducts.find(p => p.id === product.productId);
+                                if (selectedProduct?.punching) {
+                                  const baseQuantity = 1;
+                                  const adjustedQuantity = calculateAdjustedQuantity(baseQuantity, selectedProduct.punching);
+                                  const adjustmentPercentage = selectedProduct.punching === "T-Shirt w/Hook" || selectedProduct.punching === "T-Shirt" ? 20
+                                    : selectedProduct.punching === "Banana" ? 10 : 5;
+                                  
+                                  return (
+                                    <p className="text-xs text-muted-foreground mt-1">
+                                      +{adjustmentPercentage}% for {selectedProduct.punching} punching
+                                    </p>
+                                  );
+                                }
+                                return null;
+                              })()}
                             </div>
                             <Button
                               type="button"
