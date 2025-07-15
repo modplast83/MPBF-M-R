@@ -909,7 +909,7 @@ export default function OrdersIndex() {
             </div>
             
             <Link href="/orders/new" className="w-full sm:w-auto">
-              <Button className="gap-2 bg-blue-600 hover:bg-blue-700 w-full sm:w-auto">
+              <Button className="gap-2 w-full sm:w-auto ml-[12px] mr-[12px] mt-[2px] mb-[2px] pt-[6px] pb-[6px] text-center pl-[6px] pr-[6px] bg-blue-600 hover:bg-blue-700">
                 <Plus className="h-4 w-4" />
                 {t('orders.new_order')}
               </Button>
