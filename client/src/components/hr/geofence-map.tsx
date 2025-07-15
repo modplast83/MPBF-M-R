@@ -71,8 +71,12 @@ export const GeofenceMap: React.FC<GeofenceMapProps> = ({
 
         // Load Google Maps API
         if (!window.google) {
+          // Get the API key from environment variable
+          const response = await fetch('/api/config/google-maps-key');
+          const { apiKey } = await response.json();
+          
           const script = document.createElement('script');
-          script.src = `https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&libraries=geometry`;
+          script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=geometry`;
           script.async = true;
           script.defer = true;
           
@@ -126,7 +130,7 @@ export const GeofenceMap: React.FC<GeofenceMapProps> = ({
           map: map,
           center: { lat: latitude, lng: longitude },
           radius: radius,
-          editable: interactive && onRadiusChange,
+          editable: interactive && !!onRadiusChange,
           draggable: interactive,
         });
 

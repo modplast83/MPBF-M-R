@@ -8462,6 +8462,24 @@ COMMIT;
     }
   });
 
+  // Google Maps API key endpoint
+  app.get("/api/config/google-maps-key", async (req: Request, res: Response) => {
+    try {
+      const apiKey = process.env.GOOGLE_MAPS_API_KEY;
+      if (!apiKey) {
+        return res.status(500).json({ 
+          error: "Google Maps API key not configured" 
+        });
+      }
+      res.json({ apiKey });
+    } catch (error) {
+      console.error("Error serving Google Maps API key:", error);
+      res.status(500).json({ 
+        error: "Failed to get Google Maps API key" 
+      });
+    }
+  });
+
   // Dashboard widget endpoints
   app.get(
     "/api/dashboard-widgets",

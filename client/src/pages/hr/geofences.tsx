@@ -109,6 +109,8 @@ export default function GeofenceManagement() {
   const form = useForm<GeofenceForm>({
     resolver: zodResolver(geofenceSchema),
     defaultValues: {
+      name: "",
+      description: "",
       radius: 100,
       sectionIds: [],
       centerLatitude: 26.4011776, // Default to Bahrain coordinates
@@ -297,7 +299,11 @@ export default function GeofenceManagement() {
                       <FormItem>
                         <FormLabel>Geofence Name</FormLabel>
                         <FormControl>
-                          <Input {...field} placeholder="Factory Main Building" />
+                          <Input
+                            value={field.value || ""}
+                            onChange={field.onChange}
+                            placeholder="Factory Main Building"
+                          />
                         </FormControl>
                       </FormItem>
                     )}
@@ -310,7 +316,11 @@ export default function GeofenceManagement() {
                       <FormItem>
                         <FormLabel>Type</FormLabel>
                         <FormControl>
-                          <Input {...field} placeholder="factory" />
+                          <Input
+                            value={field.value || ""}
+                            onChange={field.onChange}
+                            placeholder="factory"
+                          />
                         </FormControl>
                       </FormItem>
                     )}
@@ -324,7 +334,11 @@ export default function GeofenceManagement() {
                     <FormItem>
                       <FormLabel>Description (Optional)</FormLabel>
                       <FormControl>
-                        <Input {...field} placeholder="Brief description of this geofence..." />
+                        <Input
+                          value={field.value || ""}
+                          onChange={field.onChange}
+                          placeholder="Brief description of this geofence..."
+                        />
                       </FormControl>
                     </FormItem>
                   )}
@@ -362,7 +376,7 @@ export default function GeofenceManagement() {
                           <Input
                             type="number"
                             step="0.000001"
-                            {...field}
+                            value={field.value || ""}
                             onChange={(e) =>
                               field.onChange(parseFloat(e.target.value) || 0)
                             }
@@ -383,7 +397,7 @@ export default function GeofenceManagement() {
                           <Input
                             type="number"
                             step="0.000001"
-                            {...field}
+                            value={field.value || ""}
                             onChange={(e) =>
                               field.onChange(parseFloat(e.target.value) || 0)
                             }
@@ -405,7 +419,7 @@ export default function GeofenceManagement() {
                             type="number"
                             min="10"
                             max="1000"
-                            {...field}
+                            value={field.value || ""}
                             onChange={(e) =>
                               field.onChange(parseInt(e.target.value) || 100)
                             }
