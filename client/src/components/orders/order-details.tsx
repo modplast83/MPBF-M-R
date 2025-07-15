@@ -770,21 +770,19 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
           <div>
             <div className="flex justify-between items-center mb-4">
               <h4 className="font-medium text-lg">Order Products</h4>
-              <div className="flex gap-2">
+              <div className="flex gap-3">
                 <Button 
-                  className="bg-slate-700 hover:bg-slate-800 text-white border-slate-700 hover:border-slate-800"
-                  size="sm" 
+                  className="inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden group bg-slate-700 hover:bg-slate-800 text-white border-slate-700 hover:border-slate-800 pt-[10px] pb-[10px] pl-[16px] pr-[16px]"
                   onClick={handleAddJobOrder}
                 >
-                  <Plus className="h-4 w-4 mr-1" />
+                  <Plus className="h-4 w-4 mr-2" />
                   Add Job Order
                 </Button>
                 <Button 
-                  className="bg-slate-700 hover:bg-slate-800 text-white border-slate-700 hover:border-slate-800"
-                  size="sm" 
+                  className="inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden group bg-slate-700 hover:bg-slate-800 text-white border-slate-700 hover:border-slate-800 pt-[10px] pb-[10px] pl-[16px] pr-[16px]"
                   onClick={handlePrintOrder}
                 >
-                  <Printer className="h-4 w-4 mr-1" />
+                  <Printer className="h-4 w-4 mr-2" />
                   Print Order
                 </Button>
               </div>
@@ -812,22 +810,19 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
                           </h4>
                           <div className="flex space-x-2">
                             <Button
-                              size="sm"
-                              className="bg-slate-700 hover:bg-slate-800 text-white h-8 w-8 p-0 rounded-full"
+                              className="inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden group bg-slate-700 hover:bg-slate-800 text-white border-slate-700 hover:border-slate-800 h-10 w-10 p-0 rounded-full"
                               onClick={() => handleOpenRollDialog(jobOrder)}
                             >
                               <Package className="h-4 w-4" />
                             </Button>
                             <Button
-                              size="sm"
-                              className="bg-slate-700 hover:bg-slate-800 text-white h-8 w-8 p-0 rounded-full"
+                              className="inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden group bg-slate-700 hover:bg-slate-800 text-white border-slate-700 hover:border-slate-800 h-10 w-10 p-0 rounded-full"
                               onClick={() => handleEditJobOrder(jobOrder)}
                             >
                               <Edit className="h-4 w-4" />
                             </Button>
                             <Button
-                              size="sm"
-                              className="bg-red-600 hover:bg-red-700 text-white h-8 w-8 p-0 rounded-full"
+                              className="inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden group bg-red-600 hover:bg-red-700 text-white border-red-600 hover:border-red-700 h-10 w-10 p-0 rounded-full"
                               onClick={() => handleDeleteJobOrder(jobOrder)}
                             >
                               <Trash2 className="h-4 w-4" />
@@ -957,22 +952,19 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
                           </td>
                           <td className="py-3 px-4 text-center flex justify-center space-x-2">
                             <Button
-                              size="sm"
-                              className="bg-slate-700 hover:bg-slate-800 text-white border-slate-700 hover:border-slate-800"
+                              className="inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden group bg-slate-700 hover:bg-slate-800 text-white border-slate-700 hover:border-slate-800 h-10 w-10 p-0"
                               onClick={() => handleOpenRollDialog(jobOrder)}
                             >
                               <Package className="h-4 w-4" />
                             </Button>
                             <Button
-                              size="sm"
-                              className="bg-slate-700 hover:bg-slate-800 text-white border-slate-700 hover:border-slate-800"
+                              className="inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden group bg-slate-700 hover:bg-slate-800 text-white border-slate-700 hover:border-slate-800 h-10 w-10 p-0"
                               onClick={() => handleEditJobOrder(jobOrder)}
                             >
                               <Edit className="h-4 w-4" />
                             </Button>
                             <Button
-                              size="sm"
-                              className="bg-red-600 hover:bg-red-700 text-white border-red-600 hover:border-red-700"
+                              className="inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden group bg-red-600 hover:bg-red-700 text-white border-red-600 hover:border-red-700 h-10 w-10 p-0"
                               onClick={() => handleDeleteJobOrder(jobOrder)}
                             >
                               <Trash2 className="h-4 w-4" />
@@ -1141,14 +1133,14 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
           {isMobile ? (
             <>
               <Button
-                className="bg-slate-700 hover:bg-slate-800 text-white border-slate-700 hover:border-slate-800 w-full justify-center"
+                className="inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden group bg-slate-700 hover:bg-slate-800 text-white border-slate-700 hover:border-slate-800 w-full justify-center pt-[12px] pb-[12px] pl-[20px] pr-[20px]"
                 onClick={() => handlePrintOrder()}
               >
                 <Printer className="h-4 w-4 mr-2" />
                 Print Order
               </Button>
               <Button
-                className="bg-slate-700 hover:bg-slate-800 text-white border-slate-700 hover:border-slate-800 w-full justify-center"
+                className="inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden group bg-green-600 hover:bg-green-700 text-white border-green-600 hover:border-green-700 w-full justify-center pt-[12px] pb-[12px] pl-[20px] pr-[20px]"
                 onClick={() => updateOrderMutation.mutate("completed")}
                 disabled={
                   updateOrderMutation.isPending || order.status === "completed"
@@ -1158,7 +1150,7 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
                 Mark as Completed
               </Button>
               <Link href="/orders" className="w-full">
-                <Button className="bg-slate-600 hover:bg-slate-700 text-white border-slate-600 hover:border-slate-700 w-full justify-center">
+                <Button className="inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden group bg-blue-600 hover:bg-blue-700 text-white border-blue-600 hover:border-blue-700 w-full justify-center pt-[12px] pb-[12px] pl-[20px] pr-[20px]">
                   <ArrowLeft className="h-4 w-4 mr-2" />
                   Back to Orders
                 </Button>
@@ -1167,14 +1159,14 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
           ) : (
             <>
               <Button 
-                className="bg-slate-700 hover:bg-slate-800 text-white border-slate-700 hover:border-slate-800"
+                className="inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden group bg-slate-700 hover:bg-slate-800 text-white border-slate-700 hover:border-slate-800 pt-[10px] pb-[10px] pl-[20px] pr-[20px] ml-[15px] mr-[15px]"
                 onClick={() => handlePrintOrder()}
               >
                 <Printer className="h-4 w-4 mr-2" />
                 Print Order
               </Button>
               <Button
-                className="hover:bg-slate-800 text-white border-slate-700 hover:border-slate-800 pl-[35px] pr-[35px] ml-[71px] mr-[71px] mt-[0px] mb-[0px] pt-[9px] pb-[9px] bg-[#46e314]"
+                className="inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden group bg-green-600 hover:bg-green-700 text-white border-green-600 hover:border-green-700 pt-[10px] pb-[10px] pl-[20px] pr-[20px] ml-[15px] mr-[15px]"
                 onClick={() => updateOrderMutation.mutate("completed")}
                 disabled={
                   updateOrderMutation.isPending || order.status === "completed"
@@ -1184,7 +1176,7 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
                 Mark as Completed
               </Button>
               <Link href="/orders">
-                <Button className="hover:bg-slate-800 text-white border-slate-700 hover:border-slate-800 pt-[7px] pb-[7px] pl-[9px] pr-[9px] ml-[82px] mr-[82px] bg-[#204b91]">
+                <Button className="inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden group bg-blue-600 hover:bg-blue-700 text-white border-blue-600 hover:border-blue-700 pt-[10px] pb-[10px] pl-[20px] pr-[20px] ml-[15px] mr-[15px]">
                   <ArrowLeft className="h-4 w-4 mr-2" />
                   Back to Orders
                 </Button>
@@ -1214,10 +1206,12 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel className="inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden group bg-gray-200 hover:bg-gray-300 text-gray-800 border-gray-200 hover:border-gray-300 pt-[10px] pb-[10px] pl-[16px] pr-[16px]">
+              Cancel
+            </AlertDialogCancel>
             <AlertDialogAction
               onClick={confirmDelete}
-              className="bg-red-500 hover:bg-red-600"
+              className="inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden group bg-red-600 hover:bg-red-700 text-white border-red-600 hover:border-red-700 pt-[10px] pb-[10px] pl-[16px] pr-[16px]"
             >
               Delete
             </AlertDialogAction>
@@ -1255,10 +1249,14 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
           </div>
 
           <DialogFooter>
-            <Button variant="outline" onClick={() => setRollDialogOpen(false)}>
+            <Button 
+              className="inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden group bg-gray-200 hover:bg-gray-300 text-gray-800 border-gray-200 hover:border-gray-300 pt-[10px] pb-[10px] pl-[16px] pr-[16px]"
+              onClick={() => setRollDialogOpen(false)}
+            >
               Cancel
             </Button>
             <Button
+              className="inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden group bg-blue-600 hover:bg-blue-700 text-white border-blue-600 hover:border-blue-700 pt-[10px] pb-[10px] pl-[16px] pr-[16px]"
               onClick={handleCreateRoll}
               disabled={createRollMutation.isPending}
             >
