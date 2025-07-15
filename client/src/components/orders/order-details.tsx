@@ -883,16 +883,16 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
                 <table className="w-full text-sm">
                   <thead className="bg-secondary-50 text-secondary-600 border-b border-secondary-100">
                     <tr>
-                      <th className="py-3 px-4 text-left">Product</th>
-                      <th className="py-3 px-4 text-left">Size</th>
-                      <th className="py-3 px-4 text-left">Thickness</th>
-                      <th className="py-3 px-4 text-left">Material</th>
-                      <th className="py-3 px-4 text-left">Batch</th>
-                      <th className="py-3 px-4 text-left">Qty (Kg)</th>
-                      <th className="py-3 px-4 text-left">Printed</th>
-                      <th className="py-3 px-4 text-left">Cylinder (Inch)</th>
-                      <th className="py-3 px-4 text-left">Cutting Length</th>
-                      <th className="py-3 px-4 text-left">Actions</th>
+                      <th className="py-3 px-4 text-center">{t("orders.product")}</th>
+                      <th className="py-3 px-4 text-center">{t("orders.size")}</th>
+                      <th className="py-3 px-4 text-center">{t("orders.thickness")}</th>
+                      <th className="py-3 px-4 text-center">{t("orders.material")}</th>
+                      <th className="py-3 px-4 text-center">{t("orders.batch")}</th>
+                      <th className="py-3 px-4 text-center">{t("orders.qty_kg")}</th>
+                      <th className="py-3 px-4 text-center">{t("orders.printed")}</th>
+                      <th className="py-3 px-4 text-center">{t("orders.cylinder_inch")}</th>
+                      <th className="py-3 px-4 text-center">{t("orders.cutting_length")}</th>
+                      <th className="py-3 px-4 text-center">{t("orders.actions")}</th>
                     </tr>
                   </thead>
                   <tbody className="text-secondary-800">
@@ -910,32 +910,32 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
                           key={jobOrder.id}
                           className="border-b border-secondary-100"
                         >
-                          <td className="py-3 px-4">{item?.name || "N/A"}</td>
-                          <td className="py-3 px-4">
+                          <td className="py-3 px-4 text-center">{item?.name || "N/A"}</td>
+                          <td className="py-3 px-4 text-center">
                             {product?.sizeCaption || "N/A"}
                           </td>
-                          <td className="py-3 px-4">
+                          <td className="py-3 px-4 text-center">
                             {product?.thickness || "N/A"}
                           </td>
-                          <td className="py-3 px-4">
+                          <td className="py-3 px-4 text-center">
                             {product?.rawMaterial || "N/A"}
                           </td>
-                          <td className="py-3 px-4">
+                          <td className="py-3 px-4 text-center">
                             {masterBatch?.name || "N/A"}
                           </td>
-                          <td className="py-3 px-4">
+                          <td className="py-3 px-4 text-center">
                             {Math.round(jobOrder.quantity)}
                           </td>
-                          <td className="py-3 px-4">
+                          <td className="py-3 px-4 text-center">
                             {product?.printed || "N/A"}
                           </td>
-                          <td className="py-3 px-4">
+                          <td className="py-3 px-4 text-center">
                             {product?.printingCylinder || "0"}
                           </td>
-                          <td className="py-3 px-4">
+                          <td className="py-3 px-4 text-center">
                             {product?.cuttingLength || "0"}
                           </td>
-                          <td className="py-3 px-4 flex space-x-2">
+                          <td className="py-3 px-4 text-center flex justify-center space-x-2">
                             <Button
                               size="sm"
                               variant="outline"

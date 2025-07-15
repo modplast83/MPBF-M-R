@@ -118,6 +118,15 @@ This is a comprehensive production management system built with React, TypeScrip
 
 ## Recent Changes
 
+- July 15, 2025: **ORDER PRODUCTS TABLE ENHANCEMENT WITH ARABIC TRANSLATIONS** - Enhanced order details table with improved functionality and bilingual support:
+  - ✅ **Arabic Translation Keys**: Added comprehensive Arabic translations for all table headers (product, size, thickness, material, batch, qty_kg, printed, cylinder_inch, cutting_length, actions)
+  - ✅ **Text Alignment**: Changed table headers and data cells from left-aligned to center-aligned text for better visual consistency
+  - ✅ **Cutting Length Column**: Added separate "Cutting Length" column displaying `product?.cuttingLength || "0"` distinct from cylinder measurements
+  - ✅ **Print Function Update**: Updated print table to include separate cutting length column in printed reports
+  - ✅ **Bilingual Support**: All table elements now support seamless Arabic-English language switching
+  - ✅ **UI Consistency**: Applied consistent center alignment across all table headers and data cells
+  - Order products table now provides complete bilingual support with clear separation between cylinder and cutting length measurements
+
 - July 15, 2025: **ROLL STAGE COLORS AND LAYOUT ENHANCEMENT** - Updated production roll management page with improved visual design:
   - ✅ **Roll Stage Colors**: Implemented distinct color coding for workflow stages (Extrusion: green, Printing: red, Cutting: yellow)
   - ✅ **Enhanced Card Layout**: Repositioned customer name below status and stage badges for better visual hierarchy
