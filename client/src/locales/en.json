@@ -1460,6 +1460,13 @@
       "completed": "Completed",
       "cancelled": "Cancelled",
       "cancel": "Cancel",
+      "status": {
+        "pending": "Pending",
+        "processing": "For Production",
+        "completed": "Completed",
+        "cancelled": "Cancelled",
+        "hold": "On Hold"
+      },
       "create_order": "Create Order",
       "creating": "Creating...",
       "no_recent_orders": "No recent orders found",

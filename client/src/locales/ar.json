@@ -2436,6 +2436,13 @@
       "completed": "مكتمل",
       "cancelled": "ملغى",
       "hold": "إنتظار",
+      "status": {
+        "pending": "بالإنتظار",
+        "processing": "قيد الإنتاج",
+        "completed": "مكتمل",
+        "cancelled": "ملغى",
+        "hold": "معلق"
+      },
       "no_recent_orders": "لا توجد طلبات حديثة",
       "see_all_orders": "عرض جميع الطلبات",
       "size": "المقاس",

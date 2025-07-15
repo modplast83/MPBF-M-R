@@ -86,29 +86,31 @@ import {
 
 // Enhanced Status Badge Component with icons
 const StatusBadge = ({ status }: { status: string }) => {
+  const { t } = useTranslation();
+  
   const statusConfig = {
     pending: { 
-      label: "Pending", 
+      label: t('orders.status.pending'), 
       color: "bg-yellow-100 text-yellow-800 border-yellow-300", 
       icon: <Clock className="h-3 w-3" />,
     },
     processing: { 
-      label: "For Production", 
+      label: t('orders.status.processing'), 
       color: "bg-blue-100 text-blue-800 border-blue-300", 
       icon: <Package className="h-3 w-3" />,
     },
     completed: { 
-      label: "Completed", 
+      label: t('orders.status.completed'), 
       color: "bg-green-100 text-green-800 border-green-300", 
       icon: <CheckCircle className="h-3 w-3" />,
     },
     cancelled: { 
-      label: "Cancelled", 
+      label: t('orders.status.cancelled'), 
       color: "bg-red-100 text-red-800 border-red-300", 
       icon: <XCircle className="h-3 w-3" />,
     },
     hold: { 
-      label: "On Hold", 
+      label: t('orders.status.hold'), 
       color: "bg-orange-100 text-orange-800 border-orange-300", 
       icon: <Pause className="h-3 w-3" />,
     },
@@ -1201,7 +1203,7 @@ export default function OrdersIndex() {
                     : t('orders.get_started_create_order')}
                 </p>
                 <Link href="/orders/new">
-                  <Button className="gap-2 w-full sm:w-auto">
+                  <Button className="inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden group gap-2 bg-blue-600 hover:bg-blue-700 w-full sm:w-auto ml-[12px] mr-[12px] mt-[2px] mb-[2px] pt-[6px] pb-[6px] text-center pl-[6px] pr-[6px]">
                     <Plus className="h-4 w-4" />
                     {t('orders.create_order')}
                   </Button>
