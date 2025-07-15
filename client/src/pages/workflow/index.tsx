@@ -34,7 +34,7 @@ export default function WorkflowIndex() {
         setActiveTab("cutting");
       } else {
         // Fallback if no tabs are allowed - shouldn't happen with proper route protection
-        setActiveTab(null);
+        setActiveTab("extrusion"); // Use first tab as fallback instead of null
       }
     }
   }, [showExtrusionTab, showPrintingTab, showCuttingTab, activeTab]);

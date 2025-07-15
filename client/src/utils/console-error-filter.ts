@@ -71,6 +71,11 @@ const ERROR_FILTERS: ErrorFilter[] = [
     reason: 'React prop type warning - development only',
     level: 'warn'
   },
+  {
+    pattern: /Collapsible is changing from uncontrolled to controlled/,
+    reason: 'Radix UI Collapsible component state transition warning - handled in component',
+    level: 'suppress'
+  },
   
   // Vite HMR messages
   {

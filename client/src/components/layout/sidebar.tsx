@@ -326,7 +326,8 @@ export default function Sidebar({
                     <div key={itemIndex}>
                       {item.subItems ? (
                         <Collapsible
-                          open={openMenus[item.title]}
+                          defaultOpen={false}
+                          open={openMenus[item.title] === undefined ? false : openMenus[item.title]}
                           onOpenChange={() => toggleMenu(item.title)}
                         >
                           <CollapsibleTrigger asChild>
