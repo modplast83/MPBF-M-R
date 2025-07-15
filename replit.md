@@ -119,12 +119,13 @@ This is a comprehensive production management system built with React, TypeScrip
 ## Recent Changes
 
 - July 15, 2025: **ORDER QUANTITY CALCULATION ENHANCEMENT** - Added automatic extra quantity calculation for job orders based on product punching type:
-  - ✅ **T-Shirt Punching**: Added 20% extra quantity for products with "T-Shirt" or "T-Shirt w/Hook" punching
+  - ✅ **T-Shirt Punching**: Added 20% extra quantity for products with "T-Shirt" punching
+  - ✅ **T-Shirt w/Hook Punching**: Added 20% extra quantity for products with "T-Shirt w/Hook" punching
   - ✅ **Banana Punching**: Added 10% extra quantity for products with "Banana" punching
-  - ✅ **Default Punching**: Added 5% extra quantity for all other punching types (including "None")
-  - ✅ **Smart Calculation**: Implemented calculateJobOrderQuantity function that automatically applies percentage based on customer product punching type
+  - ✅ **None Punching**: Added 5% extra quantity for products with "None" punching
+  - ✅ **Smart Calculation**: Implemented calculateJobOrderQuantity function that automatically applies specific percentage based on customer product punching type
   - ✅ **Seamless Integration**: Updated order creation mutation to fetch product punching data and calculate final quantities before creating job orders
-  - Order creation now automatically adjusts quantities: 100kg input becomes 120kg for T-Shirt, 110kg for Banana, 105kg for others
+  - Order creation now automatically adjusts quantities: 100kg input becomes 120kg for T-Shirt types, 110kg for Banana, 105kg for None
   - Enhancement improves production planning by accounting for material waste and processing requirements specific to each punching type
 
 - July 15, 2025: **ROLLS-PRO PAGE IMPLEMENTED** - Created new comprehensive production roll management page:

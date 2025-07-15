@@ -272,14 +272,19 @@ export default function NewOrderPage() {
     // Apply extra quantity based on punching type
     switch (punching) {
       case 'T-Shirt':
+        extraPercentage = 20; // 20% extra
+        break;
       case 'T-Shirt w/Hook':
         extraPercentage = 20; // 20% extra
         break;
       case 'Banana':
         extraPercentage = 10; // 10% extra
         break;
+      case 'None':
+        extraPercentage = 5; // 5% extra
+        break;
       default:
-        extraPercentage = 5; // 5% extra for all other punching types
+        extraPercentage = 5; // 5% extra for any other punching types
         break;
     }
     
