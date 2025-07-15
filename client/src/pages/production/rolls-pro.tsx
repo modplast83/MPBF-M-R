@@ -79,10 +79,15 @@ interface RollCardProps {
   customer?: Customer;
   customerProduct?: CustomerProduct;
   item?: Item;
-  user?: User;
+  users: User[];
 }
 
-function RollCard({ roll, jobOrder, customer, customerProduct, item, user }: RollCardProps) {
+function RollCard({ roll, jobOrder, customer, customerProduct, item, users }: RollCardProps) {
+  // Helper function to get user name by ID
+  const getUserName = (userId: string): string => {
+    const user = users.find(u => u.id === userId);
+    return user?.firstName || userId;
+  };
   const { t } = useTranslation();
   const statusConfig = STATUS_CONFIG[roll.status as keyof typeof STATUS_CONFIG] || STATUS_CONFIG.pending;
   const stageConfig = STAGE_CONFIG[roll.currentStage as keyof typeof STAGE_CONFIG] || STAGE_CONFIG.extrusion;
@@ -159,13 +164,13 @@ function RollCard({ roll, jobOrder, customer, customerProduct, item, user }: Rol
           </h4>
           <div className="space-y-1 text-xs text-gray-600">
             {roll.createdById && (
-              <p>Extruded by: {user?.firstName || roll.createdById}</p>
+              <p>Extruded by: {getUserName(roll.createdById)}</p>
             )}
             {roll.printedById && (
-              <p>Printed by: {roll.printedById}</p>
+              <p>Printed by: {getUserName(roll.printedById)}</p>
             )}
             {roll.cutById && (
-              <p>Cut by: {roll.cutById}</p>
+              <p>Cut by: {getUserName(roll.cutById)}</p>
             )}
           </div>
         </div>
@@ -453,7 +458,7 @@ export default function RollsProPage() {
                         customer={customer}
                         customerProduct={customerProduct}
                         item={item}
-                        user={user}
+                        users={users}
                       />
                     ))}
                   </div>
@@ -480,7 +485,7 @@ export default function RollsProPage() {
                       customer={customer}
                       customerProduct={customerProduct}
                       item={item}
-                      user={user}
+                      users={users}
                     />
                   ))}
                 </div>
@@ -501,7 +506,7 @@ export default function RollsProPage() {
                       customer={customer}
                       customerProduct={customerProduct}
                       item={item}
-                      user={user}
+                      users={users}
                     />
                   ))}
                 </div>
@@ -522,7 +527,7 @@ export default function RollsProPage() {
                       customer={customer}
                       customerProduct={customerProduct}
                       item={item}
-                      user={user}
+                      users={users}
                     />
                   ))}
                 </div>
