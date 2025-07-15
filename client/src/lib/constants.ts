@@ -110,6 +110,7 @@ export const SIDEBAR_ITEMS = [
           { title: "Job Orders", path: "/production/job-orders" },
           { title: "JO Mix", path: "/production/jo-mix" },
           { title: "Workflow", path: "/workflow" },
+          { title: "Rolls-Pro", path: "/production/rolls-pro" },
           { title: "Mix Materials", path: "/production/mix-materials" },
           {
             title: "Bottleneck Monitor",

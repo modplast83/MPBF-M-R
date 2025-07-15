@@ -18,6 +18,7 @@ import ProductionIndex from "@/pages/production/index";
 import MixMaterialsPage from "@/pages/production/mix-materials";
 import JobOrdersPage from "@/pages/production/job-orders";
 import JoMixPage from "@/pages/production/jo-mix";
+import RollsProPage from "@/pages/production/rolls-pro";
 import WarehouseIndex from "@/pages/warehouse/index";
 import RawMaterials from "@/pages/warehouse/raw-materials";
 import FinalProducts from "@/pages/warehouse/final-products";
@@ -458,6 +459,11 @@ function App() {
                         path="/production/jo-mix"
                         component={JoMixPage}
                         module="JO Mix"
+                      />
+                      <ProtectedRoute
+                        path="/production/rolls-pro"
+                        component={RollsProPage}
+                        module="Rolls-Pro"
                       />
                       <ProtectedRoute
                         path="/production/mix-materials"

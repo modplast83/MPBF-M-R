@@ -43,6 +43,13 @@ export default function ProductionIndex() {
       color: "bg-gradient-to-br from-green-500 to-green-600",
     },
     {
+      title: "Rolls-Pro",
+      description: "Advanced production rolls tracking with workflow status monitoring",
+      icon: Factory,
+      path: "/production/rolls-pro",
+      color: "bg-gradient-to-br from-cyan-500 to-cyan-600",
+    },
+    {
       title: t("production.mix_materials.title"),
       description: t("production.mix_materials.description"),
       icon: Blend,
