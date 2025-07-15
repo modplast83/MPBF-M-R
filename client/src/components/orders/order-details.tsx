@@ -42,6 +42,8 @@ import {
 } from "@shared/schema";
 import { toast } from "@/hooks/use-toast";
 import { JobOrderDialog } from "./job-order-dialog";
+// @ts-ignore
+import { useTranslation } from "react-i18next";
 
 interface OrderDetailsProps {
   orderId: number;
@@ -50,6 +52,8 @@ interface OrderDetailsProps {
 export function OrderDetails({ orderId }: OrderDetailsProps) {
   const queryClient = useQueryClient();
   const isMobile = useIsMobile();
+  // @ts-ignore
+  const { t } = useTranslation();
   const [rollDialogOpen, setRollDialogOpen] = useState(false);
   const [jobOrderDialogOpen, setJobOrderDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
