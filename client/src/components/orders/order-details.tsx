@@ -952,19 +952,19 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
                           </td>
                           <td className="py-3 px-4 text-center flex justify-center space-x-2">
                             <Button
-                              className="inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden group bg-slate-700 hover:bg-slate-800 text-white border-slate-700 hover:border-slate-800 h-10 w-10 p-0"
+                              className="inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden group bg-slate-700 hover:bg-slate-800 text-white border-slate-700 hover:border-slate-800 h-10 w-10 p-0 ml-[8px] mr-[8px]"
                               onClick={() => handleOpenRollDialog(jobOrder)}
                             >
                               <Package className="h-4 w-4" />
                             </Button>
                             <Button
-                              className="inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden group bg-slate-700 hover:bg-slate-800 text-white border-slate-700 hover:border-slate-800 h-10 w-10 p-0"
+                              className="inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden group bg-slate-700 hover:bg-slate-800 text-white border-slate-700 hover:border-slate-800 h-10 w-10 p-0 ml-[8px] mr-[8px]"
                               onClick={() => handleEditJobOrder(jobOrder)}
                             >
                               <Edit className="h-4 w-4" />
                             </Button>
                             <Button
-                              className="inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden group bg-red-600 hover:bg-red-700 text-white border-red-600 hover:border-red-700 h-10 w-10 p-0"
+                              className="inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden group bg-red-600 hover:bg-red-700 text-white border-red-600 hover:border-red-700 h-10 w-10 p-0 ml-[8px] mr-[8px]"
                               onClick={() => handleDeleteJobOrder(jobOrder)}
                             >
                               <Trash2 className="h-4 w-4" />
