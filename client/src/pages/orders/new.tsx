@@ -265,6 +265,27 @@ export default function NewOrderPage() {
     ? customersFuse.search(customerSearch).map(result => result.item)
     : customers;
 
+  // Helper function to calculate extra quantity based on punching type
+  const calculateJobOrderQuantity = (baseQuantity: number, punching: string): number => {
+    let extraPercentage = 0;
+    
+    // Apply extra quantity based on punching type
+    switch (punching) {
+      case 'T-Shirt':
+      case 'T-Shirt w/Hook':
+        extraPercentage = 20; // 20% extra
+        break;
+      case 'Banana':
+        extraPercentage = 10; // 10% extra
+        break;
+      default:
+        extraPercentage = 5; // 5% extra for all other punching types
+        break;
+    }
+    
+    return baseQuantity + (baseQuantity * extraPercentage / 100);
+  };
+
   // Create order mutation
   const createOrderMutation = useMutation({
     mutationFn: async (data: OrderFormValues) => {
@@ -281,15 +302,22 @@ export default function NewOrderPage() {
       if (!orderResponse.ok) throw new Error('Failed to create order');
       const order = await orderResponse.json();
 
-      // Then create job orders for each product
+      // Then create job orders for each product with calculated quantities
       for (const product of data.products) {
+        // Find the customer product to get punching type
+        const customerProduct = customerProducts.find(cp => cp.id === product.productId);
+        const punching = customerProduct?.punching || 'None';
+        
+        // Calculate the final quantity with extra percentage
+        const finalQuantity = calculateJobOrderQuantity(product.quantity, punching);
+        
         const jobOrderResponse = await fetch('/api/job-orders', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             orderId: order.id,
             customerProductId: product.productId,
-            quantity: product.quantity,
+            quantity: finalQuantity,
           }),
         });
         
