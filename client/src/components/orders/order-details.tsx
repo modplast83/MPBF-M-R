@@ -382,10 +382,8 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
           <td>${masterBatch?.name || "N/A"}</td>
           <td>${jobOrder.quantity}</td>
           <td>${printedValue}</td>
-          <td>${Math.max(
-            Number(product?.printingCylinder) || 0,
-            Number(product?.cuttingLength) || 0
-          )}</td>
+          <td>${product?.printingCylinder || "0"}</td>
+          <td>${product?.cuttingLength || "0"}</td>
           <td>${product?.punching || "None"}</td>
           <td>${product?.lengthCm ? Math.round(product.lengthCm) : "0"}</td>
           <td>${product?.cuttingUnit || "Kg."}</td>
@@ -583,6 +581,7 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
               <th>Qty</th>
               <th>Printed</th>
               <th>Cyle.</th>
+              <th>Cut Length</th>
               <th>Punch</th>
               <th>Length</th>
               <th>Unit</th>
@@ -859,6 +858,14 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
                               {product?.printingCylinder || "0"}
                             </p>
                           </div>
+                          <div>
+                            <p className="text-secondary-500">
+                              Cutting Length:
+                            </p>
+                            <p className="font-medium">
+                              {product?.cuttingLength || "0"}
+                            </p>
+                          </div>
                         </div>
                       </div>
                     );
@@ -884,6 +891,7 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
                       <th className="py-3 px-4 text-left">Qty (Kg)</th>
                       <th className="py-3 px-4 text-left">Printed</th>
                       <th className="py-3 px-4 text-left">Cylinder (Inch)</th>
+                      <th className="py-3 px-4 text-left">Cutting Length</th>
                       <th className="py-3 px-4 text-left">Actions</th>
                     </tr>
                   </thead>
@@ -922,10 +930,10 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
                             {product?.printed || "N/A"}
                           </td>
                           <td className="py-3 px-4">
-                            {Math.max(
-                              Number(product?.printingCylinder) || 0,
-                              Number(product?.cuttingLength) || 0
-                            )}
+                            {product?.printingCylinder || "0"}
+                          </td>
+                          <td className="py-3 px-4">
+                            {product?.cuttingLength || "0"}
                           </td>
                           <td className="py-3 px-4 flex space-x-2">
                             <Button
@@ -963,7 +971,7 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
                     {(!jobOrders || jobOrders.length === 0) && (
                       <tr>
                         <td
-                          colSpan={9}
+                          colSpan={10}
                           className="py-4 text-center text-secondary-500"
                         >
                           No job orders found for this order. Click "Add Job
