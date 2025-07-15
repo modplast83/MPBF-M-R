@@ -97,25 +97,26 @@ function RollCard({ roll, jobOrder, customer, customerProduct, item, users }: Ro
   return (
     <Card className="hover:shadow-md transition-shadow duration-200">
       <CardContent className="p-4">
-        <div className="flex justify-between items-start mb-3">
-          <div className="flex-1">
-            <h3 className="font-semibold text-lg text-gray-900">
-              {customer?.name || `Customer ID: ${jobOrder?.customerId || customerProduct?.customerId || "Unknown"}`}
-            </h3>
-            {customer?.nameAr && (
-              <p className="text-sm text-gray-600">{customer.nameAr}</p>
-            )}
-          </div>
-          <div className="flex gap-2">
-            <Badge className={`${statusConfig.color} text-xs border inline-flex items-center gap-1`}>
-              <StatusIcon className="h-3 w-3" />
-              {statusConfig.label}
-            </Badge>
-            <Badge className={`${stageConfig.color} text-xs border inline-flex items-center gap-1`}>
-              <StageIcon className="h-3 w-3" />
-              {stageConfig.label}
-            </Badge>
-          </div>
+        {/* Status and Stage Badges */}
+        <div className="flex justify-end gap-2 mb-3">
+          <Badge className={`${statusConfig.color} text-xs border inline-flex items-center gap-1`}>
+            <StatusIcon className="h-3 w-3" />
+            {statusConfig.label}
+          </Badge>
+          <Badge className={`${stageConfig.color} text-xs border inline-flex items-center gap-1`}>
+            <StageIcon className="h-3 w-3" />
+            {stageConfig.label}
+          </Badge>
+        </div>
+
+        {/* Customer Name - moved below badges and reduced size */}
+        <div className="mb-3">
+          <h4 className="font-semibold text-base text-gray-900">
+            {customer?.name || `Customer ID: ${jobOrder?.customerId || customerProduct?.customerId || "Unknown"}`}
+          </h4>
+          {customer?.nameAr && (
+            <p className="text-xs text-gray-600">{customer.nameAr}</p>
+          )}
         </div>
 
         <div className="grid grid-cols-2 gap-4 text-sm">
