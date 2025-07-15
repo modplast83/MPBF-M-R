@@ -52,17 +52,17 @@ const STATUS_CONFIG = {
 // Stage configuration with colors and icons
 const STAGE_CONFIG = {
   extrusion: {
-    color: "bg-purple-100 text-purple-800 border-purple-300",
+    color: "bg-green-100 text-green-800 border-green-300",
     icon: Layers,
     label: "Extrusion"
   },
   printing: {
-    color: "bg-orange-100 text-orange-800 border-orange-300",
+    color: "bg-red-100 text-red-800 border-red-300",
     icon: FileText,
     label: "Printing"
   },
   cutting: {
-    color: "bg-green-100 text-green-800 border-green-300",
+    color: "bg-yellow-100 text-yellow-800 border-yellow-300",
     icon: Target,
     label: "Cutting"
   },
@@ -320,19 +320,19 @@ export default function RollsProPage() {
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
-            <div className="text-2xl font-bold text-purple-600">{stats.extrusion}</div>
+            <div className="text-2xl font-bold text-green-600">{stats.extrusion}</div>
             <div className="text-sm text-gray-600">Extrusion</div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
-            <div className="text-2xl font-bold text-orange-600">{stats.printing}</div>
+            <div className="text-2xl font-bold text-red-600">{stats.printing}</div>
             <div className="text-sm text-gray-600">Printing</div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
-            <div className="text-2xl font-bold text-green-600">{stats.cutting}</div>
+            <div className="text-2xl font-bold text-yellow-600">{stats.cutting}</div>
             <div className="text-sm text-gray-600">Cutting</div>
           </CardContent>
         </Card>
@@ -409,19 +409,19 @@ export default function RollsProPage() {
                 </TabsTrigger>
                 <TabsTrigger 
                   value="extrusion"
-                  className="rounded-none border-b-2 border-b-transparent data-[state=active]:border-b-purple-500 data-[state=active]:bg-transparent"
+                  className="rounded-none border-b-2 border-b-transparent data-[state=active]:border-b-green-500 data-[state=active]:bg-transparent"
                 >
                   Extrusion ({stats.extrusion})
                 </TabsTrigger>
                 <TabsTrigger 
                   value="printing"
-                  className="rounded-none border-b-2 border-b-transparent data-[state=active]:border-b-orange-500 data-[state=active]:bg-transparent"
+                  className="rounded-none border-b-2 border-b-transparent data-[state=active]:border-b-red-500 data-[state=active]:bg-transparent"
                 >
                   Printing ({stats.printing})
                 </TabsTrigger>
                 <TabsTrigger 
                   value="cutting"
-                  className="rounded-none border-b-2 border-b-transparent data-[state=active]:border-b-green-500 data-[state=active]:bg-transparent"
+                  className="rounded-none border-b-2 border-b-transparent data-[state=active]:border-b-yellow-500 data-[state=active]:bg-transparent"
                 >
                   Cutting ({stats.cutting})
                 </TabsTrigger>
