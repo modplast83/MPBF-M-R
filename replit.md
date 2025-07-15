@@ -118,6 +118,14 @@ This is a comprehensive production management system built with React, TypeScrip
 
 ## Recent Changes
 
+- July 15, 2025: **ARABIC TRANSLATIONS FOR DROPDOWN MENU ITEMS** - Added comprehensive Arabic translations for orders index page dropdown menu:
+  - ✅ **Dropdown Menu Translations**: Added Arabic translations for all dropdown menu items (Set to Pending, Set to Processing, Set to Completed, Put on Hold, Delete)
+  - ✅ **Translation Keys**: Updated orders section in Arabic locale file with proper translation keys
+  - ✅ **View Details Button**: Added Arabic translation for "View Details" button using existing translation key
+  - ✅ **Consistent Localization**: Applied translation hooks throughout dropdown menu for seamless language switching
+  - ✅ **Professional Arabic Text**: Used proper Arabic translations that match the business context
+  - Orders index page now fully supports Arabic language for all dropdown menu actions and buttons
+
 - July 15, 2025: **ENHANCED BUTTON DESIGN WITH DARK BLUE STYLING AND ICONS** - Improved all buttons in order details page with professional dark blue design:
   - ✅ **Dark Blue Color Scheme**: Updated all buttons to use dark blue (`bg-slate-700`) with hover states (`hover:bg-slate-800`)
   - ✅ **Lucide React Icons**: Replaced material icons with modern Lucide React icons (Plus, Edit, Trash2, Printer, FileText, ArrowLeft, Package)

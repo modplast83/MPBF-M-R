@@ -248,7 +248,7 @@ const OrderCard = ({
             <Link href={`/orders/${order.id}`} className="w-full sm:w-auto">
               <Button variant="outline" size="sm" className="gap-2 hover:bg-blue-50 hover:text-blue-600 w-full sm:w-auto">
                 <Eye className="h-4 w-4" />
-                <span className="sm:inline">View Details</span>
+                <span className="sm:inline">{t('common.view_details')}</span>
               </Button>
             </Link>
             
@@ -262,26 +262,26 @@ const OrderCard = ({
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem onClick={() => onStatusChange(order, "pending")}>
                     <Clock className="h-4 w-4 mr-2" />
-                    Set to Pending
+                    {t('orders.set_to_pending')}
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => onStatusChange(order, "processing")}>
                     <Package className="h-4 w-4 mr-2" />
-                    Set to Processing
+                    {t('orders.set_to_processing')}
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => onStatusChange(order, "completed")}>
                     <CheckCircle className="h-4 w-4 mr-2" />
-                    Set to Completed
+                    {t('orders.set_to_completed')}
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => onStatusChange(order, "hold")}>
                     <Pause className="h-4 w-4 mr-2" />
-                    Put on Hold
+                    {t('orders.put_on_hold')}
                   </DropdownMenuItem>
                   <DropdownMenuItem 
                     onClick={() => onDelete(order)}
                     className="text-red-600 hover:text-red-700"
                   >
                     <Trash2 className="h-4 w-4 mr-2" />
-                    Delete
+                    {t('orders.delete')}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
