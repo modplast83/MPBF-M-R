@@ -95,7 +95,7 @@ function RollCard({ roll, jobOrder, customer, customerProduct, item, user }: Rol
         <div className="flex justify-between items-start mb-3">
           <div className="flex-1">
             <h3 className="font-semibold text-lg text-gray-900">
-              {customer?.name || "Unknown Customer"}
+              {customer?.name || `Customer ID: ${jobOrder?.customerId || customerProduct?.customerId || "Unknown"}`}
             </h3>
             {customer?.nameAr && (
               <p className="text-sm text-gray-600">{customer.nameAr}</p>
@@ -240,9 +240,21 @@ export default function RollsProPage() {
   const enrichedRolls = filteredRolls.map(roll => {
     const jobOrder = jobOrders.find(jo => jo.id === roll.jobOrderId);
     const customerProduct = customerProducts.find(cp => cp.id === jobOrder?.customerProductId);
-    const customer = customers.find(c => c.id === jobOrder?.customerId);
+    
+    // Try to find customer by different possible ID fields
+    const customer = customers.find(c => 
+      c.id === jobOrder?.customerId || 
+      c.id === customerProduct?.customerId
+    );
     const item = items.find(i => i.id === customerProduct?.itemId);
     const user = users.find(u => u.id === roll.createdById);
+
+    // Debug: Log data structure for troubleshooting
+    if (process.env.NODE_ENV === 'development' && !customer && jobOrder) {
+      console.log('Missing customer for roll:', roll.id);
+      console.log('JobOrder customerId:', jobOrder.customerId);
+      console.log('CustomerProduct customerId:', customerProduct?.customerId);
+    }
 
     return {
       roll,
