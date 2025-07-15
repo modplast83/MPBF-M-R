@@ -44,6 +44,17 @@ import { toast } from "@/hooks/use-toast";
 import { JobOrderDialog } from "./job-order-dialog";
 // @ts-ignore
 import { useTranslation } from "react-i18next";
+import { 
+  Plus, 
+  Edit, 
+  Trash2, 
+  Printer, 
+  UserPlus, 
+  Package, 
+  ArrowLeft,
+  FileText,
+  Download
+} from "lucide-react";
 
 interface OrderDetailsProps {
   orderId: number;
@@ -759,10 +770,24 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
           <div>
             <div className="flex justify-between items-center mb-4">
               <h4 className="font-medium text-lg">Order Products</h4>
-              <Button variant="outline" size="sm" onClick={handleAddJobOrder}>
-                <span className="material-icons text-sm mr-1">add</span>
-                Add Job Order
-              </Button>
+              <div className="flex gap-2">
+                <Button 
+                  className="bg-slate-700 hover:bg-slate-800 text-white border-slate-700 hover:border-slate-800"
+                  size="sm" 
+                  onClick={handleAddJobOrder}
+                >
+                  <Plus className="h-4 w-4 mr-1" />
+                  Add Job Order
+                </Button>
+                <Button 
+                  className="bg-slate-700 hover:bg-slate-800 text-white border-slate-700 hover:border-slate-800"
+                  size="sm" 
+                  onClick={handlePrintOrder}
+                >
+                  <Printer className="h-4 w-4 mr-1" />
+                  Print Order
+                </Button>
+              </div>
             </div>
 
             {isMobile ? (
@@ -788,33 +813,24 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
                           <div className="flex space-x-2">
                             <Button
                               size="sm"
-                              variant="ghost"
-                              className="h-8 w-8 p-0 rounded-full"
+                              className="bg-slate-700 hover:bg-slate-800 text-white h-8 w-8 p-0 rounded-full"
                               onClick={() => handleOpenRollDialog(jobOrder)}
                             >
-                              <span className="material-icons text-sm">
-                                add
-                              </span>
+                              <Package className="h-4 w-4" />
                             </Button>
                             <Button
                               size="sm"
-                              variant="ghost"
-                              className="h-8 w-8 p-0 rounded-full"
+                              className="bg-slate-700 hover:bg-slate-800 text-white h-8 w-8 p-0 rounded-full"
                               onClick={() => handleEditJobOrder(jobOrder)}
                             >
-                              <span className="material-icons text-sm">
-                                edit
-                              </span>
+                              <Edit className="h-4 w-4" />
                             </Button>
                             <Button
                               size="sm"
-                              variant="ghost"
-                              className="h-8 w-8 p-0 rounded-full text-red-500"
+                              className="bg-red-600 hover:bg-red-700 text-white h-8 w-8 p-0 rounded-full"
                               onClick={() => handleDeleteJobOrder(jobOrder)}
                             >
-                              <span className="material-icons text-sm">
-                                delete
-                              </span>
+                              <Trash2 className="h-4 w-4" />
                             </Button>
                           </div>
                         </div>
@@ -942,31 +958,24 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
                           <td className="py-3 px-4 text-center flex justify-center space-x-2">
                             <Button
                               size="sm"
-                              variant="outline"
+                              className="bg-slate-700 hover:bg-slate-800 text-white border-slate-700 hover:border-slate-800"
                               onClick={() => handleOpenRollDialog(jobOrder)}
                             >
-                              <span className="material-icons text-sm">
-                                add
-                              </span>
+                              <Package className="h-4 w-4" />
                             </Button>
                             <Button
                               size="sm"
-                              variant="outline"
+                              className="bg-slate-700 hover:bg-slate-800 text-white border-slate-700 hover:border-slate-800"
                               onClick={() => handleEditJobOrder(jobOrder)}
                             >
-                              <span className="material-icons text-sm">
-                                edit
-                              </span>
+                              <Edit className="h-4 w-4" />
                             </Button>
                             <Button
                               size="sm"
-                              variant="outline"
-                              className="text-red-500 hover:text-red-700"
+                              className="bg-red-600 hover:bg-red-700 text-white border-red-600 hover:border-red-700"
                               onClick={() => handleDeleteJobOrder(jobOrder)}
                             >
-                              <span className="material-icons text-sm">
-                                delete
-                              </span>
+                              <Trash2 className="h-4 w-4" />
                             </Button>
                           </td>
                         </tr>
@@ -1132,52 +1141,53 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
           {isMobile ? (
             <>
               <Button
-                variant="outline"
-                className="w-full justify-center"
+                className="bg-slate-700 hover:bg-slate-800 text-white border-slate-700 hover:border-slate-800 w-full justify-center"
                 onClick={() => handlePrintOrder()}
               >
-                <span className="material-icons text-sm mr-1">print</span>
+                <Printer className="h-4 w-4 mr-2" />
                 Print Order
               </Button>
               <Button
-                variant="outline"
-                className="w-full justify-center"
+                className="bg-slate-700 hover:bg-slate-800 text-white border-slate-700 hover:border-slate-800 w-full justify-center"
                 onClick={() => updateOrderMutation.mutate("completed")}
                 disabled={
                   updateOrderMutation.isPending || order.status === "completed"
                 }
               >
-                <span className="material-icons text-sm mr-1">
-                  check_circle
-                </span>
+                <FileText className="h-4 w-4 mr-2" />
                 Mark as Completed
               </Button>
               <Link href="/orders" className="w-full">
-                <Button variant="outline" className="w-full justify-center">
-                  <span className="material-icons text-sm mr-1">
-                    arrow_back
-                  </span>
+                <Button className="bg-slate-600 hover:bg-slate-700 text-white border-slate-600 hover:border-slate-700 w-full justify-center">
+                  <ArrowLeft className="h-4 w-4 mr-2" />
                   Back to Orders
                 </Button>
               </Link>
             </>
           ) : (
             <>
-              <Button variant="outline" onClick={() => handlePrintOrder()}>
-                <span className="material-icons text-sm mr-1">print</span>
+              <Button 
+                className="bg-slate-700 hover:bg-slate-800 text-white border-slate-700 hover:border-slate-800"
+                onClick={() => handlePrintOrder()}
+              >
+                <Printer className="h-4 w-4 mr-2" />
                 Print Order
               </Button>
               <Button
-                variant="outline"
+                className="bg-slate-700 hover:bg-slate-800 text-white border-slate-700 hover:border-slate-800"
                 onClick={() => updateOrderMutation.mutate("completed")}
                 disabled={
                   updateOrderMutation.isPending || order.status === "completed"
                 }
               >
+                <FileText className="h-4 w-4 mr-2" />
                 Mark as Completed
               </Button>
               <Link href="/orders">
-                <Button variant="outline">Back to Orders</Button>
+                <Button className="bg-slate-600 hover:bg-slate-700 text-white border-slate-600 hover:border-slate-700">
+                  <ArrowLeft className="h-4 w-4 mr-2" />
+                  Back to Orders
+                </Button>
               </Link>
             </>
           )}
