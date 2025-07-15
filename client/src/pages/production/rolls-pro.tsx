@@ -7,9 +7,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { API_ENDPOINTS } from "@/lib/constants";
 import { Roll, JobOrder, Customer, CustomerProduct, Item, User } from "@shared/schema";
+import { RollTimeline } from '@/components/production/roll-timeline';
+import { TimelineOverview } from '@/components/production/timeline-overview';
 import { 
   Package, 
   Clock, 
@@ -22,7 +25,8 @@ import {
   User as UserIcon,
   Calendar,
   Target,
-  Layers
+  Layers,
+  History
 } from "lucide-react";
 
 // Status configuration with colors and icons
@@ -177,17 +181,39 @@ function RollCard({ roll, jobOrder, customer, customerProduct, item, users }: Ro
         </div>
 
         {/* Timestamps */}
-        <div className="mt-3 flex items-center gap-4 text-xs text-gray-500">
-          <div className="flex items-center gap-1">
-            <Calendar className="h-3 w-3" />
-            <span>Created: {new Date(roll.createdAt).toLocaleDateString()}</span>
-          </div>
-          {roll.wasteQty && roll.wasteQty > 0 && (
+        <div className="mt-3 flex items-center justify-between text-xs text-gray-500">
+          <div className="flex items-center gap-4">
             <div className="flex items-center gap-1">
-              <AlertCircle className="h-3 w-3 text-red-500" />
-              <span className="text-red-600">Waste: {roll.wasteQty}kg ({roll.wastePercentage}%)</span>
+              <Calendar className="h-3 w-3" />
+              <span>Created: {new Date(roll.createdAt).toLocaleDateString()}</span>
             </div>
-          )}
+            {roll.wasteQty && roll.wasteQty > 0 && (
+              <div className="flex items-center gap-1">
+                <AlertCircle className="h-3 w-3 text-red-500" />
+                <span className="text-red-600">Waste: {roll.wasteQty}kg ({roll.wastePercentage}%)</span>
+              </div>
+            )}
+          </div>
+          
+          {/* Timeline Button */}
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="h-7 px-2 text-xs hover:bg-blue-50"
+              >
+                <History className="h-3 w-3 mr-1" />
+                Timeline
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-2xl">
+              <DialogHeader>
+                <DialogTitle>Roll Lifecycle Timeline</DialogTitle>
+              </DialogHeader>
+              <RollTimeline roll={roll} users={users} />
+            </DialogContent>
+          </Dialog>
         </div>
       </CardContent>
     </Card>
@@ -292,6 +318,9 @@ export default function RollsProPage() {
           <p className="text-gray-600">Monitor and track production rolls across workflow stages</p>
         </div>
       </div>
+
+      {/* Timeline Overview */}
+      <TimelineOverview rolls={allRolls} />
 
       {/* Statistics Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
