@@ -118,6 +118,18 @@ This is a comprehensive production management system built with React, TypeScrip
 
 ## Recent Changes
 
+- July 16, 2025: **AI-POWERED CUSTOMER NAME TRANSLATION** - Implemented OpenAI-based auto-translation for Arabic customer names:
+  - ✅ **OpenAI Integration**: Added professional translation service using GPT-4o with business-specific context
+  - ✅ **Batch Translation**: Implemented efficient batch processing for multiple customer names
+  - ✅ **Auto-translate API**: Created `/api/customers/auto-translate` endpoint for bulk translation operations
+  - ✅ **Smart Filtering**: Only translates customers with missing or empty Arabic names
+  - ✅ **Professional UI**: Added "Auto-translate Arabic Names" button with loading states and progress feedback
+  - ✅ **Error Handling**: Robust error handling with fallback to original names if translation fails
+  - ✅ **Database Updates**: Automatic updating of customer records with translated Arabic names
+  - ✅ **User Feedback**: Comprehensive toast notifications showing translation results and counts
+  - Customer management now supports one-click AI translation for all customers missing Arabic names
+  - Translation service uses business-specific context for accurate company name translations
+
 - July 15, 2025: **GEOFENCE LOCATION SELECTION FIX** - Fixed critical geofence location selection functionality with comprehensive fallback interface:
   - ✅ **Manual Location Entry**: Added comprehensive manual coordinate entry interface when Google Maps is unavailable
   - ✅ **Current Location Support**: Implemented robust geolocation API integration with proper error handling

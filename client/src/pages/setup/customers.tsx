@@ -25,6 +25,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { toast } from "@/hooks/use-toast";
 import { Customer, User } from "@shared/schema";
 import { useTranslation } from "react-i18next";
+import { Languages, Plus, Edit, Trash2, Loader2 } from "lucide-react";
 
 export default function Customers() {
   const { t } = useTranslation();
@@ -61,6 +62,27 @@ export default function Customers() {
       toast({
         title: t("common.error"),
         description: t("setup.customers.delete_failed", { error }),
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Auto-translate mutation
+  const autoTranslateMutation = useMutation({
+    mutationFn: async () => {
+      return await apiRequest("POST", "/api/customers/auto-translate", {});
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: [API_ENDPOINTS.CUSTOMERS] });
+      toast({
+        title: "Translation Complete",
+        description: `Successfully translated ${data.translatedCount} customer names to Arabic`,
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Translation Failed",
+        description: error.message || "Failed to auto-translate customer names",
         variant: "destructive",
       });
     },
@@ -133,9 +155,9 @@ export default function Customers() {
             variant="ghost"
             size="icon"
             onClick={() => handleEdit(row)}
-            className="text-primary-500 hover:text-primary-700"
+            className="text-blue-500 hover:text-blue-700"
           >
-            <span className="material-icons text-sm">edit</span>
+            <Edit className="h-4 w-4" />
           </Button>
           <Button
             variant="ghost"
@@ -143,7 +165,7 @@ export default function Customers() {
             onClick={() => handleDelete(row)}
             className="text-red-500 hover:text-red-700"
           >
-            <span className="material-icons text-sm">delete</span>
+            <Trash2 className="h-4 w-4" />
           </Button>
         </div>
       ),
@@ -151,10 +173,33 @@ export default function Customers() {
   ];
 
   const tableActions = (
-    <Button onClick={() => setFormOpen(true)}>
-      <span className="material-icons text-sm mr-1">add</span>
-      {t("setup.customers.add_customer")}
-    </Button>
+    <div className="flex space-x-2">
+      <Button 
+        onClick={() => setFormOpen(true)}
+        className="bg-blue-600 hover:bg-blue-700 text-white"
+      >
+        <Plus className="h-4 w-4 mr-2" />
+        {t("setup.customers.add_customer")}
+      </Button>
+      <Button 
+        onClick={() => autoTranslateMutation.mutate()}
+        disabled={autoTranslateMutation.isPending}
+        variant="outline"
+        className="border-green-600 text-green-600 hover:bg-green-50"
+      >
+        {autoTranslateMutation.isPending ? (
+          <>
+            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+            Translating...
+          </>
+        ) : (
+          <>
+            <Languages className="h-4 w-4 mr-2" />
+            Auto-translate Arabic Names
+          </>
+        )}
+      </Button>
+    </div>
   );
 
   return (

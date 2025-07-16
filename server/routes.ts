@@ -2,6 +2,7 @@ import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { db, pool } from "./db";
+import { translationService } from "./translation-service";
 import { adaptToFrontend, adaptToDatabase } from "./quality-adapter";
 import {
   insertCategorySchema,
@@ -1478,6 +1479,65 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(204).send();
     } catch (error) {
       res.status(500).json({ message: "Failed to delete customer" });
+    }
+  });
+
+  // Auto-translate customer Arabic names
+  app.post("/api/customers/auto-translate", async (req: Request, res: Response) => {
+    try {
+      // Get all customers
+      const customers = await storage.getCustomers();
+      
+      // Filter customers with missing Arabic names
+      const customersToTranslate = customers.filter(customer => 
+        customer.name && customer.name.trim() !== '' && 
+        (!customer.nameAr || customer.nameAr.trim() === '')
+      );
+
+      if (customersToTranslate.length === 0) {
+        return res.json({ 
+          message: "No customers need Arabic name translation", 
+          translatedCount: 0 
+        });
+      }
+
+      // Translate in batches
+      const translationResults = await translationService.batchTranslateCustomerNames(
+        customersToTranslate.map(c => ({ id: c.id, name: c.name, nameAr: c.nameAr }))
+      );
+
+      // Update customers with translated names
+      let successCount = 0;
+      const updatePromises = translationResults.map(async (result) => {
+        try {
+          const customer = customers.find(c => c.id === result.id);
+          if (customer) {
+            await storage.updateCustomer(result.id, {
+              ...customer,
+              nameAr: result.translatedName
+            });
+            successCount++;
+          }
+        } catch (error) {
+          console.error(`Failed to update customer ${result.id}:`, error);
+        }
+      });
+
+      await Promise.all(updatePromises);
+
+      res.json({
+        message: `Successfully translated ${successCount} customer names to Arabic`,
+        translatedCount: successCount,
+        totalProcessed: translationResults.length,
+        translations: translationResults
+      });
+
+    } catch (error) {
+      console.error("Auto-translate error:", error);
+      res.status(500).json({ 
+        message: "Failed to auto-translate customer names", 
+        error: error.message 
+      });
     }
   });
 
