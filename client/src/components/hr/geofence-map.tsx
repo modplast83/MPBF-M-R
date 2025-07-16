@@ -369,30 +369,207 @@ export const GeofenceMap: React.FC<GeofenceMapProps> = ({
     return (
       <Card className="w-full">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-red-600">
+          <CardTitle className="flex items-center gap-2 text-blue-600">
             <MapPin className="h-5 w-5" />
-            Map Error
+            Location Selection (Manual Mode)
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-center py-8">
-            <p className="text-red-600 mb-4">{mapError}</p>
-            <p className="text-sm text-gray-600 mb-4">
-              This demo uses a simplified map. In production, you would configure Google Maps API.
-            </p>
-            <div className="bg-gradient-to-br from-green-100 to-blue-100 rounded-lg p-8 border-2 border-dashed border-blue-300">
+          <div className="space-y-6">
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <p className="text-sm text-blue-800 font-medium mb-2">Manual Location Entry</p>
+              <p className="text-xs text-blue-600">
+                Enter coordinates manually or use the "Get Current Location" button below.
+              </p>
+            </div>
+
+            {/* Current Location Display */}
+            <div className="bg-gradient-to-br from-green-100 to-blue-100 rounded-lg p-6 border-2 border-dashed border-blue-300">
               <div className="flex items-center justify-center mb-4">
-                <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-                  <MapPin className="h-4 w-4 text-white" />
+                <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center">
+                  <MapPin className="h-6 w-6 text-white" />
                 </div>
               </div>
               <div className="text-center">
-                <p className="text-sm font-medium text-blue-800">Geofence Location</p>
-                <p className="text-xs text-blue-600">
-                  Lat: {latitude.toFixed(6)}, Lng: {longitude.toFixed(6)}
-                </p>
-                <p className="text-xs text-blue-600">Radius: {radius}m</p>
+                <p className="text-lg font-semibold text-blue-800 mb-2">Current Geofence Location</p>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                  <div className="bg-white rounded-lg p-3">
+                    <p className="text-gray-500">Latitude</p>
+                    <p className="font-mono text-blue-600">{latitude.toFixed(6)}</p>
+                  </div>
+                  <div className="bg-white rounded-lg p-3">
+                    <p className="text-gray-500">Longitude</p>
+                    <p className="font-mono text-blue-600">{longitude.toFixed(6)}</p>
+                  </div>
+                  <div className="bg-white rounded-lg p-3">
+                    <p className="text-gray-500">Radius</p>
+                    <p className="font-mono text-blue-600">{radius}m</p>
+                  </div>
+                </div>
               </div>
+            </div>
+
+            {/* Manual Location Controls */}
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Latitude
+                  </label>
+                  <input
+                    type="number"
+                    step="0.000001"
+                    value={latitude}
+                    onChange={(e) => onLocationSelect(parseFloat(e.target.value) || latitude, longitude)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="26.4011776"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Longitude
+                  </label>
+                  <input
+                    type="number"
+                    step="0.000001"
+                    value={longitude}
+                    onChange={(e) => onLocationSelect(latitude, parseFloat(e.target.value) || longitude)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="50.069504"
+                  />
+                </div>
+              </div>
+
+              {/* Location Actions */}
+              <div className="flex flex-wrap gap-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    if (navigator.geolocation) {
+                      navigator.geolocation.getCurrentPosition(
+                        (position) => {
+                          const lat = position.coords.latitude;
+                          const lng = position.coords.longitude;
+                          onLocationSelect(lat, lng);
+                          toast({
+                            title: "Location Updated",
+                            description: `Current location set: ${lat.toFixed(6)}, ${lng.toFixed(6)}`,
+                          });
+                        },
+                        (error) => {
+                          toast({
+                            title: "Location Error",
+                            description: "Could not get your current location. Please check location permissions.",
+                            variant: "destructive",
+                          });
+                        }
+                      );
+                    } else {
+                      toast({
+                        title: "Not Supported",
+                        description: "Geolocation is not supported by this browser",
+                        variant: "destructive",
+                      });
+                    }
+                  }}
+                  className="flex-1 sm:flex-none"
+                >
+                  <Navigation className="h-4 w-4 mr-2" />
+                  Get Current Location
+                </Button>
+
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    // Set to Bahrain factory default coordinates
+                    onLocationSelect(26.4011776, 50.069504);
+                    toast({
+                      title: "Location Set",
+                      description: "Default factory location set",
+                    });
+                  }}
+                  className="flex-1 sm:flex-none"
+                >
+                  <MapPinned className="h-4 w-4 mr-2" />
+                  Use Default Location
+                </Button>
+              </div>
+
+              {/* Radius Control */}
+              {onRadiusChange && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Radius (meters)
+                  </label>
+                  <div className="flex items-center space-x-3">
+                    <input
+                      type="range"
+                      min="10"
+                      max="1000"
+                      step="10"
+                      value={radius}
+                      onChange={(e) => onRadiusChange(parseInt(e.target.value))}
+                      className="flex-1"
+                    />
+                    <input
+                      type="number"
+                      min="10"
+                      max="1000"
+                      value={radius}
+                      onChange={(e) => onRadiusChange(parseInt(e.target.value) || 100)}
+                      className="w-20 px-2 py-1 border border-gray-300 rounded text-sm"
+                    />
+                    <span className="text-sm text-gray-500">m</span>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Existing Geofences */}
+            {existingGeofences.length > 0 && (
+              <div>
+                <h4 className="text-sm font-medium text-gray-700 mb-3">Existing Geofences</h4>
+                <div className="space-y-2">
+                  {existingGeofences.map((geofence, index) => (
+                    <div key={index} className="bg-gray-50 rounded-lg p-3 flex items-center justify-between">
+                      <div className="flex items-center space-x-3">
+                        <div className={`w-3 h-3 rounded-full ${geofence.isActive ? 'bg-green-500' : 'bg-gray-400'}`} />
+                        <div>
+                          <p className="text-sm font-medium">{geofence.name}</p>
+                          <p className="text-xs text-gray-500">
+                            {geofence.centerLatitude.toFixed(6)}, {geofence.centerLongitude.toFixed(6)} • {geofence.radius}m
+                          </p>
+                        </div>
+                      </div>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          onLocationSelect(geofence.centerLatitude, geofence.centerLongitude);
+                          if (onRadiusChange) {
+                            onRadiusChange(geofence.radius);
+                          }
+                          toast({
+                            title: "Location Copied",
+                            description: `Location copied from ${geofence.name}`,
+                          });
+                        }}
+                      >
+                        <Target className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+              <p className="text-sm text-yellow-800">
+                <strong>Note:</strong> The Google Maps integration is currently unavailable. You can still set geofence locations using the manual controls above.
+              </p>
             </div>
           </div>
         </CardContent>
