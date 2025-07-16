@@ -71,11 +71,12 @@ export default function Products() {
     queryKey: ["/api/master-batches"],
   });
 
-  // Filter customers by search query
+  // Filter customers by search query (bilingual: Arabic and English)
   const filteredCustomers = customers?.filter(
     (customer) =>
       customer.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      customer.code.toLowerCase().includes(searchQuery.toLowerCase()),
+      customer.code.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (customer.nameAr && customer.nameAr.toLowerCase().includes(searchQuery.toLowerCase())),
   );
 
   // Filter products by selected customer and sort by ID

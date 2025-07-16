@@ -265,7 +265,7 @@
         "select_customer": "اختر عميل",
         "select_customer_to_view": "اختر عميل لعرض منتجاته",
         "products_for": "منتجات {{customer}}",
-        "search_placeholder": "البحث في المنتجات...",
+        "search_placeholder": "البحث في العملاء (عربي/إنجليزي)...",
         "please_select_customer": "يرجى اختيار عميل لعرض منتجاته",
         "no_products_found": "لم يتم العثور على منتجات",
         "product_code": "رمز المنتج",

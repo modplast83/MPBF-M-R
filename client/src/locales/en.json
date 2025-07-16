@@ -295,7 +295,7 @@
         "select_customer": "Select Customer",
         "select_customer_to_view": "Select a customer to view products",
         "products_for": "Products for {{customer}}",
-        "search_placeholder": "Search products...",
+        "search_placeholder": "Search customers (English/Arabic)...",
         "please_select_customer": "Please select a customer to view their products"
       },
       "customers": {
