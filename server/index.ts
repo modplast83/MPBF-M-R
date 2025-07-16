@@ -106,6 +106,66 @@ app.use((req, res, next) => {
 (async () => {
   const server = await registerRoutes(app);
 
+  // Database health check endpoint
+  app.get("/api/health/database", async (req: Request, res: Response) => {
+    try {
+      // Simple query to check database connectivity
+      // @ts-expect-error
+      const result = await pool.query('SELECT 1 as health_check');
+
+      res.json({
+        status: 'healthy',
+        timestamp: new Date().toISOString(),
+        database: 'connected'
+      });
+    } catch (error) {
+      console.error('Database health check failed:', error);
+      res.status(500).json({
+        status: 'unhealthy',
+        timestamp: new Date().toISOString(),
+        database: 'disconnected',
+        error: error.message
+      });
+    }
+  });
+
+  // Debug endpoint to check session status - using manual response to bypass Vite
+  app.get("/api/auth/debug", (req: any, res: Response) => {
+    // Set explicit content type to prevent Vite from returning HTML
+    res.setHeader("Content-Type", "application/json");
+
+    const isAuthenticated = req.isAuthenticated();
+    const sessionData = {
+      isAuthenticated,
+      session: req.session
+        ? {
+            id: req.session.id,
+            cookie: req.session.cookie,
+            // Don't expose sensitive data
+            hasUser: !!req.user,
+          }
+        : null,
+      user: req.user
+        ? {
+            hasClaims: !!req.user.claims,
+            hasRefreshToken: !!req.user.refresh_token,
+            hasExpiresAt: !!req.user.expires_at,
+            claimsSubExists: req.user.claims?.sub ? true : false,
+            expiresAt: req.user.expires_at,
+            nowTime: Math.floor(Date.now() / 1000),
+            tokenExpired: req.user.expires_at
+              ? Math.floor(Date.now() / 1000) > req.user.expires_at
+              : null,
+          }
+        : null,
+    };
+
+    // Manual response to bypass vite middleware
+    const jsonData = JSON.stringify(sessionData);
+    res.writeHead(200);
+    return res.end(jsonData);
+  });
+
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
     const message = err.message || "Internal Server Error";
