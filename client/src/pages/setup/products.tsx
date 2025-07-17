@@ -342,12 +342,12 @@ export default function Products() {
       },
     },
     {
-      header: "Cutting Unit",
+      header: t("setup.products.form.cutting_unit"),
       id: "cuttingUnit",
       cell: (row: CustomerProduct) => row.cuttingUnit || "-",
     },
     {
-      header: "Package Kg",
+      header: t("setup.products.form.package_kg"),
       id: "packageKg",
       cell: (row: CustomerProduct) =>
         row.packageKg ? `${Number(row.packageKg).toFixed(2)}` : "-",
