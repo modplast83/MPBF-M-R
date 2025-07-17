@@ -1755,7 +1755,19 @@
         "name": "الاسم",
         "name_ar": "الاسم (بالعربية)",
         "user_id": "مندوب المبيعات",
-        "plate_drawer_code": "رمز درج الطباعة"
+        "plate_drawer_code": "رمز درج الطباعة",
+        "customer_id_help": "سيتم إنشاؤه تلقائياً",
+        "customer_code_help": "سيتم إنشاؤه تلقائياً",
+        "customer_id_placeholder": "سيتم إنشاؤه تلقائياً",
+        "customer_code_placeholder": "أدخل رمز العميل",
+        "customer_name_placeholder": "أدخل اسم العميل",
+        "arabic_name_optional": "الاسم العربي (اختياري)",
+        "arabic_name_placeholder": "أدخل الاسم العربي",
+        "sales_person_placeholder": "اختر مندوب المبيعات",
+        "enter_plate_drawer_code": "أدخل رمز درج الطباعة",
+        "none": "لا يوجد",
+        "create_customer": "إنشاء عميل",
+        "cancel": "إلغاء"
       },
       "items": {
         "title": "الأصناف",

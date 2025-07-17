@@ -395,6 +395,7 @@
         "arabic_name_placeholder": "Enter Arabic name",
         "none": "None",
         "enter_plate_drawer_code": "Enter plate drawer code",
+        "sales_person_placeholder": "Select sales person",
         "cancel": "Cancel",
         "create_customer": "Create Customer"
       },
