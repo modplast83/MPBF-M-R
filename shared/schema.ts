@@ -1823,6 +1823,197 @@ export const insertJoMixItemSchema = createInsertSchema(joMixItems).omit({
 export type InsertJoMixItem = z.infer<typeof insertJoMixItemSchema>;
 export type JoMixItem = typeof joMixItems.$inferSelect;
 
+// Documents Module - Comprehensive Document Management System
+export const documents = pgTable("documents", {
+  id: serial("id").primaryKey(),
+  documentNumber: text("document_number").notNull().unique(), // Auto-generated unique document S/N
+  documentType: text("document_type").notNull(), // "instruction", "obligation", "announcement", "general_letter", "agreement", "contract", "request", "disclaimer"
+  title: text("title").notNull(),
+  content: text("content").notNull(), // Rich text content
+  templateId: integer("template_id").references(() => documentTemplates.id),
+  
+  // Status and workflow
+  status: text("status").notNull().default("draft"), // "draft", "active", "archived", "deleted"
+  version: integer("version").notNull().default(1), // Version tracking
+  parentDocumentId: integer("parent_document_id").references(() => documents.id), // For revisions
+  
+  // Author and permissions
+  createdBy: text("created_by")
+    .notNull()
+    .references(() => users.id),
+  authorizedBy: text("authorized_by").references(() => users.id),
+  authorizedAt: timestamp("authorized_at"),
+  
+  // Document metadata
+  effectiveDate: timestamp("effective_date"),
+  expiryDate: timestamp("expiry_date"),
+  priority: text("priority").notNull().default("medium"), // "low", "medium", "high", "urgent"
+  category: text("category"), // Additional categorization
+  tags: text("tags").array().default(sql`'{}'`), // Searchable tags
+  
+  // Recipients and visibility
+  recipientIds: text("recipient_ids").array().default(sql`'{}'`), // Specific users
+  sectionIds: text("section_ids").array().default(sql`'{}'`), // Specific sections
+  isPublic: boolean("is_public").default(false), // Public visibility
+  
+  // Attachments and references
+  attachments: jsonb("attachments"), // File attachments metadata
+  references: jsonb("document_references"), // Related documents, orders, etc.
+  
+  // Tracking and analytics
+  viewCount: integer("view_count").default(0),
+  downloadCount: integer("download_count").default(0),
+  lastViewedAt: timestamp("last_viewed_at"),
+  
+  // Archival and deletion
+  isArchived: boolean("is_archived").default(false),
+  archivedAt: timestamp("archived_at"),
+  archivedBy: text("archived_by").references(() => users.id),
+  archiveReason: text("archive_reason"),
+  
+  // Timestamps
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Document Templates for different document types
+export const documentTemplates = pgTable("document_templates", {
+  id: serial("id").primaryKey(),
+  templateName: text("template_name").notNull(),
+  documentType: text("document_type").notNull(), // Same types as documents
+  templateContent: text("template_content").notNull(), // HTML template with placeholders
+  templateVariables: jsonb("template_variables"), // Available variables/placeholders
+  
+  // Template metadata
+  description: text("description"),
+  isDefault: boolean("is_default").default(false),
+  isActive: boolean("is_active").default(true),
+  
+  // Versioning
+  version: integer("version").notNull().default(1),
+  parentTemplateId: integer("parent_template_id").references(() => documentTemplates.id),
+  
+  // Creation tracking
+  createdBy: text("created_by")
+    .notNull()
+    .references(() => users.id),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Document Views tracking for analytics
+export const documentViews = pgTable("document_views", {
+  id: serial("id").primaryKey(),
+  documentId: integer("document_id")
+    .notNull()
+    .references(() => documents.id, { onDelete: "cascade" }),
+  viewedBy: text("viewed_by")
+    .notNull()
+    .references(() => users.id),
+  viewedAt: timestamp("viewed_at").defaultNow(),
+  viewDuration: integer("view_duration"), // in seconds
+  deviceType: text("device_type"), // "desktop", "mobile", "tablet"
+  ipAddress: text("ip_address"),
+});
+
+// Document Approval Workflow
+export const documentApprovals = pgTable("document_approvals", {
+  id: serial("id").primaryKey(),
+  documentId: integer("document_id")
+    .notNull()
+    .references(() => documents.id, { onDelete: "cascade" }),
+  approverId: text("approver_id")
+    .notNull()
+    .references(() => users.id),
+  approvalLevel: integer("approval_level").notNull(), // 1, 2, 3, etc.
+  status: text("status").notNull().default("pending"), // "pending", "approved", "rejected", "skipped"
+  comments: text("comments"),
+  approvedAt: timestamp("approved_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Document Comments and Feedback
+export const documentComments = pgTable("document_comments", {
+  id: serial("id").primaryKey(),
+  documentId: integer("document_id")
+    .notNull()
+    .references(() => documents.id, { onDelete: "cascade" }),
+  commentBy: text("comment_by")
+    .notNull()
+    .references(() => users.id),
+  comment: text("comment").notNull(),
+  commentType: text("comment_type").notNull().default("general"), // "general", "suggestion", "correction", "approval"
+  isInternal: boolean("is_internal").default(false), // Internal comments vs public
+  parentCommentId: integer("parent_comment_id").references(() => documentComments.id), // For replies
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Document Subscriptions for notifications
+export const documentSubscriptions = pgTable("document_subscriptions", {
+  id: serial("id").primaryKey(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  documentId: integer("document_id").references(() => documents.id, { onDelete: "cascade" }),
+  documentType: text("document_type"), // Subscribe to all docs of a type
+  category: text("category"), // Subscribe to all docs in a category
+  subscriptionType: text("subscription_type").notNull(), // "document", "type", "category"
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Zod schemas for Documents
+export const insertDocumentSchema = createInsertSchema(documents).omit({
+  id: true,
+  documentNumber: true,
+  version: true,
+  viewCount: true,
+  downloadCount: true,
+  createdAt: true,
+  updatedAt: true,
+});
+export type InsertDocument = z.infer<typeof insertDocumentSchema>;
+export type Document = typeof documents.$inferSelect;
+
+export const insertDocumentTemplateSchema = createInsertSchema(documentTemplates).omit({
+  id: true,
+  version: true,
+  createdAt: true,
+  updatedAt: true,
+});
+export type InsertDocumentTemplate = z.infer<typeof insertDocumentTemplateSchema>;
+export type DocumentTemplate = typeof documentTemplates.$inferSelect;
+
+export const insertDocumentViewSchema = createInsertSchema(documentViews).omit({
+  id: true,
+  viewedAt: true,
+});
+export type InsertDocumentView = z.infer<typeof insertDocumentViewSchema>;
+export type DocumentView = typeof documentViews.$inferSelect;
+
+export const insertDocumentApprovalSchema = createInsertSchema(documentApprovals).omit({
+  id: true,
+  createdAt: true,
+});
+export type InsertDocumentApproval = z.infer<typeof insertDocumentApprovalSchema>;
+export type DocumentApproval = typeof documentApprovals.$inferSelect;
+
+export const insertDocumentCommentSchema = createInsertSchema(documentComments).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+export type InsertDocumentComment = z.infer<typeof insertDocumentCommentSchema>;
+export type DocumentComment = typeof documentComments.$inferSelect;
+
+export const insertDocumentSubscriptionSchema = createInsertSchema(documentSubscriptions).omit({
+  id: true,
+  createdAt: true,
+});
+export type InsertDocumentSubscription = z.infer<typeof insertDocumentSubscriptionSchema>;
+export type DocumentSubscription = typeof documentSubscriptions.$inferSelect;
+
 // JO Mix Materials table - for tracking actual material quantities in each mix
 export const joMixMaterials = pgTable("jo_mix_materials", {
   id: serial("id").primaryKey(),

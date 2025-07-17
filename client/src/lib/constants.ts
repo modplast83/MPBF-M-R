@@ -57,6 +57,14 @@ export const API_ENDPOINTS = {
   MAINTENANCE_REQUESTS: "/api/maintenance-requests",
   MAINTENANCE_ACTIONS: "/api/maintenance/actions",
   MAINTENANCE_SCHEDULE: "/api/maintenance-schedule",
+
+  // Documents Module
+  DOCUMENTS: "/api/documents",
+  DOCUMENT_TEMPLATES: "/api/document-templates",
+  DOCUMENT_VIEWS: "/api/document-views",
+  DOCUMENT_APPROVALS: "/api/document-approvals",
+  DOCUMENT_COMMENTS: "/api/document-comments",
+  DOCUMENT_SUBSCRIPTIONS: "/api/document-subscriptions",
 };
 
 // Stage and status options
@@ -197,6 +205,23 @@ export const SIDEBAR_ITEMS = [
           { title: "Utility Tools", path: "/tools/utilities" },
           { title: "Cost", path: "/tools/cost-calculator" },
           { title: "Cliches", path: "/cliches" },
+        ],
+      },
+      {
+        title: "Documents",
+        path: "/documents",
+        icon: "description",
+        subItems: [
+          { title: "Instructions", path: "/documents/instructions" },
+          { title: "Obligations", path: "/documents/obligations" },
+          { title: "Announcements", path: "/documents/announcements" },
+          { title: "General Letters", path: "/documents/general-letters" },
+          { title: "Agreements", path: "/documents/agreements" },
+          { title: "Contracts", path: "/documents/contracts" },
+          { title: "Requests", path: "/documents/requests" },
+          { title: "Disclaimers", path: "/documents/disclaimers" },
+          { title: "Templates", path: "/documents/templates" },
+          { title: "Archive", path: "/documents/archive" },
         ],
       },
       {

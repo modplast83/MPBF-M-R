@@ -66,6 +66,14 @@ import CostCalculatorPage from "@/pages/tools/cost-calculator";
 import MixColorsCalculator from "@/pages/tools/mix-colors";
 import OrderDesignPage from "@/pages/tools/order-design";
 import ClichePage from "@/pages/cliches/index";
+// Documents Module imports
+import DocumentsIndex from "@/pages/documents/index";
+import DocumentsByType from "@/pages/documents/by-type";
+import DocumentView from "@/pages/documents/view";
+import DocumentEdit from "@/pages/documents/edit";
+import DocumentNew from "@/pages/documents/new";
+import DocumentTemplates from "@/pages/documents/templates";
+import DocumentArchive from "@/pages/documents/archive";
 // HR Module imports
 import HRIndex from "@/pages/hr/index";
 import EmployeeOfMonthPage from "@/pages/hr/employee-of-month";
@@ -369,6 +377,44 @@ function App() {
                         component={ClichePage}
                         module="Cliches"
                       />
+                      
+                      {/* Documents Module Routes */}
+                      <ProtectedRoute
+                        path="/documents"
+                        component={DocumentsIndex}
+                        module="Documents"
+                      />
+                      <ProtectedRoute
+                        path="/documents/new"
+                        component={DocumentNew}
+                        module="New Document"
+                      />
+                      <ProtectedRoute
+                        path="/documents/templates"
+                        component={DocumentTemplates}
+                        module="Document Templates"
+                      />
+                      <ProtectedRoute
+                        path="/documents/archive"
+                        component={DocumentArchive}
+                        module="Document Archive"
+                      />
+                      <ProtectedRoute
+                        path="/documents/:type"
+                        component={DocumentsByType}
+                        module="Documents by Type"
+                      />
+                      <ProtectedRoute
+                        path="/documents/:id/view"
+                        component={DocumentView}
+                        module="Document View"
+                      />
+                      <ProtectedRoute
+                        path="/documents/:id/edit"
+                        component={DocumentEdit}
+                        module="Document Edit"
+                      />
+                      
                       {/* HR Module Routes */}
                       <ProtectedRoute
                         path="/hr"
