@@ -31,6 +31,22 @@ export default function DocumentView() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
+  // Early return if no id
+  if (!id) {
+    return (
+      <div className="p-6">
+        <div className="text-center text-red-500">
+          <AlertCircle className="h-12 w-12 mx-auto mb-4" />
+          <h2 className="text-xl font-semibold mb-2">Document not found</h2>
+          <p>The document ID is missing from the URL.</p>
+          <Link to="/documents" className="text-blue-500 hover:underline mt-4 inline-block">
+            Back to Documents
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   const {
     data: document,
     isLoading,
@@ -45,6 +61,7 @@ export default function DocumentView() {
       }
       return response.json();
     },
+    enabled: !!id,
   });
 
   // Record view when document is loaded
@@ -54,7 +71,7 @@ export default function DocumentView() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          documentId: parseInt(id),
+          documentId: parseInt(id!),
           deviceType: "desktop",
         }),
       });
@@ -160,7 +177,7 @@ export default function DocumentView() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <Button variant="ghost" asChild>
-            <Link href="/documents">
+            <Link to="/documents">
               <ArrowLeft className="h-4 w-4" />
             </Link>
           </Button>
@@ -181,7 +198,7 @@ export default function DocumentView() {
             Download
           </Button>
           <Button variant="outline" size="sm" asChild>
-            <Link href={`/documents/${id}/edit`}>
+            <Link to={`/documents/${id}/edit`}>
               <Edit className="h-4 w-4 mr-2" />
               Edit
             </Link>
@@ -254,7 +271,7 @@ export default function DocumentView() {
                 <span className="text-sm font-medium">Created</span>
               </div>
               <p className="text-sm">
-                {format(new Date(document.createdAt), "PPP")}
+                {document.createdAt ? format(new Date(document.createdAt), "PPP") : "Unknown"}
               </p>
             </div>
             <div className="space-y-2">
@@ -263,7 +280,7 @@ export default function DocumentView() {
                 <span className="text-sm font-medium">Last Updated</span>
               </div>
               <p className="text-sm">
-                {format(new Date(document.updatedAt), "PPP")}
+                {document.updatedAt ? format(new Date(document.updatedAt), "PPP") : "Unknown"}
               </p>
             </div>
           </div>
@@ -298,7 +315,7 @@ export default function DocumentView() {
                     <span className="text-sm font-medium">Effective Date</span>
                   </div>
                   <p className="text-sm">
-                    {format(new Date(document.effectiveDate), "PPP")}
+                    {document.effectiveDate ? format(new Date(document.effectiveDate), "PPP") : "Unknown"}
                   </p>
                 </div>
               )}
@@ -309,7 +326,7 @@ export default function DocumentView() {
                     <span className="text-sm font-medium">Expiry Date</span>
                   </div>
                   <p className="text-sm">
-                    {format(new Date(document.expiryDate), "PPP")}
+                    {document.expiryDate ? format(new Date(document.expiryDate), "PPP") : "Unknown"}
                   </p>
                 </div>
               )}
