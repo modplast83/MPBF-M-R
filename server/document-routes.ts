@@ -12,11 +12,17 @@ export function setupDocumentRoutes(app: Express) {
   // Documents CRUD
   app.post("/api/documents", requireAuth, async (req, res) => {
     try {
-      const validatedData = insertDocumentSchema.parse(req.body);
-      const document = await documentStorage.createDocument({
-        ...validatedData,
-        createdBy: req.user.id,
-      });
+      // Parse dates and add createdBy before validation
+      const bodyWithDates = {
+        ...req.body,
+        createdBy: req.user?.id || req.user,
+        effectiveDate: req.body.effectiveDate && req.body.effectiveDate !== "" ? new Date(req.body.effectiveDate) : null,
+        expiryDate: req.body.expiryDate && req.body.expiryDate !== "" ? new Date(req.body.expiryDate) : null,
+      };
+      
+      console.log("Body with dates:", bodyWithDates);
+      const validatedData = insertDocumentSchema.parse(bodyWithDates);
+      const document = await documentStorage.createDocument(validatedData);
       res.json(document);
     } catch (error) {
       console.error("Error creating document:", error);

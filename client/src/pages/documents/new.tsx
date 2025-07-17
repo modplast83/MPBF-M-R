@@ -110,8 +110,8 @@ export default function DocumentNew() {
         body: JSON.stringify({
           ...data,
           tags: tags,
-          effectiveDate: data.effectiveDate ? new Date(data.effectiveDate).toISOString() : null,
-          expiryDate: data.expiryDate ? new Date(data.expiryDate).toISOString() : null,
+          effectiveDate: data.effectiveDate || null,
+          expiryDate: data.expiryDate || null,
         }),
       });
       
