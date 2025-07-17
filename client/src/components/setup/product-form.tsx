@@ -23,6 +23,7 @@ import {
 import { toast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { API_ENDPOINTS } from "@/lib/constants";
+import { useTranslation } from "react-i18next";
 import {
   insertCustomerProductSchema,
   CustomerProduct,
@@ -44,6 +45,7 @@ export function ProductForm({
   preSelectedCustomerId,
   isDuplicate = false,
 }: ProductFormProps) {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const isEditing = !!product && !isDuplicate;
 
@@ -71,9 +73,9 @@ export function ProductForm({
 
   // Create a simplified schema for the form
   const formSchema = z.object({
-    customerId: z.string().min(1, "Customer is required"),
-    categoryId: z.string().min(1, "Category is required"),
-    itemId: z.string().min(1, "Item is required"),
+    customerId: z.string().min(1, t("setup.products.form.customer_required")),
+    categoryId: z.string().min(1, t("setup.products.form.category_required")),
+    itemId: z.string().min(1, t("setup.products.form.item_required")),
     sizeCaption: z.string().min(1, "Size caption is required"),
     width: z.number().optional(),
     leftF: z.number().optional(),
@@ -334,20 +336,20 @@ export function ProductForm({
       });
 
       // Determine the appropriate success message based on the operation type
-      let actionTitle = "Created";
-      let actionDescription = "created";
+      let actionTitle = t("setup.products.form.created");
+      let actionDescription = t("setup.products.form.created_success");
 
       if (isDuplicate) {
-        actionTitle = "Duplicated";
-        actionDescription = "duplicated";
+        actionTitle = t("setup.products.form.duplicated");
+        actionDescription = t("setup.products.form.duplicated_success");
       } else if (isEditing) {
-        actionTitle = "Updated";
-        actionDescription = "updated";
+        actionTitle = t("setup.products.form.updated");
+        actionDescription = t("setup.products.form.updated_success");
       }
 
       toast({
-        title: `Product ${actionTitle}`,
-        description: `The product has been ${actionDescription} successfully.`,
+        title: `${t("setup.products.product_name")} ${actionTitle}`,
+        description: actionDescription,
       });
 
       form.reset();
@@ -355,17 +357,17 @@ export function ProductForm({
     },
     onError: (error) => {
       // Determine the appropriate error message based on the operation type
-      let actionType = "create";
+      let actionType = t("setup.products.form.create_failed");
       if (isDuplicate) {
-        actionType = "duplicate";
+        actionType = t("setup.products.form.duplicate_failed");
       } else if (isEditing) {
-        actionType = "update";
+        actionType = t("setup.products.form.update_failed");
       }
 
       const errorMessage = error instanceof Error ? error.message : String(error);
       toast({
-        title: "Error",
-        description: `Failed to ${actionType} product: ${errorMessage}`,
+        title: t("common.error"),
+        description: `${actionType}: ${errorMessage}`,
         variant: "destructive",
       });
     },
@@ -391,7 +393,7 @@ export function ProductForm({
             name="customerId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Customer</FormLabel>
+                <FormLabel>{t("setup.products.customer")}</FormLabel>
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
@@ -399,7 +401,7 @@ export function ProductForm({
                 >
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select customer" />
+                      <SelectValue placeholder={t("setup.products.form.select_customer")} />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
@@ -420,7 +422,7 @@ export function ProductForm({
             name="categoryId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Category</FormLabel>
+                <FormLabel>{t("setup.products.category")}</FormLabel>
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
@@ -428,7 +430,7 @@ export function ProductForm({
                 >
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select category" />
+                      <SelectValue placeholder={t("setup.products.form.select_category")} />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
@@ -449,7 +451,7 @@ export function ProductForm({
             name="itemId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Item</FormLabel>
+                <FormLabel>{t("setup.products.form.item")}</FormLabel>
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
@@ -460,8 +462,8 @@ export function ProductForm({
                       <SelectValue
                         placeholder={
                           watchedCategoryId
-                            ? "Select item"
-                            : "Select category first"
+                            ? t("setup.products.form.select_item")
+                            : t("setup.products.form.select_category_first")
                         }
                       />
                     </SelectTrigger>
@@ -484,10 +486,10 @@ export function ProductForm({
             name="sizeCaption"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Size Caption (Auto-calculated)</FormLabel>
+                <FormLabel>{t("setup.products.form.size_caption")}</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="Auto-calculated from dimensions"
+                    placeholder={t("setup.products.form.size_caption_placeholder")}
                     {...field}
                     value={field.value || ""}
                     readOnly
@@ -506,11 +508,11 @@ export function ProductForm({
             name="rightF"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Right F</FormLabel>
+                <FormLabel>{t("setup.products.form.right_f")}</FormLabel>
                 <FormControl>
                   <Input
                     type="number"
-                    placeholder="Right F"
+                    placeholder={t("setup.products.form.right_f_placeholder")}
                     {...field}
                     onChange={(e) =>
                       field.onChange(
@@ -529,11 +531,11 @@ export function ProductForm({
             name="width"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Width</FormLabel>
+                <FormLabel>{t("setup.products.form.width")}</FormLabel>
                 <FormControl>
                   <Input
                     type="number"
-                    placeholder="Width"
+                    placeholder={t("setup.products.form.width_placeholder")}
                     {...field}
                     onChange={(e) =>
                       field.onChange(
@@ -552,11 +554,11 @@ export function ProductForm({
             name="leftF"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Left F</FormLabel>
+                <FormLabel>{t("setup.products.form.left_f")}</FormLabel>
                 <FormControl>
                   <Input
                     type="number"
-                    placeholder="Left F"
+                    placeholder={t("setup.products.form.left_f_placeholder")}
                     {...field}
                     onChange={(e) =>
                       field.onChange(
@@ -577,11 +579,11 @@ export function ProductForm({
             name="thickness"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Thickness</FormLabel>
+                <FormLabel>{t("setup.products.thickness")}</FormLabel>
                 <FormControl>
                   <Input
                     type="number"
-                    placeholder="Thickness"
+                    placeholder={t("setup.products.thickness")}
                     {...field}
                     onChange={(e) =>
                       field.onChange(
@@ -600,11 +602,11 @@ export function ProductForm({
             name="thicknessOne"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Thickness One (Auto-calculated)</FormLabel>
+                <FormLabel>{t("setup.products.form.thickness_one")}</FormLabel>
                 <FormControl>
                   <Input
                     type="number"
-                    placeholder="Auto-calculated from thickness"
+                    placeholder={t("setup.products.form.thickness_one_placeholder")}
                     {...field}
                     value={field.value || ""}
                     readOnly
@@ -621,7 +623,7 @@ export function ProductForm({
             name="printingCylinder"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Printing Cylinder (Inch)</FormLabel>
+                <FormLabel>{t("setup.products.form.printing_cylinder")}</FormLabel>
                 <Select
                   onValueChange={(value) => {
                     if (value === "non") {
@@ -634,11 +636,11 @@ export function ProductForm({
                 >
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select cylinder size" />
+                      <SelectValue placeholder={t("setup.products.form.printing_cylinder_placeholder")} />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="non">Non</SelectItem>
+                    <SelectItem value="non">{t("setup.products.form.non")}</SelectItem>
                     {[
                       8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36,
                       38, 39,
@@ -661,14 +663,14 @@ export function ProductForm({
             name="lengthCm"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Length (cm) (Auto-calculated)</FormLabel>
+                <FormLabel>{t("setup.products.form.length_cm")}</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="Auto-calculated from printing cylinder"
+                    placeholder={t("setup.products.form.length_cm_placeholder")}
                     {...field}
                     value={
                       field.value === "Not Printed"
-                        ? "Not Printed"
+                        ? t("setup.products.form.not_printed")
                         : field.value || ""
                     }
                     readOnly
@@ -685,11 +687,11 @@ export function ProductForm({
             name="cuttingLength"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Cutting Length (cm)</FormLabel>
+                <FormLabel>{t("setup.products.form.cutting_length")}</FormLabel>
                 <FormControl>
                   <Input
                     type="number"
-                    placeholder="Cutting Length"
+                    placeholder={t("setup.products.form.cutting_length_placeholder")}
                     {...field}
                     onChange={(e) =>
                       field.onChange(
@@ -708,14 +710,14 @@ export function ProductForm({
             name="rawMaterial"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Raw Material</FormLabel>
+                <FormLabel>{t("setup.products.raw_material")}</FormLabel>
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
                 >
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select raw material" />
+                      <SelectValue placeholder={t("setup.products.form.raw_material_placeholder")} />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
@@ -736,7 +738,7 @@ export function ProductForm({
             name="masterBatchId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Master Batch</FormLabel>
+                <FormLabel>{t("setup.products.master_batch")}</FormLabel>
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
@@ -744,11 +746,11 @@ export function ProductForm({
                 >
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select master batch" />
+                      <SelectValue placeholder={t("setup.products.form.master_batch_placeholder")} />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="none">None</SelectItem>
+                    <SelectItem value="none">{t("setup.products.form.no_master_batch")}</SelectItem>
                     {masterBatches?.map((mb) => (
                       <SelectItem key={mb.id} value={mb.id}>
                         {mb.name}
@@ -766,19 +768,19 @@ export function ProductForm({
             name="printed"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Printed</FormLabel>
+                <FormLabel>{t("setup.products.form.printed")}</FormLabel>
                 <Select
                   onValueChange={(value) => field.onChange(value === "true")}
                   value={field.value ? "true" : "false"}
                 >
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select printed status" />
+                      <SelectValue placeholder={t("setup.products.form.printed")} />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="true">TRUE</SelectItem>
-                    <SelectItem value="false">FALSE</SelectItem>
+                    <SelectItem value="true">{t("common.yes")}</SelectItem>
+                    <SelectItem value="false">{t("common.no")}</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -793,14 +795,14 @@ export function ProductForm({
             name="cuttingUnit"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Cutting Unit</FormLabel>
+                <FormLabel>{t("setup.products.form.cutting_unit")}</FormLabel>
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
                 >
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select cutting unit" />
+                      <SelectValue placeholder={t("setup.products.form.cutting_unit_placeholder")} />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
@@ -821,11 +823,11 @@ export function ProductForm({
             name="unitWeight"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Unit Weight (Kg)</FormLabel>
+                <FormLabel>{t("setup.products.form.unit_weight")}</FormLabel>
                 <FormControl>
                   <Input
                     type="number"
-                    placeholder="Unit Weight"
+                    placeholder={t("setup.products.form.unit_weight_placeholder")}
                     {...field}
                     onChange={(e) =>
                       field.onChange(
@@ -844,11 +846,11 @@ export function ProductForm({
             name="unitQty"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Unit Qty</FormLabel>
+                <FormLabel>{t("setup.products.form.unit_qty")}</FormLabel>
                 <FormControl>
                   <Input
                     type="number"
-                    placeholder="Unit Quantity"
+                    placeholder={t("setup.products.form.unit_qty_placeholder")}
                     {...field}
                     onChange={(e) =>
                       field.onChange(
@@ -867,11 +869,11 @@ export function ProductForm({
             name="packageKg"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Package Kg (Auto-calculated)</FormLabel>
+                <FormLabel>{t("setup.products.form.package_kg")}</FormLabel>
                 <FormControl>
                   <Input
                     type="number"
-                    placeholder="Auto-calculated from Unit Weight × Unit Qty"
+                    placeholder={t("setup.products.form.package_kg_placeholder")}
                     {...field}
                     value={field.value || ""}
                     readOnly
@@ -888,9 +890,9 @@ export function ProductForm({
             name="packing"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Packing</FormLabel>
+                <FormLabel>{t("setup.products.form.packing")}</FormLabel>
                 <FormControl>
-                  <Input placeholder="e.g. 20K/Bag" {...field} />
+                  <Input placeholder={t("setup.products.form.packing_placeholder")} {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -904,14 +906,14 @@ export function ProductForm({
             name="punching"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Punching</FormLabel>
+                <FormLabel>{t("setup.products.form.punching")}</FormLabel>
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
                 >
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select punching type" />
+                      <SelectValue placeholder={t("setup.products.form.punching_placeholder")} />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
@@ -933,9 +935,9 @@ export function ProductForm({
             name="cover"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Cover</FormLabel>
+                <FormLabel>{t("setup.products.form.cover")}</FormLabel>
                 <FormControl>
-                  <Input placeholder="Cover" {...field} />
+                  <Input placeholder={t("setup.products.form.cover_placeholder")} {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -947,10 +949,10 @@ export function ProductForm({
             name="volum"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Volume (cm³) (Auto-calculated)</FormLabel>
+                <FormLabel>{t("setup.products.form.volume")}</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="Auto-calculated from dimensions"
+                    placeholder={t("setup.products.form.volume_placeholder")}
                     {...field}
                     value={field.value || ""}
                     readOnly
@@ -969,10 +971,10 @@ export function ProductForm({
             name="knife"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Knife</FormLabel>
+                <FormLabel>{t("setup.products.form.knife")}</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="Knife"
+                    placeholder={t("setup.products.form.knife_placeholder")}
                     {...field}
                     value={field.value || ""}
                     onChange={(e) => field.onChange(e.target.value || null)}
@@ -988,10 +990,10 @@ export function ProductForm({
             name="notes"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Notes</FormLabel>
+                <FormLabel>{t("setup.products.form.notes")}</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="Notes"
+                    placeholder={t("setup.products.form.notes_placeholder")}
                     {...field}
                     value={field.value || ""}
                     onChange={(e) => field.onChange(e.target.value || null)}
@@ -1006,21 +1008,13 @@ export function ProductForm({
         <div className="flex justify-end space-x-2 pt-4">
           {onSuccess && (
             <Button type="button" variant="outline" onClick={onSuccess}>
-              Cancel
+              {t("common.cancel")}
             </Button>
           )}
           <Button type="submit" disabled={mutation.isPending}>
             {mutation.isPending
-              ? isEditing
-                ? "Updating..."
-                : isDuplicate
-                  ? "Duplicating..."
-                  : "Creating..."
-              : isEditing
-                ? "Update Product"
-                : isDuplicate
-                  ? "Duplicate Product"
-                  : "Create Product"}
+              ? t("setup.products.form.submitting")
+              : t("setup.products.form.submit")}
           </Button>
         </div>
       </form>
