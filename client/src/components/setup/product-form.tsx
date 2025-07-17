@@ -158,7 +158,7 @@ export function ProductForm({
       form.setValue("lengthCm", calculatedLength);
     } else if (watchedPrintingCylinder === null) {
       // Set "Not Printed" when "Non" is selected
-      form.setValue("lengthCm", "Not Printed");
+      form.setValue("lengthCm", t("setup.products.form.not_printed"));
     }
   }, [watchedPrintingCylinder, form]);
 
@@ -669,7 +669,7 @@ export function ProductForm({
                     placeholder={t("setup.products.form.length_cm_placeholder")}
                     {...field}
                     value={
-                      field.value === "Not Printed"
+                      field.value === t("setup.products.form.not_printed") || field.value === "Not Printed"
                         ? t("setup.products.form.not_printed")
                         : field.value || ""
                     }
@@ -750,7 +750,7 @@ export function ProductForm({
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="none">{t("setup.products.form.no_master_batch")}</SelectItem>
+                    <SelectItem value="none">{t("setup.products.form.none")}</SelectItem>
                     {masterBatches?.map((mb) => (
                       <SelectItem key={mb.id} value={mb.id}>
                         {mb.name}
@@ -917,7 +917,7 @@ export function ProductForm({
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="None">None</SelectItem>
+                    <SelectItem value="None">{t("setup.products.form.none")}</SelectItem>
                     <SelectItem value="T-Shirt">T-Shirt</SelectItem>
                     <SelectItem value="T-Shirt w/Hook">
                       T-Shirt w/Hook
@@ -1008,7 +1008,7 @@ export function ProductForm({
         <div className="flex justify-end space-x-2 pt-4">
           {onSuccess && (
             <Button type="button" variant="outline" onClick={onSuccess}>
-              {t("common.cancel")}
+              {t("setup.products.form.cancel")}
             </Button>
           )}
           <Button type="submit" disabled={mutation.isPending}>
