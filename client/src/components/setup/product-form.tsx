@@ -710,7 +710,7 @@ export function ProductForm({
             name="rawMaterial"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("setup.products.raw_material")}</FormLabel>
+                <FormLabel>{t("setup.products.form.raw_material")}</FormLabel>
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
