@@ -21,9 +21,11 @@ import {
   Calendar,
   AlertCircle,
   Tag,
-  X
+  X,
+  Sparkles
 } from "lucide-react";
 import { Link } from "wouter";
+import { ContentSuggestions } from "@/components/documents/content-suggestions";
 
 const documentTypes = [
   { value: "instruction", label: "Instruction" },
@@ -69,13 +71,15 @@ export default function DocumentNew() {
   // Get document type from URL params if specified
   const urlParams = new URLSearchParams(window.location.search);
   const defaultType = urlParams.get('type') || '';
+  const defaultTitle = urlParams.get('title') || '';
+  const defaultContent = urlParams.get('content') || '';
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       documentType: defaultType,
-      title: "",
-      content: "",
+      title: defaultTitle,
+      content: defaultContent,
       priority: "medium",
       status: "draft",
       effectiveDate: "",
@@ -163,6 +167,18 @@ export default function DocumentNew() {
   const handleUseTemplate = (template: any) => {
     form.setValue("title", template.templateName);
     form.setValue("content", template.templateContent);
+  };
+
+  const handleSelectContent = (content: string) => {
+    form.setValue("content", content);
+  };
+
+  const handleSelectTitle = (title: string) => {
+    form.setValue("title", title);
+  };
+
+  const handleSelectTags = (aiTags: string[]) => {
+    setTags(prev => [...prev, ...aiTags.filter(tag => !prev.includes(tag))]);
   };
 
   return (
@@ -409,6 +425,16 @@ export default function DocumentNew() {
                   )}
                 </CardContent>
               </Card>
+
+              {/* AI Content Suggestions */}
+              {form.watch("documentType") && (
+                <ContentSuggestions
+                  documentType={form.watch("documentType")}
+                  onSelectContent={handleSelectContent}
+                  onSelectTitle={handleSelectTitle}
+                  onSelectTags={handleSelectTags}
+                />
+              )}
 
               <Card>
                 <CardContent className="pt-6">

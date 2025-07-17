@@ -66,6 +66,16 @@ export class DocumentStorage {
     return prefixes[documentType as keyof typeof prefixes] || 'DOC';
   }
 
+  // Get user's documents for analysis
+  async getUserDocuments(userId: string, limit: number = 50): Promise<Document[]> {
+    return await db
+      .select()
+      .from(documents)
+      .where(eq(documents.createdBy, userId))
+      .orderBy(desc(documents.createdAt))
+      .limit(limit);
+  }
+
   // Documents CRUD operations
   async createDocument(document: InsertDocument): Promise<Document> {
     const documentNumber = await this.generateDocumentNumber(document.documentType);

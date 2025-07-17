@@ -1,12 +1,15 @@
 import type { Express } from "express";
 import { documentStorage } from "./document-storage";
 import { requireAuth } from "./auth-utils";
+import { DocumentAIService } from "./document-ai-service";
 import {
   insertDocumentSchema,
   insertDocumentTemplateSchema,
   insertDocumentViewSchema,
   insertDocumentCommentSchema,
 } from "../shared/schema";
+
+const documentAIService = new DocumentAIService(documentStorage);
 
 export function setupDocumentRoutes(app: Express) {
   // Documents CRUD
@@ -346,6 +349,63 @@ export function setupDocumentRoutes(app: Express) {
     } catch (error) {
       console.error("Error searching documents:", error);
       res.status(500).json({ message: "Failed to search documents" });
+    }
+  });
+
+  // AI-powered personalized suggestions
+  app.get("/api/documents/ai/suggestions", requireAuth, async (req, res) => {
+    try {
+      const { limit = "5" } = req.query;
+      const suggestions = await documentAIService.generatePersonalizedSuggestions(
+        req.user.id, 
+        parseInt(limit as string)
+      );
+      res.json(suggestions);
+    } catch (error) {
+      console.error("Error generating suggestions:", error);
+      res.status(500).json({ 
+        message: error instanceof Error ? error.message : "Failed to generate suggestions" 
+      });
+    }
+  });
+
+  // AI content suggestions for specific document type
+  app.post("/api/documents/ai/content-suggestions", requireAuth, async (req, res) => {
+    try {
+      const { documentType, userContext } = req.body;
+      if (!documentType) {
+        return res.status(400).json({ message: "Document type is required" });
+      }
+      
+      const suggestions = await documentAIService.generateContentSuggestions(
+        documentType,
+        userContext || "",
+        req.user.id
+      );
+      res.json(suggestions);
+    } catch (error) {
+      console.error("Error generating content suggestions:", error);
+      res.status(500).json({ 
+        message: error instanceof Error ? error.message : "Failed to generate content suggestions" 
+      });
+    }
+  });
+
+  // AI document content analysis
+  app.post("/api/documents/ai/analyze", requireAuth, async (req, res) => {
+    try {
+      const { content, documentType } = req.body;
+      if (!content || !documentType) {
+        return res.status(400).json({ message: "Content and document type are required" });
+      }
+      
+      const analysis = await documentAIService.analyzeDocumentContent(content, documentType);
+      res.json(analysis);
+    } catch (error) {
+      console.error("Error analyzing document content:", error);
+      res.status(500).json({ 
+        message: error instanceof Error ? error.message : "Failed to analyze document content" 
+      });
     }
   });
 }

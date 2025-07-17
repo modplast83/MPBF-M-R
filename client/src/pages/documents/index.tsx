@@ -27,10 +27,13 @@ import {
   User,
   FileType,
   BarChart3,
-  Users
+  Users,
+  Sparkles,
+  Brain
 } from "lucide-react";
 import { format } from "date-fns";
 import { useTranslation } from "react-i18next";
+import { AISuggestions } from "@/components/documents/ai-suggestions";
 
 const documentTypes = [
   { value: "instruction", label: "Instructions", icon: FileCheck },
@@ -393,6 +396,15 @@ export default function DocumentsIndex() {
           </Card>
         </div>
       )}
+
+      {/* AI Suggestions */}
+      <AISuggestions
+        onSelectSuggestion={(suggestion) => {
+          // Navigate to new document page with pre-filled data
+          window.location.href = `/documents/new?type=${suggestion.templateType}&title=${encodeURIComponent(suggestion.title)}&content=${encodeURIComponent(suggestion.content)}`;
+        }}
+        className="mb-6"
+      />
 
       {/* Filters */}
       <Card>
