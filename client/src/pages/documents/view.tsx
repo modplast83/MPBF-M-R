@@ -158,6 +158,28 @@ export default function DocumentView() {
     );
   }
 
+  // Check if document exists before rendering
+  if (!document) {
+    return (
+      <div className="container mx-auto p-4">
+        <Card>
+          <CardContent className="pt-6">
+            <div className="text-center">
+              <AlertCircle className="h-8 w-8 mx-auto mb-4 text-destructive" />
+              <h3 className="text-lg font-semibold mb-2">Document not found</h3>
+              <p className="text-muted-foreground mb-4">
+                The document you are looking for does not exist.
+              </p>
+              <Button asChild>
+                <Link to="/documents">Back to Documents</Link>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   const statusVariants = {
     draft: "secondary",
     active: "default",
@@ -293,10 +315,9 @@ export default function DocumentView() {
           <CardTitle>Document Content</CardTitle>
         </CardHeader>
         <CardContent>
-          <div 
-            className="prose prose-sm max-w-none"
-            dangerouslySetInnerHTML={{ __html: document.content }}
-          />
+          <div className="prose prose-sm max-w-none whitespace-pre-wrap">
+            {document.content}
+          </div>
         </CardContent>
       </Card>
 

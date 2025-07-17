@@ -45,7 +45,8 @@ export class DocumentStorage {
     if (lastDocument.length > 0) {
       const lastNumber = lastDocument[0].documentNumber;
       const numberPart = lastNumber.split('-')[2];
-      nextNumber = parseInt(numberPart) + 1;
+      const parsedNumber = parseInt(numberPart);
+      nextNumber = isNaN(parsedNumber) ? 1 : parsedNumber + 1;
     }
 
     return `${typePrefix}${year}-${nextNumber.toString().padStart(4, '0')}`;
