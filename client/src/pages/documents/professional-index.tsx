@@ -428,7 +428,7 @@ export default function ProfessionalDocumentsIndex() {
         </div>
         <div className="flex gap-2">
           <Link href="/documents/templates">
-            <Button variant="outline">
+            <Button variant={"outline" as any}>
               <FileText className="h-4 w-4 mr-2" />
               {t('documents.templates')}
             </Button>
@@ -673,7 +673,7 @@ export default function ProfessionalDocumentsIndex() {
                       </div>
                       
                       <div className="flex items-center gap-2 ml-4">
-                        <Button variant="outline" size="sm" asChild>
+                        <Button variant={"outline" as any} size="sm" asChild>
                           <Link to={`/documents/${document.id}/view`}>
                             <Eye className="h-4 w-4 mr-2" />
                             {t('documents.actions.view')}
@@ -681,7 +681,7 @@ export default function ProfessionalDocumentsIndex() {
                         </Button>
                         
                         <Button
-                          variant="outline"
+                          variant={"outline" as any}
                           size="sm"
                           onClick={() => handlePrint(document)}
                         >
@@ -689,7 +689,7 @@ export default function ProfessionalDocumentsIndex() {
                           Print
                         </Button>
                         
-                        <Button variant="outline" size="sm" asChild>
+                        <Button variant={"outline" as any} size="sm" asChild>
                           <Link to={`/documents/${document.id}/edit`}>
                             <Edit className="h-4 w-4 mr-2" />
                             {t('documents.actions.edit')}
@@ -697,7 +697,7 @@ export default function ProfessionalDocumentsIndex() {
                         </Button>
                         
                         <Button
-                          variant="outline"
+                          variant={"outline" as any}
                           size="sm"
                           onClick={() => handleArchive(document.id)}
                           disabled={archiveMutation.isPending}
@@ -719,7 +719,7 @@ export default function ProfessionalDocumentsIndex() {
       {totalDocuments > pageSize && (
         <div className="flex justify-center items-center gap-2">
           <Button
-            variant="outline"
+            variant={"outline" as any}
             size="sm"
             onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
             disabled={currentPage === 1}
@@ -732,7 +732,7 @@ export default function ProfessionalDocumentsIndex() {
           </span>
           
           <Button
-            variant="outline"
+            variant={"outline" as any}
             size="sm"
             onClick={() => setCurrentPage(Math.min(Math.ceil(totalDocuments / pageSize), currentPage + 1))}
             disabled={currentPage === Math.ceil(totalDocuments / pageSize)}

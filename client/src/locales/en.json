@@ -487,6 +487,9 @@
       "aba_formulas": "ABA Formula",
       "rolls_processing": "Rolls Processing",
       "production": "Production",
+      "all_documents": "All Documents",
+      "all_letters": "All Letters",
+      "new_document": "New Document",
       "rolls-pro": "Rolls Processing",
       "job_orders": "Job Orders",
       "roll_management": "Roll Management",
@@ -2995,6 +2998,8 @@
       },
       "documents": {
         "title": "Documents",
+        "description": "Manage and track all organization documents and templates",
+        
         "subtitle": "Manage your organization's documents and templates",
         "create_document": "Create Document",
         "create_first_document": "Create Your First Document",
