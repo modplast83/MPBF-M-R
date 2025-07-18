@@ -508,7 +508,7 @@
       "templates": "Templates",
       "archive": "Archives",
       "letters": "Letters",
-      
+
       "setup": "Setup",
       "categories": "Categories",
       "products": "Products",
@@ -2512,7 +2512,7 @@
         "notes": "Notes",
         "no_requests": "No maintenance requests found",
         "request_created": "Request created successfully",
-        "request_updated": "Request updated successfully", 
+        "request_updated": "Request updated successfully",
         "request_deleted": "Request deleted successfully",
         "search_requests": "Search requests...",
         "select_machine": "Select machine",
@@ -2827,7 +2827,7 @@
         "share": "Share",
         "steps": {
           "product_selection": "Product Selection",
-          "specifications": "Specifications", 
+          "specifications": "Specifications",
           "material_color": "Material & Color",
           "design_upload": "Design Upload",
           "design_editor": "Design Editor",
@@ -2999,7 +2999,7 @@
       "documents": {
         "title": "Documents",
         "description": "Manage and track all organization documents and templates",
-        
+
         "subtitle": "Manage your organization's documents and templates",
         "create_document": "Create Document",
         "create_first_document": "Create Your First Document",
