@@ -1,0 +1,186 @@
+
+> rest-express@1.0.0 dev
+> NODE_ENV=development tsx server/index.ts
+
+SendGrid email service initialized successfully
+SendGrid email service initialized successfully
+Checking for admin user existence...
+Database client connected
+Admin user already exists, no need to create.
+Admin user check completed
+3:21:56 PM [express] serving on port 5000
+Database client connected
+Attempt to get user data with unauthenticated session
+3:22:10 PM [express] GET /api/user 401 in 3ms :: {"message":"Not authenticated"}
+Database client connected
+Database client connected
+Database client connected
+Database client connected
+Getting user data for: admin
+3:22:43 PM [express] GET /api/user 200 in 696ms :: {"id":"00U1","username":"admin","isAdmin":true,"s…
+3:22:44 PM [express] GET /api/modules 304 in 937ms :: [{"id":1,"name":"Categories","displayName":"Ca…
+3:22:45 PM [express] GET /api/notifications/unread-count 304 in 932ms
+3:22:45 PM [express] GET /api/notifications 304 in 935ms :: []
+3:22:45 PM [express] GET /api/permissions 304 in 1184ms :: [{"id":2070,"sectionId":"SEC001","moduleI…
+3:22:50 PM [express] GET /api/document-templates 304 in 943ms :: []
+3:22:53 PM [express] GET /api/document-templates 304 in 942ms :: []
+Error creating document: ZodError: [
+  {
+    "code": "invalid_type",
+    "expected": "string",
+    "received": "null",
+    "path": [
+      "expiryDate"
+    ],
+    "message": "Expected string, received null"
+  }
+]
+    at get error [as error] (file:///home/runner/workspace/node_modules/zod/v3/types.js:39:31)
+    at ZodObject.parse (file:///home/runner/workspace/node_modules/zod/v3/types.js:114:22)
+    at <anonymous> (/home/runner/workspace/server/professional-document-routes.ts:74:49)
+    at Layer.handle [as handle_request] (/home/runner/workspace/node_modules/express/lib/router/layer.js:95:5)
+    at next (/home/runner/workspace/node_modules/express/lib/router/route.js:149:13)
+    at requireAuth (/home/runner/workspace/server/auth-utils.ts:65:12)
+    at Layer.handle [as handle_request] (/home/runner/workspace/node_modules/express/lib/router/layer.js:95:5)
+    at next (/home/runner/workspace/node_modules/express/lib/router/route.js:149:13)
+    at Route.dispatch (/home/runner/workspace/node_modules/express/lib/router/route.js:119:3)
+    at Layer.handle [as handle_request] (/home/runner/workspace/node_modules/express/lib/router/layer.js:95:5)
+    at /home/runner/workspace/node_modules/express/lib/router/index.js:284:15
+    at Function.process_params (/home/runner/workspace/node_modules/express/lib/router/index.js:346:12)
+    at next (/home/runner/workspace/node_modules/express/lib/router/index.js:280:10)
+    at strategy.pass (/home/runner/workspace/node_modules/passport/lib/middleware/authenticate.js:355:9)
+    at /home/runner/workspace/node_modules/passport/lib/strategies/session.js:120:12
+    at pass (/home/runner/workspace/node_modules/passport/lib/authenticator.js:352:31)
+    at deserialized (/home/runner/workspace/node_modules/passport/lib/authenticator.js:364:7)
+    at <anonymous> (/home/runner/workspace/server/auth.ts:88:7)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5) {
+  issues: [
+    {
+      code: 'invalid_type',
+      expected: 'string',
+      received: 'null',
+      path: [Array],
+      message: 'Expected string, received null'
+    }
+  ],
+  addIssue: [Function (anonymous)],
+  addIssues: [Function (anonymous)],
+  errors: [
+    {
+      code: 'invalid_type',
+      expected: 'string',
+      received: 'null',
+      path: [Array],
+      message: 'Expected string, received null'
+    }
+  ]
+}
+3:23:10 PM [express] POST /api/documents 400 in 2131ms :: {"message":"Invalid document data","errors…
+3:23:16 PM [express] GET /api/notifications 304 in 936ms :: []
+3:23:17 PM [express] GET /api/notifications/unread-count 304 in 2325ms
+Error creating document: DrizzleQueryError: Failed query: insert into "documents" ("id", "document_number", "document_type", "title", "content", "template_id", "status", "version", "parent_document_id", "created_by", "reviewed_by", "approved_by", "published_by", "effective_date", "expiry_date", "review_date", "priority", "category", "department", "tags", "recipient_ids", "section_ids", "is_public", "access_level", "requires_approval", "approval_workflow", "is_template", "is_active", "attachments", "document_references", "view_count", "download_count", "last_viewed_at", "is_archived", "archived_at", "archived_by", "archive_reason", "compliance_required", "audit_trail", "created_at", "updated_at", "reviewed_at", "approved_at", "published_at") values (default, $1, $2, $3, $4, default, $5, $6, default, $7, default, default, default, $8, $9, default, $10, $11, default, $12, default, default, default, default, default, default, default, default, default, default, default, default, default, default, default, default, default, default, default, $13, $14, default, default, default) returning "id", "document_number", "document_type", "title", "content", "template_id", "status", "version", "parent_document_id", "created_by", "reviewed_by", "approved_by", "published_by", "effective_date", "expiry_date", "review_date", "priority", "category", "department", "tags", "recipient_ids", "section_ids", "is_public", "access_level", "requires_approval", "approval_workflow", "is_template", "is_active", "attachments", "document_references", "view_count", "download_count", "last_viewed_at", "is_archived", "archived_at", "archived_by", "archive_reason", "compliance_required", "audit_trail", "created_at", "updated_at", "reviewed_at", "approved_at", "published_at"
+params: INS2025-0003,instruction,test,test,draft,1.0,00U1,2025-07-01T00:00:00.000Z,2025-07-31T00:00:00.000Z,high,,{},2025-07-18T15:23:18.912Z,2025-07-18T15:23:18.912Z
+    at NeonPreparedQuery.queryWithCache (/home/runner/workspace/node_modules/src/pg-core/session.ts:74:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async NeonPreparedQuery.execute (/home/runner/workspace/node_modules/src/neon-serverless/session.ts:152:18)
+    at async ProfessionalDocumentStorage.createDocument (/home/runner/workspace/server/professional-document-storage.ts:90:29)
+    at async <anonymous> (/home/runner/workspace/server/professional-document-routes.ts:79:24) {
+  query: 'insert into "documents" ("id", "document_number", "document_type", "title", "content", "template_id", "status", "version", "parent_document_id", "created_by", "reviewed_by", "approved_by", "published_by", "effective_date", "expiry_date", "review_date", "priority", "category", "department", "tags", "recipient_ids", "section_ids", "is_public", "access_level", "requires_approval", "approval_workflow", "is_template", "is_active", "attachments", "document_references", "view_count", "download_count", "last_viewed_at", "is_archived", "archived_at", "archived_by", "archive_reason", "compliance_required", "audit_trail", "created_at", "updated_at", "reviewed_at", "approved_at", "published_at") values (default, $1, $2, $3, $4, default, $5, $6, default, $7, default, default, default, $8, $9, default, $10, $11, default, $12, default, default, default, default, default, default, default, default, default, default, default, default, default, default, default, default, default, default, default, $13, $14, default, default, default) returning "id", "document_number", "document_type", "title", "content", "template_id", "status", "version", "parent_document_id", "created_by", "reviewed_by", "approved_by", "published_by", "effective_date", "expiry_date", "review_date", "priority", "category", "department", "tags", "recipient_ids", "section_ids", "is_public", "access_level", "requires_approval", "approval_workflow", "is_template", "is_active", "attachments", "document_references", "view_count", "download_count", "last_viewed_at", "is_archived", "archived_at", "archived_by", "archive_reason", "compliance_required", "audit_trail", "created_at", "updated_at", "reviewed_at", "approved_at", "published_at"',
+  params: [
+    'INS2025-0003',
+    'instruction',
+    'test',
+    'test',
+    'draft',
+    '1.0',
+    '00U1',
+    '2025-07-01T00:00:00.000Z',
+    '2025-07-31T00:00:00.000Z',
+    'high',
+    '',
+    '{}',
+    '2025-07-18T15:23:18.912Z',
+    '2025-07-18T15:23:18.912Z'
+  ],
+  cause: error: column "requires_approval" of relation "documents" does not exist
+      at file:///home/runner/workspace/node_modules/@neondatabase/serverless/index.mjs:1087:33
+      at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+      at async <anonymous> (/home/runner/workspace/node_modules/src/neon-serverless/session.ts:153:11)
+      at async NeonPreparedQuery.queryWithCache (/home/runner/workspace/node_modules/src/pg-core/session.ts:72:12)
+      at async NeonPreparedQuery.execute (/home/runner/workspace/node_modules/src/neon-serverless/session.ts:152:18)
+      at async ProfessionalDocumentStorage.createDocument (/home/runner/workspace/server/professional-document-storage.ts:90:29)
+      at async <anonymous> (/home/runner/workspace/server/professional-document-routes.ts:79:24) {
+    length: 140,
+    severity: 'ERROR',
+    code: '42703',
+    detail: undefined,
+    hint: undefined,
+    position: '361',
+    internalPosition: undefined,
+    internalQuery: undefined,
+    where: undefined,
+    schema: undefined,
+    table: undefined,
+    column: undefined,
+    dataType: undefined,
+    constraint: undefined,
+    file: 'parse_target.c',
+    line: '1066',
+    routine: 'checkInsertTargets'
+  }
+}
+3:23:19 PM [express] POST /api/documents 500 in 1177ms :: {"message":"Failed to create document"}
+Database client connected
+Error creating document: DrizzleQueryError: Failed query: insert into "documents" ("id", "document_number", "document_type", "title", "content", "template_id", "status", "version", "parent_document_id", "created_by", "reviewed_by", "approved_by", "published_by", "effective_date", "expiry_date", "review_date", "priority", "category", "department", "tags", "recipient_ids", "section_ids", "is_public", "access_level", "requires_approval", "approval_workflow", "is_template", "is_active", "attachments", "document_references", "view_count", "download_count", "last_viewed_at", "is_archived", "archived_at", "archived_by", "archive_reason", "compliance_required", "audit_trail", "created_at", "updated_at", "reviewed_at", "approved_at", "published_at") values (default, $1, $2, $3, $4, default, $5, $6, default, $7, default, default, default, $8, $9, default, $10, $11, default, $12, default, default, default, default, default, default, default, default, default, default, default, default, default, default, default, default, default, default, default, $13, $14, default, default, default) returning "id", "document_number", "document_type", "title", "content", "template_id", "status", "version", "parent_document_id", "created_by", "reviewed_by", "approved_by", "published_by", "effective_date", "expiry_date", "review_date", "priority", "category", "department", "tags", "recipient_ids", "section_ids", "is_public", "access_level", "requires_approval", "approval_workflow", "is_template", "is_active", "attachments", "document_references", "view_count", "download_count", "last_viewed_at", "is_archived", "archived_at", "archived_by", "archive_reason", "compliance_required", "audit_trail", "created_at", "updated_at", "reviewed_at", "approved_at", "published_at"
+params: INS2025-0003,instruction,test,test,draft,1.0,00U1,2025-07-01T00:00:00.000Z,2025-07-31T00:00:00.000Z,high,,{},2025-07-18T15:23:35.090Z,2025-07-18T15:23:35.090Z
+    at NeonPreparedQuery.queryWithCache (/home/runner/workspace/node_modules/src/pg-core/session.ts:74:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async NeonPreparedQuery.execute (/home/runner/workspace/node_modules/src/neon-serverless/session.ts:152:18)
+    at async ProfessionalDocumentStorage.createDocument (/home/runner/workspace/server/professional-document-storage.ts:90:29)
+    at async <anonymous> (/home/runner/workspace/server/professional-document-routes.ts:79:24) {
+  query: 'insert into "documents" ("id", "document_number", "document_type", "title", "content", "template_id", "status", "version", "parent_document_id", "created_by", "reviewed_by", "approved_by", "published_by", "effective_date", "expiry_date", "review_date", "priority", "category", "department", "tags", "recipient_ids", "section_ids", "is_public", "access_level", "requires_approval", "approval_workflow", "is_template", "is_active", "attachments", "document_references", "view_count", "download_count", "last_viewed_at", "is_archived", "archived_at", "archived_by", "archive_reason", "compliance_required", "audit_trail", "created_at", "updated_at", "reviewed_at", "approved_at", "published_at") values (default, $1, $2, $3, $4, default, $5, $6, default, $7, default, default, default, $8, $9, default, $10, $11, default, $12, default, default, default, default, default, default, default, default, default, default, default, default, default, default, default, default, default, default, default, $13, $14, default, default, default) returning "id", "document_number", "document_type", "title", "content", "template_id", "status", "version", "parent_document_id", "created_by", "reviewed_by", "approved_by", "published_by", "effective_date", "expiry_date", "review_date", "priority", "category", "department", "tags", "recipient_ids", "section_ids", "is_public", "access_level", "requires_approval", "approval_workflow", "is_template", "is_active", "attachments", "document_references", "view_count", "download_count", "last_viewed_at", "is_archived", "archived_at", "archived_by", "archive_reason", "compliance_required", "audit_trail", "created_at", "updated_at", "reviewed_at", "approved_at", "published_at"',
+  params: [
+    'INS2025-0003',
+    'instruction',
+    'test',
+    'test',
+    'draft',
+    '1.0',
+    '00U1',
+    '2025-07-01T00:00:00.000Z',
+    '2025-07-31T00:00:00.000Z',
+    'high',
+    '',
+    '{}',
+    '2025-07-18T15:23:35.090Z',
+    '2025-07-18T15:23:35.090Z'
+  ],
+  cause: error: column "requires_approval" of relation "documents" does not exist
+      at file:///home/runner/workspace/node_modules/@neondatabase/serverless/index.mjs:1087:33
+      at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+      at async <anonymous> (/home/runner/workspace/node_modules/src/neon-serverless/session.ts:153:11)
+      at async NeonPreparedQuery.queryWithCache (/home/runner/workspace/node_modules/src/pg-core/session.ts:72:12)
+      at async NeonPreparedQuery.execute (/home/runner/workspace/node_modules/src/neon-serverless/session.ts:152:18)
+      at async ProfessionalDocumentStorage.createDocument (/home/runner/workspace/server/professional-document-storage.ts:90:29)
+      at async <anonymous> (/home/runner/workspace/server/professional-document-routes.ts:79:24) {
+    length: 140,
+    severity: 'ERROR',
+    code: '42703',
+    detail: undefined,
+    hint: undefined,
+    position: '361',
+    internalPosition: undefined,
+    internalQuery: undefined,
+    where: undefined,
+    schema: undefined,
+    table: undefined,
+    column: undefined,
+    dataType: undefined,
+    constraint: undefined,
+    file: 'parse_target.c',
+    line: '1066',
+    routine: 'checkInsertTargets'
+  }
+}
+3:23:35 PM [express] POST /api/documents 500 in 3315ms :: {"message":"Failed to create document"}
+Database client connected

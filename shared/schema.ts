@@ -2002,9 +2002,9 @@ export const insertDocumentSchema = createInsertSchema(documents).omit({
   createdAt: true,
   updatedAt: true,
 }).extend({
-  effectiveDate: z.string().optional().transform(val => val ? new Date(val) : undefined),
-  expiryDate: z.string().optional().transform(val => val ? new Date(val) : undefined),
-  reviewDate: z.string().optional().transform(val => val ? new Date(val) : undefined),
+  effectiveDate: z.string().nullish().transform(val => val && val.trim() !== '' ? new Date(val) : undefined),
+  expiryDate: z.string().nullish().transform(val => val && val.trim() !== '' ? new Date(val) : undefined),
+  reviewDate: z.string().nullish().transform(val => val && val.trim() !== '' ? new Date(val) : undefined),
 });
 export type InsertDocument = z.infer<typeof insertDocumentSchema>;
 export type Document = typeof documents.$inferSelect;
