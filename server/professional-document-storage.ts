@@ -441,10 +441,7 @@ export class ProfessionalDocumentStorage {
         count: count(),
       })
       .from(documents)
-      .where(and(
-        eq(documents.isArchived, false),
-        isNull(documents.department)
-      ))
+      .where(eq(documents.isArchived, false))
       .groupBy(documents.department);
 
     // Get recent views (last 30 days)
@@ -479,22 +476,22 @@ export class ProfessionalDocumentStorage {
       ));
 
     return {
-      totalDocuments: totalResult[0].count,
+      totalDocuments: totalResult[0]?.count || 0,
       byType: typeResults.reduce((acc, item) => {
-        acc[item.documentType] = item.count;
+        acc[item.documentType] = item.count || 0;
         return acc;
       }, {} as Record<string, number>),
       byStatus: statusResults.reduce((acc, item) => {
-        acc[item.status] = item.count;
+        acc[item.status] = item.count || 0;
         return acc;
       }, {} as Record<string, number>),
       byDepartment: departmentResults.reduce((acc, item) => {
-        acc[item.department || 'Unassigned'] = item.count;
+        acc[item.department || 'Unassigned'] = item.count || 0;
         return acc;
       }, {} as Record<string, number>),
-      recentViews: recentViewsResult[0].count,
-      pendingApprovals: pendingApprovalsResult[0].count,
-      expiringDocuments: expiringResult[0].count,
+      recentViews: recentViewsResult[0]?.count || 0,
+      pendingApprovals: pendingApprovalsResult[0]?.count || 0,
+      expiringDocuments: expiringResult[0]?.count || 0,
     };
   }
 

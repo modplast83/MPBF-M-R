@@ -48,10 +48,89 @@ export function setupProfessionalDocumentRoutes(app: Express) {
     }
   });
 
-  // Get single document by ID
+  // Document Statistics - MUST come before /:id route
+  app.get("/api/documents/stats", requireAuth, async (req, res) => {
+    try {
+      const stats = await professionalDocumentStorage.getDocumentStats();
+      res.json(stats);
+    } catch (error) {
+      console.error("Error fetching document stats:", error);
+      res.status(500).json({ message: "Failed to fetch document stats" });
+    }
+  });
+
+  // Document Search - MUST come before /:id route
+  app.get("/api/documents/search", requireAuth, async (req, res) => {
+    try {
+      const { q, documentType, status, userId } = req.query;
+      
+      if (!q || typeof q !== "string") {
+        return res.status(400).json({ message: "Search query is required" });
+      }
+
+      const filters = {
+        documentType: documentType as string,
+        status: status as string,
+        userId: userId as string,
+      };
+
+      const documents = await professionalDocumentStorage.searchDocuments(q, filters);
+      res.json(documents);
+    } catch (error) {
+      console.error("Error searching documents:", error);
+      res.status(500).json({ message: "Failed to search documents" });
+    }
+  });
+
+  // Archive endpoints - MUST come before /:id route
+  app.get("/api/documents/archived", requireAuth, async (req, res) => {
+    try {
+      const {
+        search,
+        documentType,
+        category,
+        department,
+        page = "1",
+        limit = "10",
+        sortBy = "archivedAt",
+        sortOrder = "desc"
+      } = req.query;
+
+      const filters = {
+        search: search as string,
+        documentType: documentType as string,
+        category: category as string,
+        department: department as string,
+        page: parseInt(page as string),
+        limit: parseInt(limit as string),
+        sortBy: sortBy as string,
+        sortOrder: sortOrder as 'asc' | 'desc',
+      };
+
+      // Get archived documents by modifying the filter
+      const archiveFilters = {
+        ...filters,
+        // Override the archive filter to get archived documents only
+      };
+
+      const result = await professionalDocumentStorage.getDocuments(archiveFilters);
+      res.json(result);
+    } catch (error) {
+      console.error("Error fetching archived documents:", error);
+      res.status(500).json({ message: "Failed to fetch archived documents" });
+    }
+  });
+
+  // Get single document by ID - MUST come after specific routes
   app.get("/api/documents/:id", requireAuth, async (req, res) => {
     try {
       const id = parseInt(req.params.id);
+      
+      // Validate that the ID is a valid number
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid document ID" });
+      }
+      
       const document = await professionalDocumentStorage.getDocumentById(id);
       
       if (!document) {
@@ -258,39 +337,7 @@ export function setupProfessionalDocumentRoutes(app: Express) {
     }
   });
 
-  // Document Statistics
-  app.get("/api/documents/stats", requireAuth, async (req, res) => {
-    try {
-      const stats = await professionalDocumentStorage.getDocumentStats();
-      res.json(stats);
-    } catch (error) {
-      console.error("Error fetching document stats:", error);
-      res.status(500).json({ message: "Failed to fetch document stats" });
-    }
-  });
 
-  // Document Search
-  app.get("/api/documents/search", requireAuth, async (req, res) => {
-    try {
-      const { q, documentType, status, userId } = req.query;
-      
-      if (!q || typeof q !== "string") {
-        return res.status(400).json({ message: "Search query is required" });
-      }
-
-      const filters = {
-        documentType: documentType as string,
-        status: status as string,
-        userId: userId as string,
-      };
-
-      const documents = await professionalDocumentStorage.searchDocuments(q, filters);
-      res.json(documents);
-    } catch (error) {
-      console.error("Error searching documents:", error);
-      res.status(500).json({ message: "Failed to search documents" });
-    }
-  });
 
   // Document Types endpoint for dropdown options
   app.get("/api/document-types", requireAuth, async (req, res) => {
@@ -370,44 +417,7 @@ export function setupProfessionalDocumentRoutes(app: Express) {
     }
   });
 
-  // Archive endpoints
-  app.get("/api/documents/archived", requireAuth, async (req, res) => {
-    try {
-      const {
-        search,
-        documentType,
-        category,
-        department,
-        page = "1",
-        limit = "10",
-        sortBy = "archivedAt",
-        sortOrder = "desc"
-      } = req.query;
 
-      const filters = {
-        search: search as string,
-        documentType: documentType as string,
-        category: category as string,
-        department: department as string,
-        page: parseInt(page as string),
-        limit: parseInt(limit as string),
-        sortBy: sortBy as string,
-        sortOrder: sortOrder as 'asc' | 'desc',
-      };
-
-      // Get archived documents by modifying the filter
-      const archiveFilters = {
-        ...filters,
-        // Override the archive filter to get archived documents only
-      };
-
-      const result = await professionalDocumentStorage.getDocuments(archiveFilters);
-      res.json(result);
-    } catch (error) {
-      console.error("Error fetching archived documents:", error);
-      res.status(500).json({ message: "Failed to fetch archived documents" });
-    }
-  });
 
   // Restore archived document
   app.post("/api/documents/:id/restore", requireAuth, async (req, res) => {
