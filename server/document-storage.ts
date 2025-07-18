@@ -28,8 +28,8 @@ export class DocumentStorage {
     const typePrefix = this.getDocumentTypePrefix(documentType);
     const year = new Date().getFullYear();
     
-    // Get the last document number for this type and year
-    const lastDocument = await db
+    // Get all document numbers for this type and year to find the highest number
+    const existingDocuments = await db
       .select({ documentNumber: documents.documentNumber })
       .from(documents)
       .where(
@@ -38,21 +38,32 @@ export class DocumentStorage {
           ilike(documents.documentNumber, `${typePrefix}${year}%`)
         )
       )
-      .orderBy(desc(documents.documentNumber))
-      .limit(1);
+      .orderBy(desc(documents.documentNumber));
+
+    console.log(`Found ${existingDocuments.length} existing documents for type ${documentType} in ${year}`);
 
     let nextNumber = 1;
-    if (lastDocument.length > 0) {
-      const lastNumber = lastDocument[0].documentNumber;
-      const numberPart = lastNumber.split('-')[2];
-      const parsedNumber = parseInt(numberPart);
-      nextNumber = isNaN(parsedNumber) ? 1 : parsedNumber + 1;
+    if (existingDocuments.length > 0) {
+      // Find the highest existing number
+      let maxNumber = 0;
+      for (const doc of existingDocuments) {
+        const numberPart = doc.documentNumber.split('-')[2];
+        const parsedNumber = parseInt(numberPart);
+        if (!isNaN(parsedNumber) && parsedNumber > maxNumber) {
+          maxNumber = parsedNumber;
+        }
+      }
+      nextNumber = maxNumber + 1;
+      console.log(`Highest existing number: ${maxNumber}, next number: ${nextNumber}`);
     }
 
     // Add retry count to nextNumber to handle concurrent requests
     nextNumber += retryCount;
 
-    return `${typePrefix}${year}-${nextNumber.toString().padStart(4, '0')}`;
+    const newDocumentNumber = `${typePrefix}${year}-${nextNumber.toString().padStart(4, '0')}`;
+    console.log(`Generated document number: ${newDocumentNumber} (retry count: ${retryCount})`);
+    
+    return newDocumentNumber;
   }
 
   private getDocumentTypePrefix(documentType: string): string {
@@ -98,7 +109,15 @@ export class DocumentStorage {
       return newDocument;
     } catch (error: any) {
       // Check if it's a unique constraint violation for document_number
-      if (error?.code === '23505' && error?.constraint === 'documents_document_number_key') {
+      // The error might be nested in the cause property
+      const actualError = error.cause || error;
+      const isUniqueConstraintViolation = 
+        (actualError?.code === '23505' && actualError?.constraint === 'documents_document_number_key') ||
+        (error?.code === '23505' && error?.constraint === 'documents_document_number_key') ||
+        (actualError?.detail?.includes('already exists') && actualError?.detail?.includes('document_number')) ||
+        (error?.detail?.includes('already exists') && error?.detail?.includes('document_number'));
+      
+      if (isUniqueConstraintViolation) {
         if (retryCount < maxRetries) {
           console.log(`Document number conflict, retrying... (attempt ${retryCount + 1}/${maxRetries})`);
           // Add a small delay to avoid immediate retry conflicts
