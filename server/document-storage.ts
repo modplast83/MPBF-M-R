@@ -47,10 +47,15 @@ export class DocumentStorage {
       // Find the highest existing number
       let maxNumber = 0;
       for (const doc of existingDocuments) {
-        const numberPart = doc.documentNumber.split('-')[2];
-        const parsedNumber = parseInt(numberPart);
-        if (!isNaN(parsedNumber) && parsedNumber > maxNumber) {
-          maxNumber = parsedNumber;
+        // Extract the number from format like "INS2025-0001"
+        const parts = doc.documentNumber.split('-');
+        if (parts.length === 2) {
+          const numberPart = parts[1]; // "0001"
+          const parsedNumber = parseInt(numberPart);
+          console.log(`Parsing document ${doc.documentNumber}: parts=${JSON.stringify(parts)}, numberPart=${numberPart}, parsedNumber=${parsedNumber}`);
+          if (!isNaN(parsedNumber) && parsedNumber > maxNumber) {
+            maxNumber = parsedNumber;
+          }
         }
       }
       nextNumber = maxNumber + 1;
@@ -169,8 +174,11 @@ export class DocumentStorage {
       conditions.push(eq(documents.createdBy, filters.createdBy));
     }
     
+    // Default to showing only non-archived documents unless explicitly requested
     if (filters?.isArchived !== undefined) {
       conditions.push(eq(documents.isArchived, filters.isArchived));
+    } else {
+      conditions.push(eq(documents.isArchived, false));
     }
     
     if (filters?.search) {
@@ -187,13 +195,13 @@ export class DocumentStorage {
       query = query.where(and(...conditions));
     }
 
-    // Get total count
-    const countQuery = db
+    // Get total count with same conditions
+    let countQuery = db
       .select({ count: sql`count(*)`.as('count') })
       .from(documents);
     
     if (conditions.length > 0) {
-      countQuery.where(and(...conditions));
+      countQuery = countQuery.where(and(...conditions));
     }
     
     const [{ count }] = await countQuery;

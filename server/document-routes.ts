@@ -51,7 +51,7 @@ export function setupDocumentRoutes(app: Express) {
         documentType: documentType as string,
         status: status as string,
         createdBy: createdBy as string,
-        isArchived: isArchived === "true",
+        isArchived: isArchived === "true" ? true : isArchived === "false" ? false : undefined,
         search: search as string,
         page: parseInt(page as string),
         limit: parseInt(limit as string),
