@@ -2992,6 +2992,118 @@
           "quote_title": "Product Quote",
           "generated_on": "Generated on: {{date}}"
         }
+      },
+      "documents": {
+        "title": "Documents",
+        "subtitle": "Manage your organization's documents and templates",
+        "create_document": "Create Document",
+        "create_first_document": "Create Your First Document",
+        "templates": "Templates",
+        "loading": "Loading documents...",
+        "stats": {
+          "total_documents": "Total Documents",
+          "active_documents": "Active Documents",
+          "recent_views": "Recent Views",
+          "last_30_days": "Last 30 Days",
+          "pending_approvals": "Pending Approvals",
+          "awaiting_review": "Awaiting Review",
+          "expiring_documents": "Expiring Documents",
+          "next_30_days": "Next 30 Days"
+        },
+        "filters": {
+          "title": "Advanced Filters",
+          "search": "Search",
+          "search_placeholder": "Search documents...",
+          "document_type": "Document Type",
+          "all_types": "All Types",
+          "status": "Status",
+          "all_statuses": "All Statuses",
+          "department": "Department",
+          "all_departments": "All Departments",
+          "priority": "Priority",
+          "all_priorities": "All Priorities"
+        },
+        "list": {
+          "title": "Documents List",
+          "showing_results": "Showing {{from}}-{{to}} of {{total}} results"
+        },
+        "actions": {
+          "view": "View",
+          "edit": "Edit",
+          "archive": "Archive",
+          "download": "Download",
+          "share": "Share",
+          "duplicate": "Duplicate",
+          "delete": "Delete"
+        },
+        "empty": {
+          "title": "No Documents Found",
+          "description": "Get started by creating your first document or try adjusting your filters."
+        },
+        "success": {
+          "archived": "Document Archived",
+          "archived_description": "Document has been archived successfully",
+          "created": "Document Created",
+          "created_description": "Document has been created successfully",
+          "updated": "Document Updated",
+          "updated_description": "Document has been updated successfully",
+          "deleted": "Document Deleted",
+          "deleted_description": "Document has been deleted successfully"
+        },
+        "error": {
+          "loading_failed": "Failed to Load Documents",
+          "loading_failed_description": "There was an error loading the documents. Please try again.",
+          "archive_failed": "Archive Failed",
+          "archive_failed_description": "Failed to archive the document. Please try again.",
+          "create_failed": "Create Failed",
+          "create_failed_description": "Failed to create the document. Please try again.",
+          "update_failed": "Update Failed",
+          "update_failed_description": "Failed to update the document. Please try again.",
+          "delete_failed": "Delete Failed",
+          "delete_failed_description": "Failed to delete the document. Please try again."
+        },
+        "confirm": {
+          "archive": "Are you sure you want to archive this document?",
+          "delete": "Are you sure you want to delete this document? This action cannot be undone.",
+          "publish": "Are you sure you want to publish this document?",
+          "unpublish": "Are you sure you want to unpublish this document?"
+        },
+        "types": {
+          "policy": "Policy",
+          "procedure": "Procedure",
+          "instruction": "Instruction",
+          "form": "Form",
+          "contract": "Contract",
+          "agreement": "Agreement",
+          "report": "Report",
+          "memo": "Memo",
+          "letter": "Letter",
+          "manual": "Manual",
+          "specification": "Specification",
+          "guideline": "Guideline"
+        },
+        "statuses": {
+          "draft": "Draft",
+          "under_review": "Under Review",
+          "approved": "Approved",
+          "published": "Published",
+          "archived": "Archived",
+          "obsolete": "Obsolete"
+        },
+        "priorities": {
+          "low": "Low",
+          "medium": "Medium",
+          "high": "High",
+          "urgent": "Urgent"
+        },
+        "departments": {
+          "production": "Production",
+          "quality": "Quality",
+          "hr": "Human Resources",
+          "finance": "Finance",
+          "management": "Management",
+          "all": "All Departments"
+        }
       }
     }
   }

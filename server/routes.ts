@@ -108,7 +108,7 @@ import { setupNotificationRoutes } from "./notification-routes";
 import { sendCustomerFormNotification } from "./email-service";
 import { setupIotRoutes } from "./iot-routes";
 import { setupJobOrderUpdateRoutes } from "./job-order-updates-routes";
-import { setupDocumentRoutes } from "./document-routes";
+import { setupProfessionalDocumentRoutes } from "./professional-document-routes";
 
 // Extend the Request type to include express-fileupload properties
 declare global {
@@ -8621,7 +8621,7 @@ COMMIT;
   setupJobOrderUpdateRoutes(app);
 
   // Setup document routes
-  setupDocumentRoutes(app);
+  setupProfessionalDocumentRoutes(app);
 
   // Get all customer information records (Admin only)
   app.get(

@@ -67,7 +67,7 @@ import MixColorsCalculator from "@/pages/tools/mix-colors";
 import OrderDesignPage from "@/pages/tools/order-design";
 import ClichePage from "@/pages/cliches/index";
 // Documents Module imports
-import DocumentsIndex from "@/pages/documents/index";
+import ProfessionalDocumentsIndex from "@/pages/documents/professional-index";
 import DocumentsByType from "@/pages/documents/by-type";
 import DocumentView from "@/pages/documents/view";
 import DocumentEdit from "@/pages/documents/edit";
@@ -381,7 +381,7 @@ function App() {
                       {/* Documents Module Routes */}
                       <ProtectedRoute
                         path="/documents"
-                        component={DocumentsIndex}
+                        component={ProfessionalDocumentsIndex}
                         module="Documents"
                       />
                       <ProtectedRoute

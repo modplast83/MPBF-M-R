@@ -1823,42 +1823,54 @@ export const insertJoMixItemSchema = createInsertSchema(joMixItems).omit({
 export type InsertJoMixItem = z.infer<typeof insertJoMixItemSchema>;
 export type JoMixItem = typeof joMixItems.$inferSelect;
 
-// Documents Module - Comprehensive Document Management System
+// Professional Documents Module - Enhanced Document Management System
 export const documents = pgTable("documents", {
   id: serial("id").primaryKey(),
   documentNumber: text("document_number").notNull().unique(), // Auto-generated unique document S/N
-  documentType: text("document_type").notNull(), // "instruction", "obligation", "announcement", "general_letter", "agreement", "contract", "request", "disclaimer"
+  documentType: text("document_type").notNull(), // "policy", "procedure", "instruction", "form", "contract", "agreement", "report", "memo", "letter", "manual", "specification", "guideline"
   title: text("title").notNull(),
   content: text("content").notNull(), // Rich text content
   templateId: integer("template_id").references(() => documentTemplates.id),
   
   // Status and workflow
-  status: text("status").notNull().default("draft"), // "draft", "active", "archived", "deleted"
-  version: integer("version").notNull().default(1), // Version tracking
+  status: text("status").notNull().default("draft"), // "draft", "under_review", "approved", "published", "archived", "obsolete"
+  version: text("version").notNull().default("1.0"), // Version tracking (1.0, 1.1, 2.0, etc.)
   parentDocumentId: integer("parent_document_id").references(() => documents.id), // For revisions
   
   // Author and permissions
   createdBy: text("created_by")
     .notNull()
     .references(() => users.id),
-  authorizedBy: text("authorized_by").references(() => users.id),
-  authorizedAt: timestamp("authorized_at"),
+  reviewedBy: text("reviewed_by").references(() => users.id),
+  approvedBy: text("approved_by").references(() => users.id),
+  publishedBy: text("published_by").references(() => users.id),
   
   // Document metadata
   effectiveDate: timestamp("effective_date"),
   expiryDate: timestamp("expiry_date"),
+  reviewDate: timestamp("review_date"),
   priority: text("priority").notNull().default("medium"), // "low", "medium", "high", "urgent"
   category: text("category"), // Additional categorization
+  department: text("department"), // Department/section ownership
   tags: text("tags").array().default(sql`'{}'`), // Searchable tags
   
   // Recipients and visibility
   recipientIds: text("recipient_ids").array().default(sql`'{}'`), // Specific users
   sectionIds: text("section_ids").array().default(sql`'{}'`), // Specific sections
   isPublic: boolean("is_public").default(false), // Public visibility
+  accessLevel: text("access_level").notNull().default("standard"), // "public", "standard", "confidential", "restricted"
+  
+  // Workflow and approval
+  requiresApproval: boolean("requires_approval").default(false),
+  approvalWorkflow: text("approval_workflow").array().default(sql`'{}'`), // Array of user IDs for approval chain
+  
+  // Document properties
+  isTemplate: boolean("is_template").default(false),
+  isActive: boolean("is_active").default(true),
   
   // Attachments and references
-  attachments: jsonb("attachments"), // File attachments metadata
-  references: jsonb("document_references"), // Related documents, orders, etc.
+  attachments: jsonb("attachments").default(sql`'[]'`), // File attachments metadata
+  references: jsonb("document_references").default(sql`'[]'`), // Related documents, orders, etc.
   
   // Tracking and analytics
   viewCount: integer("view_count").default(0),
@@ -1871,27 +1883,43 @@ export const documents = pgTable("documents", {
   archivedBy: text("archived_by").references(() => users.id),
   archiveReason: text("archive_reason"),
   
+  // Compliance and audit
+  complianceRequired: boolean("compliance_required").default(false),
+  auditTrail: jsonb("audit_trail").default(sql`'[]'`), // JSON array of changes
+  
   // Timestamps
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
+  reviewedAt: timestamp("reviewed_at"),
+  approvedAt: timestamp("approved_at"),
+  publishedAt: timestamp("published_at"),
 });
 
-// Document Templates for different document types
+// Professional Document Templates for different document types
 export const documentTemplates = pgTable("document_templates", {
   id: serial("id").primaryKey(),
   templateName: text("template_name").notNull(),
   documentType: text("document_type").notNull(), // Same types as documents
   templateContent: text("template_content").notNull(), // HTML template with placeholders
-  templateVariables: jsonb("template_variables"), // Available variables/placeholders
+  templateVariables: jsonb("template_variables").default(sql`'{}'`), // Available variables/placeholders
   
   // Template metadata
   description: text("description"),
+  category: text("category"), // Template category
+  department: text("department"), // Department/section ownership
   isDefault: boolean("is_default").default(false),
   isActive: boolean("is_active").default(true),
   
   // Versioning
-  version: integer("version").notNull().default(1),
+  version: text("version").notNull().default("1.0"),
   parentTemplateId: integer("parent_template_id").references(() => documentTemplates.id),
+  
+  // Access control
+  accessLevel: text("access_level").notNull().default("standard"), // "public", "standard", "confidential", "restricted"
+  
+  // Usage tracking
+  usageCount: integer("usage_count").default(0),
+  lastUsedAt: timestamp("last_used_at"),
   
   // Creation tracking
   createdBy: text("created_by")
@@ -1914,6 +1942,7 @@ export const documentViews = pgTable("document_views", {
   viewDuration: integer("view_duration"), // in seconds
   deviceType: text("device_type"), // "desktop", "mobile", "tablet"
   ipAddress: text("ip_address"),
+  userAgent: text("user_agent"),
 });
 
 // Document Approval Workflow
