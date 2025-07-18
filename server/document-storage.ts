@@ -23,8 +23,8 @@ import { eq, desc, asc, and, or, ilike, sql, inArray, isNull } from "drizzle-orm
 import { users } from "../shared/schema";
 
 export class DocumentStorage {
-  // Document number generation
-  async generateDocumentNumber(documentType: string): Promise<string> {
+  // Document number generation with retry logic to handle concurrent requests
+  async generateDocumentNumber(documentType: string, retryCount = 0): Promise<string> {
     const typePrefix = this.getDocumentTypePrefix(documentType);
     const year = new Date().getFullYear();
     
@@ -48,6 +48,9 @@ export class DocumentStorage {
       const parsedNumber = parseInt(numberPart);
       nextNumber = isNaN(parsedNumber) ? 1 : parsedNumber + 1;
     }
+
+    // Add retry count to nextNumber to handle concurrent requests
+    nextNumber += retryCount;
 
     return `${typePrefix}${year}-${nextNumber.toString().padStart(4, '0')}`;
   }
@@ -76,20 +79,39 @@ export class DocumentStorage {
       .limit(limit);
   }
 
-  // Documents CRUD operations
-  async createDocument(document: InsertDocument): Promise<Document> {
-    const documentNumber = await this.generateDocumentNumber(document.documentType);
+  // Documents CRUD operations with retry logic for duplicate document numbers
+  async createDocument(document: InsertDocument, retryCount = 0): Promise<Document> {
+    const maxRetries = 5;
     
-    const [newDocument] = await db
-      .insert(documents)
-      .values({
-        ...document,
-        documentNumber,
-        updatedAt: new Date(),
-      })
-      .returning();
+    try {
+      const documentNumber = await this.generateDocumentNumber(document.documentType, retryCount);
+      
+      const [newDocument] = await db
+        .insert(documents)
+        .values({
+          ...document,
+          documentNumber,
+          updatedAt: new Date(),
+        })
+        .returning();
 
-    return newDocument;
+      return newDocument;
+    } catch (error: any) {
+      // Check if it's a unique constraint violation for document_number
+      if (error?.code === '23505' && error?.constraint === 'documents_document_number_key') {
+        if (retryCount < maxRetries) {
+          console.log(`Document number conflict, retrying... (attempt ${retryCount + 1}/${maxRetries})`);
+          // Add a small delay to avoid immediate retry conflicts
+          await new Promise(resolve => setTimeout(resolve, 100 * (retryCount + 1)));
+          return this.createDocument(document, retryCount + 1);
+        } else {
+          throw new Error(`Failed to generate unique document number after ${maxRetries} attempts`);
+        }
+      }
+      
+      // Re-throw other errors
+      throw error;
+    }
   }
 
   async getDocuments(filters?: {

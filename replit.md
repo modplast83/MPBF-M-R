@@ -118,6 +118,16 @@ This is a comprehensive production management system built with React, TypeScrip
 
 ## Recent Changes
 
+- July 18, 2025: **DOCUMENT SAVE DUPLICATE KEY ERROR FIXED** - Fixed critical document creation error that was causing duplicate key violations:
+  - ✅ **Enhanced Document Number Generation**: Implemented retry logic with exponential backoff to handle concurrent document creation requests
+  - ✅ **Duplicate Key Handling**: Added proper error handling for PostgreSQL unique constraint violations (documents_document_number_key)
+  - ✅ **Race Condition Prevention**: Fixed race condition where multiple users could generate the same document number simultaneously
+  - ✅ **Automatic Retry Mechanism**: Added up to 5 retry attempts with incremental delays (100ms, 200ms, 300ms, etc.)
+  - ✅ **Smart Number Increment**: Enhanced document number generation to add retry count to sequence number for uniqueness
+  - ✅ **Robust Error Messages**: Improved error handling with clear messages when document number generation fails
+  - Document creation now handles high-concurrency scenarios properly without database constraint violations
+  - System can now reliably create documents even when multiple users are creating documents of the same type simultaneously
+
 - July 17, 2025: **COMPREHENSIVE ARABIC TRANSLATION FOR PRODUCT FORM COMPLETED** - Implemented complete multilingual support for the Add New Product form:
   - ✅ **Complete Form Translation**: All form fields, labels, and placeholders now support Arabic and English languages
   - ✅ **Toast Notifications**: Success and error messages fully translated with proper Arabic text
