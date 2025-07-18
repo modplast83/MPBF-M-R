@@ -139,52 +139,7 @@ export class ProfessionalDocumentStorage {
     } = filters;
 
     let query = db
-      .select({
-        id: documents.id,
-        documentNumber: documents.documentNumber,
-        documentType: documents.documentType,
-        title: documents.title,
-        content: documents.content,
-        templateId: documents.templateId,
-        status: documents.status,
-        version: documents.version,
-        parentDocumentId: documents.parentDocumentId,
-        createdBy: documents.createdBy,
-        reviewedBy: documents.reviewedBy,
-        approvedBy: documents.approvedBy,
-        publishedBy: documents.publishedBy,
-        effectiveDate: documents.effectiveDate,
-        expiryDate: documents.expiryDate,
-        reviewDate: documents.reviewDate,
-        priority: documents.priority,
-        category: documents.category,
-        department: documents.department,
-        tags: documents.tags,
-        recipientIds: documents.recipientIds,
-        sectionIds: documents.sectionIds,
-        isPublic: documents.isPublic,
-        accessLevel: documents.accessLevel,
-        requiresApproval: documents.requiresApproval,
-        approvalWorkflow: documents.approvalWorkflow,
-        isTemplate: documents.isTemplate,
-        isActive: documents.isActive,
-        attachments: documents.attachments,
-        references: documents.references,
-        viewCount: documents.viewCount,
-        downloadCount: documents.downloadCount,
-        lastViewedAt: documents.lastViewedAt,
-        isArchived: documents.isArchived,
-        archivedAt: documents.archivedAt,
-        archivedBy: documents.archivedBy,
-        archiveReason: documents.archiveReason,
-        complianceRequired: documents.complianceRequired,
-        auditTrail: documents.auditTrail,
-        createdAt: documents.createdAt,
-        updatedAt: documents.updatedAt,
-        reviewedAt: documents.reviewedAt,
-        approvedAt: documents.approvedAt,
-        publishedAt: documents.publishedAt,
-      })
+      .select()
       .from(documents);
 
     // Apply filters

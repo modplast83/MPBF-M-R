@@ -2001,6 +2001,10 @@ export const insertDocumentSchema = createInsertSchema(documents).omit({
   downloadCount: true,
   createdAt: true,
   updatedAt: true,
+}).extend({
+  effectiveDate: z.string().optional().transform(val => val ? new Date(val) : undefined),
+  expiryDate: z.string().optional().transform(val => val ? new Date(val) : undefined),
+  reviewDate: z.string().optional().transform(val => val ? new Date(val) : undefined),
 });
 export type InsertDocument = z.infer<typeof insertDocumentSchema>;
 export type Document = typeof documents.$inferSelect;
