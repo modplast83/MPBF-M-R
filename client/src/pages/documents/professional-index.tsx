@@ -30,7 +30,8 @@ import {
   AlertTriangle,
   Settings,
   RefreshCw,
-  ExternalLink
+  ExternalLink,
+  Printer
 } from "lucide-react";
 import { Link } from "wouter";
 import { format } from "date-fns";
@@ -179,6 +180,156 @@ export default function ProfessionalDocumentsIndex() {
   const handleArchive = async (documentId: number) => {
     if (window.confirm(t('documents.confirm.archive'))) {
       archiveMutation.mutate({ id: documentId, reason: "Manual archive" });
+    }
+  };
+
+  // Print document function
+  const handlePrint = (document: any) => {
+    const printContent = `
+      <html>
+        <head>
+          <title>Document Print - ${document.title}</title>
+          <style>
+            body {
+              font-family: Arial, sans-serif;
+              margin: 20px;
+              color: #333;
+            }
+            .print-header {
+              text-align: center;
+              border-bottom: 2px solid #065f46;
+              padding-bottom: 20px;
+              margin-bottom: 30px;
+            }
+            .company-logo {
+              width: 80px;
+              height: 80px;
+              margin: 0 auto 10px;
+            }
+            .company-name {
+              font-size: 24px;
+              font-weight: bold;
+              color: #065f46;
+              margin: 10px 0;
+            }
+            .company-name-ar {
+              font-size: 20px;
+              color: #059669;
+              direction: rtl;
+            }
+            .document-info {
+              display: flex;
+              justify-content: space-between;
+              margin-bottom: 20px;
+              padding: 15px;
+              background-color: #f0f9ff;
+              border-radius: 8px;
+            }
+            .info-item {
+              margin: 5px 0;
+            }
+            .info-label {
+              font-weight: bold;
+              color: #065f46;
+            }
+            .document-content {
+              line-height: 1.6;
+              margin: 20px 0;
+            }
+            .status-badge {
+              background-color: #059669;
+              color: white;
+              padding: 4px 8px;
+              border-radius: 4px;
+              font-size: 12px;
+            }
+            .priority-badge {
+              background-color: #dc2626;
+              color: white;
+              padding: 4px 8px;
+              border-radius: 4px;
+              font-size: 12px;
+            }
+            .print-footer {
+              margin-top: 40px;
+              text-align: center;
+              font-size: 12px;
+              color: #666;
+              border-top: 1px solid #e5e7eb;
+              padding-top: 20px;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="print-header">
+            <div class="company-logo">
+              <div style="width: 80px; height: 80px; background-color: #065f46; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+                <span style="color: white; font-weight: bold; font-size: 16px;">MPBF</span>
+              </div>
+            </div>
+            <div class="company-name">MODERN PLASTIC BAG FACTORY</div>
+            <div class="company-name-ar">مصنع أكياس البلاستيك الحديث</div>
+          </div>
+          
+          <div class="document-info">
+            <div>
+              <div class="info-item">
+                <span class="info-label">Document Number:</span> ${document.documentNumber}
+              </div>
+              <div class="info-item">
+                <span class="info-label">Document Type:</span> ${document.documentType}
+              </div>
+              <div class="info-item">
+                <span class="info-label">Version:</span> ${document.version}
+              </div>
+              <div class="info-item">
+                <span class="info-label">Status:</span> 
+                <span class="status-badge">${document.status}</span>
+              </div>
+            </div>
+            <div>
+              <div class="info-item">
+                <span class="info-label">Priority:</span> 
+                <span class="priority-badge">${document.priority}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Created:</span> ${format(new Date(document.createdAt), 'PPp')}
+              </div>
+              ${document.effectiveDate ? `
+              <div class="info-item">
+                <span class="info-label">Effective Date:</span> ${format(new Date(document.effectiveDate), 'PP')}
+              </div>
+              ` : ''}
+              ${document.expiryDate ? `
+              <div class="info-item">
+                <span class="info-label">Expiry Date:</span> ${format(new Date(document.expiryDate), 'PP')}
+              </div>
+              ` : ''}
+            </div>
+          </div>
+          
+          <h1 style="color: #065f46; border-bottom: 2px solid #065f46; padding-bottom: 10px;">
+            ${document.title}
+          </h1>
+          
+          <div class="document-content">
+            ${document.content.replace(/\n/g, '<br>')}
+          </div>
+          
+          <div class="print-footer">
+            <p>Generated on ${format(new Date(), 'PPp')} | Modern Plastic Bag Factory</p>
+          </div>
+        </body>
+      </html>
+    `;
+
+    const printWindow = window.open('', '_blank');
+    if (printWindow) {
+      printWindow.document.write(printContent);
+      printWindow.document.close();
+      printWindow.focus();
+      printWindow.print();
+      printWindow.close();
     }
   };
 
@@ -522,19 +673,28 @@ export default function ProfessionalDocumentsIndex() {
                       </div>
                       
                       <div className="flex items-center gap-2 ml-4">
-                        <Link href={`/documents/${document.id}`}>
-                          <Button variant="outline" size="sm">
+                        <Button variant="outline" size="sm" asChild>
+                          <Link to={`/documents/${document.id}/view`}>
                             <Eye className="h-4 w-4 mr-2" />
                             {t('documents.actions.view')}
-                          </Button>
-                        </Link>
+                          </Link>
+                        </Button>
                         
-                        <Link href={`/documents/${document.id}/edit`}>
-                          <Button variant="outline" size="sm">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handlePrint(document)}
+                        >
+                          <Printer className="h-4 w-4 mr-2" />
+                          Print
+                        </Button>
+                        
+                        <Button variant="outline" size="sm" asChild>
+                          <Link to={`/documents/${document.id}/edit`}>
                             <Edit className="h-4 w-4 mr-2" />
                             {t('documents.actions.edit')}
-                          </Button>
-                        </Link>
+                          </Link>
+                        </Button>
                         
                         <Button
                           variant="outline"
