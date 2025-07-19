@@ -534,6 +534,10 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
           .print-button:hover {
             background: #065f46;
           }
+          .order-notes {
+            color: #dc2626;
+            font-weight: bold;
+          }
         </style>
       </head>
       <body>
@@ -577,7 +581,7 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
               ? `
           <div class="info-row">
             <div class="info-label">Notes:</div>
-            <div>${order.note}</div>
+            <div class="order-notes">${order.note}</div>
           </div>`
               : ""
           }
