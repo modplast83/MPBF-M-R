@@ -398,7 +398,7 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
           <td>${jobOrder.quantity}</td>
           <td>${printedValue}</td>
           <td>${product?.printingCylinder || "0"}</td>
-          <td>${product?.cuttingLength || "0"}</td>
+          <td>${Math.round(product?.cuttingLength || 0)}</td>
           <td>${product?.punching || "None"}</td>
           <td>${product?.lengthCm ? Math.round(product.lengthCm) : "0"}</td>
           <td>${product?.cuttingUnit || "Kg."}</td>
@@ -876,7 +876,7 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
                               Cutting Length:
                             </p>
                             <p className="font-medium">
-                              {product?.cuttingLength || "0"}
+                              {Math.round(product?.cuttingLength || 0)}
                             </p>
                           </div>
                         </div>
@@ -946,7 +946,7 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
                             {product?.printingCylinder || "0"}
                           </td>
                           <td className="py-3 px-4 text-center">
-                            {product?.cuttingLength || "0"}
+                            {Math.round(product?.cuttingLength || 0)}
                           </td>
                           <td className="py-3 px-4 text-center flex justify-center space-x-2">
                             <Button
