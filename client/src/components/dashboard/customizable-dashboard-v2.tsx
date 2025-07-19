@@ -466,6 +466,7 @@ export function CustomizableDashboardV2() {
           droppableId="dashboard-widgets" 
           direction="vertical"
           isDropDisabled={Boolean(!isEditMode)}
+          isCombineEnabled={false}
         >
           {(provided, snapshot) => (
             <div

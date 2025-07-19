@@ -252,6 +252,7 @@ export function DragDropDashboard({
           droppableId="dashboard-grid" 
           direction="horizontal"
           isDropDisabled={Boolean(!isEditMode)}
+          isCombineEnabled={false}
         >
           {(provided, snapshot) => (
             <div

@@ -3240,15 +3240,6 @@ export class DatabaseStorage implements IStorage {
   }
 
   // JO Mix methods
-  async getJoMixes(): Promise<JoMix[]> {
-    return await db.select().from(joMixes).orderBy(desc(joMixes.createdAt));
-  }
-
-  async getJoMix(id: number): Promise<JoMix | undefined> {
-    const [mix] = await db.select().from(joMixes).where(eq(joMixes.id, id));
-    return mix || undefined;
-  }
-
   async createJoMix(mix: InsertJoMix): Promise<JoMix> {
     const [created] = await db.insert(joMixes).values(mix).returning();
     return created;

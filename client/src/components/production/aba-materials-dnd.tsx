@@ -264,7 +264,7 @@ export function AbaMaterialsDnd({
               </CardTitle>
             </CardHeader>
             <CardContent className="p-4 min-h-[300px]">
-              <Droppable droppableId="unassigned" type="material">
+              <Droppable droppableId="unassigned" type="material" isCombineEnabled={false}>
                 {(provided, snapshot) => (
                   <div
                     ref={provided.innerRef}
@@ -334,7 +334,7 @@ export function AbaMaterialsDnd({
               </CardTitle>
             </CardHeader>
             <CardContent className="p-4 min-h-[300px]">
-              <Droppable droppableId="screwA">
+              <Droppable droppableId="screwA" isCombineEnabled={false}>
                 {(provided, snapshot) => (
                   <div
                     {...provided.droppableProps}
@@ -417,7 +417,7 @@ export function AbaMaterialsDnd({
               </CardTitle>
             </CardHeader>
             <CardContent className="p-4 min-h-[300px]">
-              <Droppable droppableId="screwB">
+              <Droppable droppableId="screwB" isCombineEnabled={false}>
                 {(provided, snapshot) => (
                   <div
                     {...provided.droppableProps}
