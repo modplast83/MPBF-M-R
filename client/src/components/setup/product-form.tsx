@@ -260,55 +260,35 @@ export function ProductForm({
   // Create mutation for adding/updating product
   const mutation = useMutation({
     mutationFn: async (values: z.infer<typeof formSchema>) => {
-      // Handle all fields to ensure correct typing
+      // Handle all fields to ensure correct typing and validation
       const payload = {
-        ...values,
-        // Convert number fields
-        width: values.width !== undefined ? Number(values.width) : undefined,
-        leftF: values.leftF !== undefined ? Number(values.leftF) : undefined,
-        rightF: values.rightF !== undefined ? Number(values.rightF) : undefined,
-        thickness:
-          values.thickness !== undefined ? Number(values.thickness) : undefined,
-        thicknessOne:
-          values.thicknessOne !== undefined
-            ? Number(values.thicknessOne)
-            : undefined,
-        printingCylinder:
-          values.printingCylinder !== undefined &&
-          values.printingCylinder !== null
-            ? Number(values.printingCylinder)
-            : null,
-        lengthCm:
-          values.lengthCm === "Not Printed"
-            ? null
-            : values.lengthCm !== undefined &&
-                typeof values.lengthCm === "number"
-              ? Number(values.lengthCm)
-              : undefined,
-        cuttingLength:
-          values.cuttingLength !== undefined
-            ? Number(values.cuttingLength)
-            : undefined,
-        unitWeight:
-          values.unitWeight !== undefined
-            ? Number(values.unitWeight)
-            : undefined,
-
-        // Handle masterBatchId correctly
-        masterBatchId:
-          values.masterBatchId === "none" ? undefined : values.masterBatchId,
-
-        // Ensure text fields are never null or undefined
+        customerId: values.customerId,
+        categoryId: values.categoryId,
+        itemId: values.itemId,
         sizeCaption: values.sizeCaption || "",
+        // Convert number fields properly 
+        width: values.width !== undefined ? Number(values.width) : null,
+        leftF: values.leftF !== undefined ? Number(values.leftF) : null,
+        rightF: values.rightF !== undefined ? Number(values.rightF) : null,
+        thickness: values.thickness !== undefined ? Number(values.thickness) : null,
+        thicknessOne: values.thicknessOne !== undefined ? Number(values.thicknessOne) : null,
+        printingCylinder: values.printingCylinder !== undefined && values.printingCylinder !== null ? Number(values.printingCylinder) : null,
+        lengthCm: values.lengthCm === "Not Printed" ? null : (values.lengthCm !== undefined && typeof values.lengthCm === "number" ? Number(values.lengthCm) : null),
+        cuttingLength: values.cuttingLength !== undefined ? Number(values.cuttingLength) : null,
+        unitWeight: values.unitWeight !== undefined ? Number(values.unitWeight) : null,
+        unitQty: values.unitQty !== undefined ? Number(values.unitQty) : null,
+        packageKg: values.packageKg !== undefined ? Number(values.packageKg) : null,
+        // Text fields
         rawMaterial: values.rawMaterial || "",
+        masterBatchId: values.masterBatchId === "none" ? null : values.masterBatchId,
         printed: values.printed ? "Yes" : "No",
         cuttingUnit: values.cuttingUnit || "",
         packing: values.packing || "",
         punching: values.punching || "",
         cover: values.cover || "",
-        volum: values.volum || "",
-        knife: values.knife || "",
-        notes: values.notes || "",
+        volum: values.volum || null,
+        knife: values.knife || null,
+        notes: values.notes || null,
       };
 
       console.log("Submitting customer product with payload:", payload);

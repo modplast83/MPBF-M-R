@@ -1606,6 +1606,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/customer-products", async (req: Request, res: Response) => {
     try {
+      console.log("Incoming customer product data:", JSON.stringify(req.body, null, 2));
       const validatedData = insertCustomerProductSchema.parse(req.body);
 
       // Verify customer exists
@@ -1672,6 +1673,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(201).json(customerProduct);
     } catch (error) {
       if (error instanceof z.ZodError) {
+        console.error("Validation error:", JSON.stringify(error.errors, null, 2));
         return res
           .status(400)
           .json({
@@ -1679,6 +1681,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             errors: error.errors,
           });
       }
+      console.error("Failed to create customer product:", error);
       res.status(500).json({ message: "Failed to create customer product" });
     }
   });
