@@ -1,4 +1,4 @@
-import { eq, and, gte, lte, desc, asc, or, sql, ne, isNull } from "drizzle-orm";
+import { eq, and, gte, lte, desc, asc, or, sql, ne, isNull, like, lt } from "drizzle-orm";
 import {
   users,
   type User,
@@ -153,6 +153,34 @@ import {
   joMixMaterials,
   type JoMixMaterial,
   type InsertJoMixMaterial,
+  // Warehouse Management Imports
+  suppliers,
+  type Supplier,
+  type InsertSupplier,
+  stockMovements,
+  type StockMovement,
+  type InsertStockMovement,
+  purchaseOrders,
+  type PurchaseOrder,
+  type InsertPurchaseOrder,
+  purchaseOrderItems,
+  type PurchaseOrderItem,
+  type InsertPurchaseOrderItem,
+  deliveryOrders,
+  type DeliveryOrder,
+  type InsertDeliveryOrder,
+  deliveryOrderItems,
+  type DeliveryOrderItem,
+  type InsertDeliveryOrderItem,
+  stockAdjustments,
+  type StockAdjustment,
+  type InsertStockAdjustment,
+  stockAdjustmentItems,
+  type StockAdjustmentItem,
+  type InsertStockAdjustmentItem,
+  warehouseLocations,
+  type WarehouseLocation,
+  type InsertWarehouseLocation,
 } from "@shared/schema";
 import { db, pool } from "./db";
 import { IStorage } from "./storage";
@@ -3515,5 +3543,542 @@ export class DatabaseStorage implements IStorage {
       .delete(customerInformation)
       .where(eq(customerInformation.id, id));
     return result.rowCount > 0;
+  }
+
+  // =============== WAREHOUSE MANAGEMENT METHODS ===============
+
+  // Suppliers methods
+  async getSuppliers(): Promise<Supplier[]> {
+    return await db.select().from(suppliers).orderBy(suppliers.name);
+  }
+
+  async getSupplier(id: string): Promise<Supplier | undefined> {
+    const [supplier] = await db
+      .select()
+      .from(suppliers)
+      .where(eq(suppliers.id, id));
+    return supplier;
+  }
+
+  async getSupplierByCode(code: string): Promise<Supplier | undefined> {
+    const [supplier] = await db
+      .select()
+      .from(suppliers)
+      .where(eq(suppliers.code, code));
+    return supplier;
+  }
+
+  async createSupplier(supplier: InsertSupplier): Promise<Supplier> {
+    const [created] = await db
+      .insert(suppliers)
+      .values({
+        ...supplier,
+        id: `SUP${Date.now()}`,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .returning();
+    return created;
+  }
+
+  async updateSupplier(
+    id: string,
+    supplier: Partial<Supplier>,
+  ): Promise<Supplier | undefined> {
+    const [updated] = await db
+      .update(suppliers)
+      .set({ ...supplier, updatedAt: new Date() })
+      .where(eq(suppliers.id, id))
+      .returning();
+    return updated;
+  }
+
+  async deleteSupplier(id: string): Promise<boolean> {
+    await db.delete(suppliers).where(eq(suppliers.id, id));
+    return true;
+  }
+
+  // Stock Movements methods
+  async getStockMovements(): Promise<StockMovement[]> {
+    return await db.select().from(stockMovements).orderBy(desc(stockMovements.timestamp));
+  }
+
+  async getStockMovementsByType(type: string): Promise<StockMovement[]> {
+    return await db
+      .select()
+      .from(stockMovements)
+      .where(eq(stockMovements.type, type))
+      .orderBy(desc(stockMovements.timestamp));
+  }
+
+  async getStockMovementsByRawMaterial(rawMaterialId: number): Promise<StockMovement[]> {
+    return await db
+      .select()
+      .from(stockMovements)
+      .where(eq(stockMovements.rawMaterialId, rawMaterialId))
+      .orderBy(desc(stockMovements.timestamp));
+  }
+
+  async getStockMovementsByFinalProduct(finalProductId: number): Promise<StockMovement[]> {
+    return await db
+      .select()
+      .from(stockMovements)
+      .where(eq(stockMovements.finalProductId, finalProductId))
+      .orderBy(desc(stockMovements.timestamp));
+  }
+
+  async getStockMovement(id: number): Promise<StockMovement | undefined> {
+    const [movement] = await db
+      .select()
+      .from(stockMovements)
+      .where(eq(stockMovements.id, id));
+    return movement;
+  }
+
+  async createStockMovement(movement: InsertStockMovement): Promise<StockMovement> {
+    const [created] = await db
+      .insert(stockMovements)
+      .values(movement)
+      .returning();
+    return created;
+  }
+
+  async updateStockMovement(
+    id: number,
+    movement: Partial<StockMovement>,
+  ): Promise<StockMovement | undefined> {
+    const [updated] = await db
+      .update(stockMovements)
+      .set(movement)
+      .where(eq(stockMovements.id, id))
+      .returning();
+    return updated;
+  }
+
+  async deleteStockMovement(id: number): Promise<boolean> {
+    await db.delete(stockMovements).where(eq(stockMovements.id, id));
+    return true;
+  }
+
+  // Purchase Orders methods
+  async getPurchaseOrders(): Promise<PurchaseOrder[]> {
+    return await db.select().from(purchaseOrders).orderBy(desc(purchaseOrders.orderDate));
+  }
+
+  async getPurchaseOrdersBySupplier(supplierId: string): Promise<PurchaseOrder[]> {
+    return await db
+      .select()
+      .from(purchaseOrders)
+      .where(eq(purchaseOrders.supplierId, supplierId))
+      .orderBy(desc(purchaseOrders.orderDate));
+  }
+
+  async getPurchaseOrdersByStatus(status: string): Promise<PurchaseOrder[]> {
+    return await db
+      .select()
+      .from(purchaseOrders)
+      .where(eq(purchaseOrders.status, status))
+      .orderBy(desc(purchaseOrders.orderDate));
+  }
+
+  async getPurchaseOrder(id: number): Promise<PurchaseOrder | undefined> {
+    const [order] = await db
+      .select()
+      .from(purchaseOrders)
+      .where(eq(purchaseOrders.id, id));
+    return order;
+  }
+
+  async generatePurchaseOrderNumber(): Promise<string> {
+    const year = new Date().getFullYear();
+    const existingOrders = await db
+      .select({ orderNumber: purchaseOrders.orderNumber })
+      .from(purchaseOrders)
+      .where(like(purchaseOrders.orderNumber, `PO${year}%`))
+      .orderBy(desc(purchaseOrders.orderNumber));
+
+    let nextNumber = 1;
+    if (existingOrders.length > 0) {
+      const highestNumber = existingOrders[0].orderNumber;
+      const numberPart = highestNumber.split('-')[1];
+      if (numberPart) {
+        nextNumber = parseInt(numberPart) + 1;
+      }
+    }
+
+    return `PO${year}-${nextNumber.toString().padStart(4, '0')}`;
+  }
+
+  async createPurchaseOrder(order: InsertPurchaseOrder): Promise<PurchaseOrder> {
+    const orderNumber = order.orderNumber || await this.generatePurchaseOrderNumber();
+    const [created] = await db
+      .insert(purchaseOrders)
+      .values({
+        ...order,
+        orderNumber,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .returning();
+    return created;
+  }
+
+  async updatePurchaseOrder(
+    id: number,
+    order: Partial<PurchaseOrder>,
+  ): Promise<PurchaseOrder | undefined> {
+    const [updated] = await db
+      .update(purchaseOrders)
+      .set({ ...order, updatedAt: new Date() })
+      .where(eq(purchaseOrders.id, id))
+      .returning();
+    return updated;
+  }
+
+  async deletePurchaseOrder(id: number): Promise<boolean> {
+    // Delete related items first
+    await db.delete(purchaseOrderItems).where(eq(purchaseOrderItems.purchaseOrderId, id));
+    await db.delete(purchaseOrders).where(eq(purchaseOrders.id, id));
+    return true;
+  }
+
+  // Purchase Order Items methods
+  async getPurchaseOrderItems(): Promise<PurchaseOrderItem[]> {
+    return await db.select().from(purchaseOrderItems);
+  }
+
+  async getPurchaseOrderItemsByOrder(orderId: number): Promise<PurchaseOrderItem[]> {
+    return await db
+      .select()
+      .from(purchaseOrderItems)
+      .where(eq(purchaseOrderItems.purchaseOrderId, orderId));
+  }
+
+  async getPurchaseOrderItem(id: number): Promise<PurchaseOrderItem | undefined> {
+    const [item] = await db
+      .select()
+      .from(purchaseOrderItems)
+      .where(eq(purchaseOrderItems.id, id));
+    return item;
+  }
+
+  async createPurchaseOrderItem(item: InsertPurchaseOrderItem): Promise<PurchaseOrderItem> {
+    const [created] = await db
+      .insert(purchaseOrderItems)
+      .values(item)
+      .returning();
+    return created;
+  }
+
+  async updatePurchaseOrderItem(
+    id: number,
+    item: Partial<PurchaseOrderItem>,
+  ): Promise<PurchaseOrderItem | undefined> {
+    const [updated] = await db
+      .update(purchaseOrderItems)
+      .set(item)
+      .where(eq(purchaseOrderItems.id, id))
+      .returning();
+    return updated;
+  }
+
+  async deletePurchaseOrderItem(id: number): Promise<boolean> {
+    await db.delete(purchaseOrderItems).where(eq(purchaseOrderItems.id, id));
+    return true;
+  }
+
+  // Delivery Orders methods
+  async getDeliveryOrders(): Promise<DeliveryOrder[]> {
+    return await db.select().from(deliveryOrders).orderBy(desc(deliveryOrders.deliveryDate));
+  }
+
+  async getDeliveryOrdersByCustomer(customerId: string): Promise<DeliveryOrder[]> {
+    return await db
+      .select()
+      .from(deliveryOrders)
+      .where(eq(deliveryOrders.customerId, customerId))
+      .orderBy(desc(deliveryOrders.deliveryDate));
+  }
+
+  async getDeliveryOrdersByStatus(status: string): Promise<DeliveryOrder[]> {
+    return await db
+      .select()
+      .from(deliveryOrders)
+      .where(eq(deliveryOrders.status, status))
+      .orderBy(desc(deliveryOrders.deliveryDate));
+  }
+
+  async getDeliveryOrder(id: number): Promise<DeliveryOrder | undefined> {
+    const [order] = await db
+      .select()
+      .from(deliveryOrders)
+      .where(eq(deliveryOrders.id, id));
+    return order;
+  }
+
+  async generateDeliveryOrderNumber(): Promise<string> {
+    const year = new Date().getFullYear();
+    const existingOrders = await db
+      .select({ deliveryNumber: deliveryOrders.deliveryNumber })
+      .from(deliveryOrders)
+      .where(like(deliveryOrders.deliveryNumber, `DO${year}%`))
+      .orderBy(desc(deliveryOrders.deliveryNumber));
+
+    let nextNumber = 1;
+    if (existingOrders.length > 0) {
+      const highestNumber = existingOrders[0].deliveryNumber;
+      const numberPart = highestNumber.split('-')[1];
+      if (numberPart) {
+        nextNumber = parseInt(numberPart) + 1;
+      }
+    }
+
+    return `DO${year}-${nextNumber.toString().padStart(4, '0')}`;
+  }
+
+  async createDeliveryOrder(order: InsertDeliveryOrder): Promise<DeliveryOrder> {
+    const deliveryNumber = order.deliveryNumber || await this.generateDeliveryOrderNumber();
+    const [created] = await db
+      .insert(deliveryOrders)
+      .values({
+        ...order,
+        deliveryNumber,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .returning();
+    return created;
+  }
+
+  async updateDeliveryOrder(
+    id: number,
+    order: Partial<DeliveryOrder>,
+  ): Promise<DeliveryOrder | undefined> {
+    const [updated] = await db
+      .update(deliveryOrders)
+      .set({ ...order, updatedAt: new Date() })
+      .where(eq(deliveryOrders.id, id))
+      .returning();
+    return updated;
+  }
+
+  async deleteDeliveryOrder(id: number): Promise<boolean> {
+    // Delete related items first
+    await db.delete(deliveryOrderItems).where(eq(deliveryOrderItems.deliveryOrderId, id));
+    await db.delete(deliveryOrders).where(eq(deliveryOrders.id, id));
+    return true;
+  }
+
+  // Delivery Order Items methods
+  async getDeliveryOrderItems(): Promise<DeliveryOrderItem[]> {
+    return await db.select().from(deliveryOrderItems);
+  }
+
+  async getDeliveryOrderItemsByOrder(orderId: number): Promise<DeliveryOrderItem[]> {
+    return await db
+      .select()
+      .from(deliveryOrderItems)
+      .where(eq(deliveryOrderItems.deliveryOrderId, orderId));
+  }
+
+  async getDeliveryOrderItem(id: number): Promise<DeliveryOrderItem | undefined> {
+    const [item] = await db
+      .select()
+      .from(deliveryOrderItems)
+      .where(eq(deliveryOrderItems.id, id));
+    return item;
+  }
+
+  async createDeliveryOrderItem(item: InsertDeliveryOrderItem): Promise<DeliveryOrderItem> {
+    const [created] = await db
+      .insert(deliveryOrderItems)
+      .values(item)
+      .returning();
+    return created;
+  }
+
+  async updateDeliveryOrderItem(
+    id: number,
+    item: Partial<DeliveryOrderItem>,
+  ): Promise<DeliveryOrderItem | undefined> {
+    const [updated] = await db
+      .update(deliveryOrderItems)
+      .set(item)
+      .where(eq(deliveryOrderItems.id, id))
+      .returning();
+    return updated;
+  }
+
+  async deleteDeliveryOrderItem(id: number): Promise<boolean> {
+    await db.delete(deliveryOrderItems).where(eq(deliveryOrderItems.id, id));
+    return true;
+  }
+
+  // Stock Adjustments methods
+  async getStockAdjustments(): Promise<StockAdjustment[]> {
+    return await db.select().from(stockAdjustments).orderBy(desc(stockAdjustments.adjustmentDate));
+  }
+
+  async getStockAdjustmentsByStatus(status: string): Promise<StockAdjustment[]> {
+    return await db
+      .select()
+      .from(stockAdjustments)
+      .where(eq(stockAdjustments.status, status))
+      .orderBy(desc(stockAdjustments.adjustmentDate));
+  }
+
+  async getStockAdjustment(id: number): Promise<StockAdjustment | undefined> {
+    const [adjustment] = await db
+      .select()
+      .from(stockAdjustments)
+      .where(eq(stockAdjustments.id, id));
+    return adjustment;
+  }
+
+  async generateAdjustmentNumber(): Promise<string> {
+    const year = new Date().getFullYear();
+    const existingAdjustments = await db
+      .select({ adjustmentNumber: stockAdjustments.adjustmentNumber })
+      .from(stockAdjustments)
+      .where(like(stockAdjustments.adjustmentNumber, `ADJ${year}%`))
+      .orderBy(desc(stockAdjustments.adjustmentNumber));
+
+    let nextNumber = 1;
+    if (existingAdjustments.length > 0) {
+      const highestNumber = existingAdjustments[0].adjustmentNumber;
+      const numberPart = highestNumber.split('-')[1];
+      if (numberPart) {
+        nextNumber = parseInt(numberPart) + 1;
+      }
+    }
+
+    return `ADJ${year}-${nextNumber.toString().padStart(4, '0')}`;
+  }
+
+  async createStockAdjustment(adjustment: InsertStockAdjustment): Promise<StockAdjustment> {
+    const adjustmentNumber = adjustment.adjustmentNumber || await this.generateAdjustmentNumber();
+    const [created] = await db
+      .insert(stockAdjustments)
+      .values({
+        ...adjustment,
+        adjustmentNumber,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .returning();
+    return created;
+  }
+
+  async updateStockAdjustment(
+    id: number,
+    adjustment: Partial<StockAdjustment>,
+  ): Promise<StockAdjustment | undefined> {
+    const [updated] = await db
+      .update(stockAdjustments)
+      .set({ ...adjustment, updatedAt: new Date() })
+      .where(eq(stockAdjustments.id, id))
+      .returning();
+    return updated;
+  }
+
+  async deleteStockAdjustment(id: number): Promise<boolean> {
+    // Delete related items first
+    await db.delete(stockAdjustmentItems).where(eq(stockAdjustmentItems.adjustmentId, id));
+    await db.delete(stockAdjustments).where(eq(stockAdjustments.id, id));
+    return true;
+  }
+
+  // Stock Adjustment Items methods
+  async getStockAdjustmentItems(): Promise<StockAdjustmentItem[]> {
+    return await db.select().from(stockAdjustmentItems);
+  }
+
+  async getStockAdjustmentItemsByAdjustment(adjustmentId: number): Promise<StockAdjustmentItem[]> {
+    return await db
+      .select()
+      .from(stockAdjustmentItems)
+      .where(eq(stockAdjustmentItems.adjustmentId, adjustmentId));
+  }
+
+  async getStockAdjustmentItem(id: number): Promise<StockAdjustmentItem | undefined> {
+    const [item] = await db
+      .select()
+      .from(stockAdjustmentItems)
+      .where(eq(stockAdjustmentItems.id, id));
+    return item;
+  }
+
+  async createStockAdjustmentItem(item: InsertStockAdjustmentItem): Promise<StockAdjustmentItem> {
+    const [created] = await db
+      .insert(stockAdjustmentItems)
+      .values(item)
+      .returning();
+    return created;
+  }
+
+  async updateStockAdjustmentItem(
+    id: number,
+    item: Partial<StockAdjustmentItem>,
+  ): Promise<StockAdjustmentItem | undefined> {
+    const [updated] = await db
+      .update(stockAdjustmentItems)
+      .set(item)
+      .where(eq(stockAdjustmentItems.id, id))
+      .returning();
+    return updated;
+  }
+
+  async deleteStockAdjustmentItem(id: number): Promise<boolean> {
+    await db.delete(stockAdjustmentItems).where(eq(stockAdjustmentItems.id, id));
+    return true;
+  }
+
+  // Warehouse Locations methods
+  async getWarehouseLocations(): Promise<WarehouseLocation[]> {
+    return await db.select().from(warehouseLocations).orderBy(warehouseLocations.name);
+  }
+
+  async getWarehouseLocationsByType(type: string): Promise<WarehouseLocation[]> {
+    return await db
+      .select()
+      .from(warehouseLocations)
+      .where(eq(warehouseLocations.type, type))
+      .orderBy(warehouseLocations.name);
+  }
+
+  async getWarehouseLocation(id: string): Promise<WarehouseLocation | undefined> {
+    const [location] = await db
+      .select()
+      .from(warehouseLocations)
+      .where(eq(warehouseLocations.id, id));
+    return location;
+  }
+
+  async createWarehouseLocation(location: InsertWarehouseLocation): Promise<WarehouseLocation> {
+    const [created] = await db
+      .insert(warehouseLocations)
+      .values({
+        ...location,
+        id: location.id || `LOC${Date.now()}`,
+      })
+      .returning();
+    return created;
+  }
+
+  async updateWarehouseLocation(
+    id: string,
+    location: Partial<WarehouseLocation>,
+  ): Promise<WarehouseLocation | undefined> {
+    const [updated] = await db
+      .update(warehouseLocations)
+      .set(location)
+      .where(eq(warehouseLocations.id, id))
+      .returning();
+    return updated;
+  }
+
+  async deleteWarehouseLocation(id: string): Promise<boolean> {
+    await db.delete(warehouseLocations).where(eq(warehouseLocations.id, id));
+    return true;
   }
 }

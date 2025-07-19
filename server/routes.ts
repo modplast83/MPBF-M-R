@@ -87,6 +87,25 @@ import {
   InsertJoMixMaterial,
   insertCustomerInformationSchema,
   InsertCustomerInformation,
+  // Warehouse Management Schemas
+  insertSupplierSchema,
+  insertStockMovementSchema,
+  insertPurchaseOrderSchema,
+  insertPurchaseOrderItemSchema,
+  insertDeliveryOrderSchema,
+  insertDeliveryOrderItemSchema,
+  insertStockAdjustmentSchema,
+  insertStockAdjustmentItemSchema,
+  insertWarehouseLocationSchema,
+  InsertSupplier,
+  InsertStockMovement,
+  InsertPurchaseOrder,
+  InsertPurchaseOrderItem,
+  InsertDeliveryOrder,
+  InsertDeliveryOrderItem,
+  InsertStockAdjustment,
+  InsertStockAdjustmentItem,
+  InsertWarehouseLocation,
 } from "../shared/schema";
 import { z } from "zod";
 import path from "path";
@@ -8726,6 +8745,467 @@ COMMIT;
       }
       console.error("Error creating customer information:", error);
       res.status(500).json({ message: "Failed to save customer information" });
+    }
+  });
+
+  // =============== WAREHOUSE MANAGEMENT ROUTES ===============
+
+  // Suppliers routes
+  app.get("/api/warehouse/suppliers", async (_req: Request, res: Response) => {
+    try {
+      const suppliers = await storage.getSuppliers();
+      res.json(suppliers);
+    } catch (error) {
+      console.error("Error fetching suppliers:", error);
+      res.status(500).json({ message: "Failed to fetch suppliers" });
+    }
+  });
+
+  app.get("/api/warehouse/suppliers/:id", async (req: Request, res: Response) => {
+    try {
+      const supplier = await storage.getSupplier(req.params.id);
+      if (!supplier) {
+        return res.status(404).json({ message: "Supplier not found" });
+      }
+      res.json(supplier);
+    } catch (error) {
+      console.error("Error fetching supplier:", error);
+      res.status(500).json({ message: "Failed to fetch supplier" });
+    }
+  });
+
+  app.post("/api/warehouse/suppliers", async (req: Request, res: Response) => {
+    try {
+      const validatedData = insertSupplierSchema.parse(req.body);
+      const supplier = await storage.createSupplier(validatedData);
+      res.status(201).json(supplier);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({
+          message: "Invalid supplier data",
+          errors: error.errors,
+        });
+      }
+      console.error("Error creating supplier:", error);
+      res.status(500).json({ message: "Failed to create supplier" });
+    }
+  });
+
+  app.put("/api/warehouse/suppliers/:id", async (req: Request, res: Response) => {
+    try {
+      const validatedData = insertSupplierSchema.partial().parse(req.body);
+      const supplier = await storage.updateSupplier(req.params.id, validatedData);
+      if (!supplier) {
+        return res.status(404).json({ message: "Supplier not found" });
+      }
+      res.json(supplier);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({
+          message: "Invalid supplier data",
+          errors: error.errors,
+        });
+      }
+      console.error("Error updating supplier:", error);
+      res.status(500).json({ message: "Failed to update supplier" });
+    }
+  });
+
+  app.delete("/api/warehouse/suppliers/:id", async (req: Request, res: Response) => {
+    try {
+      const success = await storage.deleteSupplier(req.params.id);
+      if (!success) {
+        return res.status(404).json({ message: "Supplier not found" });
+      }
+      res.status(204).send();
+    } catch (error) {
+      console.error("Error deleting supplier:", error);
+      res.status(500).json({ message: "Failed to delete supplier" });
+    }
+  });
+
+  // Stock Movements routes
+  app.get("/api/warehouse/stock-movements", async (req: Request, res: Response) => {
+    try {
+      const { type, rawMaterialId, finalProductId } = req.query;
+      let movements;
+      
+      if (type) {
+        movements = await storage.getStockMovementsByType(type as string);
+      } else if (rawMaterialId) {
+        movements = await storage.getStockMovementsByRawMaterial(Number(rawMaterialId));
+      } else if (finalProductId) {
+        movements = await storage.getStockMovementsByFinalProduct(Number(finalProductId));
+      } else {
+        movements = await storage.getStockMovements();
+      }
+      
+      res.json(movements);
+    } catch (error) {
+      console.error("Error fetching stock movements:", error);
+      res.status(500).json({ message: "Failed to fetch stock movements" });
+    }
+  });
+
+  app.post("/api/warehouse/stock-movements", async (req: Request, res: Response) => {
+    try {
+      const validatedData = insertStockMovementSchema.parse(req.body);
+      const movement = await storage.createStockMovement(validatedData);
+      res.status(201).json(movement);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({
+          message: "Invalid stock movement data",
+          errors: error.errors,
+        });
+      }
+      console.error("Error creating stock movement:", error);
+      res.status(500).json({ message: "Failed to create stock movement" });
+    }
+  });
+
+  // Purchase Orders routes
+  app.get("/api/warehouse/purchase-orders", async (req: Request, res: Response) => {
+    try {
+      const { supplierId, status } = req.query;
+      let orders;
+      
+      if (supplierId) {
+        orders = await storage.getPurchaseOrdersBySupplier(supplierId as string);
+      } else if (status) {
+        orders = await storage.getPurchaseOrdersByStatus(status as string);
+      } else {
+        orders = await storage.getPurchaseOrders();
+      }
+      
+      res.json(orders);
+    } catch (error) {
+      console.error("Error fetching purchase orders:", error);
+      res.status(500).json({ message: "Failed to fetch purchase orders" });
+    }
+  });
+
+  app.get("/api/warehouse/purchase-orders/:id", async (req: Request, res: Response) => {
+    try {
+      const order = await storage.getPurchaseOrder(Number(req.params.id));
+      if (!order) {
+        return res.status(404).json({ message: "Purchase order not found" });
+      }
+      res.json(order);
+    } catch (error) {
+      console.error("Error fetching purchase order:", error);
+      res.status(500).json({ message: "Failed to fetch purchase order" });
+    }
+  });
+
+  app.post("/api/warehouse/purchase-orders", async (req: Request, res: Response) => {
+    try {
+      const validatedData = insertPurchaseOrderSchema.parse(req.body);
+      const order = await storage.createPurchaseOrder(validatedData);
+      res.status(201).json(order);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({
+          message: "Invalid purchase order data",
+          errors: error.errors,
+        });
+      }
+      console.error("Error creating purchase order:", error);
+      res.status(500).json({ message: "Failed to create purchase order" });
+    }
+  });
+
+  app.put("/api/warehouse/purchase-orders/:id", async (req: Request, res: Response) => {
+    try {
+      const validatedData = insertPurchaseOrderSchema.partial().parse(req.body);
+      const order = await storage.updatePurchaseOrder(Number(req.params.id), validatedData);
+      if (!order) {
+        return res.status(404).json({ message: "Purchase order not found" });
+      }
+      res.json(order);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({
+          message: "Invalid purchase order data",
+          errors: error.errors,
+        });
+      }
+      console.error("Error updating purchase order:", error);
+      res.status(500).json({ message: "Failed to update purchase order" });
+    }
+  });
+
+  // Purchase Order Items routes
+  app.get("/api/warehouse/purchase-order-items", async (req: Request, res: Response) => {
+    try {
+      const { orderId } = req.query;
+      let items;
+      
+      if (orderId) {
+        items = await storage.getPurchaseOrderItemsByOrder(Number(orderId));
+      } else {
+        items = await storage.getPurchaseOrderItems();
+      }
+      
+      res.json(items);
+    } catch (error) {
+      console.error("Error fetching purchase order items:", error);
+      res.status(500).json({ message: "Failed to fetch purchase order items" });
+    }
+  });
+
+  app.post("/api/warehouse/purchase-order-items", async (req: Request, res: Response) => {
+    try {
+      const validatedData = insertPurchaseOrderItemSchema.parse(req.body);
+      const item = await storage.createPurchaseOrderItem(validatedData);
+      res.status(201).json(item);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({
+          message: "Invalid purchase order item data",
+          errors: error.errors,
+        });
+      }
+      console.error("Error creating purchase order item:", error);
+      res.status(500).json({ message: "Failed to create purchase order item" });
+    }
+  });
+
+  // Delivery Orders routes
+  app.get("/api/warehouse/delivery-orders", async (req: Request, res: Response) => {
+    try {
+      const { customerId, status } = req.query;
+      let orders;
+      
+      if (customerId) {
+        orders = await storage.getDeliveryOrdersByCustomer(customerId as string);
+      } else if (status) {
+        orders = await storage.getDeliveryOrdersByStatus(status as string);
+      } else {
+        orders = await storage.getDeliveryOrders();
+      }
+      
+      res.json(orders);
+    } catch (error) {
+      console.error("Error fetching delivery orders:", error);
+      res.status(500).json({ message: "Failed to fetch delivery orders" });
+    }
+  });
+
+  app.get("/api/warehouse/delivery-orders/:id", async (req: Request, res: Response) => {
+    try {
+      const order = await storage.getDeliveryOrder(Number(req.params.id));
+      if (!order) {
+        return res.status(404).json({ message: "Delivery order not found" });
+      }
+      res.json(order);
+    } catch (error) {
+      console.error("Error fetching delivery order:", error);
+      res.status(500).json({ message: "Failed to fetch delivery order" });
+    }
+  });
+
+  app.post("/api/warehouse/delivery-orders", async (req: Request, res: Response) => {
+    try {
+      const validatedData = insertDeliveryOrderSchema.parse(req.body);
+      const order = await storage.createDeliveryOrder(validatedData);
+      res.status(201).json(order);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({
+          message: "Invalid delivery order data",
+          errors: error.errors,
+        });
+      }
+      console.error("Error creating delivery order:", error);
+      res.status(500).json({ message: "Failed to create delivery order" });
+    }
+  });
+
+  app.put("/api/warehouse/delivery-orders/:id", async (req: Request, res: Response) => {
+    try {
+      const validatedData = insertDeliveryOrderSchema.partial().parse(req.body);
+      const order = await storage.updateDeliveryOrder(Number(req.params.id), validatedData);
+      if (!order) {
+        return res.status(404).json({ message: "Delivery order not found" });
+      }
+      res.json(order);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({
+          message: "Invalid delivery order data",
+          errors: error.errors,
+        });
+      }
+      console.error("Error updating delivery order:", error);
+      res.status(500).json({ message: "Failed to update delivery order" });
+    }
+  });
+
+  // Delivery Order Items routes
+  app.get("/api/warehouse/delivery-order-items", async (req: Request, res: Response) => {
+    try {
+      const { orderId } = req.query;
+      let items;
+      
+      if (orderId) {
+        items = await storage.getDeliveryOrderItemsByOrder(Number(orderId));
+      } else {
+        items = await storage.getDeliveryOrderItems();
+      }
+      
+      res.json(items);
+    } catch (error) {
+      console.error("Error fetching delivery order items:", error);
+      res.status(500).json({ message: "Failed to fetch delivery order items" });
+    }
+  });
+
+  app.post("/api/warehouse/delivery-order-items", async (req: Request, res: Response) => {
+    try {
+      const validatedData = insertDeliveryOrderItemSchema.parse(req.body);
+      const item = await storage.createDeliveryOrderItem(validatedData);
+      res.status(201).json(item);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({
+          message: "Invalid delivery order item data",
+          errors: error.errors,
+        });
+      }
+      console.error("Error creating delivery order item:", error);
+      res.status(500).json({ message: "Failed to create delivery order item" });
+    }
+  });
+
+  // Stock Adjustments routes
+  app.get("/api/warehouse/stock-adjustments", async (req: Request, res: Response) => {
+    try {
+      const { status } = req.query;
+      let adjustments;
+      
+      if (status) {
+        adjustments = await storage.getStockAdjustmentsByStatus(status as string);
+      } else {
+        adjustments = await storage.getStockAdjustments();
+      }
+      
+      res.json(adjustments);
+    } catch (error) {
+      console.error("Error fetching stock adjustments:", error);
+      res.status(500).json({ message: "Failed to fetch stock adjustments" });
+    }
+  });
+
+  app.get("/api/warehouse/stock-adjustments/:id", async (req: Request, res: Response) => {
+    try {
+      const adjustment = await storage.getStockAdjustment(Number(req.params.id));
+      if (!adjustment) {
+        return res.status(404).json({ message: "Stock adjustment not found" });
+      }
+      res.json(adjustment);
+    } catch (error) {
+      console.error("Error fetching stock adjustment:", error);
+      res.status(500).json({ message: "Failed to fetch stock adjustment" });
+    }
+  });
+
+  app.post("/api/warehouse/stock-adjustments", async (req: Request, res: Response) => {
+    try {
+      const validatedData = insertStockAdjustmentSchema.parse(req.body);
+      const adjustment = await storage.createStockAdjustment(validatedData);
+      res.status(201).json(adjustment);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({
+          message: "Invalid stock adjustment data",
+          errors: error.errors,
+        });
+      }
+      console.error("Error creating stock adjustment:", error);
+      res.status(500).json({ message: "Failed to create stock adjustment" });
+    }
+  });
+
+  // Warehouse Locations routes
+  app.get("/api/warehouse/locations", async (req: Request, res: Response) => {
+    try {
+      const { type } = req.query;
+      let locations;
+      
+      if (type) {
+        locations = await storage.getWarehouseLocationsByType(type as string);
+      } else {
+        locations = await storage.getWarehouseLocations();
+      }
+      
+      res.json(locations);
+    } catch (error) {
+      console.error("Error fetching warehouse locations:", error);
+      res.status(500).json({ message: "Failed to fetch warehouse locations" });
+    }
+  });
+
+  app.get("/api/warehouse/locations/:id", async (req: Request, res: Response) => {
+    try {
+      const location = await storage.getWarehouseLocation(req.params.id);
+      if (!location) {
+        return res.status(404).json({ message: "Warehouse location not found" });
+      }
+      res.json(location);
+    } catch (error) {
+      console.error("Error fetching warehouse location:", error);
+      res.status(500).json({ message: "Failed to fetch warehouse location" });
+    }
+  });
+
+  app.post("/api/warehouse/locations", async (req: Request, res: Response) => {
+    try {
+      const validatedData = insertWarehouseLocationSchema.parse(req.body);
+      const location = await storage.createWarehouseLocation(validatedData);
+      res.status(201).json(location);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({
+          message: "Invalid warehouse location data",
+          errors: error.errors,
+        });
+      }
+      console.error("Error creating warehouse location:", error);
+      res.status(500).json({ message: "Failed to create warehouse location" });
+    }
+  });
+
+  app.put("/api/warehouse/locations/:id", async (req: Request, res: Response) => {
+    try {
+      const validatedData = insertWarehouseLocationSchema.partial().parse(req.body);
+      const location = await storage.updateWarehouseLocation(req.params.id, validatedData);
+      if (!location) {
+        return res.status(404).json({ message: "Warehouse location not found" });
+      }
+      res.json(location);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({
+          message: "Invalid warehouse location data",
+          errors: error.errors,
+        });
+      }
+      console.error("Error updating warehouse location:", error);
+      res.status(500).json({ message: "Failed to update warehouse location" });
+    }
+  });
+
+  app.delete("/api/warehouse/locations/:id", async (req: Request, res: Response) => {
+    try {
+      const success = await storage.deleteWarehouseLocation(req.params.id);
+      if (!success) {
+        return res.status(404).json({ message: "Warehouse location not found" });
+      }
+      res.status(204).send();
+    } catch (error) {
+      console.error("Error deleting warehouse location:", error);
+      res.status(500).json({ message: "Failed to delete warehouse location" });
     }
   });
 

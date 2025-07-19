@@ -821,6 +821,200 @@ export type InsertMaterialInputItem = z.infer<
 >;
 export type MaterialInputItem = typeof materialInputItems.$inferSelect;
 
+// ================== WAREHOUSE MANAGEMENT SYSTEM ==================
+
+// Suppliers table
+export const suppliers = pgTable("suppliers", {
+  id: text("id").primaryKey(),
+  name: text("name").notNull(),
+  code: text("code").notNull().unique(),
+  contactPerson: text("contact_person"),
+  email: text("email"),
+  phone: text("phone"),
+  address: text("address"),
+  city: text("city"),
+  country: text("country"),
+  taxNumber: text("tax_number"),
+  paymentTerms: text("payment_terms"),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const insertSupplierSchema = createInsertSchema(suppliers).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+export type InsertSupplier = z.infer<typeof insertSupplierSchema>;
+export type Supplier = typeof suppliers.$inferSelect;
+
+// Stock movements table for tracking all inventory changes
+export const stockMovements = pgTable("stock_movements", {
+  id: serial("id").primaryKey(),
+  type: text("type").notNull(), // "in", "out", "adjustment", "transfer"
+  referenceType: text("reference_type"), // "supplier_receipt", "customer_delivery", "production_use", "manual_adjustment"
+  referenceId: text("reference_id"), // ID of the related entity (purchase order, delivery, etc.)
+  rawMaterialId: integer("raw_material_id").references(() => rawMaterials.id),
+  finalProductId: integer("final_product_id").references(() => finalProducts.id),
+  quantity: doublePrecision("quantity").notNull(),
+  unitCost: doublePrecision("unit_cost"),
+  totalCost: doublePrecision("total_cost"),
+  userId: text("user_id").notNull().references(() => users.id),
+  notes: text("notes"),
+  timestamp: timestamp("timestamp").defaultNow().notNull(),
+});
+
+export const insertStockMovementSchema = createInsertSchema(stockMovements).omit({
+  id: true,
+  timestamp: true,
+});
+export type InsertStockMovement = z.infer<typeof insertStockMovementSchema>;
+export type StockMovement = typeof stockMovements.$inferSelect;
+
+// Purchase orders for receiving raw materials from suppliers
+export const purchaseOrders = pgTable("purchase_orders", {
+  id: serial("id").primaryKey(),
+  orderNumber: text("order_number").notNull().unique(),
+  supplierId: text("supplier_id").notNull().references(() => suppliers.id),
+  orderDate: timestamp("order_date").defaultNow().notNull(),
+  expectedDeliveryDate: timestamp("expected_delivery_date"),
+  actualDeliveryDate: timestamp("actual_delivery_date"),
+  status: text("status").notNull().default("pending"), // pending, ordered, received, cancelled
+  totalAmount: doublePrecision("total_amount").default(0),
+  notes: text("notes"),
+  createdBy: text("created_by").notNull().references(() => users.id),
+  receivedBy: text("received_by").references(() => users.id),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const insertPurchaseOrderSchema = createInsertSchema(purchaseOrders).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+export type InsertPurchaseOrder = z.infer<typeof insertPurchaseOrderSchema>;
+export type PurchaseOrder = typeof purchaseOrders.$inferSelect;
+
+// Purchase order items
+export const purchaseOrderItems = pgTable("purchase_order_items", {
+  id: serial("id").primaryKey(),
+  purchaseOrderId: integer("purchase_order_id").notNull().references(() => purchaseOrders.id, { onDelete: "cascade" }),
+  rawMaterialId: integer("raw_material_id").notNull().references(() => rawMaterials.id),
+  orderedQuantity: doublePrecision("ordered_quantity").notNull(),
+  receivedQuantity: doublePrecision("received_quantity").default(0),
+  unitPrice: doublePrecision("unit_price").notNull(),
+  totalPrice: doublePrecision("total_price").notNull(),
+  notes: text("notes"),
+});
+
+export const insertPurchaseOrderItemSchema = createInsertSchema(purchaseOrderItems).omit({
+  id: true,
+});
+export type InsertPurchaseOrderItem = z.infer<typeof insertPurchaseOrderItemSchema>;
+export type PurchaseOrderItem = typeof purchaseOrderItems.$inferSelect;
+
+// Delivery orders for sending final products to customers
+export const deliveryOrders = pgTable("delivery_orders", {
+  id: serial("id").primaryKey(),
+  deliveryNumber: text("delivery_number").notNull().unique(),
+  customerId: text("customer_id").notNull().references(() => customers.id),
+  orderId: integer("order_id").references(() => orders.id),
+  deliveryDate: timestamp("delivery_date").defaultNow().notNull(),
+  scheduledDeliveryDate: timestamp("scheduled_delivery_date"),
+  status: text("status").notNull().default("pending"), // pending, prepared, shipped, delivered, cancelled
+  driverName: text("driver_name"),
+  vehicleNumber: text("vehicle_number"),
+  trackingNumber: text("tracking_number"),
+  deliveryAddress: text("delivery_address"),
+  notes: text("notes"),
+  createdBy: text("created_by").notNull().references(() => users.id),
+  deliveredBy: text("delivered_by").references(() => users.id),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const insertDeliveryOrderSchema = createInsertSchema(deliveryOrders).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+export type InsertDeliveryOrder = z.infer<typeof insertDeliveryOrderSchema>;
+export type DeliveryOrder = typeof deliveryOrders.$inferSelect;
+
+// Delivery order items
+export const deliveryOrderItems = pgTable("delivery_order_items", {
+  id: serial("id").primaryKey(),
+  deliveryOrderId: integer("delivery_order_id").notNull().references(() => deliveryOrders.id, { onDelete: "cascade" }),
+  finalProductId: integer("final_product_id").notNull().references(() => finalProducts.id),
+  quantity: doublePrecision("quantity").notNull(),
+  notes: text("notes"),
+});
+
+export const insertDeliveryOrderItemSchema = createInsertSchema(deliveryOrderItems).omit({
+  id: true,
+});
+export type InsertDeliveryOrderItem = z.infer<typeof insertDeliveryOrderItemSchema>;
+export type DeliveryOrderItem = typeof deliveryOrderItems.$inferSelect;
+
+// Stock adjustments for manual inventory corrections
+export const stockAdjustments = pgTable("stock_adjustments", {
+  id: serial("id").primaryKey(),
+  adjustmentNumber: text("adjustment_number").notNull().unique(),
+  adjustmentDate: timestamp("adjustment_date").defaultNow().notNull(),
+  reason: text("reason").notNull(),
+  notes: text("notes"),
+  approvedBy: text("approved_by").references(() => users.id),
+  createdBy: text("created_by").notNull().references(() => users.id),
+  status: text("status").notNull().default("pending"), // pending, approved, rejected
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const insertStockAdjustmentSchema = createInsertSchema(stockAdjustments).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+export type InsertStockAdjustment = z.infer<typeof insertStockAdjustmentSchema>;
+export type StockAdjustment = typeof stockAdjustments.$inferSelect;
+
+// Stock adjustment items
+export const stockAdjustmentItems = pgTable("stock_adjustment_items", {
+  id: serial("id").primaryKey(),
+  adjustmentId: integer("adjustment_id").notNull().references(() => stockAdjustments.id, { onDelete: "cascade" }),
+  rawMaterialId: integer("raw_material_id").references(() => rawMaterials.id),
+  finalProductId: integer("final_product_id").references(() => finalProducts.id),
+  currentQuantity: doublePrecision("current_quantity").notNull(),
+  adjustedQuantity: doublePrecision("adjusted_quantity").notNull(),
+  difference: doublePrecision("difference").notNull(),
+  reason: text("reason"),
+});
+
+export const insertStockAdjustmentItemSchema = createInsertSchema(stockAdjustmentItems).omit({
+  id: true,
+});
+export type InsertStockAdjustmentItem = z.infer<typeof insertStockAdjustmentItemSchema>;
+export type StockAdjustmentItem = typeof stockAdjustmentItems.$inferSelect;
+
+// Warehouse locations for better organization
+export const warehouseLocations = pgTable("warehouse_locations", {
+  id: text("id").primaryKey(),
+  name: text("name").notNull(),
+  description: text("description"),
+  type: text("type").notNull(), // "raw_materials", "final_products", "staging", "shipping"
+  capacity: doublePrecision("capacity"),
+  currentUtilization: doublePrecision("current_utilization").default(0),
+  isActive: boolean("is_active").default(true),
+});
+
+export const insertWarehouseLocationSchema = createInsertSchema(warehouseLocations);
+export type InsertWarehouseLocation = z.infer<typeof insertWarehouseLocationSchema>;
+export type WarehouseLocation = typeof warehouseLocations.$inferSelect;
+
+// ================== END WAREHOUSE MANAGEMENT SYSTEM ==================
+
 // Cliché (Plate) Pricing Parameters
 export const platePricingParameters = pgTable("plate_pricing_parameters", {
   id: serial("id").primaryKey(),

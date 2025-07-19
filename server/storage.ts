@@ -68,6 +68,25 @@ import {
   InsertTrainingEvaluation,
   CustomerInformation,
   InsertCustomerInformation,
+  // Warehouse Management Types
+  Supplier,
+  InsertSupplier,
+  StockMovement,
+  InsertStockMovement,
+  PurchaseOrder,
+  InsertPurchaseOrder,
+  PurchaseOrderItem,
+  InsertPurchaseOrderItem,
+  DeliveryOrder,
+  InsertDeliveryOrder,
+  DeliveryOrderItem,
+  InsertDeliveryOrderItem,
+  StockAdjustment,
+  InsertStockAdjustment,
+  StockAdjustmentItem,
+  InsertStockAdjustmentItem,
+  WarehouseLocation,
+  InsertWarehouseLocation,
 } from "../shared/schema";
 import session from "express-session";
 import MemoryStore from "memorystore";
@@ -479,6 +498,84 @@ export interface IStorage {
     customerInfo: InsertCustomerInformation,
   ): Promise<CustomerInformation>;
   deleteCustomerInformation(id: number): Promise<boolean>;
+
+  // =============== WAREHOUSE MANAGEMENT METHODS ===============
+  
+  // Suppliers
+  getSuppliers(): Promise<Supplier[]>;
+  getSupplier(id: string): Promise<Supplier | undefined>;
+  getSupplierByCode(code: string): Promise<Supplier | undefined>;
+  createSupplier(supplier: InsertSupplier): Promise<Supplier>;
+  updateSupplier(id: string, supplier: Partial<Supplier>): Promise<Supplier | undefined>;
+  deleteSupplier(id: string): Promise<boolean>;
+
+  // Stock Movements
+  getStockMovements(): Promise<StockMovement[]>;
+  getStockMovementsByType(type: string): Promise<StockMovement[]>;
+  getStockMovementsByRawMaterial(rawMaterialId: number): Promise<StockMovement[]>;
+  getStockMovementsByFinalProduct(finalProductId: number): Promise<StockMovement[]>;
+  getStockMovement(id: number): Promise<StockMovement | undefined>;
+  createStockMovement(movement: InsertStockMovement): Promise<StockMovement>;
+  updateStockMovement(id: number, movement: Partial<StockMovement>): Promise<StockMovement | undefined>;
+  deleteStockMovement(id: number): Promise<boolean>;
+
+  // Purchase Orders
+  getPurchaseOrders(): Promise<PurchaseOrder[]>;
+  getPurchaseOrdersBySupplier(supplierId: string): Promise<PurchaseOrder[]>;
+  getPurchaseOrdersByStatus(status: string): Promise<PurchaseOrder[]>;
+  getPurchaseOrder(id: number): Promise<PurchaseOrder | undefined>;
+  createPurchaseOrder(order: InsertPurchaseOrder): Promise<PurchaseOrder>;
+  updatePurchaseOrder(id: number, order: Partial<PurchaseOrder>): Promise<PurchaseOrder | undefined>;
+  deletePurchaseOrder(id: number): Promise<boolean>;
+
+  // Purchase Order Items
+  getPurchaseOrderItems(): Promise<PurchaseOrderItem[]>;
+  getPurchaseOrderItemsByOrder(orderId: number): Promise<PurchaseOrderItem[]>;
+  getPurchaseOrderItem(id: number): Promise<PurchaseOrderItem | undefined>;
+  createPurchaseOrderItem(item: InsertPurchaseOrderItem): Promise<PurchaseOrderItem>;
+  updatePurchaseOrderItem(id: number, item: Partial<PurchaseOrderItem>): Promise<PurchaseOrderItem | undefined>;
+  deletePurchaseOrderItem(id: number): Promise<boolean>;
+
+  // Delivery Orders
+  getDeliveryOrders(): Promise<DeliveryOrder[]>;
+  getDeliveryOrdersByCustomer(customerId: string): Promise<DeliveryOrder[]>;
+  getDeliveryOrdersByStatus(status: string): Promise<DeliveryOrder[]>;
+  getDeliveryOrder(id: number): Promise<DeliveryOrder | undefined>;
+  createDeliveryOrder(order: InsertDeliveryOrder): Promise<DeliveryOrder>;
+  updateDeliveryOrder(id: number, order: Partial<DeliveryOrder>): Promise<DeliveryOrder | undefined>;
+  deleteDeliveryOrder(id: number): Promise<boolean>;
+
+  // Delivery Order Items
+  getDeliveryOrderItems(): Promise<DeliveryOrderItem[]>;
+  getDeliveryOrderItemsByOrder(orderId: number): Promise<DeliveryOrderItem[]>;
+  getDeliveryOrderItem(id: number): Promise<DeliveryOrderItem | undefined>;
+  createDeliveryOrderItem(item: InsertDeliveryOrderItem): Promise<DeliveryOrderItem>;
+  updateDeliveryOrderItem(id: number, item: Partial<DeliveryOrderItem>): Promise<DeliveryOrderItem | undefined>;
+  deleteDeliveryOrderItem(id: number): Promise<boolean>;
+
+  // Stock Adjustments
+  getStockAdjustments(): Promise<StockAdjustment[]>;
+  getStockAdjustmentsByStatus(status: string): Promise<StockAdjustment[]>;
+  getStockAdjustment(id: number): Promise<StockAdjustment | undefined>;
+  createStockAdjustment(adjustment: InsertStockAdjustment): Promise<StockAdjustment>;
+  updateStockAdjustment(id: number, adjustment: Partial<StockAdjustment>): Promise<StockAdjustment | undefined>;
+  deleteStockAdjustment(id: number): Promise<boolean>;
+
+  // Stock Adjustment Items
+  getStockAdjustmentItems(): Promise<StockAdjustmentItem[]>;
+  getStockAdjustmentItemsByAdjustment(adjustmentId: number): Promise<StockAdjustmentItem[]>;
+  getStockAdjustmentItem(id: number): Promise<StockAdjustmentItem | undefined>;
+  createStockAdjustmentItem(item: InsertStockAdjustmentItem): Promise<StockAdjustmentItem>;
+  updateStockAdjustmentItem(id: number, item: Partial<StockAdjustmentItem>): Promise<StockAdjustmentItem | undefined>;
+  deleteStockAdjustmentItem(id: number): Promise<boolean>;
+
+  // Warehouse Locations
+  getWarehouseLocations(): Promise<WarehouseLocation[]>;
+  getWarehouseLocationsByType(type: string): Promise<WarehouseLocation[]>;
+  getWarehouseLocation(id: string): Promise<WarehouseLocation | undefined>;
+  createWarehouseLocation(location: InsertWarehouseLocation): Promise<WarehouseLocation>;
+  updateWarehouseLocation(id: string, location: Partial<WarehouseLocation>): Promise<WarehouseLocation | undefined>;
+  deleteWarehouseLocation(id: string): Promise<boolean>;
 }
 
 export class MemStorage {
