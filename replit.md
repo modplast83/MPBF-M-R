@@ -50,6 +50,13 @@ This is a comprehensive production management system built with React, TypeScrip
 
 ## Recent Changes
 
+### July 19, 2025 - Enhanced Product Selection Dropdown ✅
+- **Enhanced Product Selection Dropdown**: Added category name, master batch, and cutting length to product dropdown in /orders/new page
+- **Master Batch Integration**: Added master batch data fetching and display with proper Arabic translation support
+- **Improved Product Information**: Product dropdown now shows comprehensive product details with bilingual support
+- **Arabic Translation Support**: Applied existing Arabic translation keys for enhanced dropdown elements (category, master_batch, cutting_length)
+- **User Experience Enhancement**: Better product identification with complete product details in order creation process
+
 ### July 19, 2025 - Application Debugging and Recovery ✅
 - **Fixed critical JSON parsing error**: Resolved malformed Arabic localization file that was preventing frontend from loading
 - **Restored Arabic translation support**: Arabic translations now loading properly (ar:true in i18next)

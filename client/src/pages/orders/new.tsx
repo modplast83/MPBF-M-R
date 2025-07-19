@@ -776,19 +776,19 @@ export default function NewOrderPage() {
                                           {itemName}{rawMaterial && ` • ${rawMaterial}`}
                                         </div>
                                         <div className="text-xs text-muted-foreground flex flex-wrap gap-2">
-                                          <span className="font-medium">Category:</span>
+                                          <span className="font-medium">{t('orders.category')}:</span>
                                           <span>{categoryName}</span>
                                           {masterBatchName && (
                                             <>
                                               <span>•</span>
-                                              <span className="font-medium">Master Batch:</span>
+                                              <span className="font-medium">{t('orders.master_batch')}:</span>
                                               <span>{masterBatchName}</span>
                                             </>
                                           )}
                                           {cuttingLength && (
                                             <>
                                               <span>•</span>
-                                              <span className="font-medium">Cutting Length:</span>
+                                              <span className="font-medium">{t('orders.cutting_length')}:</span>
                                               <span>{cuttingLength}</span>
                                             </>
                                           )}
