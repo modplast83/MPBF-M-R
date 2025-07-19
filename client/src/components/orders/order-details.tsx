@@ -1041,7 +1041,7 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
                           <div>
                             <p className="text-secondary-500">{t('rolls.cutting_qty')}:</p>
                             <p className="font-medium">
-                              {roll.cuttingQty || 0}
+                              {Math.round(roll.cuttingQty || 0)}
                             </p>
                           </div>
                         </div>
@@ -1097,7 +1097,7 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
                               {roll.printingQty || 0}
                             </td>
                             <td className="py-3 px-4">
-                              {roll.cuttingQty || 0}
+                              {Math.round(roll.cuttingQty || 0)}
                             </td>
                             <td className="py-3 px-4">
                               <StatusBadge status={roll.currentStage} />
