@@ -1,8 +1,14 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import themePlugin from "@replit/vite-plugin-shadcn-theme-json";
-import path from "path";
 import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
+
+import { fileURLToPath } from "url";
+import path, { dirname } from "path";
+
+// حل لمشكلة __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 // نجهز الإعدادات العامة
 const baseConfig = {
@@ -30,9 +36,7 @@ const baseConfig = {
   },
 };
 
-// ما نستخدم async هنا أبداً
 export default defineConfig(() => {
-  // نخلي config عادي غير async
   if (process.env.NODE_ENV !== "production" && process.env.REPL_ID !== undefined) {
     const { cartographer } = require("@replit/vite-plugin-cartographer");
     baseConfig.plugins.push(cartographer());
