@@ -48,7 +48,7 @@ export const PDFExportButton = ({
   const { toast } = useToast();
 
   const handleExport = async () => {
-    if (!data || data.length === 0) {
+    if (!data || !Array.isArray(data) || data.length === 0) {
       toast({
         title: "No Data Available",
         description:
@@ -137,7 +137,7 @@ export const PDFExportButton = ({
   return (
     <Button
       onClick={handleExport}
-      disabled={isExporting || !data || data.length === 0}
+      disabled={isExporting || !data || !Array.isArray(data) || data.length === 0}
       variant={variant}
       size={size}
       className={className}
@@ -178,7 +178,7 @@ export const usePDFExport = () => {
       options,
     } = config;
 
-    if (!data || data.length === 0) {
+    if (!data || !Array.isArray(data) || data.length === 0) {
       toast({
         title: "No Data Available",
         description: "There is no data to export.",

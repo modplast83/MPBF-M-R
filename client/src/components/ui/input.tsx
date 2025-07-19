@@ -28,12 +28,12 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     // Handle focus and blur
     const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
       setIsFocused(true);
-      props.onFocus && props.onFocus(e);
+      props.onFocus?.(e);
     };
 
     const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
       setIsFocused(false);
-      props.onBlur && props.onBlur(e);
+      props.onBlur?.(e);
     };
 
     // Determine className based on status

@@ -109,8 +109,10 @@ app.use((req, res, next) => {
   // Database health check endpoint
   app.get("/api/health/database", async (req: Request, res: Response) => {
     try {
+      // Import the pool from db.ts
+      const { pool } = await import('./db.js');
+      
       // Simple query to check database connectivity
-      // @ts-expect-error
       const result = await pool.query('SELECT 1 as health_check');
 
       res.json({
@@ -120,6 +122,29 @@ app.use((req, res, next) => {
       });
     } catch (error) {
       console.error('Database health check failed:', error);
+      res.status(500).json({
+        status: 'unhealthy',
+        timestamp: new Date().toISOString(),
+        database: 'disconnected',
+        error: error.message
+      });
+    }
+  });
+
+  // General health check endpoint
+  app.get("/api/health", async (req: Request, res: Response) => {
+    try {
+      const { pool } = await import('./db.js');
+      const result = await pool.query('SELECT 1 as health_check');
+
+      res.json({
+        status: 'healthy',
+        timestamp: new Date().toISOString(),
+        database: 'connected',
+        version: process.env.npm_package_version || '1.0.0'
+      });
+    } catch (error) {
+      console.error('Health check failed:', error);
       res.status(500).json({
         status: 'unhealthy',
         timestamp: new Date().toISOString(),

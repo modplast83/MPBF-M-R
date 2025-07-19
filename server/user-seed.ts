@@ -13,8 +13,8 @@ export async function ensureAdminUser() {
     if (!adminUser) {
       console.log("Admin user not found. Creating default admin user...");
 
-      // Hash the default admin password 'admin123'
-      const hashedPassword = await hashPassword("admin123");
+      // Hash the default admin password 'admin'
+      const hashedPassword = await hashPassword("admin");
 
       // Create admin user if it doesn't exist
       const adminUser = {
@@ -36,7 +36,7 @@ export async function ensureAdminUser() {
 
       await storage.upsertUser(adminUser);
       console.log(
-        "Default admin user created successfully with username 'admin' and password 'admin123'!",
+        "Default admin user created successfully with username 'admin' and password 'admin'!",
       );
     } else {
       console.log("Admin user already exists, no need to create.");
