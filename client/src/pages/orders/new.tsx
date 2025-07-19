@@ -242,6 +242,11 @@ export default function NewOrderPage() {
     queryKey: ['/api/categories'],
   });
 
+  // Fetch master batches for master batch names
+  const { data: masterBatches = [] } = useQuery<{ id: string; name: string }[]>({
+    queryKey: ['/api/master-batches'],
+  });
+
   // Fetch products for selected customer
   const { data: customerProducts = [], isLoading: productsLoading } = useQuery<Product[]>({
     queryKey: ['/api/customers', selectedCustomer?.id, 'products'],
@@ -449,6 +454,17 @@ export default function NewOrderPage() {
     } catch (error) {
       console.error('Error getting category name:', error);
       return categoryId || 'Unknown Category';
+    }
+  };
+
+  // Get master batch name by masterBatchId
+  const getMasterBatchName = (masterBatchId: string) => {
+    try {
+      const masterBatch = masterBatches.find(mb => mb.id === masterBatchId);
+      return masterBatch ? masterBatch.name : masterBatchId;
+    } catch (error) {
+      console.error('Error getting master batch name:', error);
+      return masterBatchId || 'Unknown Master Batch';
     }
   };
 
@@ -737,7 +753,11 @@ export default function NewOrderPage() {
                               <SelectContent className="max-h-60 overflow-y-auto">
                                 {customerProducts.map((p) => {
                                   const itemName = getItemName(p.itemId);
+                                  const categoryName = getCategoryName(p.categoryId);
+                                  const masterBatchName = p.masterBatchId ? getMasterBatchName(p.masterBatchId) : '';
                                   const rawMaterial = p.rawMaterial || '';
+                                  const cuttingLength = p.cuttingLength || '';
+                                  
                                   const displayText = safeSync(
                                     () => {
                                       const sizeCaption = safeStringAccess(p, 'sizeCaption', 'Product');
@@ -754,6 +774,24 @@ export default function NewOrderPage() {
                                         <div className="font-medium">{displayText}</div>
                                         <div className="text-sm text-muted-foreground">
                                           {itemName}{rawMaterial && ` • ${rawMaterial}`}
+                                        </div>
+                                        <div className="text-xs text-muted-foreground flex flex-wrap gap-2">
+                                          <span className="font-medium">Category:</span>
+                                          <span>{categoryName}</span>
+                                          {masterBatchName && (
+                                            <>
+                                              <span>•</span>
+                                              <span className="font-medium">Master Batch:</span>
+                                              <span>{masterBatchName}</span>
+                                            </>
+                                          )}
+                                          {cuttingLength && (
+                                            <>
+                                              <span>•</span>
+                                              <span className="font-medium">Cutting Length:</span>
+                                              <span>{cuttingLength}</span>
+                                            </>
+                                          )}
                                         </div>
                                       </div>
                                     </SelectItem>
