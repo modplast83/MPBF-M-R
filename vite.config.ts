@@ -37,7 +37,9 @@ const baseConfig = {
 };
 
 export default defineConfig(() => {
-  if (process.env.NODE_ENV !== "production" && process.env.REPL_ID !== undefined) {
+  const isReplit = process.env.NODE_ENV !== "production" && !!process.env.REPL_ID;
+
+  if (isReplit) {
     const { cartographer } = require("@replit/vite-plugin-cartographer");
     baseConfig.plugins.push(cartographer());
   }
