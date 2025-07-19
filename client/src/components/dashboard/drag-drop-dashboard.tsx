@@ -253,6 +253,7 @@ export function DragDropDashboard({
           direction="horizontal"
           isDropDisabled={Boolean(!isEditMode)}
           isCombineEnabled={false}
+          ignoreContainerClipping={false}
         >
           {(provided, snapshot) => (
             <div

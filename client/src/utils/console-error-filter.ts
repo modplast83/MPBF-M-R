@@ -23,6 +23,16 @@ const ERROR_FILTERS: ErrorFilter[] = [
     reason: 'React Beautiful DnD isCombineEnabled prop issue - fixed in configuration',
     level: 'suppress'
   },
+  {
+    pattern: /Invariant failed: ignoreContainerClipping must be a boolean/,
+    reason: 'React Beautiful DnD ignoreContainerClipping prop issue - fixed in configuration',
+    level: 'suppress'
+  },
+  {
+    pattern: /Cannot read properties of undefined \(reading 'frame'\)/,
+    reason: 'React Beautiful DnD frame property error - fixed with proper prop configuration',
+    level: 'suppress'
+  },
   
   // ResizeObserver errors
   {

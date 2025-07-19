@@ -10,7 +10,7 @@ import {
 
 // Optimized Droppable wrapper to reduce warnings
 const OptimizedDroppable = memo<DroppableProps>(function OptimizedDroppable(props) {
-  return <Droppable {...props} />;
+  return <Droppable {...props} ignoreContainerClipping={false} />;
 });
 
 // Optimized Draggable wrapper to reduce warnings

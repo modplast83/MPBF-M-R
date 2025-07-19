@@ -467,6 +467,7 @@ export function CustomizableDashboardV2() {
           direction="vertical"
           isDropDisabled={Boolean(!isEditMode)}
           isCombineEnabled={false}
+          ignoreContainerClipping={false}
         >
           {(provided, snapshot) => (
             <div
