@@ -90,7 +90,7 @@ export function DataTable<T>({
       const timer = setTimeout(() => setNewRowsSet(new Set()), 3000);
       setPreviousDataLength(data.length);
       return () => clearTimeout(timer);
-    } else {
+    } else if (data.length !== previousDataLength) {
       setPreviousDataLength(data.length);
     }
   }, [data.length, previousDataLength, highlightNewRows]);

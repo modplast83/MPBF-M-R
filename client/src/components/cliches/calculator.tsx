@@ -67,8 +67,16 @@ export default function Calculator() {
   const { toast } = useToast();
   const [calculation, setCalculation] = useState<any>(null);
 
-  // Form setup
-  const form = useForm<CalculatorFormValues>({
+  // Form setup with proper string types for input fields
+  const form = useForm<{
+    width: string;
+    height: string;
+    colors: string;
+    plateType: string;
+    thickness: string;
+    customerDiscount: string;
+    notes: string;
+  }>({
     resolver: zodResolver(calculatorSchema),
     defaultValues: {
       width: "",

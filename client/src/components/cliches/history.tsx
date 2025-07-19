@@ -73,9 +73,7 @@ export default function History() {
   // Delete calculation mutation
   const deleteMutation = useMutation({
     mutationFn: async (id: number) => {
-      return apiRequest(`${API_ENDPOINTS.PLATE_CALCULATIONS}/${id}`, {
-        method: "DELETE",
-      });
+      return apiRequest("DELETE", `${API_ENDPOINTS.PLATE_CALCULATIONS}/${id}`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({

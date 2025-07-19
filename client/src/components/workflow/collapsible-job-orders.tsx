@@ -239,10 +239,7 @@ export function CollapsibleJobOrdersForExtrusion() {
       totalExtrudedQty >= jobOrder.quantity &&
       jobOrder.status !== "extrusion_completed"
     ) {
-      console.log(
-        `Job order ${jobOrderId} extruded quantity (${totalExtrudedQty}) meets or exceeds required quantity (${jobOrder.quantity}). Marking as extrusion_completed.`,
-      );
-
+      // Job order is ready for extrusion completion
       updateJobOrderStatusMutation.mutate({
         id: jobOrderId,
         status: "extrusion_completed",

@@ -97,7 +97,6 @@ export function OrderForm() {
 
   // When customers data is loaded, initialize Fuse
   useEffect(() => {
-    console.log("Customers data:", customers);
     try {
       if (customers && customers.length > 0) {
         // Enhanced Fuse.js configuration for bilingual search

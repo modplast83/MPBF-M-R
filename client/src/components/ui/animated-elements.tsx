@@ -9,14 +9,21 @@ export const AnimatedButton = (props: React.ComponentProps<typeof Button>) => {
   const { children, onClick, className = "", ...rest } = props;
   const [isPulsing, setIsPulsing] = useState(false);
 
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+    if (isPulsing) {
+      timeoutId = setTimeout(() => setIsPulsing(false), 300);
+    }
+    return () => {
+      if (timeoutId) clearTimeout(timeoutId);
+    };
+  }, [isPulsing]);
+
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     setIsPulsing(true);
     if (onClick) {
       onClick(e);
     }
-
-    // Reset pulsing state after animation completes
-    setTimeout(() => setIsPulsing(false), 300);
   };
 
   return (

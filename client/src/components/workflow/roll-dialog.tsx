@@ -116,7 +116,6 @@ export function RollDialog({
   }, [form, remainingQty]);
 
   const handleFormSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log("Form submitted with values:", values);
     const rollData: CreateRoll = {
       jobOrderId: values.jobOrderId,
       extrudingQty: values.extrudingQty,
@@ -126,7 +125,6 @@ export function RollDialog({
       status: "pending",
       createdById: user?.id || "0U41", // Include the current user's ID with fallback
     };
-    console.log("Creating roll with user ID:", user?.id || "0U41");
     onSubmit(rollData);
   };
 
