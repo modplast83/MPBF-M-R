@@ -631,12 +631,6 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
             ${rollRows.length > 0 ? rollRows : '<tr><td colspan="7" style="text-align: center;">No rolls created for this order yet</td></tr>'}
           </tbody>
         </table>
-        
-        <div class="print-footer">
-          <p><strong>Modern Plastic Bag Factory</strong> | مصنع أكياس البلاستيك الحديث</p>
-          <p>Generated on ${new Date().toLocaleString()}</p>
-          <p>Order Report #${order.id} - Status: ${order.status.toUpperCase()}</p>
-        </div>
       </body>
       </html>
     `;
