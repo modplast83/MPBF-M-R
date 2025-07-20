@@ -284,20 +284,31 @@ export default function MachineParts() {
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>{t("common.are_you_sure")}</AlertDialogTitle>
+            <AlertDialogTitle>
+              {t("setup.machine_parts.confirm_delete")}
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              {t("common.delete_confirmation_message", {
-                item: deletingMachinePart?.name || t("setup.machine_parts.part_name"),
+              {t("setup.machine_parts.confirm_delete_description", {
+                name: deletingMachinePart?.name || "",
               })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
+            <AlertDialogCancel>
+              {t("common.cancel")}
+            </AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDelete}
-              disabled={deleteMutation.isPending}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              {deleteMutation.isPending ? t("common.deleting") : t("common.delete")}
+              {deleteMutation.isPending ? (
+                <div className="flex items-center gap-2">
+                  <div className="animate-spin h-4 w-4 border-2 border-current border-t-transparent rounded-full" />
+                  {t("common.deleting")}
+                </div>
+              ) : (
+                t("common.delete")
+              )}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
