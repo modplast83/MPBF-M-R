@@ -88,7 +88,7 @@ export function MachinePartForm({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6 bg-[#13132475]">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Machine Name */}
           <FormField
