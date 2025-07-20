@@ -658,6 +658,7 @@
       "new_document": "New Document",
       "rolls-pro": "Rolls Processing",
       "job_orders": "Job Orders",
+      
       "roll_management": "Roll Management",
       "mix_materials": "Mix Materials",
       "jo_mix": "JO Mix",
@@ -674,7 +675,7 @@
       "templates": "Templates",
       "archive": "Archives",
       "letters": "Letters",
-
+      "machine_parts": "Machine Parts",
       "setup": "Setup",
       "categories": "Categories",
       "products": "Products",
