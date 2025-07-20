@@ -9,6 +9,7 @@ import Customers from "@/pages/setup/customers";
 import Items from "@/pages/setup/items";
 import Sections from "@/pages/setup/sections";
 import Machines from "@/pages/setup/machines";
+import MachineParts from "@/pages/setup/machine-parts";
 import Users from "@/pages/setup/users";
 import AbaFormulas from "@/pages/setup/aba-formulas";
 import OrdersIndex from "@/pages/orders/index";
@@ -165,7 +166,7 @@ function App() {
                       />
                       <ProtectedRoute
                         path="/setup/machine-parts"
-                        component={lazy(() => import("./pages/setup/machine-parts"))}
+                        component={MachineParts}
                         module="Machine Parts"
                       />
                       <ProtectedRoute
