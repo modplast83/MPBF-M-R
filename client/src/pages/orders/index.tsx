@@ -248,7 +248,7 @@ const OrderCard = ({
             <Link href={`/orders/${order.id}`} className="w-full sm:w-auto">
               <Button variant="outline" size="sm" className="gap-2 hover:bg-blue-50 hover:text-blue-600 w-full sm:w-auto">
                 <Eye className="h-4 w-4" />
-                <span className="sm:inline">{t('common.view_details')}</span>
+                <span className="truncate pl-[0px] pr-[0px] ml-[-12px] mr-[-12px]">{t('common.view_details')}</span>
               </Button>
             </Link>
             
