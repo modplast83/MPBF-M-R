@@ -321,8 +321,7 @@ export function MachinePartForm({
                 <FormMessage />
               </FormItem>
             )}
-          />
-        </div>
+          </div>
 
         {/* Note */}
         <FormField
