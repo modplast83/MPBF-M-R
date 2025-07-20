@@ -28,6 +28,7 @@ import { API_ENDPOINTS } from "@/lib/constants";
 // Define the form schema
 const machinePartFormSchema = insertMachinePartSchema.extend({
   machineName: z.string().min(1, "Machine name is required"),
+  sectionId: z.string().optional(),
   partType: z.enum(["Mechanic", "Electronic"], {
     required_error: "Part type is required",
   }),
@@ -321,7 +322,8 @@ export function MachinePartForm({
                 <FormMessage />
               </FormItem>
             )}
-          </div>
+          />
+        </div>
 
         {/* Note */}
         <FormField
