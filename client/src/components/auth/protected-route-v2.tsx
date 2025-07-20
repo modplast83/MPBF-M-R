@@ -55,6 +55,7 @@ export function ProtectedRoute({
 
       // If module is specified, check if user has permission
       if (module && !hasPermission(module)) {
+        console.log(`Permission denied for module: ${module}`);
         setLocation("/");
         return;
       }

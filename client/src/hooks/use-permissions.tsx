@@ -81,7 +81,10 @@ export function PermissionsProvider({
     const userSection = user?.sectionId;
 
     // Administrator has all permissions
-    if (isAdmin) return true;
+    if (isAdmin) {
+      console.log(`Admin access granted for module: ${module}`);
+      return true;
+    }
 
     // If data is still loading, deny access for non-admins to prevent unauthorized access
     if (
