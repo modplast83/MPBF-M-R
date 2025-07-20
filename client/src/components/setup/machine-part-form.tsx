@@ -20,7 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { insertMachinePartSchema, Section, MachinePart, Machine } from "@shared/schema";
+import { insertMachinePartSchema, MachinePart, Machine } from "@shared/schema";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { API_ENDPOINTS } from "@/lib/constants";
@@ -28,7 +28,6 @@ import { API_ENDPOINTS } from "@/lib/constants";
 // Define the form schema
 const machinePartFormSchema = insertMachinePartSchema.extend({
   machineName: z.string().min(1, "Machine name is required"),
-  sectionId: z.string().optional(),
   partType: z.enum(["Mechanic", "Electronic"], {
     required_error: "Part type is required",
   }),
@@ -39,7 +38,6 @@ const machinePartFormSchema = insertMachinePartSchema.extend({
   sizeUnit: z.enum(["cm", "inch", "mm"]).optional(),
   sizeValue: z.number().optional(),
   note: z.string().optional(),
-  lastMaintenanceDate: z.string().optional(),
 });
 
 type MachinePartFormData = z.infer<typeof machinePartFormSchema>;
@@ -59,11 +57,7 @@ export function MachinePartForm({
 }: MachinePartFormProps) {
   const { t } = useTranslation();
 
-  // Fetch sections and machines for the dropdowns
-  const { data: sections = [] } = useQuery<Section[]>({
-    queryKey: [API_ENDPOINTS.SECTIONS],
-  });
-
+  // Fetch machines for the dropdown
   const { data: machines = [] } = useQuery<Machine[]>({
     queryKey: [API_ENDPOINTS.MACHINES],
   });
@@ -72,7 +66,6 @@ export function MachinePartForm({
     resolver: zodResolver(machinePartFormSchema),
     defaultValues: {
       machineName: initialData?.machineName || "",
-      sectionId: initialData?.sectionId || undefined,
       partType: initialData?.partType as "Mechanic" | "Electronic" || undefined,
       name: initialData?.name || "",
       code: initialData?.code || "",
@@ -81,9 +74,6 @@ export function MachinePartForm({
       sizeUnit: initialData?.sizeUnit as "cm" | "inch" | "mm" || undefined,
       sizeValue: initialData?.sizeValue || undefined,
       note: initialData?.note || "",
-      lastMaintenanceDate: initialData?.lastMaintenanceDate
-        ? new Date(initialData.lastMaintenanceDate).toISOString().split("T")[0]
-        : "",
     },
   });
 
@@ -92,9 +82,6 @@ export function MachinePartForm({
     const submitData = {
       ...data,
       sizeValue: data.sizeValue ? Number(data.sizeValue) : null,
-      lastMaintenanceDate: data.lastMaintenanceDate
-        ? new Date(data.lastMaintenanceDate).toISOString()
-        : null,
     };
     onSubmit(submitData);
   };
@@ -120,32 +107,6 @@ export function MachinePartForm({
                     {machines.map((machine) => (
                       <SelectItem key={machine.id} value={machine.name}>
                         {machine.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          {/* Section */}
-          <FormField
-            control={form.control}
-            name="sectionId"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{t("common.section")}</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder={t("common.select")} />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {sections.map((section) => (
-                      <SelectItem key={section.id} value={section.id}>
-                        {section.name}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -299,24 +260,6 @@ export function MachinePartForm({
                     {...field}
                     value={field.value || ""}
                     onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : undefined)}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          {/* Last Maintenance Date */}
-          <FormField
-            control={form.control}
-            name="lastMaintenanceDate"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{t("setup.machine_parts.last_maintenance_date")}</FormLabel>
-                <FormControl>
-                  <Input
-                    type="date"
-                    {...field}
                   />
                 </FormControl>
                 <FormMessage />
