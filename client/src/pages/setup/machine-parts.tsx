@@ -145,39 +145,32 @@ export default function MachineParts() {
 
   const columns = [
     {
-      key: "machineName",
-      label: t("setup.machine_parts.machine_name"),
-      sortable: true,
+      header: t("setup.machine_parts.machine_name"),
+      accessorKey: "machineName",
     },
     {
-      key: "name",
-      label: t("setup.machine_parts.part_name"),
-      sortable: true,
+      header: t("setup.machine_parts.part_name"),
+      accessorKey: "name",
     },
     {
-      key: "code",
-      label: t("setup.machine_parts.part_code"),
-      sortable: true,
+      header: t("setup.machine_parts.part_code"),
+      accessorKey: "code",
     },
     {
-      key: "partType",
-      label: t("setup.machine_parts.part_type"),
-      render: (row: MachinePart) => getPartTypeBadge(row.partType),
+      header: t("setup.machine_parts.part_type"),
+      cell: (row: MachinePart) => getPartTypeBadge(row.partType),
     },
     {
-      key: "section",
-      label: t("common.section"),
-      render: (row: MachinePart) => getSectionName(row.sectionId),
+      header: t("common.section"),
+      cell: (row: MachinePart) => getSectionName(row.sectionId),
     },
     {
-      key: "serialNumber",
-      label: t("setup.machine_parts.serial_number"),
-      render: (row: MachinePart) => row.serialNumber || t("common.not_available"),
+      header: t("setup.machine_parts.serial_number"),
+      cell: (row: MachinePart) => row.serialNumber || t("common.not_available"),
     },
     {
-      key: "size",
-      label: t("setup.machine_parts.size"),
-      render: (row: MachinePart) => {
+      header: t("setup.machine_parts.size"),
+      cell: (row: MachinePart) => {
         if (!row.size && !row.sizeValue) return t("common.not_available");
         if (row.sizeValue && row.sizeUnit) {
           return `${row.sizeValue} ${row.sizeUnit}${row.size ? ` (${row.size})` : ""}`;
@@ -186,14 +179,12 @@ export default function MachineParts() {
       },
     },
     {
-      key: "lastMaintenanceDate",
-      label: t("setup.machine_parts.last_maintenance_date"),
-      render: (row: MachinePart) => formatDate(row.lastMaintenanceDate),
+      header: t("setup.machine_parts.last_maintenance_date"),
+      cell: (row: MachinePart) => formatDate(row.lastMaintenanceDate),
     },
     {
-      key: "actions",
-      label: t("common.actions"),
-      render: (row: MachinePart) => (
+      header: t("common.actions"),
+      cell: (row: MachinePart) => (
         <div className="flex space-x-2">
           <Button
             variant="outline"
