@@ -47,10 +47,7 @@ export default function MachineParts() {
 
   // Create machine part mutation
   const createMutation = useMutation({
-    mutationFn: (data: any) => apiRequest(API_ENDPOINTS.MACHINE_PARTS, {
-      method: "POST",
-      body: JSON.stringify(data),
-    }),
+    mutationFn: (data: any) => apiRequest("POST", API_ENDPOINTS.MACHINE_PARTS, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [API_ENDPOINTS.MACHINE_PARTS] });
       setFormOpen(false);
@@ -71,10 +68,7 @@ export default function MachineParts() {
   // Update machine part mutation
   const updateMutation = useMutation({
     mutationFn: ({ id, data }: { id: number; data: any }) =>
-      apiRequest(`${API_ENDPOINTS.MACHINE_PARTS}/${id}`, {
-        method: "PUT",
-        body: JSON.stringify(data),
-      }),
+      apiRequest("PUT", `${API_ENDPOINTS.MACHINE_PARTS}/${id}`, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [API_ENDPOINTS.MACHINE_PARTS] });
       setFormOpen(false);
@@ -96,9 +90,7 @@ export default function MachineParts() {
   // Delete machine part mutation
   const deleteMutation = useMutation({
     mutationFn: (id: number) =>
-      apiRequest(`${API_ENDPOINTS.MACHINE_PARTS}/${id}`, {
-        method: "DELETE",
-      }),
+      apiRequest("DELETE", `${API_ENDPOINTS.MACHINE_PARTS}/${id}`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [API_ENDPOINTS.MACHINE_PARTS] });
       setDeletingMachinePart(null);
