@@ -126,10 +126,11 @@ export default function MachineParts() {
     );
   };
 
-  const formatDate = (dateString: string | null) => {
-    if (!dateString) return t("common.not_available");
+  const formatDate = (date: Date | string | null) => {
+    if (!date) return t("common.not_available");
     try {
-      return format(new Date(dateString), "MMM dd, yyyy");
+      const dateObj = date instanceof Date ? date : new Date(date);
+      return format(dateObj, "MMM dd, yyyy");
     } catch {
       return t("common.not_available");
     }
