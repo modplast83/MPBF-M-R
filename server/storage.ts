@@ -11,6 +11,10 @@ import {
   InsertSection,
   Machine,
   InsertMachine,
+  MachinePart,
+  InsertMachinePart,
+  MachinePartToMachine,
+  InsertMachinePartToMachine,
   MasterBatch,
   InsertMasterBatch,
   CustomerProduct,
@@ -228,6 +232,23 @@ export interface IStorage {
     machine: Partial<Machine>,
   ): Promise<Machine | undefined>;
   deleteMachine(id: string): Promise<boolean>;
+
+  // Machine Parts
+  getMachineParts(): Promise<MachinePart[]>;
+  getMachinePartsBySection(sectionId: string): Promise<MachinePart[]>;
+  getMachinePartsByMachine(machineId: string): Promise<MachinePart[]>;
+  getMachinePart(id: number): Promise<MachinePart | undefined>;
+  createMachinePart(machinePart: InsertMachinePart): Promise<MachinePart>;
+  updateMachinePart(
+    id: number,
+    machinePart: Partial<MachinePart>,
+  ): Promise<MachinePart | undefined>;
+  deleteMachinePart(id: number): Promise<boolean>;
+
+  // Machine Parts to Machines Relations
+  getMachinePartToMachineRelations(): Promise<MachinePartToMachine[]>;
+  createMachinePartToMachineRelation(relation: InsertMachinePartToMachine): Promise<MachinePartToMachine>;
+  deleteMachinePartToMachineRelation(machineId: string, machinePartId: number): Promise<boolean>;
 
   // Master Batches
   getMasterBatches(): Promise<MasterBatch[]>;

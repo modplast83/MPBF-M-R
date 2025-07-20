@@ -11,6 +11,7 @@ import {
   ShoppingBag,
   Layout,
   Cog,
+  Settings,
   UserCheck,
   ArrowRight,
   Building2,
@@ -129,6 +130,13 @@ export default function SetupIndex() {
       icon: Cog,
       path: "/setup/machines",
       count: 8,
+    },
+    {
+      title: t("setup.machine_parts.title"),
+      description: t("setup.machine_parts.description"),
+      icon: Settings,
+      path: "/setup/machine-parts",
+      count: 15,
     },
     {
       title: t("setup.users.title"),

@@ -1,4 +1,5 @@
 import { Switch, Route } from "wouter";
+import { lazy } from "react";
 import Dashboard from "@/pages/dashboard";
 import MyDashboard from "@/pages/my-dashboard";
 import SetupIndex from "@/pages/setup/index";
@@ -161,6 +162,11 @@ function App() {
                         path="/setup/machines"
                         component={Machines}
                         module="Machines"
+                      />
+                      <ProtectedRoute
+                        path="/setup/machine-parts"
+                        component={lazy(() => import("./pages/setup/machine-parts"))}
+                        module="Machine Parts"
                       />
                       <ProtectedRoute
                         path="/setup/users"

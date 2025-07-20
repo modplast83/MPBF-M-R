@@ -10,6 +10,8 @@ import {
   insertItemSchema,
   insertSectionSchema,
   insertMachineSchema,
+  insertMachinePartSchema,
+  insertMachinePartToMachineSchema,
   insertMasterBatchSchema,
   insertCustomerProductSchema,
   insertOrderSchema,
@@ -1125,6 +1127,202 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(204).send();
     } catch (error) {
       res.status(500).json({ message: "Failed to delete machine" });
+    }
+  });
+
+  // Machine Parts
+  app.get("/api/machine-parts", async (_req: Request, res: Response) => {
+    try {
+      const machineParts = await storage.getMachineParts();
+      res.json(machineParts);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to get machine parts" });
+    }
+  });
+
+  app.get(
+    "/api/sections/:sectionId/machine-parts",
+    async (req: Request, res: Response) => {
+      try {
+        const section = await storage.getSection(req.params.sectionId);
+        if (!section) {
+          return res.status(404).json({ message: "Section not found" });
+        }
+
+        const machineParts = await storage.getMachinePartsBySection(
+          req.params.sectionId,
+        );
+        res.json(machineParts);
+      } catch (error) {
+        res.status(500).json({ message: "Failed to get machine parts" });
+      }
+    },
+  );
+
+  app.get(
+    "/api/machines/:machineId/machine-parts",
+    async (req: Request, res: Response) => {
+      try {
+        const machine = await storage.getMachine(req.params.machineId);
+        if (!machine) {
+          return res.status(404).json({ message: "Machine not found" });
+        }
+
+        const machineParts = await storage.getMachinePartsByMachine(
+          req.params.machineId,
+        );
+        res.json(machineParts);
+      } catch (error) {
+        res.status(500).json({ message: "Failed to get machine parts" });
+      }
+    },
+  );
+
+  app.get("/api/machine-parts/:id", async (req: Request, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid machine part ID" });
+      }
+
+      const machinePart = await storage.getMachinePart(id);
+      if (!machinePart) {
+        return res.status(404).json({ message: "Machine part not found" });
+      }
+      res.json(machinePart);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to get machine part" });
+    }
+  });
+
+  app.post("/api/machine-parts", async (req: Request, res: Response) => {
+    try {
+      const validatedData = insertMachinePartSchema.parse(req.body);
+
+      if (validatedData.sectionId) {
+        // Verify section exists if provided
+        const section = await storage.getSection(validatedData.sectionId);
+        if (!section) {
+          return res.status(404).json({ message: "Section not found" });
+        }
+      }
+
+      const machinePart = await storage.createMachinePart(validatedData);
+      res.status(201).json(machinePart);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res
+          .status(400)
+          .json({ message: "Invalid machine part data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Failed to create machine part" });
+    }
+  });
+
+  app.put("/api/machine-parts/:id", async (req: Request, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid machine part ID" });
+      }
+
+      const existingMachinePart = await storage.getMachinePart(id);
+      if (!existingMachinePart) {
+        return res.status(404).json({ message: "Machine part not found" });
+      }
+
+      const validatedData = insertMachinePartSchema.parse(req.body);
+
+      if (validatedData.sectionId) {
+        // Verify section exists if provided
+        const section = await storage.getSection(validatedData.sectionId);
+        if (!section) {
+          return res.status(404).json({ message: "Section not found" });
+        }
+      }
+
+      const machinePart = await storage.updateMachinePart(id, validatedData);
+      res.json(machinePart);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res
+          .status(400)
+          .json({ message: "Invalid machine part data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Failed to update machine part" });
+    }
+  });
+
+  app.delete("/api/machine-parts/:id", async (req: Request, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid machine part ID" });
+      }
+
+      const machinePart = await storage.getMachinePart(id);
+      if (!machinePart) {
+        return res.status(404).json({ message: "Machine part not found" });
+      }
+
+      await storage.deleteMachinePart(id);
+      res.status(204).send();
+    } catch (error) {
+      res.status(500).json({ message: "Failed to delete machine part" });
+    }
+  });
+
+  // Machine Parts to Machines Relations
+  app.get("/api/machine-parts-relations", async (_req: Request, res: Response) => {
+    try {
+      const relations = await storage.getMachinePartToMachineRelations();
+      res.json(relations);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to get machine part relations" });
+    }
+  });
+
+  app.post("/api/machine-parts-relations", async (req: Request, res: Response) => {
+    try {
+      const validatedData = insertMachinePartToMachineSchema.parse(req.body);
+
+      // Verify machine exists
+      const machine = await storage.getMachine(validatedData.machineId);
+      if (!machine) {
+        return res.status(404).json({ message: "Machine not found" });
+      }
+
+      // Verify machine part exists
+      const machinePart = await storage.getMachinePart(validatedData.machinePartId);
+      if (!machinePart) {
+        return res.status(404).json({ message: "Machine part not found" });
+      }
+
+      const relation = await storage.createMachinePartToMachineRelation(validatedData);
+      res.status(201).json(relation);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res
+          .status(400)
+          .json({ message: "Invalid relation data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Failed to create machine part relation" });
+    }
+  });
+
+  app.delete("/api/machine-parts-relations/:machineId/:machinePartId", async (req: Request, res: Response) => {
+    try {
+      const { machineId } = req.params;
+      const machinePartId = parseInt(req.params.machinePartId);
+
+      if (isNaN(machinePartId)) {
+        return res.status(400).json({ message: "Invalid machine part ID" });
+      }
+
+      await storage.deleteMachinePartToMachineRelation(machineId, machinePartId);
+      res.status(204).send();
+    } catch (error) {
+      res.status(500).json({ message: "Failed to delete machine part relation" });
     }
   });
 

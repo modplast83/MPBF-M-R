@@ -21,6 +21,12 @@ import {
   machines,
   type Machine,
   type InsertMachine,
+  machineParts,
+  type MachinePart,
+  type InsertMachinePart,
+  machinePartsToMachines,
+  type MachinePartToMachine,
+  type InsertMachinePartToMachine,
   masterBatches,
   type MasterBatch,
   type InsertMasterBatch,
@@ -615,6 +621,107 @@ export class DatabaseStorage implements IStorage {
 
   async deleteMachine(id: string): Promise<boolean> {
     await db.delete(machines).where(eq(machines.id, id));
+    return true;
+  }
+
+  // Machine Parts methods
+  async getMachineParts(): Promise<MachinePart[]> {
+    return await db.select().from(machineParts);
+  }
+
+  async getMachinePartsBySection(sectionId: string): Promise<MachinePart[]> {
+    return await db
+      .select()
+      .from(machineParts)
+      .where(eq(machineParts.sectionId, sectionId));
+  }
+
+  async getMachinePartsByMachine(machineId: string): Promise<MachinePart[]> {
+    return await db
+      .select({
+        id: machineParts.id,
+        machineName: machineParts.machineName,
+        sectionId: machineParts.sectionId,
+        partType: machineParts.partType,
+        name: machineParts.name,
+        code: machineParts.code,
+        serialNumber: machineParts.serialNumber,
+        size: machineParts.size,
+        sizeUnit: machineParts.sizeUnit,
+        sizeValue: machineParts.sizeValue,
+        note: machineParts.note,
+        lastMaintenanceDate: machineParts.lastMaintenanceDate,
+        createdAt: machineParts.createdAt,
+        updatedAt: machineParts.updatedAt,
+      })
+      .from(machineParts)
+      .innerJoin(
+        machinePartsToMachines,
+        eq(machineParts.id, machinePartsToMachines.machinePartId),
+      )
+      .where(eq(machinePartsToMachines.machineId, machineId));
+  }
+
+  async getMachinePart(id: number): Promise<MachinePart | undefined> {
+    const [machinePart] = await db
+      .select()
+      .from(machineParts)
+      .where(eq(machineParts.id, id));
+    return machinePart;
+  }
+
+  async createMachinePart(machinePart: InsertMachinePart): Promise<MachinePart> {
+    const [created] = await db
+      .insert(machineParts)
+      .values(machinePart)
+      .returning();
+    return created;
+  }
+
+  async updateMachinePart(
+    id: number,
+    machinePart: Partial<MachinePart>,
+  ): Promise<MachinePart | undefined> {
+    const [updated] = await db
+      .update(machineParts)
+      .set({ ...machinePart, updatedAt: new Date() })
+      .where(eq(machineParts.id, id))
+      .returning();
+    return updated;
+  }
+
+  async deleteMachinePart(id: number): Promise<boolean> {
+    await db.delete(machineParts).where(eq(machineParts.id, id));
+    return true;
+  }
+
+  // Machine Parts to Machines Relations methods
+  async getMachinePartToMachineRelations(): Promise<MachinePartToMachine[]> {
+    return await db.select().from(machinePartsToMachines);
+  }
+
+  async createMachinePartToMachineRelation(
+    relation: InsertMachinePartToMachine,
+  ): Promise<MachinePartToMachine> {
+    const [created] = await db
+      .insert(machinePartsToMachines)
+      .values(relation)
+      .returning();
+    return created;
+  }
+
+  async deleteMachinePartToMachineRelation(
+    machineId: string,
+    machinePartId: number,
+  ): Promise<boolean> {
+    await db
+      .delete(machinePartsToMachines)
+      .where(
+        and(
+          eq(machinePartsToMachines.machineId, machineId),
+          eq(machinePartsToMachines.machinePartId, machinePartId),
+        ),
+      );
     return true;
   }
 

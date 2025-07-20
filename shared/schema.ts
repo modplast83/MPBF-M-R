@@ -435,6 +435,53 @@ export const insertMachineSchema = createInsertSchema(machines);
 export type InsertMachine = z.infer<typeof insertMachineSchema>;
 export type Machine = typeof machines.$inferSelect;
 
+// Machine Parts table
+export const machineParts = pgTable("machine_parts", {
+  id: serial("id").primaryKey(),
+  machineName: text("machine_name").notNull(), // Machine name (not FK for flexibility)
+  sectionId: text("section_id").references(() => sections.id),
+  partType: text("part_type").notNull(), // Mechanic / Electronic
+  name: text("name").notNull(), // Part name
+  code: text("code").notNull().unique(), // Part code
+  serialNumber: text("serial_number"), // S/N
+  size: text("size"), // Size description
+  sizeUnit: text("size_unit"), // cm / inch / mm
+  sizeValue: doublePrecision("size_value"), // Size numeric value
+  note: text("note"), // Notes
+  lastMaintenanceDate: timestamp("last_maintenance_date"), // Last maintenance date
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const insertMachinePartSchema = createInsertSchema(machineParts).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+export type InsertMachinePart = z.infer<typeof insertMachinePartSchema>;
+export type MachinePart = typeof machineParts.$inferSelect;
+
+// Machine Parts to Machines relation table (many-to-many)
+export const machinePartsToMachines = pgTable("machine_parts_to_machines", {
+  id: serial("id").primaryKey(),
+  machineId: text("machine_id")
+    .notNull()
+    .references(() => machines.id, { onDelete: "cascade" }),
+  machinePartId: integer("machine_part_id")
+    .notNull()
+    .references(() => machineParts.id, { onDelete: "cascade" }),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => ({
+  uniqueIndex: unique().on(table.machineId, table.machinePartId),
+}));
+
+export const insertMachinePartToMachineSchema = createInsertSchema(machinePartsToMachines).omit({
+  id: true,
+  createdAt: true,
+});
+export type InsertMachinePartToMachine = z.infer<typeof insertMachinePartToMachineSchema>;
+export type MachinePartToMachine = typeof machinePartsToMachines.$inferSelect;
+
 // Raw Materials table
 export const rawMaterials = pgTable("raw_materials", {
   id: serial("id").primaryKey(),
@@ -1771,7 +1818,8 @@ export const maintenanceActions = pgTable("maintenance_actions", {
   actionDate: timestamp("action_date").defaultNow().notNull(),
   actionType: text("action_type").notNull(),
   partReplaced: text("part_replaced"),
-  partId: integer("part_id"),
+  partId: integer("part_id"), // Legacy field for backward compatibility
+  machinePartId: integer("machine_part_id").references(() => machineParts.id), // New reference to machine parts
   description: text("description").notNull(),
   performedBy: text("performed_by")
     .notNull()
