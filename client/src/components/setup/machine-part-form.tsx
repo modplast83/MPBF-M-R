@@ -20,7 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { insertMachinePartSchema, Section, MachinePart } from "@shared/schema";
+import { insertMachinePartSchema, Section, MachinePart, Machine } from "@shared/schema";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { API_ENDPOINTS } from "@/lib/constants";
@@ -58,9 +58,13 @@ export function MachinePartForm({
 }: MachinePartFormProps) {
   const { t } = useTranslation();
 
-  // Fetch sections for the dropdown
+  // Fetch sections and machines for the dropdowns
   const { data: sections = [] } = useQuery<Section[]>({
     queryKey: [API_ENDPOINTS.SECTIONS],
+  });
+
+  const { data: machines = [] } = useQuery<Machine[]>({
+    queryKey: [API_ENDPOINTS.MACHINES],
   });
 
   const form = useForm<MachinePartFormData>({
@@ -105,12 +109,20 @@ export function MachinePartForm({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>{t("setup.machine_parts.machine_name")}</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder={t("setup.machine_parts.form.machine_name_placeholder")}
-                    {...field}
-                  />
-                </FormControl>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder={t("setup.machine_parts.form.select_machine")} />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {machines.map((machine) => (
+                      <SelectItem key={machine.id} value={machine.name}>
+                        {machine.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 <FormMessage />
               </FormItem>
             )}

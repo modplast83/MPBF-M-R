@@ -572,6 +572,7 @@
         "updated_at": "Updated At",
         "form": {
           "machine_name_placeholder": "Enter machine name",
+          "select_machine": "Select machine",
           "machine_name_required": "Machine name is required",
           "part_type_required": "Part type is required",
           "select_part_type": "Select part type",
