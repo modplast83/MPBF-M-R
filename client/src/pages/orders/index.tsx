@@ -213,7 +213,7 @@ const OrderCard = ({
               <div className="flex items-center gap-2 flex-1 min-w-0">
                 <div className="min-w-0">
                   <h3 className="font-semibold text-gray-900 text-sm sm:text-base pt-[0px] pb-[0px] mt-[16px] mb-[16px]">#{order.id}</h3>
-                  <p className="text-xs text-gray-500 flex items-center gap-1 font-bold">
+                  <p className="text-xs text-gray-500 flex items-center gap-1 font-bold ml-[-38px] mr-[-38px] mt-[-10px] mb-[-10px] text-center">
                     <Calendar className="h-3 w-3 flex-shrink-0" />
                     <span className="truncate">{formatDateString(order.date)}</span>
                   </p>
