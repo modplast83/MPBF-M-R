@@ -135,18 +135,22 @@ export default function MachineParts() {
     }
   };
 
-  const columns = [
+  const columns: Array<{
+    header: string;
+    accessorKey?: keyof MachinePart;
+    cell?: (row: MachinePart) => React.ReactNode;
+  }> = [
     {
       header: t("setup.machine_parts.machine_name"),
-      accessorKey: "machineName",
+      accessorKey: "machineName" as keyof MachinePart,
     },
     {
       header: t("setup.machine_parts.part_name"),
-      accessorKey: "name",
+      accessorKey: "name" as keyof MachinePart,
     },
     {
       header: t("setup.machine_parts.part_code"),
-      accessorKey: "code",
+      accessorKey: "code" as keyof MachinePart,
     },
     {
       header: t("setup.machine_parts.part_type"),
@@ -243,9 +247,9 @@ export default function MachineParts() {
           <DataTable
             data={machinePartsData || []}
             columns={columns}
-            loading={isLoading}
-            searchPlaceholder={t("common.search_placeholder")}
-            emptyMessage={t("common.not_found")}
+            isLoading={isLoading}
+            searchable={true}
+            pagination={true}
           />
         </CardContent>
       </Card>
