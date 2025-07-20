@@ -252,7 +252,7 @@ const OrderCard = ({
               </Button>
             </Link>
             
-            <div className="flex items-center gap-2 justify-end">
+            <div className="flex items-center justify-between gap-2 pl-[0px] pr-[0px] ml-[-14px] mr-[-14px]">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="sm" className="hover:bg-gray-100">
