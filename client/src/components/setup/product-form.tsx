@@ -24,6 +24,7 @@ import { toast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { API_ENDPOINTS } from "@/lib/constants";
 import { useTranslation } from "react-i18next";
+import DesignPreview from "./design-preview";
 import {
   insertCustomerProductSchema,
   CustomerProduct,
@@ -1108,6 +1109,18 @@ export function ProductForm({
             )}
           />
         </div>
+
+        {/* Design Preview Section */}
+        {(form.watch("clicheFrontDesign") || form.watch("clicheBackDesign") || frontDesignFile || backDesignFile) && (
+          <div className="space-y-4">
+            <h3 className="text-lg font-medium">Design Preview</h3>
+            <DesignPreview
+              frontDesignPath={frontDesignFile ? URL.createObjectURL(frontDesignFile) : form.watch("clicheFrontDesign")}
+              backDesignPath={backDesignFile ? URL.createObjectURL(backDesignFile) : form.watch("clicheBackDesign")}
+              productName={form.watch("sizeCaption") || "Product"}
+            />
+          </div>
+        )}
 
         <div className="flex justify-end space-x-2 pt-4">
           {onSuccess && (

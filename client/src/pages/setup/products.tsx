@@ -20,6 +20,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { ProductForm } from "@/components/setup/product-form";
+import DesignPreview from "@/components/setup/design-preview";
 import { API_ENDPOINTS } from "@/lib/constants";
 import { apiRequest } from "@/lib/queryClient";
 import { toast } from "@/hooks/use-toast";
@@ -32,7 +33,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { Search, Printer } from "lucide-react";
+import { Search, Printer, Eye } from "lucide-react";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { useTranslation } from "react-i18next";
@@ -45,6 +46,7 @@ export default function Products() {
   const [isDuplicating, setIsDuplicating] = useState(false);
   const [deletingProduct, setDeletingProduct] =
     useState<CustomerProduct | null>(null);
+  const [viewingDesign, setViewingDesign] = useState<CustomerProduct | null>(null);
   const [selectedCustomerId, setSelectedCustomerId] = useState<string>("");
   const [searchQuery, setSearchQuery] = useState<string>("");
 
@@ -377,6 +379,17 @@ export default function Products() {
       id: "actions",
       cell: (row: CustomerProduct) => (
         <div className="flex space-x-2">
+          {(row.clicheFrontDesign || row.clicheBackDesign) && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setViewingDesign(row)}
+              className="text-blue-500 hover:text-blue-700"
+              title="View Design"
+            >
+              <Eye className="h-4 w-4" />
+            </Button>
+          )}
           <Button
             variant="ghost"
             size="icon"
@@ -552,6 +565,24 @@ export default function Products() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Design Preview Dialog */}
+      {viewingDesign && (
+        <Dialog open={!!viewingDesign} onOpenChange={() => setViewingDesign(null)}>
+          <DialogContent className="max-w-6xl max-h-[90vh]">
+            <DialogHeader>
+              <DialogTitle>
+                Design Preview - {viewingDesign.sizeCaption || `Product ${viewingDesign.id}`}
+              </DialogTitle>
+            </DialogHeader>
+            <DesignPreview
+              frontDesignPath={viewingDesign.clicheFrontDesign}
+              backDesignPath={viewingDesign.clicheBackDesign}
+              productName={viewingDesign.sizeCaption || `Product ${viewingDesign.id}`}
+            />
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 }
