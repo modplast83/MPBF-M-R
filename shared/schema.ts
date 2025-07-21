@@ -541,16 +541,14 @@ export const qualityChecks = pgTable("quality_checks", {
   checkTypeId: text("check_type_id")
     .notNull()
     .references(() => qualityCheckTypes.id),
-  rollId: text("roll_id").references(() => rolls.id),
-  jobOrderId: integer("job_order_id").references(() => jobOrders.id),
-  performedBy: text("performed_by").references(() => users.id),
-  timestamp: timestamp("timestamp").defaultNow().notNull(),
+  rollId: text("roll_id").references(() => rolls.id, { onDelete: "cascade" }),
+  jobOrderId: integer("job_order_id").references(() => jobOrders.id, { onDelete: "cascade" }),
+  checkedBy: text("checked_by").references(() => users.id),
+  checkedAt: timestamp("checked_at").defaultNow(),
   status: text("status").notNull().default("pending"), // pending, passed, failed
+  result: text("result"), // passed, failed
   notes: text("notes"),
-  checklistResults: text("checklist_results").array(),
-  parameterValues: text("parameter_values").array(),
-  issueSeverity: text("issue_severity"), // minor, major, critical
-  imageUrls: text("image_urls").array(),
+  createdAt: timestamp("created_at").defaultNow(),
 });
 
 export const insertQualityCheckSchema = createInsertSchema(qualityChecks).omit({
