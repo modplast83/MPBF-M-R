@@ -106,17 +106,17 @@ export default function DocumentArchive() {
 
   const columns = [
     {
-      accessorKey: "documentNumber",
+      accessorKey: "documentNumber" as keyof typeof documents[0],
       header: "Document #",
-      cell: ({ row }: { row: any }) => (
-        <div className="font-mono text-sm">{row.getValue("documentNumber")}</div>
+      cell: (row: any) => (
+        <div className="font-mono text-sm">{row.documentNumber}</div>
       ),
     },
     {
-      accessorKey: "documentType",
+      accessorKey: "documentType" as keyof typeof documents[0],
       header: "Type",
-      cell: ({ row }: { row: any }) => {
-        const type = row.getValue("documentType") as string;
+      cell: (row: any) => {
+        const type = row.documentType as string;
         const typeInfo = documentTypes.find(t => t.value === type);
         return (
           <Badge variant="secondary">
@@ -126,17 +126,17 @@ export default function DocumentArchive() {
       },
     },
     {
-      accessorKey: "title",
+      accessorKey: "title" as keyof typeof documents[0],
       header: "Title",
-      cell: ({ row }: { row: any }) => (
-        <div className="max-w-[300px] truncate">{row.getValue("title")}</div>
+      cell: (row: any) => (
+        <div className="max-w-[300px] truncate">{row.title}</div>
       ),
     },
     {
-      accessorKey: "createdByUser",
+      accessorKey: "createdByUser" as keyof typeof documents[0],
       header: "Created By",
-      cell: ({ row }: { row: any }) => {
-        const user = row.getValue("createdByUser") as any;
+      cell: (row: any) => {
+        const user = row.createdByUser as any;
         return (
           <div className="flex items-center gap-2">
             <User className="h-4 w-4" />
@@ -150,27 +150,27 @@ export default function DocumentArchive() {
       },
     },
     {
-      accessorKey: "archivedAt",
+      accessorKey: "archivedAt" as keyof typeof documents[0],
       header: "Archived",
-      cell: ({ row }: { row: any }) => (
+      cell: (row: any) => (
         <div className="text-sm text-muted-foreground">
-          {format(new Date(row.getValue("archivedAt")), "MMM dd, yyyy")}
+          {format(new Date(row.archivedAt), "MMM dd, yyyy")}
         </div>
       ),
     },
     {
-      accessorKey: "archiveReason",
+      accessorKey: "archiveReason" as keyof typeof documents[0],
       header: "Reason",
-      cell: ({ row }: { row: any }) => (
+      cell: (row: any) => (
         <div className="max-w-[200px] truncate text-sm">
-          {row.getValue("archiveReason") || "No reason specified"}
+          {row.archiveReason || "No reason specified"}
         </div>
       ),
     },
     {
       id: "actions",
-      cell: ({ row }: { row: any }) => {
-        const document = row.original;
+      header: "Actions",
+      cell: (row: any) => {
         return (
           <div className="flex items-center gap-2">
             <Button
@@ -178,14 +178,14 @@ export default function DocumentArchive() {
               size="sm"
               asChild
             >
-              <Link href={`/documents/${document.id}/view`}>
+              <Link href={`/documents/${row.id}/view`}>
                 <Eye className="h-4 w-4" />
               </Link>
             </Button>
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => unarchiveMutation.mutate(document.id)}
+              onClick={() => unarchiveMutation.mutate(row.id)}
               disabled={unarchiveMutation.isPending}
             >
               <ArchiveRestore className="h-4 w-4" />
@@ -287,14 +287,12 @@ export default function DocumentArchive() {
           <DataTable
             columns={columns}
             data={documents}
-            loading={isLoading}
-            pagination={{
-              page: currentPage,
-              pageSize: pageSize,
-              total: totalDocuments,
-              onPageChange: setCurrentPage,
-              onPageSizeChange: setPageSize,
-            }}
+            isLoading={isLoading}
+            pagination={true}
+            pageSize={pageSize}
+            currentPage={currentPage}
+            onPageChange={setCurrentPage}
+            onPageSizeChange={setPageSize}
           />
         </CardContent>
       </Card>

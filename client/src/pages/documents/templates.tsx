@@ -45,55 +45,55 @@ export default function DocumentTemplates() {
 
   const columns = [
     {
-      accessorKey: "templateName",
+      accessorKey: "templateName" as keyof typeof filteredTemplates[0],
       header: "Template Name",
-      cell: ({ row }: { row: any }) => (
+      cell: (row: any) => (
         <div className="flex items-center gap-2">
           <FileType className="h-4 w-4 text-muted-foreground" />
-          <span className="font-medium">{row.getValue("templateName")}</span>
+          <span className="font-medium">{row.templateName}</span>
         </div>
       ),
     },
     {
-      accessorKey: "documentType",
+      accessorKey: "documentType" as keyof typeof filteredTemplates[0],
       header: "Document Type",
-      cell: ({ row }: { row: any }) => (
+      cell: (row: any) => (
         <Badge variant="secondary">
-          {row.getValue("documentType")}
+          {row.documentType}
         </Badge>
       ),
     },
     {
-      accessorKey: "description",
+      accessorKey: "description" as keyof typeof filteredTemplates[0],
       header: "Description",
-      cell: ({ row }: { row: any }) => (
+      cell: (row: any) => (
         <div className="max-w-[300px] truncate">
-          {row.getValue("description") || "No description"}
+          {row.description || "No description"}
         </div>
       ),
     },
     {
-      accessorKey: "isDefault",
+      accessorKey: "isDefault" as keyof typeof filteredTemplates[0],
       header: "Default",
-      cell: ({ row }: { row: any }) => (
-        row.getValue("isDefault") ? (
+      cell: (row: any) => (
+        row.isDefault ? (
           <Badge variant="default">Default</Badge>
         ) : null
       ),
     },
     {
-      accessorKey: "createdAt",
+      accessorKey: "createdAt" as keyof typeof filteredTemplates[0],
       header: "Created",
-      cell: ({ row }: { row: any }) => (
+      cell: (row: any) => (
         <div className="text-sm text-muted-foreground">
-          {format(new Date(row.getValue("createdAt")), "MMM dd, yyyy")}
+          {format(new Date(row.createdAt), "MMM dd, yyyy")}
         </div>
       ),
     },
     {
       id: "actions",
-      cell: ({ row }: { row: any }) => {
-        const template = row.original;
+      header: "Actions",
+      cell: (row: any) => {
         return (
           <div className="flex items-center gap-2">
             <Button
@@ -191,7 +191,7 @@ export default function DocumentTemplates() {
           <DataTable
             columns={columns}
             data={filteredTemplates}
-            loading={isLoading}
+            isLoading={isLoading}
           />
         </CardContent>
       </Card>

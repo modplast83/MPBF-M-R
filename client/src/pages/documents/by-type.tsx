@@ -75,24 +75,24 @@ export default function DocumentsByType() {
 
   const columns = [
     {
-      accessorKey: "documentNumber",
+      accessorKey: "documentNumber" as keyof typeof documents[0],
       header: "Document #",
-      cell: ({ row }: { row: any }) => (
-        <div className="font-mono text-sm">{row.getValue("documentNumber")}</div>
+      cell: (row: any) => (
+        <div className="font-mono text-sm">{row.documentNumber}</div>
       ),
     },
     {
-      accessorKey: "title",
+      accessorKey: "title" as keyof typeof documents[0],
       header: "Title",
-      cell: ({ row }: { row: any }) => (
-        <div className="max-w-[400px] truncate">{row.getValue("title")}</div>
+      cell: (row: any) => (
+        <div className="max-w-[400px] truncate">{row.title}</div>
       ),
     },
     {
-      accessorKey: "status",
+      accessorKey: "status" as keyof typeof documents[0],
       header: "Status",
-      cell: ({ row }: { row: any }) => {
-        const status = row.getValue("status") as string;
+      cell: (row: any) => {
+        const status = row.status as string;
         const variants = {
           draft: "secondary",
           active: "default",
@@ -106,10 +106,10 @@ export default function DocumentsByType() {
       },
     },
     {
-      accessorKey: "priority",
+      accessorKey: "priority" as keyof typeof documents[0],
       header: "Priority", 
-      cell: ({ row }: { row: any }) => {
-        const priority = row.getValue("priority") as string;
+      cell: (row: any) => {
+        const priority = row.priority as string;
         const variants = {
           low: "secondary",
           medium: "default",
@@ -124,28 +124,28 @@ export default function DocumentsByType() {
       },
     },
     {
-      accessorKey: "viewCount",
+      accessorKey: "viewCount" as keyof typeof documents[0],
       header: "Views",
-      cell: ({ row }: { row: any }) => (
+      cell: (row: any) => (
         <div className="flex items-center gap-2">
           <Eye className="h-4 w-4" />
-          <span>{row.getValue("viewCount")}</span>
+          <span>{row.viewCount}</span>
         </div>
       ),
     },
     {
-      accessorKey: "createdAt",
+      accessorKey: "createdAt" as keyof typeof documents[0],
       header: "Created",
-      cell: ({ row }: { row: any }) => (
+      cell: (row: any) => (
         <div className="text-sm text-muted-foreground">
-          {format(new Date(row.getValue("createdAt")), "MMM dd, yyyy")}
+          {format(new Date(row.createdAt), "MMM dd, yyyy")}
         </div>
       ),
     },
     {
       id: "actions",
-      cell: ({ row }: { row: any }) => {
-        const document = row.original;
+      header: "Actions",
+      cell: (row: any) => {
         return (
           <div className="flex items-center gap-2">
             <Button
@@ -153,7 +153,7 @@ export default function DocumentsByType() {
               size="sm"
               asChild
             >
-              <Link href={`/documents/${document.id}/view`}>
+              <Link href={`/documents/${row.id}/view`}>
                 <Eye className="h-4 w-4" />
               </Link>
             </Button>
@@ -162,7 +162,7 @@ export default function DocumentsByType() {
               size="sm"
               asChild
             >
-              <Link href={`/documents/${document.id}/edit`}>
+              <Link href={`/documents/${row.id}/edit`}>
                 <Edit className="h-4 w-4" />
               </Link>
             </Button>
@@ -245,14 +245,12 @@ export default function DocumentsByType() {
           <DataTable
             columns={columns}
             data={documents}
-            loading={isLoading}
-            pagination={{
-              page: currentPage,
-              pageSize: pageSize,
-              total: totalDocuments,
-              onPageChange: setCurrentPage,
-              onPageSizeChange: setPageSize,
-            }}
+            isLoading={isLoading}
+            pagination={true}
+            pageSize={pageSize}
+            currentPage={currentPage}
+            onPageChange={setCurrentPage}
+            onPageSizeChange={setPageSize}
           />
         </CardContent>
       </Card>
