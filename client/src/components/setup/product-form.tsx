@@ -98,6 +98,8 @@ export function ProductForm({
     volum: z.string().nullable().optional(),
     knife: z.string().nullable().optional(),
     notes: z.string().nullable().optional(),
+    clicheFrontDesign: z.string().nullable().optional(),
+    clicheBackDesign: z.string().nullable().optional(),
   });
 
   // Set up the form
@@ -132,6 +134,8 @@ export function ProductForm({
       volum: product?.volum || null,
       knife: product?.knife || null,
       notes: product?.notes || null,
+      clicheFrontDesign: product?.clicheFrontDesign || null,
+      clicheBackDesign: product?.clicheBackDesign || null,
     },
   });
 
@@ -978,6 +982,75 @@ export function ProductForm({
                     value={field.value || ""}
                     onChange={(e) => field.onChange(e.target.value || null)}
                   />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+
+        {/* Cliché Design Attachments Section */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <FormField
+            control={form.control}
+            name="clicheFrontDesign"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t("setup.products.form.cliche_front_design")}</FormLabel>
+                <FormControl>
+                  <div className="space-y-2">
+                    <Input
+                      type="file"
+                      accept="image/*,.pdf"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          // For now, we'll store just the filename
+                          // In a full implementation, you'd upload to server and store URL
+                          field.onChange(`uploads/cliche-front-${Date.now()}-${file.name}`);
+                        }
+                      }}
+                      className="file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                    />
+                    {field.value && (
+                      <div className="text-sm text-green-600">
+                        File selected: {field.value.split('/').pop()}
+                      </div>
+                    )}
+                  </div>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="clicheBackDesign"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t("setup.products.form.cliche_back_design")}</FormLabel>
+                <FormControl>
+                  <div className="space-y-2">
+                    <Input
+                      type="file"
+                      accept="image/*,.pdf"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          // For now, we'll store just the filename
+                          // In a full implementation, you'd upload to server and store URL
+                          field.onChange(`uploads/cliche-back-${Date.now()}-${file.name}`);
+                        }
+                      }}
+                      className="file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                    />
+                    {field.value && (
+                      <div className="text-sm text-green-600">
+                        File selected: {field.value.split('/').pop()}
+                      </div>
+                    )}
+                  </div>
                 </FormControl>
                 <FormMessage />
               </FormItem>

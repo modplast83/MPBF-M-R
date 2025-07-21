@@ -168,6 +168,8 @@ export const customerProducts = pgTable(
     volum: text("volum"), // Volum
     knife: text("knife"), // Knife
     notes: text("notes"), // Notes
+    clicheFrontDesign: text("cliche_front_design"), // Cliché Front Design File Path
+    clicheBackDesign: text("cliche_back_design"), // Cliché Back Design File Path
   },
   (table) => {
     return {

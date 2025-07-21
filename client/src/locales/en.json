@@ -468,6 +468,8 @@
           "knife_placeholder": "Knife",
           "notes": "Notes",
           "notes_placeholder": "Notes",
+          "cliche_front_design": "Cliché Front Design",
+          "cliche_back_design": "Cliché Back Design",
           "not_printed": "Not Printed",
           "submit": "Submit",
           "submitting": "Submitting...",

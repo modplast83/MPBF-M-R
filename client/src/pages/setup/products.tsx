@@ -353,6 +353,26 @@ export default function Products() {
         row.packageKg ? `${Number(row.packageKg).toFixed(2)}` : "-",
     },
     {
+      header: "Cliché Front",
+      id: "clicheFrontDesign",
+      cell: (row: CustomerProduct) => 
+        row.clicheFrontDesign ? (
+          <span className="text-green-600 text-sm">✓ Attached</span>
+        ) : (
+          <span className="text-gray-400 text-sm">- No file</span>
+        ),
+    },
+    {
+      header: "Cliché Back", 
+      id: "clicheBackDesign",
+      cell: (row: CustomerProduct) => 
+        row.clicheBackDesign ? (
+          <span className="text-green-600 text-sm">✓ Attached</span>
+        ) : (
+          <span className="text-gray-400 text-sm">- No file</span>
+        ),
+    },
+    {
       header: t("setup.products.actions"),
       id: "actions",
       cell: (row: CustomerProduct) => (

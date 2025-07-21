@@ -50,6 +50,18 @@ This is a comprehensive production management system built with React, TypeScrip
 
 ## Recent Changes
 
+### July 21, 2025 - Cliché (Plate) Design File Attachment for Products ✅
+- **Database Schema Enhancement**: Added two new attachment columns to customer_products table for Cliché design files
+- **File Upload Functionality**: Added `cliche_front_design` and `cliche_back_design` file path columns to support design attachments
+- **Product Form Enhancement**: Updated product creation/editing form with file upload inputs for Cliché Front and Back designs
+- **File Input Validation**: Added file type restrictions (image/* and .pdf) with proper file name generation
+- **Table Display Enhancement**: Added new columns to products table showing attachment status with visual indicators
+- **User Experience Enhancement**: File upload inputs display selected file names with green confirmation text
+- **Translation Support**: Added English translation keys for the new attachment fields
+- **Database Migration**: Successfully altered customer_products table with proper column additions using CASCADE
+- Products setup now supports complete Cliché (Plate) design file management with front and back design attachments
+- Enhanced production workflow with proper design file tracking for manufacturing specifications
+
 ### July 21, 2025 - Cascading Delete Implementation for Orders ✅
 - **Database Schema Updates**: Added CASCADE DELETE constraints to all order-related foreign key relationships
 - **Job Orders Cascade**: Deleting an order automatically removes all associated job orders
