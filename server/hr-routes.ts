@@ -272,23 +272,24 @@ export function setupHRRoutes(app: Express) {
   // Enhanced Time Attendance with geofencing and overtime validation
   app.post("/api/hr/check-in", async (req, res) => {
     try {
-      const { userId, latitude, longitude, manualEntry = false } = req.body;
+      const { userId, latitude, longitude } = req.body;
 
-      // Skip geofence validation for manual entries or when coordinates are default (0,0)
-      const skipGeofenceValidation =
-        manualEntry || (latitude === 0 && longitude === 0);
+      // Validate that coordinates are provided
+      if (latitude === undefined || longitude === undefined || latitude === 0 && longitude === 0) {
+        return res
+          .status(400)
+          .json({ error: "Location coordinates are required for check-in" });
+      }
 
-      if (!skipGeofenceValidation) {
-        // Check if user is within geofence for GPS-based check-ins
-        const geofences = await storage.checkUserInGeofence(
-          latitude,
-          longitude,
-        );
-        if (geofences.length === 0) {
-          return res
-            .status(400)
-            .json({ error: "You are not within the factory area" });
-        }
+      // Always check if user is within geofence
+      const geofences = await storage.checkUserInGeofence(
+        latitude,
+        longitude,
+      );
+      if (geofences.length === 0) {
+        return res
+          .status(400)
+          .json({ error: "You are not within the factory area" });
       }
 
       // Check if already checked in today
@@ -330,29 +331,30 @@ export function setupHRRoutes(app: Express) {
   // Break start endpoint
   app.post("/api/hr/break-start", async (req, res) => {
     try {
-      const { userId, latitude, longitude, manualEntry = false } = req.body;
+      const { userId, latitude, longitude } = req.body;
 
       if (!userId) {
         return res.status(400).json({ error: "User ID is required" });
       }
 
-      // Skip geofence validation for manual entries or when coordinates are default (0,0)
-      const skipGeofenceValidation =
-        manualEntry || (latitude === 0 && longitude === 0);
+      // Validate that coordinates are provided
+      if (latitude === undefined || longitude === undefined || latitude === 0 && longitude === 0) {
+        return res
+          .status(400)
+          .json({ error: "Location coordinates are required to start break" });
+      }
 
-      if (!skipGeofenceValidation) {
-        // Check if user is within geofence for GPS-based break start
-        const geofences = await storage.checkUserInGeofence(
-          latitude,
-          longitude,
-        );
-        if (geofences.length === 0) {
-          return res
-            .status(400)
-            .json({
-              error: "You must be within the factory area to start break",
-            });
-        }
+      // Always check if user is within geofence
+      const geofences = await storage.checkUserInGeofence(
+        latitude,
+        longitude,
+      );
+      if (geofences.length === 0) {
+        return res
+          .status(400)
+          .json({
+            error: "You must be within the factory area to start break",
+          });
       }
 
       // Get today's attendance record
@@ -406,29 +408,30 @@ export function setupHRRoutes(app: Express) {
   // Break end endpoint
   app.post("/api/hr/break-end", async (req, res) => {
     try {
-      const { userId, latitude, longitude, manualEntry = false } = req.body;
+      const { userId, latitude, longitude } = req.body;
 
       if (!userId) {
         return res.status(400).json({ error: "User ID is required" });
       }
 
-      // Skip geofence validation for manual entries or when coordinates are default (0,0)
-      const skipGeofenceValidation =
-        manualEntry || (latitude === 0 && longitude === 0);
+      // Validate that coordinates are provided
+      if (latitude === undefined || longitude === undefined || latitude === 0 && longitude === 0) {
+        return res
+          .status(400)
+          .json({ error: "Location coordinates are required to end break" });
+      }
 
-      if (!skipGeofenceValidation) {
-        // Check if user is within geofence for GPS-based break end
-        const geofences = await storage.checkUserInGeofence(
-          latitude,
-          longitude,
-        );
-        if (geofences.length === 0) {
-          return res
-            .status(400)
-            .json({
-              error: "You must be within the factory area to end break",
-            });
-        }
+      // Always check if user is within geofence
+      const geofences = await storage.checkUserInGeofence(
+        latitude,
+        longitude,
+      );
+      if (geofences.length === 0) {
+        return res
+          .status(400)
+          .json({
+            error: "You must be within the factory area to end break",
+          });
       }
 
       // Get today's attendance record
@@ -482,15 +485,18 @@ export function setupHRRoutes(app: Express) {
         latitude,
         longitude,
         isAutomatic = false,
-        manualEntry = false,
       } = req.body;
 
-      // Skip geofence validation for manual entries or when coordinates are default (0,0)
-      const skipGeofenceValidation =
-        manualEntry || isAutomatic || (latitude === 0 && longitude === 0);
+      // Allow automatic check-out to skip geofence validation (for leaving factory area)
+      if (!isAutomatic) {
+        // Validate that coordinates are provided for manual check-outs
+        if (latitude === undefined || longitude === undefined || latitude === 0 && longitude === 0) {
+          return res
+            .status(400)
+            .json({ error: "Location coordinates are required for check-out" });
+        }
 
-      if (!skipGeofenceValidation) {
-        // Check if user is within geofence for GPS-based check-out
+        // Check if user is within geofence for manual check-out
         const geofences = await storage.checkUserInGeofence(
           latitude,
           longitude,

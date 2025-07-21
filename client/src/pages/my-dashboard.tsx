@@ -62,6 +62,45 @@ import {
   Eye,
 } from "lucide-react";
 
+// Helper function to get user's current location
+const getCurrentLocation = (): Promise<{ latitude: number; longitude: number }> => {
+  return new Promise((resolve, reject) => {
+    if (!navigator.geolocation) {
+      reject(new Error("Geolocation is not supported by this browser"));
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        resolve({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        });
+      },
+      (error) => {
+        let errorMessage = "Unable to get location";
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
+            errorMessage = "Location access denied. Please enable location access to check in/out.";
+            break;
+          case error.POSITION_UNAVAILABLE:
+            errorMessage = "Location information is unavailable.";
+            break;
+          case error.TIMEOUT:
+            errorMessage = "Location request timed out.";
+            break;
+        }
+        reject(new Error(errorMessage));
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 60000,
+      }
+    );
+  });
+};
+
 interface AttendanceRecord {
   id: number;
   userId: string;
@@ -202,13 +241,15 @@ export default function MyDashboard() {
 
   // Check-in mutation
   const checkInMutation = useMutation({
-    mutationFn: () =>
-      apiRequest("POST", "/api/hr/check-in", {
+    mutationFn: async () => {
+      // Get user's current location
+      const position = await getCurrentLocation();
+      return apiRequest("POST", "/api/hr/check-in", {
         userId: user?.id,
-        latitude: 0,
-        longitude: 0,
-        manualEntry: true,
-      }),
+        latitude: position.latitude,
+        longitude: position.longitude,
+      });
+    },
     onSuccess: () => {
       toast({
         title: t("common.success"),
@@ -227,13 +268,15 @@ export default function MyDashboard() {
 
   // Check-out mutation
   const checkOutMutation = useMutation({
-    mutationFn: () =>
-      apiRequest("POST", "/api/hr/check-out", {
+    mutationFn: async () => {
+      // Get user's current location
+      const position = await getCurrentLocation();
+      return apiRequest("POST", "/api/hr/check-out", {
         userId: user?.id,
-        latitude: 0,
-        longitude: 0,
-        manualEntry: true,
-      }),
+        latitude: position.latitude,
+        longitude: position.longitude,
+      });
+    },
     onSuccess: () => {
       toast({
         title: t("common.success"),
@@ -252,13 +295,15 @@ export default function MyDashboard() {
 
   // Break start mutation
   const breakStartMutation = useMutation({
-    mutationFn: () =>
-      apiRequest("POST", "/api/hr/break-start", {
+    mutationFn: async () => {
+      // Get user's current location
+      const position = await getCurrentLocation();
+      return apiRequest("POST", "/api/hr/break-start", {
         userId: user?.id,
-        latitude: 0,
-        longitude: 0,
-        manualEntry: true,
-      }),
+        latitude: position.latitude,
+        longitude: position.longitude,
+      });
+    },
     onSuccess: () => {
       toast({
         title: t("common.success"),
@@ -277,13 +322,15 @@ export default function MyDashboard() {
 
   // Break end mutation
   const breakEndMutation = useMutation({
-    mutationFn: () =>
-      apiRequest("POST", "/api/hr/break-end", {
+    mutationFn: async () => {
+      // Get user's current location
+      const position = await getCurrentLocation();
+      return apiRequest("POST", "/api/hr/break-end", {
         userId: user?.id,
-        latitude: 0,
-        longitude: 0,
-        manualEntry: true,
-      }),
+        latitude: position.latitude,
+        longitude: position.longitude,
+      });
+    },
     onSuccess: () => {
       toast({
         title: t("common.success"),
