@@ -53,7 +53,9 @@ import {
   Package, 
   ArrowLeft,
   FileText,
-  Download
+  Download,
+  Eye,
+  Image
 } from "lucide-react";
 
 interface OrderDetailsProps {
@@ -68,6 +70,7 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
   const [rollDialogOpen, setRollDialogOpen] = useState(false);
   const [jobOrderDialogOpen, setJobOrderDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [designDialogOpen, setDesignDialogOpen] = useState(false);
   const [selectedJobOrder, setSelectedJobOrder] = useState<JobOrder | null>(
     null,
   );
@@ -1147,12 +1150,13 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
                 <FileText className="h-4 w-4 mr-2" />
                 Mark as Completed
               </Button>
-              <Link href="/orders" className="w-full">
-                <Button className="inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden group bg-blue-600 hover:bg-blue-700 text-white border-blue-600 hover:border-blue-700 w-full justify-center pt-[12px] pb-[12px] pl-[20px] pr-[20px]">
-                  <ArrowLeft className="h-4 w-4 mr-2" />
-                  Back to Orders
-                </Button>
-              </Link>
+              <Button 
+                className="inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden group bg-purple-600 hover:bg-purple-700 text-white border-purple-600 hover:border-purple-700 w-full justify-center pt-[12px] pb-[12px] pl-[20px] pr-[20px]"
+                onClick={() => setDesignDialogOpen(true)}
+              >
+                <Eye className="h-4 w-4 mr-2" />
+                View Order Products Cliche Designs
+              </Button>
             </>
           ) : (
             <>
@@ -1173,12 +1177,13 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
                 <FileText className="h-4 w-4 mr-2" />
                 Mark as Completed
               </Button>
-              <Link href="/orders">
-                <Button className="inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden group bg-blue-600 hover:bg-blue-700 text-white border-blue-600 hover:border-blue-700 pt-[10px] pb-[10px] pl-[20px] pr-[20px] ml-[15px] mr-[15px]">
-                  <ArrowLeft className="h-4 w-4 mr-2" />
-                  Back to Orders
-                </Button>
-              </Link>
+              <Button 
+                className="inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden group bg-purple-600 hover:bg-purple-700 text-white border-purple-600 hover:border-purple-700 pt-[10px] pb-[10px] pl-[20px] pr-[20px] ml-[15px] mr-[15px]"
+                onClick={() => setDesignDialogOpen(true)}
+              >
+                <Eye className="h-4 w-4 mr-2" />
+                View Order Products Cliche Designs
+              </Button>
             </>
           )}
         </CardFooter>
@@ -1259,6 +1264,209 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
               disabled={createRollMutation.isPending}
             >
               {createRollMutation.isPending ? "Creating..." : "Create Roll"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Order Products Cliche Designs Dialog */}
+      <Dialog open={designDialogOpen} onOpenChange={setDesignDialogOpen}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-auto">
+          <DialogHeader>
+            <DialogTitle>Order Products Cliche Designs</DialogTitle>
+          </DialogHeader>
+
+          <div className="space-y-6 py-4">
+            {jobOrders && jobOrders.length > 0 ? (
+              jobOrders.map((jobOrder) => {
+                const product = customerProducts?.find(
+                  (p) => p.id === jobOrder.customerProductId
+                );
+                
+                if (!product) return null;
+
+                const hasDesigns = product.clicheFrontDesign || product.clicheBackDesign;
+
+                return (
+                  <div
+                    key={jobOrder.id}
+                    className="border rounded-lg p-4 space-y-4 bg-gray-50"
+                  >
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-lg font-semibold">
+                        Job Order #{jobOrder.id}
+                      </h3>
+                      <div className="text-sm text-gray-600">
+                        Quantity: {jobOrder.quantity} Kg
+                      </div>
+                    </div>
+
+                    <div className="text-sm space-y-1">
+                      <p><strong>Product:</strong> {items?.find(i => i.id === product.itemId)?.name || 'Unknown'}</p>
+                      <p><strong>Size:</strong> {product.sizeCaption || 'N/A'}</p>
+                      <p><strong>Dimensions:</strong> {product.width || 'N/A'} × {product.lengthCm || 'N/A'} cm</p>
+                    </div>
+
+                    {hasDesigns ? (
+                      <div className="grid md:grid-cols-2 gap-6">
+                        {/* Front Design */}
+                        {product.clicheFrontDesign && (
+                          <div className="space-y-3">
+                            <h4 className="font-medium flex items-center">
+                              <Image className="h-4 w-4 mr-2" />
+                              Front Design
+                            </h4>
+                            <div className="border rounded-lg overflow-hidden bg-white">
+                              <img
+                                src={product.clicheFrontDesign}
+                                alt="Front Cliche Design"
+                                className="w-full h-auto max-h-64 object-contain"
+                                onError={(e) => {
+                                  (e.currentTarget as HTMLElement).style.display = 'none';
+                                  (e.currentTarget.nextElementSibling as HTMLElement).style.display = 'block';
+                                }}
+                              />
+                              <div 
+                                className="hidden p-4 text-center text-gray-500"
+                              >
+                                Image not available
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Back Design */}
+                        {product.clicheBackDesign && (
+                          <div className="space-y-3">
+                            <h4 className="font-medium flex items-center">
+                              <Image className="h-4 w-4 mr-2" />
+                              Back Design
+                            </h4>
+                            <div className="border rounded-lg overflow-hidden bg-white">
+                              <img
+                                src={product.clicheBackDesign}
+                                alt="Back Cliche Design"
+                                className="w-full h-auto max-h-64 object-contain"
+                                onError={(e) => {
+                                  (e.currentTarget as HTMLElement).style.display = 'none';
+                                  (e.currentTarget.nextElementSibling as HTMLElement).style.display = 'block';
+                                }}
+                              />
+                              <div 
+                                className="hidden p-4 text-center text-gray-500"
+                              >
+                                Image not available
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="text-center py-8 text-gray-500">
+                        No designs available for this product
+                      </div>
+                    )}
+                  </div>
+                );
+              })
+            ) : (
+              <div className="text-center py-8 text-gray-500">
+                No job orders available
+              </div>
+            )}
+          </div>
+
+          <DialogFooter>
+            <Button 
+              className="inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden group bg-gray-200 hover:bg-gray-300 text-gray-800 border-gray-200 hover:border-gray-300 pt-[10px] pb-[10px] pl-[16px] pr-[16px]"
+              onClick={() => setDesignDialogOpen(false)}
+            >
+              Close
+            </Button>
+            <Button
+              className="inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden group bg-blue-600 hover:bg-blue-700 text-white border-blue-600 hover:border-blue-700 pt-[10px] pb-[10px] pl-[16px] pr-[16px]"
+              onClick={() => {
+                const printWindow = window.open('', '_blank');
+                if (printWindow) {
+                  let printContent = `
+                    <html>
+                      <head>
+                        <title>Order ${order?.id} - Product Designs</title>
+                        <style>
+                          body { font-family: Arial, sans-serif; margin: 20px; }
+                          .job-order { margin-bottom: 30px; page-break-inside: avoid; }
+                          .header { margin-bottom: 15px; }
+                          .designs { display: flex; flex-wrap: wrap; gap: 20px; }
+                          .design { flex: 1; min-width: 300px; }
+                          .design h4 { margin-bottom: 10px; }
+                          .design img { max-width: 100%; height: auto; border: 1px solid #ccc; }
+                          @media print {
+                            .job-order { page-break-after: always; }
+                          }
+                        </style>
+                      </head>
+                      <body>
+                        <h1>Order #${order?.id} - Product Designs</h1>
+                        <p><strong>Customer:</strong> ${customer?.name || 'N/A'}</p>
+                        <p><strong>Date:</strong> ${order?.date ? formatDateString(order.date) : 'N/A'}</p>
+                        <hr/>
+                  `;
+                  
+                  jobOrders?.forEach((jobOrder) => {
+                    const product = customerProducts?.find(p => p.id === jobOrder.customerProductId);
+                    if (product && (product.clicheFrontDesign || product.clicheBackDesign)) {
+                      const itemName = items?.find(i => i.id === product.itemId)?.name || 'Unknown';
+                      
+                      printContent += `
+                        <div class="job-order">
+                          <div class="header">
+                            <h2>Job Order #${jobOrder.id}</h2>
+                            <p><strong>Product:</strong> ${itemName}</p>
+                            <p><strong>Quantity:</strong> ${jobOrder.quantity} Kg</p>
+                            <p><strong>Size:</strong> ${product.sizeCaption || 'N/A'}</p>
+                          </div>
+                          <div class="designs">
+                      `;
+                      
+                      if (product.clicheFrontDesign) {
+                        printContent += `
+                          <div class="design">
+                            <h4>Front Design</h4>
+                            <img src="${product.clicheFrontDesign}" alt="Front Design" />
+                          </div>
+                        `;
+                      }
+                      
+                      if (product.clicheBackDesign) {
+                        printContent += `
+                          <div class="design">
+                            <h4>Back Design</h4>
+                            <img src="${product.clicheBackDesign}" alt="Back Design" />
+                          </div>
+                        `;
+                      }
+                      
+                      printContent += `
+                          </div>
+                        </div>
+                      `;
+                    }
+                  });
+                  
+                  printContent += `
+                      </body>
+                    </html>
+                  `;
+                  
+                  printWindow.document.write(printContent);
+                  printWindow.document.close();
+                  printWindow.focus();
+                  setTimeout(() => printWindow.print(), 500);
+                }
+              }}
+            >
+              <Printer className="h-4 w-4 mr-2" />
+              Print Designs
             </Button>
           </DialogFooter>
         </DialogContent>
