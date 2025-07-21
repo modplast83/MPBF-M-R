@@ -183,8 +183,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Move file to uploads directory
       await file.mv(filePath);
 
-      // Return relative path for database storage
-      const relativePath = `attached_assets/${fileName}`;
+      // Return correct path that matches static file serving configuration
+      const relativePath = `/assets/${fileName}`;
       
       res.json({ 
         message: "File uploaded successfully",
