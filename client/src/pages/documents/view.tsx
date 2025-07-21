@@ -206,11 +206,9 @@ export default function DocumentView() {
         <body>
           <div class="print-header">
             <div class="company-logo">
-              <div style="width: 80px; height: 80px; background-color: #065f46; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
-                <span style="color: white; font-weight: bold; font-size: 16px;">MPBF</span>
-              </div>
+              <img src="https://mpbf.modplastic.com/assets/FactoryLogoHPNGW%20Green-ovYSWk-2.png" alt="Company Logo" style="width: 80px; height: 80px; margin: 0 auto 10px; display: block; border-radius: 0;" />
             </div>
-            <div class="company-name">MODERN PLASTIC BAG FACTORY</div>
+            <div class="company-name" style="font-weight: bold;">MODERN PLASTIC BAG FACTORY</div>
             <div class="company-name-ar">مصنع أكياس البلاستيك الحديث</div>
           </div>
           
@@ -251,6 +249,9 @@ export default function DocumentView() {
             </div>
           </div>
           
+          <h2 style="text-align: center; font-size: 24px; font-weight: bold;">
+            ${document.documentType}
+          </h2>
           <h1 style="color: #065f46; border-bottom: 2px solid #065f46; padding-bottom: 10px;">
             ${document.title}
           </h1>
