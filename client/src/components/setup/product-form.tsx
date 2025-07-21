@@ -2,7 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { z } from "zod";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   Form,
   FormControl,
@@ -48,6 +48,11 @@ export function ProductForm({
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const isEditing = !!product && !isDuplicate;
+  
+  // State for file uploads
+  const [frontDesignFile, setFrontDesignFile] = useState<File | null>(null);
+  const [backDesignFile, setBackDesignFile] = useState<File | null>(null);
+  const [uploadingFiles, setUploadingFiles] = useState(false);
 
   // Fetch required data
   const { data: customers = [], isLoading: customersLoading } = useQuery<
@@ -221,7 +226,7 @@ export function ProductForm({
       watchedRightF > 0 &&
       watchedWidth > 0 &&
       watchedLeftF > 0 &&
-      watchedLengthCm > 0 &&
+      typeof watchedLengthCm === 'number' && watchedLengthCm > 0 &&
       watchedThicknessOne > 0
     ) {
       const calculatedVolume =
@@ -261,11 +266,45 @@ export function ProductForm({
   const filteredItems =
     items?.filter((item) => item.categoryId === watchedCategoryId) || [];
 
+  // Function to upload file
+  const uploadFile = async (file: File, prefix: string): Promise<string> => {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('prefix', prefix);
+    
+    const response = await fetch('/api/upload', {
+      method: 'POST',
+      body: formData,
+    });
+    
+    if (!response.ok) {
+      throw new Error('File upload failed');
+    }
+    
+    const result = await response.json();
+    return result.filePath;
+  };
+
   // Create mutation for adding/updating product
   const mutation = useMutation({
     mutationFn: async (values: z.infer<typeof formSchema>) => {
-      // Handle all fields to ensure correct typing and validation
-      const payload = {
+      setUploadingFiles(true);
+      
+      try {
+        // Upload files first if they exist
+        let frontDesignPath = values.clicheFrontDesign;
+        let backDesignPath = values.clicheBackDesign;
+
+        if (frontDesignFile) {
+          frontDesignPath = await uploadFile(frontDesignFile, 'cliche-front');
+        }
+
+        if (backDesignFile) {
+          backDesignPath = await uploadFile(backDesignFile, 'cliche-back');
+        }
+
+        // Handle all fields to ensure correct typing and validation
+        const payload = {
         customerId: values.customerId,
         categoryId: values.categoryId,
         itemId: values.itemId,
@@ -293,11 +332,13 @@ export function ProductForm({
         volum: values.volum || null,
         knife: values.knife || null,
         notes: values.notes || null,
+        // Add file upload paths
+        clicheFrontDesign: frontDesignPath,
+        clicheBackDesign: backDesignPath,
       };
 
-      console.log("Submitting customer product with payload:", payload);
+        console.log("Submitting customer product with payload:", payload);
 
-      try {
         if (isEditing && product && !isDuplicate) {
           // Only do an update if we're editing and not duplicating
           await apiRequest(
@@ -312,6 +353,8 @@ export function ProductForm({
       } catch (error) {
         console.error("Error submitting customer product:", error);
         throw error;
+      } finally {
+        setUploadingFiles(false);
       }
     },
     onSuccess: () => {
@@ -1005,16 +1048,20 @@ export function ProductForm({
                       onChange={(e) => {
                         const file = e.target.files?.[0];
                         if (file) {
-                          // For now, we'll store just the filename
-                          // In a full implementation, you'd upload to server and store URL
-                          field.onChange(`uploads/cliche-front-${Date.now()}-${file.name}`);
+                          setFrontDesignFile(file);
+                          field.onChange(`cliche-front-${Date.now()}-${file.name}`);
                         }
                       }}
                       className="file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
                     />
                     {field.value && (
                       <div className="text-sm text-green-600">
-                        File selected: {field.value.split('/').pop()}
+                        ✓ File selected: {field.value.split('-').slice(2).join('-')}
+                      </div>
+                    )}
+                    {frontDesignFile && (
+                      <div className="text-sm text-blue-600">
+                        Ready to upload: {frontDesignFile.name}
                       </div>
                     )}
                   </div>
@@ -1038,16 +1085,20 @@ export function ProductForm({
                       onChange={(e) => {
                         const file = e.target.files?.[0];
                         if (file) {
-                          // For now, we'll store just the filename
-                          // In a full implementation, you'd upload to server and store URL
-                          field.onChange(`uploads/cliche-back-${Date.now()}-${file.name}`);
+                          setBackDesignFile(file);
+                          field.onChange(`cliche-back-${Date.now()}-${file.name}`);
                         }
                       }}
                       className="file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
                     />
                     {field.value && (
                       <div className="text-sm text-green-600">
-                        File selected: {field.value.split('/').pop()}
+                        ✓ File selected: {field.value.split('-').slice(2).join('-')}
+                      </div>
+                    )}
+                    {backDesignFile && (
+                      <div className="text-sm text-blue-600">
+                        Ready to upload: {backDesignFile.name}
                       </div>
                     )}
                   </div>
@@ -1064,8 +1115,10 @@ export function ProductForm({
               {t("setup.products.form.cancel")}
             </Button>
           )}
-          <Button type="submit" disabled={mutation.isPending}>
-            {mutation.isPending
+          <Button type="submit" disabled={mutation.isPending || uploadingFiles}>
+            {uploadingFiles
+              ? "Uploading files..."
+              : mutation.isPending
               ? t("setup.products.form.submitting")
               : t("setup.products.form.submit")}
           </Button>

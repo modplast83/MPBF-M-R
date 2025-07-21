@@ -158,6 +158,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Setup authentication
   setupAuth(app);
 
+  // File Upload Route
+  app.post("/api/upload", async (req: Request, res: Response) => {
+    try {
+      if (!req.files || !req.files.file) {
+        return res.status(400).json({ message: "No file uploaded" });
+      }
+
+      const file = req.files.file as fileUpload.UploadedFile;
+      const prefix = req.body.prefix || 'upload';
+      
+      // Create uploads directory if it doesn't exist
+      const uploadsDir = path.join(process.cwd(), "attached_assets");
+      if (!fs.existsSync(uploadsDir)) {
+        fs.mkdirSync(uploadsDir, { recursive: true });
+      }
+
+      // Generate unique filename
+      const timestamp = Date.now();
+      const fileExtension = path.extname(file.name);
+      const fileName = `${prefix}-${timestamp}${fileExtension}`;
+      const filePath = path.join(uploadsDir, fileName);
+
+      // Move file to uploads directory
+      await file.mv(filePath);
+
+      // Return relative path for database storage
+      const relativePath = `attached_assets/${fileName}`;
+      
+      res.json({ 
+        message: "File uploaded successfully",
+        filePath: relativePath,
+        fileName: fileName
+      });
+    } catch (error) {
+      console.error("File upload error:", error);
+      res.status(500).json({ message: "File upload failed" });
+    }
+  });
+
   // ABA Formulas Routes
   app.get("/api/aba-formulas", async (_req: Request, res: Response) => {
     try {
