@@ -283,7 +283,7 @@ export const jobOrders = pgTable(
     id: serial("id").primaryKey(), // ID
     orderId: integer("order_id")
       .notNull()
-      .references(() => orders.id), // Order ID
+      .references(() => orders.id, { onDelete: "cascade" }), // Order ID
     customerProductId: integer("customer_product_id")
       .notNull()
       .references(() => customerProducts.id), // Customer Product No
@@ -313,7 +313,7 @@ export const jobOrderUpdates = pgTable("job_order_updates", {
   id: serial("id").primaryKey(),
   jobOrderId: integer("job_order_id")
     .notNull()
-    .references(() => jobOrders.id),
+    .references(() => jobOrders.id, { onDelete: "cascade" }),
   updateType: text("update_type").notNull(), // 'status_change', 'priority_change', 'assigned', 'completed', 'delayed', 'quality_issue'
   title: text("title").notNull(),
   message: text("message").notNull(),
@@ -335,7 +335,7 @@ export const rolls = pgTable("rolls", {
   id: text("id").primaryKey(), // ID
   jobOrderId: integer("job_order_id")
     .notNull()
-    .references(() => jobOrders.id), // Job Order ID
+    .references(() => jobOrders.id, { onDelete: "cascade" }), // Job Order ID
   serialNumber: text("roll_serial").notNull(), // Roll Serial
   extrudingQty: doublePrecision("extruding_qty").default(0), // Extruding Qty
   printingQty: doublePrecision("printing_qty").default(0), // Printing Qty
@@ -967,7 +967,7 @@ export const deliveryOrders = pgTable("delivery_orders", {
   id: serial("id").primaryKey(),
   deliveryNumber: text("delivery_number").notNull().unique(),
   customerId: text("customer_id").notNull().references(() => customers.id),
-  orderId: integer("order_id").references(() => orders.id),
+  orderId: integer("order_id").references(() => orders.id, { onDelete: "cascade" }),
   deliveryDate: timestamp("delivery_date").defaultNow().notNull(),
   scheduledDeliveryDate: timestamp("scheduled_delivery_date"),
   status: text("status").notNull().default("pending"), // pending, prepared, shipped, delivered, cancelled

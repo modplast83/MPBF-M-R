@@ -2122,13 +2122,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Order not found" });
       }
 
-      // Let the storage implementation handle cascading delete
+      // With CASCADE DELETE constraints in place, deleting the order will automatically 
+      // delete all related job orders, rolls, job order updates, SMS messages, and mix materials
       const success = await storage.deleteOrder(orderId);
 
       if (success) {
         return res.status(200).json({
           success: true,
-          message: `Order and all associated job orders deleted successfully`,
+          message: `Order and all associated data (job orders, rolls, updates, messages) deleted successfully`,
         });
       } else {
         return res.status(500).json({ message: "Failed to delete order" });
