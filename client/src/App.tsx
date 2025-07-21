@@ -80,6 +80,7 @@ import DocumentArchive from "@/pages/documents/archive";
 import HRIndex from "@/pages/hr/index";
 import EmployeeOfMonthPage from "@/pages/hr/employee-of-month";
 import AttendancePage from "@/pages/hr/attendance";
+import EnhancedAttendancePage from "@/pages/hr/enhanced-attendance";
 
 import OvertimeLeave from "@/pages/hr/overtime-leave";
 import GeofenceManagement from "@/pages/hr/geofences";
@@ -430,7 +431,7 @@ function App() {
                       />
                       <ProtectedRoute
                         path="/hr/enhanced-attendance"
-                        component={AttendancePage}
+                        component={EnhancedAttendancePage}
                         module="Attendance"
                       />
 
