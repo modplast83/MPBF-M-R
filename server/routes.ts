@@ -115,8 +115,7 @@ import fs from "fs";
 import { exec } from "child_process";
 import { promisify } from "util";
 import fileUpload from "express-fileupload";
-import { validateRequest, assertType } from "./types-fix";
-import { typeAssertion } from "./temp-type-bypass";
+// Removed non-existent type utility imports
 import { setupAuth } from "./auth";
 import { ensureAdminUser } from "./user-seed";
 import { setupHRRoutes } from "./hr-routes";
@@ -555,7 +554,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Create training evaluation
   app.post("/api/training-evaluations", async (req: Request, res: Response) => {
     try {
-      const validatedData = insertTrainingEvaluationSchema.parse(req.body);
+      const validatedData = insertTrainingEvaluationSchema.parse(req.body) as InsertTrainingEvaluation;
 
       // Check if evaluation already exists for this training and training point
       const existingEvaluations =
@@ -1467,7 +1466,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/users", async (req: Request, res: Response) => {
     try {
-      const validatedData = insertUserSchema.parse(req.body);
+      const validatedData = insertUserSchema.parse(req.body) as InsertUser;
 
       const existingUser = await storage.getUserByUsername(
         validatedData.username,
@@ -1506,7 +1505,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const validatedData = upsertUserSchema.parse({
         ...req.body,
         id: req.params.id, // Ensure the ID is set for the update
-      });
+      }) as UpsertUser;
 
       if (validatedData.username !== existingUser.username) {
         const usernameExists = await storage.getUserByUsername(
@@ -1844,7 +1843,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/customer-products", async (req: Request, res: Response) => {
     try {
       console.log("Incoming customer product data:", JSON.stringify(req.body, null, 2));
-      const validatedData = insertCustomerProductSchema.parse(req.body);
+      const validatedData = insertCustomerProductSchema.parse(req.body) as InsertCustomerProduct;
 
       // Verify customer exists
       const customer = await storage.getCustomer(validatedData.customerId);
@@ -1877,33 +1876,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Clean up empty strings to null for numeric fields before database insertion
       const cleanedData = {
         ...validatedData,
-        width: validatedData.width === "" ? null : validatedData.width,
-        leftF: validatedData.leftF === "" ? null : validatedData.leftF,
-        rightF: validatedData.rightF === "" ? null : validatedData.rightF,
-        thickness:
-          validatedData.thickness === "" ? null : validatedData.thickness,
-        thicknessOne:
-          validatedData.thicknessOne === "" ? null : validatedData.thicknessOne,
-        printingCylinder:
-          validatedData.printingCylinder === ""
-            ? null
-            : validatedData.printingCylinder,
-        lengthCm: validatedData.lengthCm === "" ? null : validatedData.lengthCm,
-        cuttingLength:
-          validatedData.cuttingLength === ""
-            ? null
-            : validatedData.cuttingLength,
-        unitWeight:
-          validatedData.unitWeight === "" ? null : validatedData.unitWeight,
-        unitQty: validatedData.unitQty === "" ? null : validatedData.unitQty,
-        packageKg:
-          validatedData.packageKg === "" ? null : validatedData.packageKg,
-        volum: validatedData.volum === "" ? null : validatedData.volum,
+        width: (validatedData.width === "" || validatedData.width === undefined) ? null : validatedData.width,
+        leftF: (validatedData.leftF === "" || validatedData.leftF === undefined) ? null : validatedData.leftF,
+        rightF: (validatedData.rightF === "" || validatedData.rightF === undefined) ? null : validatedData.rightF,
+        thickness: (validatedData.thickness === "" || validatedData.thickness === undefined) ? null : validatedData.thickness,
+        thicknessOne: (validatedData.thicknessOne === "" || validatedData.thicknessOne === undefined) ? null : validatedData.thicknessOne,
+        printingCylinder: (validatedData.printingCylinder === "" || validatedData.printingCylinder === undefined) ? null : validatedData.printingCylinder,
+        lengthCm: (validatedData.lengthCm === "" || validatedData.lengthCm === undefined) ? null : validatedData.lengthCm,
+        cuttingLength: (validatedData.cuttingLength === "" || validatedData.cuttingLength === undefined) ? null : validatedData.cuttingLength,
+        unitWeight: (validatedData.unitWeight === "" || validatedData.unitWeight === undefined) ? null : validatedData.unitWeight,
+        unitQty: (validatedData.unitQty === "" || validatedData.unitQty === undefined) ? null : validatedData.unitQty,
+        packageKg: (validatedData.packageKg === "" || validatedData.packageKg === undefined) ? null : validatedData.packageKg,
+        volum: (validatedData.volum === "" || validatedData.volum === undefined) ? null : validatedData.volum,
         // Clean up text fields that might have empty strings causing issues
-        packing: validatedData.packing === "" ? null : validatedData.packing,
-        cover: validatedData.cover === "" ? null : validatedData.cover,
-        knife: validatedData.knife === "" ? null : validatedData.knife,
-        notes: validatedData.notes === "" ? null : validatedData.notes,
+        packing: (validatedData.packing === "" || validatedData.packing === undefined) ? null : validatedData.packing,
+        cover: (validatedData.cover === "" || validatedData.cover === undefined) ? null : validatedData.cover,
+        knife: (validatedData.knife === "" || validatedData.knife === undefined) ? null : validatedData.knife,
+        notes: (validatedData.notes === "" || validatedData.notes === undefined) ? null : validatedData.notes,
       };
 
       const customerProduct = await storage.createCustomerProduct(cleanedData);
