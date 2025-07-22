@@ -26,7 +26,11 @@ import {
   ExternalLink,
   Clock,
   CheckCircle,
-  AlertTriangle
+  AlertTriangle,
+  Mic,
+  MicOff,
+  Volume2,
+  VolumeX
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -71,11 +75,74 @@ export function AIAssistantWidget({
   const { toast } = useToast();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [isWelcomeShown, setIsWelcomeShown] = useState(false);
+  
+  // Voice functionality states
+  const [isListening, setIsListening] = useState(false);
+  const [speechEnabled, setSpeechEnabled] = useState(true);
+  const [speechSupported, setSpeechSupported] = useState(false);
+  const recognitionRef = useRef<any>(null);
+  const speechSynthesisRef = useRef<SpeechSynthesis | null>(null);
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  // Initialize speech recognition and synthesis
+  useEffect(() => {
+    const initializeSpeech = () => {
+      // Check for speech recognition support
+      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      
+      if (SpeechRecognition) {
+        setSpeechSupported(true);
+        recognitionRef.current = new SpeechRecognition();
+        recognitionRef.current.continuous = false;
+        recognitionRef.current.interimResults = false;
+        recognitionRef.current.lang = 'en-US';
+        
+        recognitionRef.current.onstart = () => {
+          setIsListening(true);
+        };
+        
+        recognitionRef.current.onresult = (event: any) => {
+          const transcript = event.results[0][0].transcript;
+          setInput(transcript);
+          setIsListening(false);
+        };
+        
+        recognitionRef.current.onerror = (event: any) => {
+          console.error('Speech recognition error:', event.error);
+          setIsListening(false);
+          toast({
+            title: "Voice Recognition Error",
+            description: "Could not process your voice command. Please try again.",
+            variant: "destructive"
+          });
+        };
+        
+        recognitionRef.current.onend = () => {
+          setIsListening(false);
+        };
+      }
+      
+      // Check for speech synthesis support
+      if ('speechSynthesis' in window) {
+        speechSynthesisRef.current = window.speechSynthesis;
+      }
+    };
+
+    initializeSpeech();
+    
+    return () => {
+      if (recognitionRef.current) {
+        recognitionRef.current.abort();
+      }
+      if (speechSynthesisRef.current) {
+        speechSynthesisRef.current.cancel();
+      }
+    };
+  }, [toast]);
 
   // Show welcome message on first load
   useEffect(() => {
@@ -152,6 +219,11 @@ export function AIAssistantWidget({
         actions: data.actions
       };
       setMessages(prev => [...prev, assistantMessage]);
+      
+      // Speak the response if speech is enabled
+      if (speechEnabled && speechSynthesisRef.current) {
+        speakText(data.response);
+      }
     },
     onError: () => {
       toast({
@@ -223,6 +295,67 @@ export function AIAssistantWidget({
       case 'low': return 'border-blue-200 bg-blue-50 text-blue-800';
       default: return 'border-gray-200 bg-gray-50 text-gray-800';
     }
+  };
+
+  // Voice functionality methods
+  const startListening = () => {
+    if (recognitionRef.current && speechSupported) {
+      try {
+        recognitionRef.current.start();
+      } catch (error) {
+        console.error('Failed to start speech recognition:', error);
+        toast({
+          title: "Voice Recognition Error",
+          description: "Failed to start voice recognition. Please try again.",
+          variant: "destructive"
+        });
+      }
+    }
+  };
+
+  const stopListening = () => {
+    if (recognitionRef.current) {
+      recognitionRef.current.stop();
+    }
+  };
+
+  const speakText = (text: string) => {
+    if (speechSynthesisRef.current && 'speechSynthesis' in window) {
+      // Cancel any ongoing speech
+      speechSynthesisRef.current.cancel();
+      
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = 0.9;
+      utterance.pitch = 1;
+      utterance.volume = 0.8;
+      
+      // Try to use a pleasant voice if available
+      const voices = speechSynthesisRef.current.getVoices();
+      const preferredVoice = voices.find(voice => 
+        voice.name.includes('Female') || 
+        voice.name.includes('Samantha') || 
+        voice.name.includes('Alex')
+      );
+      
+      if (preferredVoice) {
+        utterance.voice = preferredVoice;
+      }
+      
+      speechSynthesisRef.current.speak(utterance);
+    }
+  };
+
+  const toggleSpeech = () => {
+    setSpeechEnabled(!speechEnabled);
+    
+    if (speechEnabled && speechSynthesisRef.current) {
+      speechSynthesisRef.current.cancel();
+    }
+    
+    toast({
+      title: speechEnabled ? "Speech Disabled" : "Speech Enabled",
+      description: speechEnabled ? "AI responses will no longer be spoken" : "AI responses will now be spoken aloud",
+    });
   };
 
   if (minimized) {
@@ -342,14 +475,43 @@ export function AIAssistantWidget({
         
         <div className="p-4 border-t">
           <div className="flex gap-2">
-            <Input
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyPress={handleKeyPress}
-              placeholder="Ask about production, orders, quality..."
-              className="flex-1"
-              disabled={assistantMutation.isPending}
-            />
+            <div className="flex-1 flex gap-1">
+              <Input
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyPress={handleKeyPress}
+                placeholder={isListening ? "Listening..." : "Ask about production, orders, quality..."}
+                className="flex-1"
+                disabled={assistantMutation.isPending || isListening}
+              />
+              {speechSupported && (
+                <Button
+                  onClick={isListening ? stopListening : startListening}
+                  disabled={assistantMutation.isPending}
+                  size="sm"
+                  variant={isListening ? "destructive" : "outline"}
+                  className={cn(
+                    "px-2",
+                    isListening && "animate-pulse"
+                  )}
+                  title={isListening ? "Stop listening" : "Start voice command"}
+                >
+                  {isListening ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
+                </Button>
+              )}
+              {speechSynthesisRef.current && (
+                <Button
+                  onClick={toggleSpeech}
+                  disabled={assistantMutation.isPending}
+                  size="sm"
+                  variant="outline"
+                  className="px-2"
+                  title={speechEnabled ? "Disable voice responses" : "Enable voice responses"}
+                >
+                  {speechEnabled ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
+                </Button>
+              )}
+            </div>
             <Button 
               onClick={handleSendMessage}
               disabled={!input.trim() || assistantMutation.isPending}
@@ -358,6 +520,15 @@ export function AIAssistantWidget({
               <Send className="h-4 w-4" />
             </Button>
           </div>
+          {speechSupported && (
+            <div className="text-xs text-muted-foreground mt-2 text-center">
+              {isListening ? (
+                <span className="text-primary">🎤 Listening for your voice command...</span>
+              ) : (
+                <span>Click the microphone to use voice commands</span>
+              )}
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>
