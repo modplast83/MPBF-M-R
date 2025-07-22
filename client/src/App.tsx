@@ -102,6 +102,7 @@ import IoTMonitor from "@/pages/production/iot-monitor";
 import EmployeeDashboard from "@/pages/employee-dashboard";
 import ServerRestart from "@/pages/system/server-restart";
 import EmailConfiguration from "@/pages/system/email-config";
+import AIAssistantPage from "@/pages/ai-assistant";
 import { User } from "@shared/schema";
 
 function App() {
@@ -125,6 +126,11 @@ function App() {
                   <MainLayout>
                     <Switch>
                       <ProtectedRoute path="/" component={Dashboard} />
+                      <ProtectedRoute
+                        path="/ai-assistant"
+                        component={AIAssistantPage}
+                        module="AI Assistant"
+                      />
                       <ProtectedRoute
                         path="/my-dashboard"
                         component={MyDashboard}

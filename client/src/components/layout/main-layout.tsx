@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import Sidebar from "@/components/layout/sidebar";
 import Header from "@/components/layout/header";
+import { FloatingAIAssistant } from "@/components/ai/floating-ai-assistant";
 import { useSidebar } from "@/hooks/use-sidebar";
 import { useAuth } from "@/hooks/use-auth-v2";
 import { useLanguage } from "@/hooks/use-language";
@@ -95,6 +96,11 @@ export default function MainLayout({ children }: MainLayoutProps) {
           </div>
         </main>
       </div>
+      
+      {/* Floating AI Assistant - only show when authenticated and not on auth or AI assistant pages */}
+      {isAuthenticated && !isAuthPage && !location.startsWith("/ai-assistant") && (
+        <FloatingAIAssistant />
+      )}
     </div>
   );
 }

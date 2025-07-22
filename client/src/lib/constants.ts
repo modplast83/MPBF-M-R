@@ -67,6 +67,14 @@ export const API_ENDPOINTS = {
   DOCUMENT_APPROVALS: "/api/document-approvals",
   DOCUMENT_COMMENTS: "/api/document-comments",
   DOCUMENT_SUBSCRIPTIONS: "/api/document-subscriptions",
+
+  // AI Assistant Module
+  AI_ASSISTANT: "/api/ai/assistant",
+  AI_PRODUCTION_INSIGHTS: "/api/ai/production-insights",
+  AI_QUALITY_RECOMMENDATIONS: "/api/ai/quality-recommendations",
+  AI_OPTIMIZE_SCHEDULE: "/api/ai/optimize-schedule",
+  AI_PREDICTIVE_MAINTENANCE: "/api/ai/predictive-maintenance",
+  AI_MODULE_SUGGESTIONS: "/api/ai/module-suggestions",
 };
 
 // Stage and status options
@@ -93,6 +101,11 @@ export const SIDEBAR_ITEMS = [
         title: "Dashboard",
         path: "/",
         icon: "dashboard",
+      },
+      {
+        title: "AI Assistant",
+        path: "/ai-assistant", 
+        icon: "smart_toy",
       },
       {
         title: "Setup",

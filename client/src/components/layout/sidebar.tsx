@@ -30,6 +30,7 @@ import {
   HelpCircle,
   Search,
   X,
+  Bot,
 } from "lucide-react";
 import companyLogo from "@assets/FactoryLogoHPNGW Green.png";
 // import factoryLogo from "@assets/FactoryLogoHPNGW Green.png";
@@ -51,6 +52,7 @@ const iconMap: Record<string, any> = {
   description: FileText,
   security: Shield,
   help: HelpCircle,
+  smart_toy: Bot,
 };
 
 export default function Sidebar({

@@ -9450,6 +9450,10 @@ COMMIT;
     }
   });
 
+  // AI Assistant routes
+  const aiRoutes = (await import("./ai-routes.js")).default;
+  app.use("/api/ai", aiRoutes);
+
   const httpServer = createServer(app);
   return httpServer;
 }
