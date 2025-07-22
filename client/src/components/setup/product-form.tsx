@@ -435,7 +435,13 @@ export function ProductForm({
                   <SelectContent>
                     {customers?.map((customer) => (
                       <SelectItem key={customer.id} value={customer.id}>
-                        {customer.name}
+                        <div className="flex flex-col">
+                          <span className="font-medium">{customer.name}</span>
+                          {customer.nameAr && (
+                            <span className="text-sm text-gray-500 font-arabic">{customer.nameAr}</span>
+                          )}
+                          <span className="text-xs text-gray-400">({customer.code})</span>
+                        </div>
                       </SelectItem>
                     ))}
                   </SelectContent>
