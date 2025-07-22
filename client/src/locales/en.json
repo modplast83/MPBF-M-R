@@ -415,6 +415,11 @@
         "search_placeholder": "Search customers (English/Arabic)...",
         "please_select_customer": "Please select a customer to view their products",
         "form": {
+          "basic_information": "Basic Information",
+          "dimensions": "Dimensions & Measurements", 
+          "materials_technical": "Materials & Technical",
+          "production_settings": "Production Settings",
+          "design_files": "Design Files",
           "customer_required": "Customer is required",
           "category_required": "Category is required",
           "item_required": "Item is required",

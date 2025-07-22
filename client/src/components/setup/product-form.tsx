@@ -20,6 +20,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge";
 import { toast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { API_ENDPOINTS } from "@/lib/constants";
@@ -32,6 +35,17 @@ import {
   Category,
   Item,
 } from "@shared/schema";
+import { 
+  User, 
+  Package, 
+  Layers, 
+  Ruler, 
+  Palette, 
+  FileImage, 
+  Settings, 
+  Calculator,
+  Info
+} from "lucide-react";
 
 interface ProductFormProps {
   product?: CustomerProduct;
@@ -414,365 +428,454 @@ export function ProductForm({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <FormField
-            control={form.control}
-            name="customerId"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{t("setup.products.customer")}</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                  disabled={isLoading}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder={t("setup.products.form.select_customer")} />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {customers?.map((customer) => (
-                      <SelectItem key={customer.id} value={customer.id}>
-                        <div className="flex flex-col">
-                          <span className="font-medium">{customer.name}</span>
-                          {customer.nameAr && (
-                            <span className="text-sm text-gray-500 font-arabic">{customer.nameAr}</span>
-                          )}
-                          <span className="text-xs text-gray-400">({customer.code})</span>
-                        </div>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        {/* Basic Information Section */}
+        <Card>
+          <CardHeader className="pb-4">
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <User className="h-5 w-5 text-blue-600" />
+              {t("setup.products.form.basic_information")}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="customerId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="flex items-center gap-2">
+                      <User className="h-4 w-4" />
+                      {t("setup.products.customer")}
+                    </FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                      disabled={isLoading}
+                    >
+                      <FormControl>
+                        <SelectTrigger className="h-11">
+                          <SelectValue placeholder={t("setup.products.form.select_customer")} />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {customers?.map((customer) => (
+                          <SelectItem key={customer.id} value={customer.id}>
+                            <div className="flex flex-col">
+                              <span className="font-medium">{customer.name}</span>
+                              {customer.nameAr && (
+                                <span className="text-sm text-gray-500 font-arabic">{customer.nameAr}</span>
+                              )}
+                              <span className="text-xs text-gray-400">({customer.code})</span>
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-          <FormField
-            control={form.control}
-            name="categoryId"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{t("setup.products.category")}</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                  disabled={isLoading}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder={t("setup.products.form.select_category")} />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {categories?.map((category) => (
-                      <SelectItem key={category.id} value={category.id}>
-                        <div className="flex flex-col">
-                          <span className="font-medium">{category.name}</span>
-                          {category.nameAr && (
-                            <span className="text-sm text-gray-500 font-arabic">{category.nameAr}</span>
-                          )}
-                          <span className="text-xs text-gray-400">({category.code})</span>
-                        </div>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+              <FormField
+                control={form.control}
+                name="categoryId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="flex items-center gap-2">
+                      <Package className="h-4 w-4" />
+                      {t("setup.products.category")}
+                    </FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                      disabled={isLoading}
+                    >
+                      <FormControl>
+                        <SelectTrigger className="h-11">
+                          <SelectValue placeholder={t("setup.products.form.select_category")} />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {categories?.map((category) => (
+                          <SelectItem key={category.id} value={category.id}>
+                            <div className="flex flex-col">
+                              <span className="font-medium">{category.name}</span>
+                              {category.nameAr && (
+                                <span className="text-sm text-gray-500 font-arabic">{category.nameAr}</span>
+                              )}
+                              <span className="text-xs text-gray-400">({category.code})</span>
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-          <FormField
-            control={form.control}
-            name="itemId"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{t("setup.products.form.item")}</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                  disabled={isLoading || !watchedCategoryId}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue
-                        placeholder={
-                          watchedCategoryId
-                            ? t("setup.products.form.select_item")
-                            : t("setup.products.form.select_category_first")
+              <FormField
+                control={form.control}
+                name="itemId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="flex items-center gap-2">
+                      <Layers className="h-4 w-4" />
+                      {t("setup.products.form.item")}
+                    </FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                      disabled={isLoading || !watchedCategoryId}
+                    >
+                      <FormControl>
+                        <SelectTrigger className="h-11">
+                          <SelectValue
+                            placeholder={
+                              watchedCategoryId
+                                ? t("setup.products.form.select_item")
+                                : t("setup.products.form.select_category_first")
+                            }
+                          />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {filteredItems?.map((item) => (
+                          <SelectItem key={item.id} value={item.id}>
+                            {item.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="sizeCaption"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="flex items-center gap-2">
+                      <Info className="h-4 w-4" />
+                      {t("setup.products.form.size_caption")}
+                      <Badge variant="secondary" className="text-xs">Auto</Badge>
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder={t("setup.products.form.size_caption_placeholder")}
+                        {...field}
+                        value={field.value || ""}
+                        readOnly
+                        className="bg-gray-50 h-11"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Dimensions Section */}
+        <Card>
+          <CardHeader className="pb-4">
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <Ruler className="h-5 w-5 text-green-600" />
+              {t("setup.products.form.dimensions")}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <FormField
+                control={form.control}
+                name="rightF"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="flex items-center gap-2">
+                      <Ruler className="h-4 w-4" />
+                      {t("setup.products.form.right_f")}
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        placeholder={t("setup.products.form.right_f_placeholder")}
+                        {...field}
+                        className="h-11"
+                        onChange={(e) =>
+                          field.onChange(
+                            e.target.value ? parseFloat(e.target.value) : undefined,
+                          )
                         }
                       />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {filteredItems?.map((item) => (
-                      <SelectItem key={item.id} value={item.id}>
-                        {item.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-          <FormField
-            control={form.control}
-            name="sizeCaption"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{t("setup.products.form.size_caption")}</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder={t("setup.products.form.size_caption_placeholder")}
-                    {...field}
-                    value={field.value || ""}
-                    readOnly
-                    className="bg-gray-50"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
+              <FormField
+                control={form.control}
+                name="width"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="flex items-center gap-2">
+                      <Ruler className="h-4 w-4" />
+                      {t("setup.products.form.width")}
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        placeholder={t("setup.products.form.width_placeholder")}
+                        {...field}
+                        className="h-11"
+                        onChange={(e) =>
+                          field.onChange(
+                            e.target.value ? parseFloat(e.target.value) : undefined,
+                          )
+                        }
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <FormField
-            control={form.control}
-            name="rightF"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{t("setup.products.form.right_f")}</FormLabel>
-                <FormControl>
-                  <Input
-                    type="number"
-                    placeholder={t("setup.products.form.right_f_placeholder")}
-                    {...field}
-                    onChange={(e) =>
-                      field.onChange(
-                        e.target.value ? parseFloat(e.target.value) : undefined,
-                      )
-                    }
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+              <FormField
+                control={form.control}
+                name="leftF"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="flex items-center gap-2">
+                      <Ruler className="h-4 w-4" />
+                      {t("setup.products.form.left_f")}
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        placeholder={t("setup.products.form.left_f_placeholder")}
+                        {...field}
+                        className="h-11"
+                        onChange={(e) =>
+                          field.onChange(
+                            e.target.value ? parseFloat(e.target.value) : undefined,
+                          )
+                        }
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </CardContent>
+        </Card>
 
-          <FormField
-            control={form.control}
-            name="width"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{t("setup.products.form.width")}</FormLabel>
-                <FormControl>
-                  <Input
-                    type="number"
-                    placeholder={t("setup.products.form.width_placeholder")}
-                    {...field}
-                    onChange={(e) =>
-                      field.onChange(
-                        e.target.value ? parseFloat(e.target.value) : undefined,
-                      )
-                    }
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+        {/* Materials & Technical Section */}
+        <Card>
+          <CardHeader className="pb-4">
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <Palette className="h-5 w-5 text-purple-600" />
+              {t("setup.products.form.materials_technical")}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <FormField
+                control={form.control}
+                name="thickness"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="flex items-center gap-2">
+                      <Layers className="h-4 w-4" />
+                      {t("setup.products.thickness")}
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        placeholder={t("setup.products.thickness")}
+                        {...field}
+                        className="h-11"
+                        onChange={(e) =>
+                          field.onChange(
+                            e.target.value ? parseFloat(e.target.value) : undefined,
+                          )
+                        }
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-          <FormField
-            control={form.control}
-            name="leftF"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{t("setup.products.form.left_f")}</FormLabel>
-                <FormControl>
-                  <Input
-                    type="number"
-                    placeholder={t("setup.products.form.left_f_placeholder")}
-                    {...field}
-                    onChange={(e) =>
-                      field.onChange(
-                        e.target.value ? parseFloat(e.target.value) : undefined,
-                      )
-                    }
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
+              <FormField
+                control={form.control}
+                name="thicknessOne"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="flex items-center gap-2">
+                      <Calculator className="h-4 w-4" />
+                      {t("setup.products.form.thickness_one")}
+                      <Badge variant="secondary" className="text-xs">Auto</Badge>
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        placeholder={t("setup.products.form.thickness_one_placeholder")}
+                        {...field}
+                        value={field.value || ""}
+                        readOnly
+                        className="bg-gray-50 h-11"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <FormField
-            control={form.control}
-            name="thickness"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{t("setup.products.thickness")}</FormLabel>
-                <FormControl>
-                  <Input
-                    type="number"
-                    placeholder={t("setup.products.thickness")}
-                    {...field}
-                    onChange={(e) =>
-                      field.onChange(
-                        e.target.value ? parseFloat(e.target.value) : undefined,
-                      )
-                    }
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+              <FormField
+                control={form.control}
+                name="printingCylinder"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="flex items-center gap-2">
+                      <Settings className="h-4 w-4" />
+                      {t("setup.products.form.printing_cylinder")}
+                    </FormLabel>
+                    <Select
+                      onValueChange={(value) => {
+                        if (value === "non") {
+                          field.onChange(null);
+                        } else {
+                          field.onChange(parseFloat(value));
+                        }
+                      }}
+                      value={field.value ? field.value.toString() : "non"}
+                    >
+                      <FormControl>
+                        <SelectTrigger className="h-11">
+                          <SelectValue placeholder={t("setup.products.form.printing_cylinder_placeholder")} />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="non">{t("setup.products.form.non")}</SelectItem>
+                        {[
+                          8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36,
+                          38, 39,
+                        ].map((size) => (
+                          <SelectItem key={size} value={size.toString()}>
+                            {size}"
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </CardContent>
+        </Card>
 
-          <FormField
-            control={form.control}
-            name="thicknessOne"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{t("setup.products.form.thickness_one")}</FormLabel>
-                <FormControl>
-                  <Input
-                    type="number"
-                    placeholder={t("setup.products.form.thickness_one_placeholder")}
-                    {...field}
-                    value={field.value || ""}
-                    readOnly
-                    className="bg-gray-50"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+        {/* Production Settings Section */}
+        <Card>
+          <CardHeader className="pb-4">
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <Settings className="h-5 w-5 text-orange-600" />
+              {t("setup.products.form.production_settings")}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <FormField
+                control={form.control}
+                name="lengthCm"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="flex items-center gap-2">
+                      <Ruler className="h-4 w-4" />
+                      {t("setup.products.form.length_cm")}
+                      <Badge variant="secondary" className="text-xs">Auto</Badge>
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder={t("setup.products.form.length_cm_placeholder")}
+                        {...field}
+                        value={
+                          field.value === t("setup.products.form.not_printed") || field.value === "Not Printed"
+                            ? t("setup.products.form.not_printed")
+                            : field.value || ""
+                        }
+                        readOnly
+                        className="bg-gray-50 h-11"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-          <FormField
-            control={form.control}
-            name="printingCylinder"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{t("setup.products.form.printing_cylinder")}</FormLabel>
-                <Select
-                  onValueChange={(value) => {
-                    if (value === "non") {
-                      field.onChange(null);
-                    } else {
-                      field.onChange(parseFloat(value));
-                    }
-                  }}
-                  value={field.value ? field.value.toString() : "non"}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder={t("setup.products.form.printing_cylinder_placeholder")} />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="non">{t("setup.products.form.non")}</SelectItem>
-                    {[
-                      8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36,
-                      38, 39,
-                    ].map((size) => (
-                      <SelectItem key={size} value={size.toString()}>
-                        {size}"
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
+              <FormField
+                control={form.control}
+                name="cuttingLength"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="flex items-center gap-2">
+                      <Ruler className="h-4 w-4" />
+                      {t("setup.products.form.cutting_length")}
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        placeholder={t("setup.products.form.cutting_length_placeholder")}
+                        {...field}
+                        className="h-11"
+                        onChange={(e) =>
+                          field.onChange(
+                            e.target.value ? parseFloat(e.target.value) : undefined,
+                          )
+                        }
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <FormField
-            control={form.control}
-            name="lengthCm"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{t("setup.products.form.length_cm")}</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder={t("setup.products.form.length_cm_placeholder")}
-                    {...field}
-                    value={
-                      field.value === t("setup.products.form.not_printed") || field.value === "Not Printed"
-                        ? t("setup.products.form.not_printed")
-                        : field.value || ""
-                    }
-                    readOnly
-                    className="bg-gray-50"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+              <FormField
+                control={form.control}
+                name="rawMaterial"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="flex items-center gap-2">
+                      <Palette className="h-4 w-4" />
+                      {t("setup.products.form.raw_material")}
+                    </FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger className="h-11">
+                          <SelectValue placeholder={t("setup.products.form.raw_material_placeholder")} />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="HDPE">HDPE</SelectItem>
+                        <SelectItem value="LLDPE">LLDPE</SelectItem>
+                        <SelectItem value="Regrind">Regrind</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
 
-          <FormField
-            control={form.control}
-            name="cuttingLength"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{t("setup.products.form.cutting_length")}</FormLabel>
-                <FormControl>
-                  <Input
-                    type="number"
-                    placeholder={t("setup.products.form.cutting_length_placeholder")}
-                    {...field}
-                    onChange={(e) =>
-                      field.onChange(
-                        e.target.value ? parseFloat(e.target.value) : undefined,
-                      )
-                    }
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="rawMaterial"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{t("setup.products.form.raw_material")}</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder={t("setup.products.form.raw_material_placeholder")} />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="HDPE">HDPE</SelectItem>
-                    <SelectItem value="LLDPE">LLDPE</SelectItem>
-                    <SelectItem value="Regrind">Regrind</SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <FormField
             control={form.control}
             name="masterBatchId"
@@ -1120,7 +1223,9 @@ export function ProductForm({
               </FormItem>
             )}
           />
-        </div>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Design Preview Section */}
         {(form.watch("clicheFrontDesign") || form.watch("clicheBackDesign") || frontDesignFile || backDesignFile) && (
