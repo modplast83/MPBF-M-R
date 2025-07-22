@@ -68,6 +68,32 @@ router.get("/quality-recommendations", async (req, res) => {
   }
 });
 
+// Create records endpoint
+router.post("/create-records", async (req, res) => {
+  try {
+    const { type, data } = req.body;
+    
+    if (!type || !data) {
+      return res.status(400).json({ error: "Type and data are required" });
+    }
+    
+    const action = { type: `create_${type}`, data };
+    const result = await aiService.executeCreateAction(action);
+    
+    res.json({ 
+      success: true, 
+      message: `${type.charAt(0).toUpperCase() + type.slice(1)} created successfully`,
+      data: result 
+    });
+  } catch (error) {
+    console.error("Create records error:", error);
+    res.status(500).json({ 
+      error: "Failed to create record",
+      details: error.message 
+    });
+  }
+});
+
 // Production schedule optimization endpoint
 router.get("/optimize-schedule", async (req, res) => {
   try {

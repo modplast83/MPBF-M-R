@@ -31,7 +31,7 @@ export interface AssistantSuggestion {
 }
 
 export interface AssistantAction {
-  type: 'create_order' | 'schedule_maintenance' | 'quality_check' | 'analytics_report';
+  type: 'create_order' | 'create_customer' | 'create_product' | 'schedule_maintenance' | 'quality_check' | 'analytics_report';
   label: string;
   data: any;
 }
@@ -160,6 +160,10 @@ export class AIAssistantService {
         5. HR and workforce planning
         6. Document management assistance
         7. System navigation and feature discovery
+        8. Creating new customers, products, and orders automatically
+        
+        When users ask to create customers, products, or orders, automatically generate the appropriate actions.
+        Extract relevant information from their request and format it for creation.
         
         Respond naturally and professionally. Provide actionable suggestions.
         Include relevant navigation suggestions or quick actions when appropriate.
@@ -178,9 +182,15 @@ export class AIAssistantService {
           ],
           "actions": [
             {
-              "type": "create_order|schedule_maintenance|quality_check|analytics_report",
-              "label": "Action label",
-              "data": {}
+              "type": "create_order|create_customer|create_product|schedule_maintenance|quality_check|analytics_report",
+              "label": "Action label", 
+              "data": {
+                "name": "extracted name",
+                "code": "extracted code",
+                "customerId": "if needed",
+                "categoryId": "if needed",
+                "itemId": "if needed"
+              }
             }
           ],
           "confidence": 0.95,
@@ -207,10 +217,35 @@ export class AIAssistantService {
 
       const result = JSON.parse(response.choices[0].message.content || '{}');
       
+      // Execute create actions if any
+      const actions: AssistantAction[] = result.actions || [];
+      if (actions.length > 0) {
+        for (let i = 0; i < actions.length; i++) {
+          const action = actions[i];
+          if (action.type.startsWith('create_')) {
+            try {
+              const createdRecord = await this.executeCreateAction(action);
+              actions[i] = {
+                ...action,
+                label: `✅ Created ${action.type.replace('create_', '').toUpperCase()}`,
+                data: createdRecord
+              };
+            } catch (error) {
+              console.error(`Failed to execute ${action.type}:`, error);
+              actions[i] = {
+                ...action,
+                label: `❌ Failed to create ${action.type.replace('create_', '')}`,
+                data: { error: error.message }
+              };
+            }
+          }
+        }
+      }
+      
       return {
         response: result.response || "I'm here to help with your production management needs.",
         suggestions: result.suggestions || [],
-        actions: result.actions || [],
+        actions,
         confidence: Math.max(0, Math.min(1, result.confidence || 0.9)),
         context: result.context || context?.currentPage || 'general'
       };
@@ -425,6 +460,159 @@ export class AIAssistantService {
     } catch (error) {
       console.error('Predictive maintenance error:', error);
       return [];
+    }
+  }
+
+  // New method to execute create actions
+  async executeCreateAction(action: any): Promise<any> {
+    try {
+      switch (action.type) {
+        case 'create_customer':
+          return await this.createCustomerRecord(action.data);
+        case 'create_product':
+          return await this.createProductRecord(action.data);
+        case 'create_order':
+          return await this.createOrderRecord(action.data);
+        default:
+          throw new Error(`Unsupported action type: ${action.type}`);
+      }
+    } catch (error) {
+      console.error('Error executing create action:', error);
+      throw error;
+    }
+  }
+
+  async createCustomerRecord(data: any): Promise<any> {
+    try {
+      // Generate customer ID and code if not provided
+      const customerId = data.id || `CUS${Date.now().toString().slice(-6)}`;
+      const customerCode = data.code || `C${Date.now().toString().slice(-4)}`;
+
+      const customerData = {
+        id: customerId,
+        code: customerCode,
+        name: data.name || data.customerName || 'New Customer',
+        nameAr: data.nameAr || data.arabicName || null,
+        userId: data.userId || null,
+        plateDrawerCode: data.plateDrawerCode || null
+      };
+
+      const result = await this.db.query(
+        `INSERT INTO customers (id, code, name, name_ar, user_id, plate_drawer_code) 
+         VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
+        [customerData.id, customerData.code, customerData.name, customerData.nameAr, customerData.userId, customerData.plateDrawerCode]
+      );
+
+      return result.rows[0];
+    } catch (error) {
+      console.error('Error creating customer:', error);
+      throw new Error(`Failed to create customer: ${error.message}`);
+    }
+  }
+
+  async createProductRecord(data: any): Promise<any> {
+    try {
+      // Validate required fields
+      if (!data.customerId) {
+        throw new Error('Customer ID is required for product creation');
+      }
+      if (!data.categoryId) {
+        throw new Error('Category ID is required for product creation');
+      }
+      if (!data.itemId) {
+        throw new Error('Item ID is required for product creation');
+      }
+
+      const productData = {
+        customerId: data.customerId,
+        categoryId: data.categoryId,
+        itemId: data.itemId,
+        sizeCaption: data.sizeCaption || data.size || 'Standard Size',
+        width: data.width || null,
+        leftF: data.leftF || null,
+        rightF: data.rightF || null,
+        thickness: data.thickness || null,
+        thicknessOne: data.thicknessOne || null,
+        printingCylinder: data.printingCylinder || null,
+        lengthCm: data.lengthCm || null,
+        cuttingLength: data.cuttingLength || null,
+        rawMaterial: data.rawMaterial || null,
+        masterBatchId: data.masterBatchId || null,
+        printed: data.printed || null,
+        cuttingUnit: data.cuttingUnit || null,
+        unitWeight: data.unitWeight || null,
+        unitQty: data.unitQty || null,
+        packageKg: data.packageKg || null,
+        packing: data.packing || null,
+        punching: data.punching || null,
+        cover: data.cover || null,
+        volum: data.volum || null,
+        knife: data.knife || null,
+        notes: data.notes || null
+      };
+
+      const result = await this.db.query(
+        `INSERT INTO customer_products (
+          customer_id, category_id, item_id, size_caption, width, left_f, right_f,
+          thickness, thickness_one, printing_cylinder, length_cm, cutting_length_cm,
+          raw_material, master_batch_id, printed, cutting_unit, unit_weight_kg,
+          unit_qty, package_kg, packing, punching, cover, volum, knife, notes
+        ) VALUES (
+          $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25
+        ) RETURNING *`,
+        [
+          productData.customerId, productData.categoryId, productData.itemId, productData.sizeCaption,
+          productData.width, productData.leftF, productData.rightF, productData.thickness,
+          productData.thicknessOne, productData.printingCylinder, productData.lengthCm, productData.cuttingLength,
+          productData.rawMaterial, productData.masterBatchId, productData.printed, productData.cuttingUnit,
+          productData.unitWeight, productData.unitQty, productData.packageKg, productData.packing,
+          productData.punching, productData.cover, productData.volum, productData.knife, productData.notes
+        ]
+      );
+
+      return result.rows[0];
+    } catch (error) {
+      console.error('Error creating product:', error);
+      throw new Error(`Failed to create product: ${error.message}`);
+    }
+  }
+
+  async createOrderRecord(data: any): Promise<any> {
+    try {
+      // Validate required fields
+      if (!data.customerId) {
+        throw new Error('Customer ID is required for order creation');
+      }
+
+      const orderData = {
+        customerId: data.customerId,
+        note: data.note || data.notes || null,
+        status: 'pending',
+        userId: data.userId || null
+      };
+
+      const result = await this.db.query(
+        `INSERT INTO orders (customer_id, note, status, user_id, date) 
+         VALUES ($1, $2, $3, $4, NOW()) RETURNING *`,
+        [orderData.customerId, orderData.note, orderData.status, orderData.userId]
+      );
+
+      // If products are provided, create job orders
+      if (data.products && Array.isArray(data.products)) {
+        const orderId = result.rows[0].id;
+        for (const product of data.products) {
+          await this.db.query(
+            `INSERT INTO job_orders (order_id, customer_product_id, quantity, status) 
+             VALUES ($1, $2, $3, 'pending')`,
+            [orderId, product.customerProductId, product.quantity || 100]
+          );
+        }
+      }
+
+      return result.rows[0];
+    } catch (error) {
+      console.error('Error creating order:', error);
+      throw new Error(`Failed to create order: ${error.message}`);
     }
   }
 }
