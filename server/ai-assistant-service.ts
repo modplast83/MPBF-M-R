@@ -63,14 +63,14 @@ export class AIAssistantService {
 
   async getProductionInsights(timeframe: string = '7d'): Promise<ProductionAnalysis> {
     try {
-      // Get production data from database
+      // Get production data from database  
       const ordersQuery = `
-        SELECT o.*, jo.*, r.stage, r.status
+        SELECT o.*, jo.*, r.current_stage, r.status as roll_status
         FROM orders o
         LEFT JOIN job_orders jo ON o.id = jo.order_id
         LEFT JOIN rolls r ON jo.id = r.job_order_id
-        WHERE o.created_at >= NOW() - INTERVAL '${timeframe === '7d' ? '7 days' : '30 days'}'
-        ORDER BY o.created_at DESC
+        WHERE o.date >= CURRENT_DATE - INTERVAL '${timeframe === '7d' ? '7 days' : '30 days'}'
+        ORDER BY o.date DESC
       `;
 
       const machineQuery = `
@@ -90,7 +90,7 @@ export class AIAssistantService {
         Orders Data: ${JSON.stringify(ordersResult.rows.slice(0, 20))}
         Machines Data: ${JSON.stringify(machinesResult.rows)}
         
-        Provide analysis in JSON format:
+        Please provide your analysis in JSON format:
         {
           "bottlenecks": [
             {
@@ -164,7 +164,7 @@ export class AIAssistantService {
         Respond naturally and professionally. Provide actionable suggestions.
         Include relevant navigation suggestions or quick actions when appropriate.
         
-        Response format:
+        Please respond with JSON in the following format:
         {
           "response": "Natural language response",
           "suggestions": [
@@ -241,7 +241,7 @@ export class AIAssistantService {
       const prompt = `
         Based on this quality data: ${qualityData}
         
-        Generate quality improvement recommendations as JSON array:
+        Please generate quality improvement recommendations as JSON array:
         [
           {
             "type": "optimization",
@@ -298,10 +298,10 @@ export class AIAssistantService {
         Orders: ${JSON.stringify(ordersResult.rows)}
         Available Machines: ${JSON.stringify(machinesResult.rows)}
         
-        Generate optimization suggestions as JSON array:
+        Please generate optimization suggestions as JSON array:
         [
           {
-            "type": "optimization",
+            "type": "optimization", 
             "title": "suggestion title",
             "description": "detailed optimization description",
             "priority": "low|medium|high"
@@ -360,7 +360,7 @@ export class AIAssistantService {
           const productionResult = await this.db.query(`
             SELECT jo.status, COUNT(*) as count 
             FROM job_orders jo 
-            WHERE DATE(jo.created_at) >= CURRENT_DATE - INTERVAL '7 days'
+            WHERE jo.receive_date >= CURRENT_DATE - INTERVAL '7 days'
             GROUP BY jo.status
           `);
           return `Recent production: ${JSON.stringify(productionResult.rows)}`;
@@ -392,7 +392,7 @@ export class AIAssistantService {
         Analyze machine maintenance data and predict maintenance needs:
         ${JSON.stringify(result.rows)}
         
-        Generate predictive maintenance suggestions as JSON array:
+        Please generate predictive maintenance suggestions as JSON array:
         [
           {
             "type": "action",
