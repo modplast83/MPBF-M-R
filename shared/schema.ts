@@ -23,6 +23,7 @@ export const categories = pgTable("categories", {
   id: text("id").primaryKey(), // CID in the provided schema
   name: text("name").notNull(), // Category Name
   code: text("code").notNull().unique(), // Category Code
+  nameAr: text("name_ar"), // Arabic Category Name
 });
 
 export const insertCategorySchema = createInsertSchema(categories);

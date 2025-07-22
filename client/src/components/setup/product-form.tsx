@@ -470,7 +470,13 @@ export function ProductForm({
                   <SelectContent>
                     {categories?.map((category) => (
                       <SelectItem key={category.id} value={category.id}>
-                        {category.name}
+                        <div className="flex flex-col">
+                          <span className="font-medium">{category.name}</span>
+                          {category.nameAr && (
+                            <span className="text-sm text-gray-500 font-arabic">{category.nameAr}</span>
+                          )}
+                          <span className="text-xs text-gray-400">({category.code})</span>
+                        </div>
                       </SelectItem>
                     ))}
                   </SelectContent>
