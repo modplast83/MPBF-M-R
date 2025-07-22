@@ -30,7 +30,8 @@ import {
   Mic,
   MicOff,
   Volume2,
-  VolumeX
+  VolumeX,
+  Languages
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -80,6 +81,7 @@ export function AIAssistantWidget({
   const [isListening, setIsListening] = useState(false);
   const [speechEnabled, setSpeechEnabled] = useState(true);
   const [speechSupported, setSpeechSupported] = useState(false);
+  const [voiceLanguage, setVoiceLanguage] = useState('en-US'); // Default to English
   const recognitionRef = useRef<any>(null);
   const speechSynthesisRef = useRef<SpeechSynthesis | null>(null);
 
@@ -99,7 +101,7 @@ export function AIAssistantWidget({
         recognitionRef.current = new SpeechRecognition();
         recognitionRef.current.continuous = false;
         recognitionRef.current.interimResults = false;
-        recognitionRef.current.lang = 'en-US';
+        recognitionRef.current.lang = voiceLanguage;
         
         recognitionRef.current.onstart = () => {
           setIsListening(true);
@@ -142,7 +144,7 @@ export function AIAssistantWidget({
         speechSynthesisRef.current.cancel();
       }
     };
-  }, [toast]);
+  }, [toast, voiceLanguage]);
 
   // Show welcome message on first load
   useEffect(() => {
@@ -329,13 +331,28 @@ export function AIAssistantWidget({
       utterance.pitch = 1;
       utterance.volume = 0.8;
       
-      // Try to use a pleasant voice if available
+      // Set language based on current voice language setting
+      utterance.lang = voiceLanguage;
+      
+      // Try to use appropriate voice for the language
       const voices = speechSynthesisRef.current.getVoices();
-      const preferredVoice = voices.find(voice => 
-        voice.name.includes('Female') || 
-        voice.name.includes('Samantha') || 
-        voice.name.includes('Alex')
-      );
+      let preferredVoice;
+      
+      if (voiceLanguage.startsWith('ar')) {
+        // Arabic voice preferences
+        preferredVoice = voices.find(voice => 
+          voice.lang.startsWith('ar') || 
+          voice.name.includes('Arabic') ||
+          voice.name.includes('عربي')
+        );
+      } else {
+        // English voice preferences
+        preferredVoice = voices.find(voice => 
+          voice.name.includes('Female') || 
+          voice.name.includes('Samantha') || 
+          voice.name.includes('Alex')
+        );
+      }
       
       if (preferredVoice) {
         utterance.voice = preferredVoice;
@@ -355,6 +372,21 @@ export function AIAssistantWidget({
     toast({
       title: speechEnabled ? "Speech Disabled" : "Speech Enabled",
       description: speechEnabled ? "AI responses will no longer be spoken" : "AI responses will now be spoken aloud",
+    });
+  };
+
+  const toggleLanguage = () => {
+    const newLanguage = voiceLanguage === 'en-US' ? 'ar-SA' : 'en-US';
+    setVoiceLanguage(newLanguage);
+    
+    // Update speech recognition language if available
+    if (recognitionRef.current) {
+      recognitionRef.current.lang = newLanguage;
+    }
+    
+    toast({
+      title: "Voice Language Changed",
+      description: newLanguage === 'ar-SA' ? "Voice commands now in Arabic" : "Voice commands now in English",
     });
   };
 
@@ -511,6 +543,18 @@ export function AIAssistantWidget({
                   {speechEnabled ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
                 </Button>
               )}
+              {speechSupported && (
+                <Button
+                  onClick={toggleLanguage}
+                  disabled={assistantMutation.isPending}
+                  size="sm"
+                  variant="outline"
+                  className="px-2 font-bold"
+                  title={voiceLanguage === 'ar-SA' ? "Switch to English voice" : "Switch to Arabic voice"}
+                >
+                  {voiceLanguage === 'ar-SA' ? 'ع' : 'EN'}
+                </Button>
+              )}
             </div>
             <Button 
               onClick={handleSendMessage}
@@ -523,9 +567,13 @@ export function AIAssistantWidget({
           {speechSupported && (
             <div className="text-xs text-muted-foreground mt-2 text-center">
               {isListening ? (
-                <span className="text-primary">🎤 Listening for your voice command...</span>
+                <span className="text-primary">
+                  🎤 {voiceLanguage === 'ar-SA' ? 'يستمع للأوامر الصوتية...' : 'Listening for your voice command...'}
+                </span>
               ) : (
-                <span>Click the microphone to use voice commands</span>
+                <span>
+                  {voiceLanguage === 'ar-SA' ? 'انقر على الميكروفون لاستخدام الأوامر الصوتية' : 'Click the microphone to use voice commands'} ({voiceLanguage === 'ar-SA' ? 'عربي' : 'English'})
+                </span>
               )}
             </div>
           )}

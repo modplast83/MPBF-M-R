@@ -147,6 +147,7 @@ export class AIAssistantService {
 
       const systemPrompt = `
         You are a Production Management AI Assistant for MPBF (a manufacturing company).
+        You support both English and Arabic languages. Respond in the same language as the user's message.
         
         Context: ${context?.currentPage || 'dashboard'}
         User Role: ${context?.userRole || 'user'}
@@ -165,8 +166,9 @@ export class AIAssistantService {
         When users ask to create customers, products, or orders, automatically generate the appropriate actions.
         Extract relevant information from their request and format it for creation.
         
-        Respond naturally and professionally. Provide actionable suggestions.
-        Include relevant navigation suggestions or quick actions when appropriate.
+        Respond naturally and professionally in the same language as the user's message. 
+        If the user speaks in Arabic, respond in Arabic. If in English, respond in English.
+        Provide actionable suggestions. Include relevant navigation suggestions or quick actions when appropriate.
         
         Please respond with JSON in the following format:
         {
