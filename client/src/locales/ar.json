@@ -1191,7 +1191,6 @@
       "hr": "الموارد البشرية",
       "attendance": "الحضور والإنصراف",
       "employee_management": "إدارة الموظفين",
-
       "overtime_leave": "الإضافي والإجازات",
       "geofence_management": "إدارة المواقع",
       "time_attendance": "الحضور والانصراف",
@@ -1214,7 +1213,6 @@
       "my_dashboard": "لوحة التحكم الخاصة بي",
       "employee_dashboard": "لوحة تحكم الموظف",
       "admin_dashboard": "لوحة تحكم المدير",
-
       "user_dashboard": "لوحة تحكم المستخدم",
       "server_management": "إدارة الخادم",
       "user": "المستخدم",
@@ -1274,7 +1272,7 @@
       "submit_request": "تقديم الطلب"
     },
 
-    "ai_assistant"{
+    "ai_assistant":{
       "title": "مساعد الذكاء الاصطناعي",
       "description": "مساعد ذكي يساعدك في اتخاذ القرارات",
       "production": "الإنتاج",
@@ -1298,10 +1296,100 @@
       "maintenance_insights": "رؤى الصيانة",
       "system_insights": "رؤى النظام",
       "production_insights_description": "رؤى الإنتاج",
-      "quality_insights_description": "رؤى الجودة",
-      "warehouse_insights_description": "رؤى المستودع"
+      "quality_insights_description": "رؤى الجودة"
     },
-    "chat"
+    "chat":{
+      "chat": "دردشة",
+      "chat_description": "دردشة مع مساعد الذكاء الاصطناعي",
+      "chat_with_ai": "دردشة مع الذكاء الاصطناعي",
+      "chat_with_ai_description": "دردشة مع مساعد الذكاء الاصطناعي",
+      "placeholder": "اكتب رسالة...",
+      "send": "إرسال",
+      "title": "دردشة مع الذكاء الاصطناعي",
+      "description": "دردشة مع مساعد الذكاء الاصطناعي"
+    },
+    "tabs":{
+      "insights": "رؤى",
+      "chat": "دردشة",
+      "settings": "إعدادات",
+      "dashboard": "لوحة التحكم",
+      "automation": "أتمتة",
+      "notifications": "إشعارات",
+      "alerts": "تنبيهات",
+      "reports": "تقارير",
+      "analytics": "تحليلات",
+      "metrics": "مقاييس"
+    },
+    "insights":{
+      "production": "الإنتاج",
+      "quality": "الجودة",
+      "warehouse": "المستودع",
+      "maintenance": "الصيانة",
+      "system": "النظام",
+      "production_insights": "رؤى الإنتاج",
+      "quality_insights": "رؤى الجودة",
+      "warehouse_insights": "رؤى المستودع",
+      "maintenance_insights": "رؤى الصيانة",
+      "system_insights": "رؤى النظام",
+      "production_insights_description": "رؤى الإنتاج",
+      "quality_insights_description": "رؤى الجودة",
+      "warehouse_insights_description": "رؤى المستودع",
+      "maintenance_insights_description": "رؤى الصيانة",
+      "system_insights_description": "رؤى النظام",
+      "production_insights": "رؤى الإنتاج",
+      "quality_insights": "رؤى الجودة",
+      "warehouse_insights": "رؤى المستودع",
+      "maintenance_insights": "رؤى الصيانة",
+      "system_insights": "رؤى النظام",
+      "production_insights_description": "رؤى الإنتاج",
+      "quality_insights_description": "رؤى الجودة",
+      "warehouse_insights_description": "رؤى المستودع",
+      "maintenance_insights_description": "رؤى الصيانة",
+      "system_insights_description": "رؤى النظام"
+    },
+    "suggestions":{
+      "production": "الإنتاج",
+      "quality": "الجودة",
+      "warehouse": "المستودع",
+      "maintenance": "الصيانة",
+      "system": "النظام",
+      "production_suggestions": "اقتراحات الإنتاج",
+      "quality_suggestions": "اقتراحات الجودة",
+      "warehouse_suggestions": "اقتراحات المستودع",
+      "maintenance_suggestions": "اقتراحات الصيانة",
+      "system_suggestions": "اقتراحات النظام",
+      "production_suggestions_description": "اقتراحات الإنتاج",
+      "quality_suggestions_description": "اقتراحات الجودة",
+      "warehouse_suggestions_description": "اقتراحات المستودع",
+      "maintenance_suggestions_description": "اقتراحات الصيانة",
+      "system_suggestions_description": "اقتراحات النظام",
+      "production_suggestions": "اقتراحات الإنتاج",
+      "quality_suggestions": "اقتراحات الجودة",
+      "warehouse_suggestions": "اقتراحات المستودع",
+      "maintenance_suggestions": "اقتراحات الصيانة",
+      "system_suggestions": "اقتراحات النظام",
+      "production_suggestions_description": "اقتراحات الإنتاج",
+      "quality_suggestions_description": "اقتراحات الجودة",
+      "warehouse_suggestions_description": "اقتراحات المستودع",
+      "maintenance_suggestions_description": "اقتراحات الصيانة"
+    },
+    "voice":{
+      "voice": "صوت",
+      "voice_description": "التحدث مع مساعد الذكاء الاصطناعي",
+      "voice_with_ai": "التحدث مع الذكاء الاصطناعي",
+      "voice_with_ai_description": "التحدث مع مساعد الذكاء الاصطناعي",
+      "placeholder": "اكتب رسالة...",
+      "send": "إرسال",
+      "title": "التحدث مع الذكاء الاصطناعي",
+      "description": "التحدث مع مساعد الذكاء الاصطناعي"
+    },
+    "errors":{
+      "assistant_error": "حدث خطأ أثناء الاتصال بمساعد الذكاء الاصطناعي. يرجى المحاولة مرة أخرى في وقت لاحق.",
+      "assistant_error_description": "حدث خطأ أثناء الاتصال بمساعد الذكاء الاصطناعي. يرجى المحاولة مرة أخرى في وقت لاحق.",
+      "failed_to_connect": "فشل الاتصال بمساعد الذكاء الاصطناعي. يرجى المحاولة مرة أخرى في وقت لاحق.",
+      "failed_to_connect_description": "فشل الاتصال بمساعد الذكاء الاصطناعي. يرجى المحاولة مرة أخرى في وقت لاحق.",
+      "failed_to_process": "فشل معالجة الطلب. يرجى المحاولة مرة أخرى في وقت لاحق."
+    },
     "maintenance": {
       "title": "إدارة الصيانة",
       "description": "نظام شامل لإدارة صيانة معدات الإنتاج",
