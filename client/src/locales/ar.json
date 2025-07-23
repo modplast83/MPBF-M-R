@@ -1296,7 +1296,33 @@
       "maintenance_insights": "رؤى الصيانة",
       "system_insights": "رؤى النظام",
       "production_insights_description": "رؤى الإنتاج",
-      "quality_insights_description": "رؤى الجودة"
+      "quality_insights_description": "رؤى الجودة",
+      "chat":{
+        "chat": "دردشة",
+        "chat_description": "دردشة مع مساعد الذكاء الاصطناعي",
+        "chat_with_ai": "دردشة مع الذكاء الاصطناعي",
+        "chat_with_ai_description": "دردشة مع مساعد الذكاء الاصطناعي",
+        "placeholder": "اكتب رسالة...",
+        "send": "إرسال",
+        "title": "دردشة مع الذكاء الاصطناعي",
+        "description": "دردشة مع مساعد الذكاء الاصطناعي",
+        "welcome":{
+          "welcome": "مرحبًا بك في مساعد الذكاء الاصطناعي",
+          "welcome_description": "مرحبًا بك في مساعد الذكاء الاصطناعي",
+          "welcome_message": "مرحبًا بك في مساعد الذكاء الاصطناعي",
+          "suggestions":{
+              "suggestions": "اقتراحات",
+              "suggestions_description": "اقتراحات",
+              "suggestions_message": "اقتراحات",
+              "production_analysis": "تحليل الإنتاج",
+              "quality_analysis": "تحليل الجودة",
+              "warehouse_analysis": "تحليل المستودع",
+              "maintenance_analysis": "تحليل الصيانة",
+              "system_analysis": "تحليل النظام",
+              "suggestions": "اقتراحات"
+          }
+        }
+      }
     },
     "chat":{
       "chat": "دردشة",
