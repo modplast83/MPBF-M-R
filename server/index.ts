@@ -126,7 +126,7 @@ app.use((req, res, next) => {
         status: 'unhealthy',
         timestamp: new Date().toISOString(),
         database: 'disconnected',
-        error: error.message
+        error: (error as Error).message
       });
     }
   });
@@ -149,7 +149,7 @@ app.use((req, res, next) => {
         status: 'unhealthy',
         timestamp: new Date().toISOString(),
         database: 'disconnected',
-        error: error.message
+        error: (error as Error).message
       });
     }
   });

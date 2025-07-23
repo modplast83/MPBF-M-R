@@ -1483,7 +1483,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
 
-      const user = await storage.upsertUser(validatedData);
+      const user = await storage.upsertUser({
+        ...validatedData,
+        id: Math.random().toString(36).substr(2, 9), // Generate a new ID for creation
+      });
       res.status(201).json(user);
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -1792,7 +1795,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error("Auto-translate error:", error);
       res.status(500).json({ 
         message: "Failed to auto-translate customer names", 
-        error: error.message 
+        error: (error as Error).message 
       });
     }
   });
@@ -1876,18 +1879,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Clean up empty strings to null for numeric fields before database insertion
       const cleanedData = {
         ...validatedData,
-        width: (validatedData.width === "" || validatedData.width === undefined) ? null : validatedData.width,
-        leftF: (validatedData.leftF === "" || validatedData.leftF === undefined) ? null : validatedData.leftF,
-        rightF: (validatedData.rightF === "" || validatedData.rightF === undefined) ? null : validatedData.rightF,
-        thickness: (validatedData.thickness === "" || validatedData.thickness === undefined) ? null : validatedData.thickness,
-        thicknessOne: (validatedData.thicknessOne === "" || validatedData.thicknessOne === undefined) ? null : validatedData.thicknessOne,
-        printingCylinder: (validatedData.printingCylinder === "" || validatedData.printingCylinder === undefined) ? null : validatedData.printingCylinder,
-        lengthCm: (validatedData.lengthCm === "" || validatedData.lengthCm === undefined) ? null : validatedData.lengthCm,
-        cuttingLength: (validatedData.cuttingLength === "" || validatedData.cuttingLength === undefined) ? null : validatedData.cuttingLength,
-        unitWeight: (validatedData.unitWeight === "" || validatedData.unitWeight === undefined) ? null : validatedData.unitWeight,
-        unitQty: (validatedData.unitQty === "" || validatedData.unitQty === undefined) ? null : validatedData.unitQty,
-        packageKg: (validatedData.packageKg === "" || validatedData.packageKg === undefined) ? null : validatedData.packageKg,
-        volum: (validatedData.volum === "" || validatedData.volum === undefined) ? null : validatedData.volum,
+        width: validatedData.width ?? null,
+        leftF: validatedData.leftF ?? null,
+        rightF: validatedData.rightF ?? null,
+        thickness: validatedData.thickness ?? null,
+        thicknessOne: validatedData.thicknessOne ?? null,
+        printingCylinder: validatedData.printingCylinder ?? null,
+        lengthCm: validatedData.lengthCm ?? null,
+        cuttingLength: validatedData.cuttingLength ?? null,
+        unitWeight: validatedData.unitWeight ?? null,
+        unitQty: validatedData.unitQty ?? null,
+        packageKg: validatedData.packageKg ?? null,
+        volum: validatedData.volum ?? null,
         // Clean up text fields that might have empty strings causing issues
         packing: (validatedData.packing === "" || validatedData.packing === undefined) ? null : validatedData.packing,
         cover: (validatedData.cover === "" || validatedData.cover === undefined) ? null : validatedData.cover,
@@ -6172,7 +6175,7 @@ COMMIT;
 
       if (startDate || endDate) {
         qualityChecks = qualityChecks.filter((check) => {
-          const checkDate = new Date(check.timestamp);
+          const checkDate = new Date(check.checkedAt || check.createdAt!);
           if (startDate && checkDate < startDate) return false;
           if (endDate && checkDate > endDate) return false;
           return true;
@@ -6202,7 +6205,7 @@ COMMIT;
 
           return {
             id: check.id,
-            date: check.timestamp,
+            date: check.checkedAt,
             type: {
               id: checkType?.id || "",
               name: checkType?.name || "Unknown",
@@ -6637,7 +6640,7 @@ COMMIT;
 
       const serverStatus = {
         status: "running",
-        uptime: uptimeSeconds,
+        uptime: process.uptime(),
         lastRestart: new Date(Date.now() - uptimeSeconds * 1000).toISOString(),
         processId: process.pid,
         memoryUsage: {
@@ -7607,7 +7610,7 @@ COMMIT;
         .status(500)
         .json({
           error: "Failed to create time attendance",
-          details: error.message,
+          details: (error as Error).message,
         });
     }
   });

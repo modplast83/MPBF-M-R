@@ -166,7 +166,7 @@ export const customerProducts = pgTable(
     packing: text("packing"), // Packing
     punching: text("punching"), // Punching
     cover: text("cover"), // Cover
-    volum: text("volum"), // Volum
+    volum: doublePrecision("volum"), // Volum
     knife: text("knife"), // Knife
     notes: text("notes"), // Notes
     clicheFrontDesign: text("cliche_front_design"), // Cliché Front Design File Path
@@ -556,7 +556,6 @@ export const qualityChecks = pgTable("quality_checks", {
 
 export const insertQualityCheckSchema = createInsertSchema(qualityChecks).omit({
   id: true,
-  timestamp: true,
 });
 export type InsertQualityCheck = z.infer<typeof insertQualityCheckSchema>;
 export type QualityCheck = typeof qualityChecks.$inferSelect;
