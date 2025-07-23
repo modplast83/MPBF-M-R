@@ -445,7 +445,7 @@ export function OrderForm() {
                                     return (
                                       <div
                                         key={customer.id}
-                                        className={`p-3 cursor-pointer hover:bg-accent/70 rounded-lg transition-colors border-2 border-transparent mb-2 ${
+                                        className={`p-4 cursor-pointer hover:bg-accent/70 rounded-lg transition-colors border-2 border-transparent mb-2 min-h-[64px] ${
                                           field.value === customer.id ? "bg-accent border-primary/20" : ""
                                         }`}
                                         onClick={() => {
@@ -615,11 +615,11 @@ export function OrderForm() {
                                           const display = `${category?.name || "Unknown"} - ${item?.name || "Unknown"}${product.sizeCaption ? ` (${product.sizeCaption})` : ""}`;
                                           
                                           return (
-                                            <SelectItem key={product.id} value={product.id.toString()}>
-                                              <div className="flex flex-col">
-                                                <span className="font-medium">{display}</span>
+                                            <SelectItem key={product.id} value={product.id.toString()} className="select-item-enhanced">
+                                              <div className="flex flex-col w-full">
+                                                <span className="font-medium text-left">{display}</span>
                                                 {product.thickness && (
-                                                  <span className="text-xs text-muted-foreground">
+                                                  <span className="text-xs text-muted-foreground text-left mt-1">
                                                     Thickness: {product.thickness}μm
                                                   </span>
                                                 )}
