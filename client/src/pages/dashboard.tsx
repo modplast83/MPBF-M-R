@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { LayoutGrid, Grid3X3 } from "lucide-react";
 import { RoleBasedDashboard } from "@/components/dashboard/role-based-dashboard";
-import { CustomizableDashboardV2 } from "@/components/dashboard/customizable-dashboard-v2";
+import { EnhancedCustomizableDashboard } from "@/components/dashboard/enhanced-customizable-dashboard";
 import { useTranslation } from "react-i18next";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -32,20 +32,24 @@ export default function Dashboard() {
           isMobile ? "w-full" : ""
         }`}>
           <Button
-            variant={viewMode === "standard" ? "gradient" : "ghost"}
+            variant={viewMode === "standard" ? "default" : "ghost"}
             size={isMobile ? "sm" : "sm"}
             onClick={() => setViewMode("standard")}
-            className={`transition-all duration-300 ${isMobile ? "flex-1" : ""}`}
+            className={`transition-all duration-300 ${isMobile ? "flex-1" : ""} ${
+              viewMode === "standard" ? "bg-gradient-to-r from-primary to-accent text-white" : ""
+            }`}
           >
             <Grid3X3 className="h-4 w-4" />
             {!isMobile && <span className="ml-1">{t("dashboard.standard")}</span>}
             {isMobile && <span className="ml-1 text-xs">Standard</span>}
           </Button>
           <Button
-            variant={viewMode === "customizable" ? "gradient" : "ghost"}
+            variant={viewMode === "customizable" ? "default" : "ghost"}
             size={isMobile ? "sm" : "sm"}
             onClick={() => setViewMode("customizable")}
-            className={`transition-all duration-300 ${isMobile ? "flex-1" : ""}`}
+            className={`transition-all duration-300 ${isMobile ? "flex-1" : ""} ${
+              viewMode === "customizable" ? "bg-gradient-to-r from-primary to-accent text-white" : ""
+            }`}
           >
             <LayoutGrid className="h-4 w-4" />
             {!isMobile && <span className="ml-1">{t("dashboard.customizable")}</span>}
@@ -55,7 +59,7 @@ export default function Dashboard() {
       </div>
 
       {viewMode === "customizable" ? (
-        <CustomizableDashboardV2 />
+        <EnhancedCustomizableDashboard />
       ) : (
         <RoleBasedDashboard />
       )}
