@@ -210,21 +210,21 @@ export function AIAssistantWidget({
         suggestions: [
           {
             type: 'insight',
-            title: t("ai.welcome.suggestions.production_analysis.title"),
-            description: t("ai.welcome.suggestions.production_analysis.description"),
+            title: t("ai.production_analysis.title"),
+            description: t("ai.production_analysis_description"),
             priority: 'high'
           },
           {
             type: 'navigation',
-            title: t("ai.welcome.suggestions.quality_dashboard.title"),
-            description: t("ai.welcome.suggestions.quality_dashboard.description"),
+            title: t("ai.quality_dashboard.title"),
+            description: t("ai.quality_dashboard_description"),
             actionUrl: '/quality',
             priority: 'medium'
           },
           {
             type: 'action',
-            title: t("ai.welcome.suggestions.schedule_optimization.title"),
-            description: t("ai.welcome.suggestions.schedule_optimization.description"),
+            title: t("ai.schedule_optimization.title"),
+            description: t("ai.schedule_optimization_description"),
             priority: 'medium'
           }
         ]
@@ -282,8 +282,8 @@ export function AIAssistantWidget({
     },
     onError: () => {
       toast({
-        title: t("ai.errors.assistant_error"),
-        description: t("ai.errors.assistant_error_desc"),
+        title: t("ai.assistant_error"),
+        description: t("ai.assistant_error_desc"),
         variant: "destructive"
       });
     }
@@ -465,8 +465,8 @@ export function AIAssistantWidget({
     }
     
     toast({
-      title: speechEnabled ? t("ai.speech.disabled") : t("ai.speech.enabled"),
-      description: speechEnabled ? t("ai.speech.disabled_desc") : t("ai.speech.enabled_desc"),
+      title: speechEnabled ? t("ai.disabled") : t("ai.enabled"),
+      description: speechEnabled ? t("ai.disabled_desc") : t("ai.enabled_desc"),
     });
   };
 
@@ -480,8 +480,8 @@ export function AIAssistantWidget({
     }
     
     toast({
-      title: t("ai.speech.language_changed"),
-      description: newLanguage === 'ar-SA' ? t("ai.speech.arabic_mode") : t("ai.speech.english_mode"),
+      title: t("ai.language_changed"),
+      description: newLanguage === 'ar-SA' ? t("ai.arabic_mode") : t("ai.english_mode"),
     });
   };
 
@@ -590,7 +590,7 @@ export function AIAssistantWidget({
                 <div className="bg-muted rounded-lg px-3 py-2 max-w-[85%]">
                   <div className="flex items-center gap-2 text-sm">
                     <RefreshCw className="h-4 w-4 animate-spin" />
-                    {t("ai.voice.processing")}
+                    {t("ai_assistant.chat.voice.processing")}
                   </div>
                 </div>
               </div>
@@ -621,7 +621,7 @@ export function AIAssistantWidget({
                     "px-2",
                     isListening && "animate-pulse"
                   )}
-                  title={isListening ? t("ai.buttons.stop_listening") : t("ai.buttons.start_voice_command")}
+                  title={isListening ? t("ai.stop_listening") : t("ai.start_voice_command")}
                 >
                   {isListening ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
                 </Button>
@@ -633,7 +633,7 @@ export function AIAssistantWidget({
                   size="sm"
                   variant="outline"
                   className="px-2"
-                  title={speechEnabled ? t("ai.buttons.disable_voice_responses") : t("ai.buttons.enable_voice_responses")}
+                  title={speechEnabled ? t("ai.disable_voice_responses") : t("ai.enable_voice_responses")}
                 >
                   {speechEnabled ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
                 </Button>
@@ -645,7 +645,7 @@ export function AIAssistantWidget({
                   size="sm"
                   variant="outline"
                   className="px-2 font-bold"
-                  title={voiceLanguage === 'ar-SA' ? t("ai.buttons.switch_to_english") : t("ai.buttons.switch_to_arabic")}
+                  title={voiceLanguage === 'ar-SA' ? t("ai.switch_to_english") : t("ai.switch_to_arabic")}
                 >
                   {voiceLanguage === 'ar-SA' ? 'ع' : 'EN'}
                 </Button>
