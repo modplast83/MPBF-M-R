@@ -153,7 +153,7 @@ export default function EnhancedAttendancePage() {
       <PageHeader
         title={t("hr.enhanced_attendance")}
         description={t("hr.enhanced_attendance_description")}
-        icon={<Users className="h-6 w-6" />}
+        icon="group"
       />
 
       {/* Filters */}

@@ -192,11 +192,13 @@ export default function MyDashboard() {
     queryFn: async () => {
       const today = format(new Date(), "yyyy-MM-dd");
       const allAttendance = await apiRequest("GET", "/api/hr/time-attendance");
-      return allAttendance.find(
+      // Always return a value - either the found attendance or null
+      const foundAttendance = allAttendance.find(
         (att: AttendanceRecord) =>
           att.userId === user?.id &&
           format(new Date(att.date), "yyyy-MM-dd") === today,
       );
+      return foundAttendance || null;
     },
     enabled: !!user?.id,
   });
