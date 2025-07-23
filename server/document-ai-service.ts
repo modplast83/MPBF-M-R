@@ -160,7 +160,7 @@ export class DocumentAIService {
     ]
     `;
 
-    const response = await openai.chat.completions.create({
+    const response = await openai.create({
       model: "gpt-4o",
       messages: [
         {
@@ -225,7 +225,7 @@ export class DocumentAIService {
       }
       `;
 
-      const response = await openai.chat.completions.create({
+      const response = await openai.create({
         model: "gpt-4o",
         messages: [
           {
@@ -281,7 +281,7 @@ export class DocumentAIService {
       }
       `;
 
-      const response = await openai.chat.completions.create({
+      const response = await openai.create({
         model: "gpt-4o",
         messages: [
           {

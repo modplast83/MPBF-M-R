@@ -112,7 +112,7 @@ export class AIAssistantService {
         }
       `;
 
-      const response = await openai.chat.completions.create({
+      const response = await openai.create({
         model: "gpt-4o",
         messages: [
           {
@@ -200,7 +200,7 @@ export class AIAssistantService {
         }
       `;
 
-      const response = await openai.chat.completions.create({
+      const response = await openai.create({
         model: "gpt-4o",
         messages: [
           {
@@ -289,7 +289,7 @@ export class AIAssistantService {
         ]
       `;
 
-      const response = await openai.chat.completions.create({
+      const response = await openai.create({
         model: "gpt-4o",
         messages: [
           {
@@ -346,7 +346,7 @@ export class AIAssistantService {
         ]
       `;
 
-      const response = await openai.chat.completions.create({
+      const response = await openai.create({
         model: "gpt-4o",
         messages: [
           {
@@ -440,7 +440,7 @@ export class AIAssistantService {
         ]
       `;
 
-      const response = await openai.chat.completions.create({
+      const response = await openai.create({
         model: "gpt-4o",
         messages: [
           {
@@ -666,7 +666,7 @@ Focus on actionable workflows that address current bottlenecks, improve efficien
 
 Return only the JSON array, no additional text.`;
 
-      const completion = await this.openai.chat.completions.create({
+      const completion = await this.openai.create({
         model: "gpt-4o",
         messages: [
           {

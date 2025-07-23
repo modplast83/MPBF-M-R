@@ -84,8 +84,12 @@ export function AIAssistantWidget({
   const [speechEnabled, setSpeechEnabled] = useState(true);
   const [speechSupported, setSpeechSupported] = useState(false);
   const [voiceLanguage, setVoiceLanguage] = useState('en-US'); // Default to English
+  const [voiceActivity, setVoiceActivity] = useState(0); // 0-100 voice level
+  const [isProcessingVoice, setIsProcessingVoice] = useState(false);
+  const [gestureAnimation, setGestureAnimation] = useState<'idle' | 'listening' | 'processing' | 'speaking'>('idle');
   const recognitionRef = useRef<any>(null);
   const speechSynthesisRef = useRef<SpeechSynthesis | null>(null);
+  const animationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
@@ -116,6 +120,12 @@ export function AIAssistantWidget({
           recognitionRef.current.onstart = () => {
             console.log('Speech recognition started');
             setIsListening(true);
+            setGestureAnimation('listening');
+            
+            // Trigger haptic feedback if available
+            if (navigator.vibrate) {
+              navigator.vibrate([50, 50, 50]); // Three short vibrations
+            }
           };
           
           recognitionRef.current.onresult = (event: any) => {
@@ -123,11 +133,35 @@ export function AIAssistantWidget({
             console.log('Speech recognized:', transcript);
             setInput(transcript);
             setIsListening(false);
+            setIsProcessingVoice(true);
+            setGestureAnimation('processing');
+            
+            // Success haptic feedback
+            if (navigator.vibrate) {
+              navigator.vibrate([100, 50, 100]); // Success pattern
+            }
+            
+            // Auto-submit after brief delay for visual feedback
+            setTimeout(() => {
+              setIsProcessingVoice(false);
+              if (transcript.trim()) {
+                handleSendMessage();
+              }
+              setGestureAnimation('idle');
+            }, 1200);
           };
           
           recognitionRef.current.onerror = (event: any) => {
             console.error('Speech recognition error:', event.error);
             setIsListening(false);
+            setIsProcessingVoice(false);
+            setGestureAnimation('idle');
+            
+            // Error haptic feedback
+            if (navigator.vibrate) {
+              navigator.vibrate([200, 100, 200, 100, 200]); // Error pattern
+            }
+            
             toast({
               title: "Voice Recognition Error",
               description: `Speech recognition failed: ${event.error}`,
@@ -137,7 +171,10 @@ export function AIAssistantWidget({
           
           recognitionRef.current.onend = () => {
             console.log('Speech recognition ended');
-            setIsListening(false);
+            if (!isProcessingVoice) {
+              setIsListening(false);
+              setGestureAnimation('idle');
+            }
           };
         } catch (error) {
           console.error('Failed to initialize speech recognition:', error);
@@ -168,26 +205,26 @@ export function AIAssistantWidget({
       const welcomeMessage: AssistantMessage = {
         id: 'welcome',
         type: 'assistant',
-        content: t("ai_assistant.chat.welcome.message", { username: user.username }),
+        content: t("ai.welcome.message", { username: user.username }),
         timestamp: new Date(),
         suggestions: [
           {
             type: 'insight',
-            title: t("ai_assistant.chat.welcome.suggestions.production_analysis.title"),
-            description: t("ai_assistant.chat.welcome.suggestions.production_analysis.description"),
+            title: t("ai.welcome.suggestions.production_analysis.title"),
+            description: t("ai.welcome.suggestions.production_analysis.description"),
             priority: 'high'
           },
           {
             type: 'navigation',
-            title: t("ai_assistant.chat.welcome.suggestions.quality_dashboard.title"),
-            description: t("ai_assistant.chat.welcome.suggestions.quality_dashboard.description"),
+            title: t("ai.welcome.suggestions.quality_dashboard.title"),
+            description: t("ai.welcome.suggestions.quality_dashboard.description"),
             actionUrl: '/quality',
             priority: 'medium'
           },
           {
             type: 'action',
-            title: t("ai_assistant.chat.welcome.suggestions.schedule_optimization.title"),
-            description: t("ai_assistant.chat.welcome.suggestions.schedule_optimization.description"),
+            title: t("ai.welcome.suggestions.schedule_optimization.title"),
+            description: t("ai.welcome.suggestions.schedule_optimization.description"),
             priority: 'medium'
           }
         ]
@@ -245,8 +282,8 @@ export function AIAssistantWidget({
     },
     onError: () => {
       toast({
-        title: t("ai_assistant.chat.errors.assistant_error"),
-        description: t("ai_assistant.chat.errors.assistant_error_desc"),
+        title: t("ai.errors.assistant_error"),
+        description: t("ai.errors.assistant_error_desc"),
         variant: "destructive"
       });
     }
@@ -313,6 +350,36 @@ export function AIAssistantWidget({
       case 'low': return 'border-blue-200 bg-blue-50 text-blue-800';
       default: return 'border-gray-200 bg-gray-50 text-gray-800';
     }
+  };
+
+  // Voice gesture animation styles
+  const getGestureAnimationClass = () => {
+    switch (gestureAnimation) {
+      case 'listening':
+        return 'animate-pulse bg-blue-500 border-blue-400';
+      case 'processing':
+        return 'animate-bounce bg-yellow-500 border-yellow-400';
+      case 'speaking':
+        return 'animate-ping bg-green-500 border-green-400';
+      default:
+        return 'bg-gray-500 border-gray-400';
+    }
+  };
+
+  // Voice activity indicator component
+  const VoiceActivityIndicator = () => {
+    if (gestureAnimation === 'idle') return null;
+    
+    return (
+      <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 flex items-center space-x-2 bg-black/80 text-white px-3 py-2 rounded-lg text-xs z-10">
+        <div className={`w-2 h-2 rounded-full ${getGestureAnimationClass()}`}></div>
+        <span>
+          {gestureAnimation === 'listening' && 'Listening...'}
+          {gestureAnimation === 'processing' && 'Processing...'}
+          {gestureAnimation === 'speaking' && 'Speaking...'}
+        </span>
+      </div>
+    );
   };
 
   // Voice functionality methods
@@ -398,8 +465,8 @@ export function AIAssistantWidget({
     }
     
     toast({
-      title: speechEnabled ? t("ai_assistant.chat.speech.disabled") : t("ai_assistant.chat.speech.enabled"),
-      description: speechEnabled ? t("ai_assistant.chat.speech.disabled_desc") : t("ai_assistant.chat.speech.enabled_desc"),
+      title: speechEnabled ? t("ai.speech.disabled") : t("ai.speech.enabled"),
+      description: speechEnabled ? t("ai.speech.disabled_desc") : t("ai.speech.enabled_desc"),
     });
   };
 
@@ -413,8 +480,8 @@ export function AIAssistantWidget({
     }
     
     toast({
-      title: t("ai_assistant.chat.speech.language_changed"),
-      description: newLanguage === 'ar-SA' ? t("ai_assistant.chat.speech.arabic_mode") : t("ai_assistant.chat.speech.english_mode"),
+      title: t("ai.speech.language_changed"),
+      description: newLanguage === 'ar-SA' ? t("ai.speech.arabic_mode") : t("ai.speech.english_mode"),
     });
   };
 
@@ -437,7 +504,7 @@ export function AIAssistantWidget({
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
         <CardTitle className="flex items-center gap-2 text-lg">
           <Bot className="h-5 w-5 text-primary" />
-          {t("ai_assistant.chat.title")}
+          {t("ai.title")}
         </CardTitle>
         <div className="flex items-center gap-1">
           <Button
@@ -523,7 +590,7 @@ export function AIAssistantWidget({
                 <div className="bg-muted rounded-lg px-3 py-2 max-w-[85%]">
                   <div className="flex items-center gap-2 text-sm">
                     <RefreshCw className="h-4 w-4 animate-spin" />
-                    {t("ai_assistant.chat.voice.processing")}
+                    {t("ai.voice.processing")}
                   </div>
                 </div>
               </div>
@@ -540,7 +607,7 @@ export function AIAssistantWidget({
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyPress={handleKeyPress}
-                placeholder={isListening ? t("ai_assistant.chat.voice.listening") : t("ai_assistant.chat.placeholder")}
+                placeholder={isListening ? t("ai.voice.listening") : t("ai.placeholder")}
                 className="flex-1"
                 disabled={assistantMutation.isPending || isListening}
               />
@@ -554,7 +621,7 @@ export function AIAssistantWidget({
                     "px-2",
                     isListening && "animate-pulse"
                   )}
-                  title={isListening ? t("ai_assistant.chat.buttons.stop_listening") : t("ai_assistant.chat.buttons.start_voice_command")}
+                  title={isListening ? t("ai.buttons.stop_listening") : t("ai.buttons.start_voice_command")}
                 >
                   {isListening ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
                 </Button>
@@ -566,7 +633,7 @@ export function AIAssistantWidget({
                   size="sm"
                   variant="outline"
                   className="px-2"
-                  title={speechEnabled ? t("ai_assistant.chat.buttons.disable_voice_responses") : t("ai_assistant.chat.buttons.enable_voice_responses")}
+                  title={speechEnabled ? t("ai.buttons.disable_voice_responses") : t("ai.buttons.enable_voice_responses")}
                 >
                   {speechEnabled ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
                 </Button>
@@ -578,7 +645,7 @@ export function AIAssistantWidget({
                   size="sm"
                   variant="outline"
                   className="px-2 font-bold"
-                  title={voiceLanguage === 'ar-SA' ? t("ai_assistant.chat.buttons.switch_to_english") : t("ai_assistant.chat.buttons.switch_to_arabic")}
+                  title={voiceLanguage === 'ar-SA' ? t("ai.buttons.switch_to_english") : t("ai.buttons.switch_to_arabic")}
                 >
                   {voiceLanguage === 'ar-SA' ? 'ع' : 'EN'}
                 </Button>
@@ -592,19 +659,41 @@ export function AIAssistantWidget({
               <Send className="h-4 w-4" />
             </Button>
           </div>
-          <div className="text-xs text-muted-foreground mt-2 text-center">
+          <div className="text-xs mt-2 text-center relative">
             {speechSupported ? (
-              isListening ? (
-                <span className="text-primary font-medium">
-                  🎤 Listening... ({voiceLanguage === 'ar-SA' ? 'Arabic' : 'English'})
-                </span>
-              ) : (
-                <span>
-                  Click microphone to speak ({voiceLanguage === 'ar-SA' ? 'Arabic' : 'English'} mode)
-                </span>
-              )
+              <div className={cn(
+                "transition-all duration-300 rounded-md px-3 py-2",
+                isListening && "bg-blue-50 border border-blue-200 text-blue-700 animate-pulse",
+                isProcessingVoice && "bg-yellow-50 border border-yellow-200 text-yellow-700 animate-bounce",
+                gestureAnimation === 'speaking' && "bg-green-50 border border-green-200 text-green-700 animate-ping",
+                gestureAnimation === 'idle' && "text-muted-foreground"
+              )}>
+                {isListening && (
+                  <span className="font-medium flex items-center justify-center gap-2">
+                    <div className="w-2 h-2 bg-blue-500 rounded-full animate-ping"></div>
+                    🎤 Listening... ({voiceLanguage === 'ar-SA' ? 'Arabic' : 'English'})
+                  </span>
+                )}
+                {isProcessingVoice && (
+                  <span className="font-medium flex items-center justify-center gap-2">
+                    <div className="w-2 h-2 bg-yellow-500 rounded-full animate-bounce"></div>
+                    ⚡ Processing voice command...
+                  </span>
+                )}
+                {gestureAnimation === 'speaking' && (
+                  <span className="font-medium flex items-center justify-center gap-2">
+                    <div className="w-2 h-2 bg-green-500 rounded-full animate-ping"></div>
+                    🔊 AI is speaking...
+                  </span>
+                )}
+                {gestureAnimation === 'idle' && (
+                  <span>
+                    Click microphone to speak ({voiceLanguage === 'ar-SA' ? 'Arabic' : 'English'} mode)
+                  </span>
+                )}
+              </div>
             ) : (
-              <span className="text-orange-600">
+              <span className="text-orange-600 bg-orange-50 border border-orange-200 rounded-md px-3 py-2 inline-block">
                 Voice recognition unavailable - use Chrome, Edge, or Safari
               </span>
             )}
