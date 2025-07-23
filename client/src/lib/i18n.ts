@@ -24,7 +24,7 @@ i18nInstance
     },
     fallbackLng: "en",
     debug: false,
-    lng: "en",
+lng: undefined, // ← يتركه للكشف التلقائي
     defaultNS: "translation",
     ns: ["translation"],
     interpolation: {

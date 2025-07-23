@@ -1,11 +1,110 @@
 {
+  "ai": {
+    "title": "الذكاء الاصطناعي",
+    "subtitle": "مساعد ذكي لتسهيل عمليات المصنع",
+    "refresh": "تحديث",
+    "chat": "المحادثة",
+    "insights": "تحليلات",
+    "automation": "أتمتة",
+    "chat_assistant": "مساعد المحادثة",
+    "welcome_message": "مرحبًا بك! كيف يمكنني مساعدتك اليوم؟",
+    "chat_placeholder": "اكتب سؤالك هنا...",
+    "quick_actions": "إجراءات سريعة",
+    "production_analysis": "تحليل الإنتاج",
+    "check_production_status": "تحقّق من حالة الإنتاج",
+    "quality_check": "فحص الجودة",
+    "review_quality_metrics": "مراجعة مؤشرات الجودة",
+    "maintenance_status": "حالة الصيانة",
+    "check_equipment_health": "تحقّق من حالة الماكينات",
+    "production_insights": "رؤى الإنتاج",
+    "efficiency": "الكفاءة",
+    "output_rate": "معدل الإنتاج",
+
+    "quality_metrics": "مقاييس الجودة",
+    "quality_score": "درجة الجودة",
+    "defect_rate": "معدل العيوب",
+
+    "maintenance_alerts": "تنبيهات الصيانة",
+    "pending_maintenance": "أعمال صيانة معلّقة",
+    "next_scheduled": "الصيانة المجدولة القادمة",
+    "tomorrow": "غدًا",
+
+    "recommendations": "توصيات",
+    "sample_recommendation_1": "يفضّل إعادة جدولة أوامر الإنتاج مساءً لتحسين الكفاءة.",
+    "sample_recommendation_2": "الصيانة الوقائية للآلة A3 مطلوبة خلال 24 ساعة.",
+
+    "auto_quality_checks": "الفحوصات الآلية للجودة",
+    "auto_quality_desc": "فعّل فحص الجودة التلقائي لتقليل التداخل البشري وتحسين الكفاءة.",
+    "enable": "تفعيل",
+
+    "smart_scheduling": "الجدولة الذكية",
+    "smart_scheduling_desc": "تحسين ترتيب أوامر التشغيل بناءً على الأداء والطاقة المتاحة.",
+    "activate": "تنشيط",
+
+    "predictive_alerts": "تنبيهات تنبؤية",
+    "predictive_alerts_desc": "تلقي تنبيهات ذكية قبل حدوث أعطال أو انخفاض الأداء.",
+    "configure": "تكوين",
+
+    "workflow_optimization": "تحسين سير العمل",
+    "workflow_optimization_desc": "اقتراحات لتحسين تسلسل العمليات وتقليل الهدر.",
+    "optimize": "تحسين",
+
+    "thinking": "جارٍ التفكير"
+  },
+
   "translation": {
+    "ai": {
+      "title": "مساعد الذكاء الصناعي",
+      "subtitle": "تحليلات وتنبيهات ذكية لمراقبة المصنع",
+      "refresh": "تحديث",
+      "chat": "المحادثة",
+      "insights": "تحليلات",
+      "automation": "الأتمتة",
+      "chat_assistant": "المساعد الذكي",
+      "welcome_message": "مرحبًا بك! كيف يمكنني مساعدتك اليوم؟",
+      "chat_placeholder": "اكتب سؤالك هنا...",
+      "quick_actions": "اقتراحات سريعة",
+      "production_analysis": "تحليل الإنتاج",
+      "check_production_status": "راجع حالة الإنتاج الحالية",
+      "quality_check": "فحص الجودة",
+      "review_quality_metrics": "عرض مؤشرات الجودة",
+      "maintenance_status": "حالة الصيانة",
+      "check_equipment_health": "تحقق من سلامة المعدات",
+      "thinking": "جاري المعالجة",
+      "production_insights": "رؤى الإنتاج",
+      "efficiency": "الكفاءة",
+      "output_rate": "معدل الإنتاج",
+      "quality_metrics": "مقاييس الجودة",
+      "quality_score": "درجة الجودة",
+      "defect_rate": "معدل العيوب",
+      "maintenance_alerts": "تنبيهات الصيانة",
+      "pending_maintenance": "الصيانة المعلقة",
+      "next_scheduled": "الصيانة المجدولة التالية",
+      "tomorrow": "غدًا",
+      "recommendations": "توصيات",
+      "sample_recommendation_1": "قم بتحسين وقت تشغيل المكائن لتقليل التوقفات.",
+      "sample_recommendation_2": "إجراء صيانة وقائية للماكينة رقم 4.",
+      "auto_quality_checks": "فحوصات جودة تلقائية",
+      "auto_quality_desc": "قم بتفعيل الفحص التلقائي لاكتشاف العيوب مبكرًا.",
+      "enable": "تفعيل",
+      "smart_scheduling": "جدولة ذكية",
+      "smart_scheduling_desc": "جدولة تلقائية لأوامر الإنتاج بناءً على الأولوية.",
+      "activate": "تشغيل",
+      "predictive_alerts": "تنبيهات تنبؤية",
+      "predictive_alerts_desc": "احصل على تنبيهات مبكرة قبل حدوث الأعطال.",
+      "configure": "تهيئة",
+      "workflow_optimization": "تحسين سير العمل",
+      "workflow_optimization_desc": "اقتراحات لتحسين الأداء وزيادة الكفاءة.",
+      "optimize": "تحسين"
+    },
+
     "app": {
       "title": "مصنع أكياس البلاستيك الحديث",
       "full_title": "مصنع أكياس البلاستيك الحديث",
       "manufacturing_system": "نظام التصنيع",
       "manufacturing_short": "نظام التصنيع"
     },
+
     "common": {
       "loading": "جاري التحميل...",
       "name": "الاسم",
@@ -1271,7 +1370,7 @@
       "submitting": "جاري التقديم...",
       "submit_request": "تقديم الطلب"
     },
-    "ia":{
+    "ia": {
       "chat": "دردشة",
       "insights": "رؤى",
       "automation": "أتمتة",
@@ -1339,7 +1438,7 @@
       "ia_maintenance_description": "صيانة",
       "ia_system": "نظام"
     },
-    "ai_assistant":{
+    "ai_assistant": {
       "title": "مساعد الذكاء الاصطناعي",
       "description": "مساعد ذكي يساعدك في اتخاذ القرارات",
       "production": "الإنتاج",
@@ -1364,7 +1463,7 @@
       "system_insights": "رؤى النظام",
       "production_insights_description": "رؤى الإنتاج",
       "quality_insights_description": "رؤى الجودة",
-      "chat":{
+      "chat": {
         "chat": "دردشة",
         "chat_description": "دردشة مع مساعد الذكاء الاصطناعي",
         "chat_with_ai": "دردشة مع الذكاء الاصطناعي",
@@ -1373,44 +1472,44 @@
         "send": "إرسال",
         "title": "دردشة مع الذكاء الاصطناعي",
         "description": "دردشة مع مساعد الذكاء الاصطناعي",
-        "welcome":{
+        "welcome": {
           "welcome": "مرحبًا بك في مساعد الذكاء الاصطناعي",
           "welcome_description": "مرحبًا بك في مساعد الذكاء الاصطناعي",
           "welcome_message": "مرحبًا بك في مساعد الذكاء الاصطناعي",
-          "suggestions":{
-              "suggestions": "اقتراحات",
-              "suggestions_description": "اقتراحات",
-              "suggestions_message": "اقتراحات",
+          "suggestions": {
+            "suggestions": "اقتراحات",
+            "suggestions_description": "اقتراحات",
+            "suggestions_message": "اقتراحات",
+            "production_analysis": "تحليل الإنتاج",
+            "quality_analysis": "تحليل الجودة",
+            "warehouse_analysis": "تحليل المستودع",
+            "maintenance_analysis": "تحليل الصيانة",
+            "system_analysis": "تحليل النظام",
+            "suggestions": "اقتراحات",
+            "suggestions": {
+              "title": {
+                "production": "تحليل الإنتاج",
+                "quality": "تحليل الجودة",
+                "warehouse": "تحليل المستودع",
+                "maintenance": "تحليل الصيانة"
+              },
+              "title": "تحليل الإنتاج",
               "production_analysis": "تحليل الإنتاج",
-              "quality_analysis": "تحليل الجودة",
-              "warehouse_analysis": "تحليل المستودع",
-              "maintenance_analysis": "تحليل الصيانة",
-              "system_analysis": "تحليل النظام",
-              "suggestions": "اقتراحات",
-              "suggestions":{
-                "title": {
-                  "production": "تحليل الإنتاج",
-                  "quality": "تحليل الجودة",
-                  "warehouse": "تحليل المستودع",
-                  "maintenance": "تحليل الصيانة"
-                },
+              "production_analysis": {
                 "title": "تحليل الإنتاج",
-                "production_analysis": "تحليل الإنتاج",
-                  "production_analysis":{
-                    "title": "تحليل الإنتاج",
-                    "description": "تحليل الإنتاج",
-                    "message": "تحليل الإنتاج",
-                    "production_analysis": "تحليل الإنتاج"
-                  }
-                },
-                "quality_analysis": "تحليل الجودة",
-                "warehouse_analysis": "تحليل المستودع",
-                "maintenance_analysis": "تحليل الصيانة"
+                "description": "تحليل الإنتاج",
+                "message": "تحليل الإنتاج",
+                "production_analysis": "تحليل الإنتاج"
               }
+            },
+            "quality_analysis": "تحليل الجودة",
+            "warehouse_analysis": "تحليل المستودع",
+            "maintenance_analysis": "تحليل الصيانة"
           }
         }
-      },
-    "chat":{
+      }
+    },
+    "chat": {
       "chat": "دردشة",
       "chat_description": "دردشة مع مساعد الذكاء الاصطناعي",
       "chat_with_ai": "دردشة مع الذكاء الاصطناعي",
@@ -1420,7 +1519,7 @@
       "title": "دردشة مع الذكاء الاصطناعي",
       "description": "دردشة مع مساعد الذكاء الاصطناعي"
     },
-    "tabs":{
+    "tabs": {
       "insights": "رؤى",
       "chat": "دردشة",
       "settings": "إعدادات",
@@ -1432,7 +1531,7 @@
       "analytics": "تحليلات",
       "metrics": "مقاييس"
     },
-    "insights":{
+    "insights": {
       "production": "الإنتاج",
       "quality": "الجودة",
       "warehouse": "المستودع",
@@ -1459,7 +1558,7 @@
       "maintenance_insights_description": "رؤى الصيانة",
       "system_insights_description": "رؤى النظام"
     },
-    "suggestions":{
+    "suggestions": {
       "production": "الإنتاج",
       "quality": "الجودة",
       "warehouse": "المستودع",
@@ -1485,7 +1584,7 @@
       "warehouse_suggestions_description": "اقتراحات المستودع",
       "maintenance_suggestions_description": "اقتراحات الصيانة"
     },
-    "voice":{
+    "voice": {
       "voice": "صوت",
       "voice_description": "التحدث مع مساعد الذكاء الاصطناعي",
       "voice_with_ai": "التحدث مع الذكاء الاصطناعي",
@@ -1495,7 +1594,7 @@
       "title": "التحدث مع الذكاء الاصطناعي",
       "description": "التحدث مع مساعد الذكاء الاصطناعي"
     },
-    "errors":{
+    "errors": {
       "assistant_error": "حدث خطأ أثناء الاتصال بمساعد الذكاء الاصطناعي. يرجى المحاولة مرة أخرى في وقت لاحق.",
       "assistant_error_description": "حدث خطأ أثناء الاتصال بمساعد الذكاء الاصطناعي. يرجى المحاولة مرة أخرى في وقت لاحق.",
       "failed_to_connect": "فشل الاتصال بمساعد الذكاء الاصطناعي. يرجى المحاولة مرة أخرى في وقت لاحق.",
@@ -1988,7 +2087,7 @@
         "delete_confirmation": "سيتم حذف هذا المنتج نهائياً. لا يمكن التراجع عن هذا الإجراء.",
         "cancel": "إلغاء",
         "delete": "حذف",
-        "form":{
+        "form": {
           "customer_required": "العميل مطلوب",
           "category_required": "الفئة مطلوبة",
           "product_name_required": "اسم المنتج مطلوب",
@@ -2080,7 +2179,6 @@
           "submitting": "جاري الحفظ...",
           "cancel": "إلغاء",
           "created": "تم الإنشاء"
-
         }
       },
       "customers": {
@@ -2504,7 +2602,7 @@
       "checks": "الفحوصات",
       "violations": "المخالفات",
       "quality_violations": "مخالفات الجودة",
-      "corrective_actions": "الإجراءات التصحيحية",
+      "corrective_actions": "الإجراء��ت التصحيحية",
       "penalties": "الغرامات",
       "unified_dashboard": "لوحة تحكم موحدة",
       "quality_rate": "معدل الجودة",
@@ -3620,7 +3718,7 @@
       "search_employees": "البحث عن الموظفين...",
       "showing_records": "عرض {{count}} سجل",
       "present_today": "حاضر اليوم",
-      "absent_today": "غائب اليوم", 
+      "absent_today": "غائب اليوم",
       "total_overtime": "مجموع الساعات الإضافية",
       "selected_date": "التاريخ المحدد",
       "daily_attendance_report": "تقرير الحضور اليومي",
@@ -3727,7 +3825,7 @@
         "compliance_certificates": "شهادات الامتثال",
         "safety_certifications": "شهادات السلامة",
         "technical_certifications": "الشهادات التقنية",
-        "certificate_templates": "قوالب الشهادات",
+        "certificate_templates": "e�والب الشهادات",
         "batch_processing": "المعالجة المجمعة",
         "certificate_analytics": "تحليلات الشهادات",
         "audit_trail": "مسار التدقيق"
@@ -4401,7 +4499,7 @@
         },
         "severity_options": {
           "low": "منخفض",
-          "normal": "عادي", 
+          "normal": "عادي",
           "high": "عالي",
           "critical": "حرج"
         },
@@ -4541,7 +4639,7 @@
         "actions_plural": "إجراءات",
         "maintenance_request_details": "تفاصيل طلب الصيانة",
         "view_complete_information": "عرض معلومات كاملة عن طلب الصيانة هذا",
-        "status_options":"خيارات الحالة",
+        "status_options": "خيارات الحالة",
         "severity_options": "خيارات الشدة",
         "damage_types": "أنواع الضرر",
         "Motor Issue": "مشكلة في المحرك",
@@ -4590,7 +4688,7 @@
         "actions": "الإجراءات",
         "view_details": "عرض التفاصيل",
         "print_request": "طباعة الطلب",
-        "damage_types":{
+        "damage_types": {
           "damage_types_Motor": "مشكلة في المحرك",
           "Motor Issue": "مشكلة في المحرك",
           "Other Issue": "مشكلة أخرى",
@@ -4905,13 +5003,13 @@
           "sidebar_text_settings_design_preview": "معاينة التصميم",
           "sidebar_text_settings_design_editor_title": "محرر التصميم",
           "sidebar_text_settings_design_canvas": "لوحة التصميم",
-          "sidebar_text_settings_tools":{
+          "sidebar_text_settings_tools": {
             "rectangle": "مستطيل",
             "circle": "دائرة",
             "text": "نص",
             "move": "تحريك",
             "clear": "مسح اللوحة",
-            "colors":{
+            "colors": {
               "black": "أسود",
               "red": "أحمر",
               "blue": "أزرق",
@@ -4921,278 +5019,278 @@
               "orange": "برتقالي",
               "gray": "رمادي"
             },
-            "text_settings":{
+            "text_settings": {
               "add_text": "إضافة نص",
               "font_size": "حجم الخط",
               "element_selected": "عنصر محدد",
               "delete_element": "حذف العنصر"
             },
 
-          "supported_formats": "الأنواع المدعومة: AI, EPS, PDF, PNG, JPG, SVG (حد أقصى 10 ميجابايت)",
-          "choose_file": "اختر ملف",
-          "upload_success": "تم رفع التصميم بنجاح وسيتم تحويله إلى متجهات لجودة طباعة مثلى",
-          "design_preview": "معاينة التصميم",
-          "design_editor_title": "محرر التصميم",
-          "design_canvas": "لوحة التصميم",
-          "tools": {
-            "rectangle": "مستطيل",
-            "circle": "دائرة",
-            "text": "نص",
-            "move": "تحريك",
-            "clear": "مسح اللوحة"
-          },
-          "colors": {
-            "black": "أسود",
-            "red": "أحمر",
-            "blue": "أزرق",
-            "green": "أخضر",
-            "yellow": "أصفر",
-            "purple": "بنفسجي",
-            "orange": "برتقالي",
-            "gray": "رمادي"
-          },
-          "text_settings": {
-            "add_text": "إضافة نص",
-            "font_size": "حجم الخط",
-            "element_selected": "عنصر محدد",
-            "delete_element": "حذف العنصر",
-            "deselect": "إلغاء التحديد"
-          }
-        },
-        "customer": {
-          "details": "تفاصيل العميل",
-          "name": "اسم العميل",
-          "name_placeholder": "أدخل اسم العميل",
-          "email": "عنوان البريد الإلكتروني",
-          "email_placeholder": "أدخل عنوان البريد الإلكتروني",
-          "phone": "رقم الهاتف",
-          "phone_placeholder": "أدخل رقم الهاتف",
-          "quantity": "الكمية",
-          "quantity_placeholder": "أدخل الكمية",
-          "notes": "ملاحظات خاصة",
-          "notes_placeholder": "أي متطلبات خاصة أو ملاحظات"
-        },
-        "review": {
-          "title": "المراجعة النهائية",
-          "order_summary": "ملخص الطلب",
-          "product_type": "نوع المنتج:",
-          "template": "القالب:",
-          "dimensions": "الأبعاد:",
-          "material_color": "لون المادة:",
-          "quantity": "الكمية:",
-          "customer_info": "معلومات العميل:",
-          "estimated_total": "المجموع المقدر",
-          "download_quote": "تنزيل عرض السعر",
-          "submit_quote": "إرسال طلب عرض السعر",
-          "quote_submitted": "تم إرسال طلب عرض السعر",
-          "quote_submitted_desc": "سنتواصل معك في غضون 24 ساعة مع السعر النهائي والجدول الزمني للإنتاج."
-        },
-        "live_preview": {
-          "title": "معاينة مباشرة",
-          "dimensions_info": "الأبعاد: {{width}}سم × {{length}}سم",
-          "aspect_ratio_info": "نسبة الأبعاد: {{ratio}}",
-          "material_info": "المادة: {{material}}",
-          "template_info": "القالب: {{template}}"
-        },
-        "navigation": {
-          "next": "التالي",
-          "previous": "السابق",
-          "finish": "إنهاء"
-        },
-        "validation": {
-          "invalid_file_type": "نوع ملف غير صالح",
-          "invalid_file_type_desc": "يرجى رفع ملفات PNG أو JPG أو PDF أو SVG فقط.",
-          "file_too_large": "الملف كبير جداً",
-          "file_too_large_desc": "يرجى رفع ملفات أصغر من 10 ميجابايت.",
-          "max_colors_reached": "تم الوصول إلى الحد الأقصى من الألوان",
-          "max_colors_reached_desc": "يمكنك استخدام حتى 4 ألوان في تصميمك للحصول على جودة طباعة مثلى.",
-          "required_field": "هذا الحقل مطلوب",
-          "invalid_email": "يرجى إدخال عنوان بريد إلكتروني صالح",
-          "invalid_phone": "يرجى إدخال رقم هاتف صالح"
-        },
-        "pdf": {
-          "pricing_disclaimer": "*قد تختلف الأسعار النهائية بناءً على تعقيد التصميم وتوفر المواد",
-          "quote_title": "عرض سعر المنتج",
-          "generated_on": "تم إنشاؤه في: {{date}}"
-        }
-      }
-    },
-    "ai": {
-      "title": "مساعد الذكاء الاصطناعي",
-      "subtitle": "مساعدك الذكي للإنتاج",
-      "chat": "دردشة",
-      "insights": "رؤى", 
-      "automation": "أتمتة",
-      "refresh": "تحديث",
-      "welcome_message": "مرحباً! أنا مساعدك الذكي. كيف يمكنني مساعدتك اليوم؟",
-      "chat_assistant": "مساعد الدردشة",
-      "chat_placeholder": "اكتب رسالتك...",
-      "thinking": "أفكر",
-      "quick_actions": "إجراءات سريعة",
-      "production_analysis": "تحليل الإنتاج", 
-      "check_production_status": "فحص حالة الإنتاج الحالية",
-      "quality_check": "فحص الجودة",
-      "review_quality_metrics": "مراجعة مقاييس الجودة",
-      "maintenance_status": "حالة الصيانة",
-      "check_equipment_health": "فحص صحة المعدات",
-      "production_insights": "رؤى الإنتاج",
-      "efficiency": "الكفاءة",
-      "output_rate": "معدل الإنتاج",
-      "quality_metrics": "مقاييس الجودة",
-      "quality_score": "درجة الجودة",
-      "defect_rate": "معدل العيوب",
-      "maintenance_alerts": "تنبيهات الصيانة",
-      "pending_maintenance": "صيانة معلقة",
-      "next_scheduled": "الموعد القادم",
-      "tomorrow": "غداً",
-      "recommendations": "توصيات",
-      "sample_recommendation_1": "فكر في تحسين جدولة الآلات لتقليل وقت التوقف",
-      "sample_recommendation_2": "جدولة صيانة وقائية للآلة رقم 3 الأسبوع القادم",
-      "auto_quality_checks": "فحوصات جودة تلقائية",
-      "auto_quality_desc": "جدولة فحوصات الجودة تلقائياً بناءً على أنماط الإنتاج",
-      "smart_scheduling": "جدولة ذكية",
-      "smart_scheduling_desc": "تحسين جدولة الإنتاج بالذكاء الاصطناعي",
-      "predictive_alerts": "تنبيهات تنبؤية",
-      "predictive_alerts_desc": "احصل على إشعارات قبل حدوث المشاكل بالتحليلات التنبؤية",
-      "workflow_optimization": "تحسين سير العمل",
-      "workflow_optimization_desc": "حسن سير عمل الإنتاج تلقائياً",
-      "enable": "تفعيل",
-      "activate": "تنشيط",
-      "configure": "تكوين",
-      "optimize": "تحسين"
-    },
-    "ai_assistant_old": {
-      "chat": {
-        "title": "المساعد الذكي",
-        "placeholder": "اسألني أي شيء عن الإنتاج...",
-        "voice": {
-          "processing": "معالجة طلبك...",
-          "listening": "استماع...",
-          "listening_for_command": "يستمع للأوامر الصوتية...",
-          "click_microphone": "انقر على الميكروفون لاستخدام الأوامر الصوتية",
-          "english": "English",
-          "arabic": "عربي"
-        },
-        "buttons": {
-          "stop_listening": "إيقاف الاستماع",
-          "start_voice_command": "بدء الأمر الصوتي",
-          "disable_voice_responses": "إيقاف الردود الصوتية",
-          "enable_voice_responses": "تمكين الردود الصوتية",
-          "switch_to_english": "التبديل إلى الصوت الإنجليزي",
-          "switch_to_arabic": "التبديل إلى الصوت العربي"
-        },
-        "welcome": {
-          "message": "مرحباً {{username}}! أنا مساعد الإنتاج الذكي. يمكنني مساعدتك في تخطيط الإنتاج وبيانات الجودة وإدارة الطلبات والتنقل في النظام. ماذا تريد أن تعرف؟",
-          "suggestions": {
-            "production_analysis": {
-              "title": "تحليل الإنتاج",
-              "description": "احصل على كفاءة الإنتاج الحالية وتحليل الاختناقات"
+            "supported_formats": "الأنواع المدعومة: AI, EPS, PDF, PNG, JPG, SVG (حد أقصى 10 ميجابايت)",
+            "choose_file": "اختر ملف",
+            "upload_success": "تم رفع التصميم بنجاح وسيتم تحويله إلى متجهات لجودة طباعة مثلى",
+            "design_preview": "معاينة التصميم",
+            "design_editor_title": "محرر التصميم",
+            "design_canvas": "لوحة التصميم",
+            "tools": {
+              "rectangle": "مستطيل",
+              "circle": "دائرة",
+              "text": "نص",
+              "move": "تحريك",
+              "clear": "مسح اللوحة"
             },
-            "quality_dashboard": {
-              "title": "لوحة الجودة",
-              "description": "عرض مقاييس الجودة والفحوصات الأخيرة"
+            "colors": {
+              "black": "أسود",
+              "red": "أحمر",
+              "blue": "أزرق",
+              "green": "أخضر",
+              "yellow": "أصفر",
+              "purple": "بنفسجي",
+              "orange": "برتقالي",
+              "gray": "رمادي"
             },
-            "schedule_optimization": {
-              "title": "تحسين الجدولة",
-              "description": "تحسين جدول الإنتاج للطلبات المعلقة"
+            "text_settings": {
+              "add_text": "إضافة نص",
+              "font_size": "حجم الخط",
+              "element_selected": "عنصر محدد",
+              "delete_element": "حذف العنصر",
+              "deselect": "إلغاء التحديد"
             }
+          },
+          "customer": {
+            "details": "تفاصيل العميل",
+            "name": "اسم العميل",
+            "name_placeholder": "أدخل اسم العميل",
+            "email": "عنوان البريد الإلكتروني",
+            "email_placeholder": "أدخل عنوان البريد الإلكتروني",
+            "phone": "رقم الهاتف",
+            "phone_placeholder": "أدخل رقم الهاتف",
+            "quantity": "الكمية",
+            "quantity_placeholder": "أدخل الكمية",
+            "notes": "ملاحظات خاصة",
+            "notes_placeholder": "أي متطلبات خاصة أو ملاحظات"
+          },
+          "review": {
+            "title": "المراجعة النهائية",
+            "order_summary": "ملخص الطلب",
+            "product_type": "نوع المنتج:",
+            "template": "القالب:",
+            "dimensions": "الأبعاد:",
+            "material_color": "لون المادة:",
+            "quantity": "الكمية:",
+            "customer_info": "معلومات العميل:",
+            "estimated_total": "المجموع المقدر",
+            "download_quote": "تنزيل عرض السعر",
+            "submit_quote": "إرسال طلب عرض السعر",
+            "quote_submitted": "تم إرسال طلب عرض السعر",
+            "quote_submitted_desc": "سنتواصل معك في غضون 24 ساعة مع السعر النهائي والجدول الزمني للإنتاج."
+          },
+          "live_preview": {
+            "title": "معاينة مباشرة",
+            "dimensions_info": "الأبعاد: {{width}}سم × {{length}}سم",
+            "aspect_ratio_info": "نسبة الأبعاد: {{ratio}}",
+            "material_info": "المادة: {{material}}",
+            "template_info": "القالب: {{template}}"
+          },
+          "navigation": {
+            "next": "التالي",
+            "previous": "السابق",
+            "finish": "إنهاء"
+          },
+          "validation": {
+            "invalid_file_type": "نوع ملف غير صالح",
+            "invalid_file_type_desc": "يرجى رفع ملفات PNG أو JPG أو PDF أو SVG فقط.",
+            "file_too_large": "الملف كبير جداً",
+            "file_too_large_desc": "يرجى رفع ملفات أصغر من 10 ميجابايت.",
+            "max_colors_reached": "تم الوصول إلى الحد الأقصى من الألوان",
+            "max_colors_reached_desc": "يمكنك استخدام حتى 4 ألوان في تصميمك للحصول على جودة طباعة مثلى.",
+            "required_field": "هذا الحقل مطلوب",
+            "invalid_email": "يرجى إدخال عنوان بريد إلكتروني صالح",
+            "invalid_phone": "يرجى إدخال رقم هاتف صالح"
+          },
+          "pdf": {
+            "pricing_disclaimer": "*قد تختلف الأسعار النهائية بناءً على تعقيد التصميم وتوفر المواد",
+            "quote_title": "عرض سعر المنتج",
+            "generated_on": "تم إنشاؤه في: {{date}}"
           }
-        },
-        "errors": {
-          "voice_recognition": "خطأ في التعرف على الصوت",
-          "voice_recognition_desc": "تعذر معالجة الأمر الصوتي. يرجى المحاولة مرة أخرى.",
-          "voice_start_failed": "فشل في بدء التعرف على الصوت. يرجى المحاولة مرة أخرى.",
-          "assistant_error": "خطأ في المساعد",
-          "assistant_error_desc": "فشل في معالجة طلبك. يرجى المحاولة مرة أخرى."
-        },
-        "speech": {
-          "disabled": "تم إيقاف الصوت",
-          "disabled_desc": "لن يتم نطق ردود الذكاء الاصطناعي بعد الآن",
-          "enabled": "تم تمكين الصوت",
-          "enabled_desc": "سيتم الآن نطق ردود الذكاء الاصطناعي بصوت عالٍ",
-          "language_changed": "تم تغيير لغة الصوت",
-          "arabic_mode": "الأوامر الصوتية الآن بالعربية",
-          "english_mode": "الأوامر الصوتية الآن بالإنجليزية"
-        },
+        }
+      },
+      "ai": {
+        "title": "مساعد الذكاء الاصطناعي",
+        "subtitle": "مساعدك الذكي للإنتاج",
+        "chat": "دردشة",
+        "insights": "رؤى",
+        "automation": "أتمتة",
+        "refresh": "تحديث",
+        "welcome_message": "مرحباً! أنا مساعدك الذكي. كيف يمكنني مساعدتك اليوم؟",
+        "chat_assistant": "مساعد الدردشة",
+        "chat_placeholder": "اكتب رسالتك...",
+        "thinking": "أفكر",
+        "quick_actions": "إجراءات سريعة",
+        "production_analysis": "تحليل الإنتاج",
+        "check_production_status": "فحص حالة الإنتاج الحالية",
+        "quality_check": "فحص الجودة",
+        "review_quality_metrics": "مراجعة مقاييس الجودة",
+        "maintenance_status": "حالة الصيانة",
+        "check_equipment_health": "فحص صحة المعدات",
+        "production_insights": "رؤى الإنتاج",
+        "efficiency": "الكفاءة",
+        "output_rate": "معدل الإنتاج",
+        "quality_metrics": "مقاييس الجودة",
+        "quality_score": "درجة الجودة",
+        "defect_rate": "معدل العيوب",
+        "maintenance_alerts": "تنبيهات الصيانة",
+        "pending_maintenance": "صيانة معلقة",
+        "next_scheduled": "الموعد القادم",
+        "tomorrow": "غداً",
+        "recommendations": "توصيات",
+        "sample_recommendation_1": "فكر في تحسين جدولة الآلات لتقليل وقت التوقف",
+        "sample_recommendation_2": "جدولة صيانة وقائية للآلة رقم 3 الأسبوع القادم",
+        "auto_quality_checks": "فحوصات جودة تلقائية",
+        "auto_quality_desc": "جدولة فحوصات الجودة تلقائياً بناءً على أنماط الإنتاج",
+        "smart_scheduling": "جدولة ذكية",
+        "smart_scheduling_desc": "تحسين جدولة الإنتاج بالذكاء الاصطناعي",
+        "predictive_alerts": "تنبيهات تنبؤية",
+        "predictive_alerts_desc": "احصل على إشعارات قبل حدوث المشاكل بالتحليلات التنبؤية",
+        "workflow_optimization": "تحسين سير العمل",
+        "workflow_optimization_desc": "حسن سير عمل الإنتاج تلقائياً",
+        "enable": "تفعيل",
+        "activate": "تنشيط",
+        "configure": "تكوين",
+        "optimize": "تحسين"
+      },
+      "ai_assistant_old": {
         "chat": {
+          "title": "المساعد الذكي",
+          "placeholder": "اسألني أي شيء عن الإنتاج...",
+          "voice": {
+            "processing": "معالجة طلبك...",
+            "listening": "استماع...",
+            "listening_for_command": "يستمع للأوامر الصوتية...",
+            "click_microphone": "انقر على الميكروفون لاستخدام الأوامر الصوتية",
+            "english": "English",
+            "arabic": "عربي"
+          },
+          "buttons": {
+            "stop_listening": "إيقاف الاستماع",
+            "start_voice_command": "بدء الأمر الصوتي",
+            "disable_voice_responses": "إيقاف الردود الصوتية",
+            "enable_voice_responses": "تمكين الردود الصوتية",
+            "switch_to_english": "التبديل إلى الصوت الإنجليزي",
+            "switch_to_arabic": "التبديل إلى الصوت العربي"
+          },
           "welcome": {
-            "message": "مرحباً! أنا مساعد الذكاء الاصطناعي للإنتاج. يمكنني مساعدتك في الطلبات ومراقبة الجودة وتخطيط الإنتاج والتنقل في النظام. كيف يمكنني مساعدتك اليوم؟",
+            "message": "مرحباً {{username}}! أنا مساعد الإنتاج الذكي. يمكنني مساعدتك في تخطيط الإنتاج وبيانات الجودة وإدارة الطلبات والتنقل في النظام. ماذا تريد أن تعرف؟",
             "suggestions": {
               "production_analysis": {
                 "title": "تحليل الإنتاج",
-                "description": "احصل على رؤى حول أداء الإنتاج الحالي والعقد"
+                "description": "احصل على كفاءة الإنتاج الحالية وتحليل الاختناقات"
               },
               "quality_dashboard": {
-                "title": "لوحة معلومات الجودة",
-                "description": "مراجعة مقاييس الجودة وتوصيات التحسين"
+                "title": "لوحة الجودة",
+                "description": "عرض مقاييس الجودة والفحوصات الأخيرة"
               },
               "schedule_optimization": {
                 "title": "تحسين الجدولة",
-                "description": "تحسين جداول الإنتاج لكفاءة أفضل"
+                "description": "تحسين جدول الإنتاج للطلبات المعلقة"
               }
             }
           },
-          "voice": {
-            "click_microphone": "انقر على الميكروفون لبدء الإدخال الصوتي",
-            "english": "وضع الصوت الإنجليزي نشط",
-            "arabic": "وضع الصوت العربي نشط"
+          "errors": {
+            "voice_recognition": "خطأ في التعرف على الصوت",
+            "voice_recognition_desc": "تعذر معالجة الأمر الصوتي. يرجى المحاولة مرة أخرى.",
+            "voice_start_failed": "فشل في بدء التعرف على الصوت. يرجى المحاولة مرة أخرى.",
+            "assistant_error": "خطأ في المساعد",
+            "assistant_error_desc": "فشل في معالجة طلبك. يرجى المحاولة مرة أخرى."
+          },
+          "speech": {
+            "disabled": "تم إيقاف الصوت",
+            "disabled_desc": "لن يتم نطق ردود الذكاء الاصطناعي بعد الآن",
+            "enabled": "تم تمكين الصوت",
+            "enabled_desc": "سيتم الآن نطق ردود الذكاء الاصطناعي بصوت عالٍ",
+            "language_changed": "تم تغيير لغة الصوت",
+            "arabic_mode": "الأوامر الصوتية الآن بالعربية",
+            "english_mode": "الأوامر الصوتية الآن بالإنجليزية"
+          },
+          "chat": {
+            "welcome": {
+              "message": "مرحباً! أنا مساعد الذكاء الاصطناعي للإنتاج. يمكنني مساعدتك في الطلبات ومراقبة الجودة وتخطيط الإنتاج والتنقل في النظام. كيف يمكنني مساعدتك اليوم؟",
+              "suggestions": {
+                "production_analysis": {
+                  "title": "تحليل الإنتاج",
+                  "description": "احصل على رؤى حول أداء الإنتاج الحالي والعقد"
+                },
+                "quality_dashboard": {
+                  "title": "لوحة معلومات الجودة",
+                  "description": "مراجعة مقاييس الجودة وتوصيات التحسين"
+                },
+                "schedule_optimization": {
+                  "title": "تحسين الجدولة",
+                  "description": "تحسين جداول الإنتاج لكفاءة أفضل"
+                }
+              }
+            },
+            "voice": {
+              "click_microphone": "انقر على الميكروفون لبدء الإدخال الصوتي",
+              "english": "وضع الصوت الإنجليزي نشط",
+              "arabic": "وضع الصوت العربي نشط"
+            }
+          },
+          "workflows": {
+            "title": "اقتراحات سير العمل",
+            "suggestions": "اقتراحات",
+            "loading": "جاري تحميل اقتراحات سير العمل...",
+            "recommended": "موصى به",
+            "start_workflow": "بدء سير العمل",
+            "progress": "التقدم",
+            "steps": "الخطوات",
+            "benefits": "الفوائد",
+            "close": "إغلاق",
+            "priority": {
+              "low": "منخفض",
+              "medium": "متوسط",
+              "high": "عالي",
+              "urgent": "عاجل"
+            },
+            "difficulty": {
+              "easy": "سهل",
+              "medium": "متوسط",
+              "advanced": "متقدم"
+            },
+            "optimize_order_flow": {
+              "title": "تحسين تدفق معالجة الطلبات",
+              "description": "تبسيط عملية إدارة الطلبات لتحسين الكفاءة",
+              "step1": "مراجعة حالة الطلبات الحالية والأولويات",
+              "step2": "تحديد العقد في سير العمل",
+              "step3": "تنفيذ تحسينات العمليات",
+              "benefit1": "تقليل وقت معالجة الطلبات بنسبة 25%"
+            },
+            "quality_improvement": {
+              "title": "تحسين مراقبة الجودة",
+              "description": "تنفيذ إجراءات مراقبة الجودة المتقدمة",
+              "step1": "تحليل مقاييس الجودة والمشاكل الأخيرة",
+              "step2": "نشر خطط الإجراءات التصحيحية",
+              "benefit1": "تحسين نقاط الجودة وتقليل العيوب"
+            },
+            "daily_production_check": {
+              "title": "فحص الإنتاج اليومي",
+              "description": "مراقبة وتحسين أداء الإنتاج اليومي",
+              "step1": "مراجعة مقاييس الإنتاج ومؤشرات الأداء الرئيسية",
+              "step2": "فحص حالة الآلات والكفاءة",
+              "benefit1": "الحفاظ على الأداء الأمثل للإنتاج"
+            },
+            "preventive_maintenance": {
+              "title": "جدولة الصيانة الوقائية",
+              "description": "صيانة استباقية لمنع أعطال المعدات",
+              "step1": "مراجعة حالة المعدات وتاريخ الصيانة",
+              "step2": "جدولة وتنفيذ مهام الصيانة الوقائية",
+              "benefit1": "تقليل وقت التوقف وإطالة عمر المعدات"
+            }
           }
-        },
-        "workflows": {
-          "title": "اقتراحات سير العمل",
-          "suggestions": "اقتراحات",
-          "loading": "جاري تحميل اقتراحات سير العمل...",
-          "recommended": "موصى به",
-          "start_workflow": "بدء سير العمل",
-          "progress": "التقدم",
-          "steps": "الخطوات",
-          "benefits": "الفوائد",
-          "close": "إغلاق",
-          "priority": {
-            "low": "منخفض",
-            "medium": "متوسط",
-            "high": "عالي",
-            "urgent": "عاجل"
-          },
-          "difficulty": {
-            "easy": "سهل",
-            "medium": "متوسط",
-            "advanced": "متقدم"
-          },
-          "optimize_order_flow": {
-            "title": "تحسين تدفق معالجة الطلبات",
-            "description": "تبسيط عملية إدارة الطلبات لتحسين الكفاءة",
-            "step1": "مراجعة حالة الطلبات الحالية والأولويات",
-            "step2": "تحديد العقد في سير العمل",
-            "step3": "تنفيذ تحسينات العمليات",
-            "benefit1": "تقليل وقت معالجة الطلبات بنسبة 25%"
-          },
-          "quality_improvement": {
-            "title": "تحسين مراقبة الجودة",
-            "description": "تنفيذ إجراءات مراقبة الجودة المتقدمة",
-            "step1": "تحليل مقاييس الجودة والمشاكل الأخيرة",
-            "step2": "نشر خطط الإجراءات التصحيحية",
-            "benefit1": "تحسين نقاط الجودة وتقليل العيوب"
-          },
-          "daily_production_check": {
-            "title": "فحص الإنتاج اليومي",
-            "description": "مراقبة وتحسين أداء الإنتاج اليومي",
-            "step1": "مراجعة مقاييس الإنتاج ومؤشرات الأداء الرئيسية",
-            "step2": "فحص حالة الآلات والكفاءة",
-            "benefit1": "الحفاظ على الأداء الأمثل للإنتاج"
-          },
-          "preventive_maintenance": {
-            "title": "جدولة الصيانة الوقائية",
-            "description": "صيانة استباقية لمنع أعطال المعدات",
-            "step1": "مراجعة حالة المعدات وتاريخ الصيانة",
-            "step2": "جدولة وتنفيذ مهام الصيانة الوقائية",
-            "benefit1": "تقليل وقت التوقف وإطالة عمر المعدات"
-          }
-        }
         },
         "insights": {
           "quality_recommendations": "توصيات الجودة",
-          "schedule_optimization": "تحسين الجدولة", 
+          "schedule_optimization": "تحسين الجدولة",
           "predictive_maintenance": "الصيانة التنبؤية",
           "no_quality_recommendations": "لا توجد توصيات جودة متاحة",
           "no_optimization_suggestions": "لا توجد اقتراحات تحسين متاحة",
