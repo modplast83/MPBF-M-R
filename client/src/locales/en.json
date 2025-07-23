@@ -848,12 +848,21 @@
       "chat": {
         "title": "AI Chat Assistant",
         "placeholder": "Ask me anything about production management...",
+        "welcome_message": "Hello {{username}}! I'm your AI Production Assistant. I can help you with production planning, quality insights, order management, and system navigation. What would you like to know?",
         "examples": {
           "title": "Try asking:",
           "create_order": "Create a new order for customer ABC",
           "production_status": "What's the current production status?",
           "quality_issues": "Show me recent quality issues",
           "efficiency_tips": "How can I improve production efficiency?"
+        },
+        "suggestions": {
+          "production_analysis": "Production Analysis",
+          "production_analysis_desc": "Get current production efficiency and bottleneck analysis",
+          "quality_dashboard": "Quality Dashboard",
+          "quality_dashboard_desc": "View quality metrics and recent checks",
+          "schedule_optimization": "Schedule Optimization",
+          "schedule_optimization_desc": "Optimize production schedule for pending orders"
         },
         "voice": {
           "start_recording": "Start Voice Recording",
@@ -862,9 +871,25 @@
           "volume_control": "Volume Control",
           "listening": "Listening...",
           "processing": "Processing...",
+          "thinking": "Thinking...",
           "speaking": "Speaking...",
           "english_mode": "English Mode",
-          "arabic_mode": "Arabic Mode"
+          "arabic_mode": "Arabic Mode",
+          "start_listening": "Start voice command",
+          "stop_listening": "Stop listening",
+          "enable_voice_responses": "Enable voice responses",
+          "disable_voice_responses": "Disable voice responses",
+          "speech_enabled": "Speech Enabled",
+          "speech_disabled": "Speech Disabled",
+          "speech_enabled_desc": "AI responses will now be spoken aloud",
+          "speech_disabled_desc": "AI responses will no longer be spoken",
+          "voice_language_changed": "Voice Language Changed",
+          "voice_commands_arabic": "Voice commands now in Arabic",
+          "voice_commands_english": "Voice commands now in English"
+        },
+        "errors": {
+          "assistant_error": "Assistant Error",
+          "failed_to_process": "Failed to process your request. Please try again."
         }
       },
       "insights": {
