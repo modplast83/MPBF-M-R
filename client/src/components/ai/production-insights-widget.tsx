@@ -138,7 +138,7 @@ export function ProductionInsightsWidget({
           <Alert>
             <AlertTriangle className="h-4 w-4" />
             <AlertDescription>
-              Failed to load production insights. Please try again.
+              {t("ai_assistant.insights.failed_to_load")}
             </AlertDescription>
           </Alert>
           <Button 
@@ -148,7 +148,7 @@ export function ProductionInsightsWidget({
             className="mt-4"
           >
             <RefreshCw className="h-4 w-4 mr-2" />
-            Retry
+            {t("ai_assistant.common.retry")}
           </Button>
         </CardContent>
       </Card>
@@ -161,7 +161,7 @@ export function ProductionInsightsWidget({
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2">
             <BarChart3 className="h-5 w-5 text-primary" />
-            Production Insights
+            {t("ai_assistant.insights.production_insights")}
           </CardTitle>
           <div className="flex items-center gap-2">
             <select
@@ -169,8 +169,8 @@ export function ProductionInsightsWidget({
               onChange={(e) => setSelectedTimeframe(e.target.value)}
               className="text-sm border rounded px-2 py-1"
             >
-              <option value="7d">Last 7 days</option>
-              <option value="30d">Last 30 days</option>
+              <option value="7d">{t("ai_assistant.insights.last_7_days")}</option>
+              <option value="30d">{t("ai_assistant.insights.last_30_days")}</option>
             </select>
             <Button 
               variant="outline" 
@@ -187,7 +187,7 @@ export function ProductionInsightsWidget({
         {/* Overall Efficiency */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-sm font-medium">Overall Efficiency</h3>
+            <h3 className="text-sm font-medium">{t("ai_assistant.insights.overall_efficiency")}</h3>
             <div className="flex items-center gap-2">
               {getEfficiencyIcon(analysis?.efficiency?.overall || 0)}
               <span className={cn("text-lg font-bold", getEfficiencyColor(analysis?.efficiency?.overall || 0))}>
@@ -204,7 +204,7 @@ export function ProductionInsightsWidget({
           {/* Section Efficiency */}
           {analysis?.efficiency?.bySection && Object.keys(analysis.efficiency.bySection).length > 0 && (
             <div className="space-y-2">
-              <h4 className="text-xs font-medium text-muted-foreground">By Section</h4>
+              <h4 className="text-xs font-medium text-muted-foreground">{t("ai_assistant.insights.efficiency_by_section")}</h4>
               {Object.entries(analysis.efficiency.bySection).map(([section, efficiency]) => (
                 <div key={section} className="flex items-center justify-between text-sm">
                   <span className="flex-1">{section}</span>
@@ -225,7 +225,7 @@ export function ProductionInsightsWidget({
           <div className="space-y-4">
             <h3 className="text-sm font-medium flex items-center gap-2">
               <AlertTriangle className="h-4 w-4" />
-              Current Bottlenecks
+              {t("ai_assistant.insights.bottlenecks_detected")}
             </h3>
             <div className="space-y-3">
               {analysis.bottlenecks.map((bottleneck, index) => (
@@ -263,7 +263,7 @@ export function ProductionInsightsWidget({
           <div className="space-y-4">
             <h3 className="text-sm font-medium flex items-center gap-2">
               <Target className="h-4 w-4" />
-              Predictive Analysis
+              {t("ai_assistant.insights.predictions")}
             </h3>
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
               <div className="space-y-2">
@@ -271,13 +271,13 @@ export function ProductionInsightsWidget({
                   <Clock className="h-4 w-4 text-blue-600 mt-0.5" />
                   <div>
                     <p className="text-sm font-medium text-blue-800">
-                      Next Potential Issue
+                      {t("ai_assistant.insights.next_bottleneck")}
                     </p>
                     <p className="text-xs text-blue-700">
                       {analysis.predictions.nextBottleneck}
                     </p>
                     <p className="text-xs text-blue-600 mt-1">
-                      Expected: {analysis.predictions.timeframe}
+                      {t("ai_assistant.insights.timeframe")}: {analysis.predictions.timeframe}
                     </p>
                   </div>
                 </div>
@@ -286,7 +286,7 @@ export function ProductionInsightsWidget({
                   <Wrench className="h-4 w-4 text-blue-600 mt-0.5" />
                   <div>
                     <p className="text-sm font-medium text-blue-800">
-                      Recommended Action
+                      {t("ai_assistant.insights.recommended_action")}
                     </p>
                     <p className="text-xs text-blue-700">
                       {analysis.predictions.recommendedAction}

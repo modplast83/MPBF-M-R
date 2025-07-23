@@ -3592,6 +3592,38 @@
             "step2": "Schedule and execute preventive maintenance tasks",
             "benefit1": "Reduce downtime and extend equipment life"
           }
+        },
+        "insights": {
+          "quality_recommendations": "Quality Recommendations",
+          "schedule_optimization": "Schedule Optimization", 
+          "predictive_maintenance": "Predictive Maintenance",
+          "no_quality_recommendations": "No quality recommendations available",
+          "no_optimization_suggestions": "No optimization suggestions available",
+          "no_maintenance_predictions": "No maintenance predictions available",
+          "production_insights": "Production Insights",
+          "overall_efficiency": "Overall Efficiency",
+          "bottlenecks_detected": "Bottlenecks Detected",
+          "efficiency_by_section": "Efficiency by Section",
+          "predictions": "Predictions",
+          "next_bottleneck": "Next Bottleneck",
+          "recommended_action": "Recommended Action",
+          "timeframe": "Timeframe",
+          "refresh_insights": "Refresh Insights",
+          "failed_to_load": "Failed to load production insights. Please try again.",
+          "last_7_days": "Last 7 days",
+          "last_30_days": "Last 30 days",
+          "no_data_available": "No production data available"
+        },
+        "automation": {
+          "auto_quality_checks": "Auto-Quality Checks",
+          "auto_quality_description": "Automatically schedule quality checks based on production patterns",
+          "enable_auto_checks": "Enable Auto-Checks",
+          "smart_scheduling": "Smart Scheduling",
+          "smart_scheduling_description": "AI-powered production scheduling optimization",
+          "activate_smart_scheduling": "Activate Smart Scheduling",
+          "predictive_alerts": "Predictive Alerts",
+          "predictive_alerts_description": "Get notified before issues occur with predictive analytics",
+          "configure_alerts": "Configure Alerts"
         }
       }
     }

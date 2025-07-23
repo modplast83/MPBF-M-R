@@ -5059,6 +5059,38 @@
             "benefit1": "تقليل وقت التوقف وإطالة عمر المعدات"
           }
         }
+        },
+        "insights": {
+          "quality_recommendations": "توصيات الجودة",
+          "schedule_optimization": "تحسين الجدولة", 
+          "predictive_maintenance": "الصيانة التنبؤية",
+          "no_quality_recommendations": "لا توجد توصيات جودة متاحة",
+          "no_optimization_suggestions": "لا توجد اقتراحات تحسين متاحة",
+          "no_maintenance_predictions": "لا توجد توقعات صيانة متاحة",
+          "production_insights": "رؤى الإنتاج",
+          "overall_efficiency": "الكفاءة العامة",
+          "bottlenecks_detected": "عقد مكتشفة",
+          "efficiency_by_section": "الكفاءة حسب القسم",
+          "predictions": "التوقعات",
+          "next_bottleneck": "العقدة التالية",
+          "recommended_action": "الإجراء الموصى به",
+          "timeframe": "الإطار الزمني",
+          "refresh_insights": "تحديث الرؤى",
+          "failed_to_load": "فشل في تحميل رؤى الإنتاج. يرجى المحاولة مرة أخرى.",
+          "last_7_days": "آخر 7 أيام",
+          "last_30_days": "آخر 30 يوم",
+          "no_data_available": "لا توجد بيانات إنتاج متاحة"
+        },
+        "automation": {
+          "auto_quality_checks": "فحوصات الجودة التلقائية",
+          "auto_quality_description": "جدولة فحوصات الجودة تلقائياً بناءً على أنماط الإنتاج",
+          "enable_auto_checks": "تمكين الفحوصات التلقائية",
+          "smart_scheduling": "الجدولة الذكية",
+          "smart_scheduling_description": "تحسين جدولة الإنتاج بواسطة الذكاء الاصطناعي",
+          "activate_smart_scheduling": "تفعيل الجدولة الذكية",
+          "predictive_alerts": "التنبيهات التنبؤية",
+          "predictive_alerts_description": "احصل على إشعارات قبل حدوث المشاكل باستخدام التحليلات التنبؤية",
+          "configure_alerts": "تكوين التنبيهات"
         }
       }
     }

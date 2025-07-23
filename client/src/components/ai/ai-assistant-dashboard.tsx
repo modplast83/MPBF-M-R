@@ -142,7 +142,7 @@ export function AIAssistantDashboard({ className }: AIAssistantDashboardProps) {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <CheckCircle className="h-5 w-5 text-primary" />
-                  Quality Recommendations
+                  {t("ai_assistant.insights.quality_recommendations")}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -171,7 +171,7 @@ export function AIAssistantDashboard({ className }: AIAssistantDashboardProps) {
                   </div>
                 ) : (
                   <p className="text-sm text-muted-foreground text-center py-4">
-                    No quality recommendations available
+                    {t("ai_assistant.insights.no_quality_recommendations")}
                   </p>
                 )}
               </CardContent>
@@ -182,7 +182,7 @@ export function AIAssistantDashboard({ className }: AIAssistantDashboardProps) {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <TrendingUp className="h-5 w-5 text-primary" />
-                  Schedule Optimization
+                  {t("ai_assistant.insights.schedule_optimization")}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -211,7 +211,7 @@ export function AIAssistantDashboard({ className }: AIAssistantDashboardProps) {
                   </div>
                 ) : (
                   <p className="text-sm text-muted-foreground text-center py-4">
-                    No optimization suggestions available
+                    {t("ai_assistant.insights.no_optimization_suggestions")}
                   </p>
                 )}
               </CardContent>
@@ -222,7 +222,7 @@ export function AIAssistantDashboard({ className }: AIAssistantDashboardProps) {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Wrench className="h-5 w-5 text-primary" />
-                  Predictive Maintenance
+                  {t("ai_assistant.insights.predictive_maintenance")}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -251,7 +251,7 @@ export function AIAssistantDashboard({ className }: AIAssistantDashboardProps) {
                   </div>
                 ) : (
                   <p className="text-sm text-muted-foreground text-center py-4">
-                    No maintenance predictions available
+                    {t("ai_assistant.insights.no_maintenance_predictions")}
                   </p>
                 )}
               </CardContent>
@@ -271,37 +271,37 @@ export function AIAssistantDashboard({ className }: AIAssistantDashboardProps) {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Auto-Quality Checks</CardTitle>
+                <CardTitle className="text-lg">{t("ai_assistant.automation.auto_quality_checks")}</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-muted-foreground mb-4">
-                  Automatically schedule quality checks based on production patterns
+                  {t("ai_assistant.automation.auto_quality_description")}
                 </p>
-                <Button className="w-full">Enable Auto-Checks</Button>
+                <Button className="w-full">{t("ai_assistant.automation.enable_auto_checks")}</Button>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Smart Scheduling</CardTitle>
+                <CardTitle className="text-lg">{t("ai_assistant.automation.smart_scheduling")}</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-muted-foreground mb-4">
-                  AI-powered production scheduling optimization
+                  {t("ai_assistant.automation.smart_scheduling_description")}
                 </p>
-                <Button className="w-full">Activate Smart Scheduling</Button>
+                <Button className="w-full">{t("ai_assistant.automation.activate_smart_scheduling")}</Button>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Predictive Alerts</CardTitle>
+                <CardTitle className="text-lg">{t("ai_assistant.automation.predictive_alerts")}</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-muted-foreground mb-4">
-                  Get notified before issues occur with predictive analytics
+                  {t("ai_assistant.automation.predictive_alerts_description")}
                 </p>
-                <Button className="w-full">Configure Alerts</Button>
+                <Button className="w-full">{t("ai_assistant.automation.configure_alerts")}</Button>
               </CardContent>
             </Card>
           </div>
