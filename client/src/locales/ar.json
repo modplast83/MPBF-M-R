@@ -4904,7 +4904,62 @@
           "generated_on": "تم إنشاؤه في: {{date}}"
         }
       }
+    },
+    "ai_assistant": {
+      "chat": {
+        "title": "المساعد الذكي",
+        "placeholder": "اسألني أي شيء عن الإنتاج...",
+        "voice": {
+          "processing": "معالجة طلبك...",
+          "listening": "استماع...",
+          "listening_for_command": "يستمع للأوامر الصوتية...",
+          "click_microphone": "انقر على الميكروفون لاستخدام الأوامر الصوتية",
+          "english": "English",
+          "arabic": "عربي"
+        },
+        "buttons": {
+          "stop_listening": "إيقاف الاستماع",
+          "start_voice_command": "بدء الأمر الصوتي",
+          "disable_voice_responses": "إيقاف الردود الصوتية",
+          "enable_voice_responses": "تمكين الردود الصوتية",
+          "switch_to_english": "التبديل إلى الصوت الإنجليزي",
+          "switch_to_arabic": "التبديل إلى الصوت العربي"
+        },
+        "welcome": {
+          "message": "مرحباً {{username}}! أنا مساعد الإنتاج الذكي. يمكنني مساعدتك في تخطيط الإنتاج وبيانات الجودة وإدارة الطلبات والتنقل في النظام. ماذا تريد أن تعرف؟",
+          "suggestions": {
+            "production_analysis": {
+              "title": "تحليل الإنتاج",
+              "description": "احصل على كفاءة الإنتاج الحالية وتحليل الاختناقات"
+            },
+            "quality_dashboard": {
+              "title": "لوحة الجودة",
+              "description": "عرض مقاييس الجودة والفحوصات الأخيرة"
+            },
+            "schedule_optimization": {
+              "title": "تحسين الجدولة",
+              "description": "تحسين جدول الإنتاج للطلبات المعلقة"
+            }
+          }
+        },
+        "errors": {
+          "voice_recognition": "خطأ في التعرف على الصوت",
+          "voice_recognition_desc": "تعذر معالجة الأمر الصوتي. يرجى المحاولة مرة أخرى.",
+          "voice_start_failed": "فشل في بدء التعرف على الصوت. يرجى المحاولة مرة أخرى.",
+          "assistant_error": "خطأ في المساعد",
+          "assistant_error_desc": "فشل في معالجة طلبك. يرجى المحاولة مرة أخرى."
+        },
+        "speech": {
+          "disabled": "تم إيقاف الصوت",
+          "disabled_desc": "لن يتم نطق ردود الذكاء الاصطناعي بعد الآن",
+          "enabled": "تم تمكين الصوت",
+          "enabled_desc": "سيتم الآن نطق ردود الذكاء الاصطناعي بصوت عالٍ",
+          "language_changed": "تم تغيير لغة الصوت",
+          "arabic_mode": "الأوامر الصوتية الآن بالعربية",
+          "english_mode": "الأوامر الصوتية الآن بالإنجليزية"
+        }
+        }
+      }
     }
-  }
   }
 }

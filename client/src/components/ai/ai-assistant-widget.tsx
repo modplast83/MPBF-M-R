@@ -119,8 +119,8 @@ export function AIAssistantWidget({
           console.error('Speech recognition error:', event.error);
           setIsListening(false);
           toast({
-            title: "Voice Recognition Error",
-            description: "Could not process your voice command. Please try again.",
+            title: t("ai_assistant.chat.errors.voice_recognition"),
+            description: t("ai_assistant.chat.errors.voice_recognition_desc"),
             variant: "destructive"
           });
         };
@@ -154,26 +154,26 @@ export function AIAssistantWidget({
       const welcomeMessage: AssistantMessage = {
         id: 'welcome',
         type: 'assistant',
-        content: `Hello ${user.username}! I'm your AI Production Assistant. I can help you with production planning, quality insights, order management, and system navigation. What would you like to know?`,
+        content: t("ai_assistant.chat.welcome.message", { username: user.username }),
         timestamp: new Date(),
         suggestions: [
           {
             type: 'insight',
-            title: 'Production Analysis',
-            description: 'Get current production efficiency and bottleneck analysis',
+            title: t("ai_assistant.chat.welcome.suggestions.production_analysis.title"),
+            description: t("ai_assistant.chat.welcome.suggestions.production_analysis.description"),
             priority: 'high'
           },
           {
             type: 'navigation',
-            title: 'Quality Dashboard',
-            description: 'View quality metrics and recent checks',
+            title: t("ai_assistant.chat.welcome.suggestions.quality_dashboard.title"),
+            description: t("ai_assistant.chat.welcome.suggestions.quality_dashboard.description"),
             actionUrl: '/quality',
             priority: 'medium'
           },
           {
             type: 'action',
-            title: 'Schedule Optimization',
-            description: 'Optimize production schedule for pending orders',
+            title: t("ai_assistant.chat.welcome.suggestions.schedule_optimization.title"),
+            description: t("ai_assistant.chat.welcome.suggestions.schedule_optimization.description"),
             priority: 'medium'
           }
         ]
@@ -231,8 +231,8 @@ export function AIAssistantWidget({
     },
     onError: () => {
       toast({
-        title: "Assistant Error",
-        description: "Failed to process your request. Please try again.",
+        title: t("ai_assistant.chat.errors.assistant_error"),
+        description: t("ai_assistant.chat.errors.assistant_error_desc"),
         variant: "destructive"
       });
     }
@@ -309,8 +309,8 @@ export function AIAssistantWidget({
       } catch (error) {
         console.error('Failed to start speech recognition:', error);
         toast({
-          title: "Voice Recognition Error",
-          description: "Failed to start voice recognition. Please try again.",
+          title: t("ai_assistant.chat.errors.voice_recognition"),
+          description: t("ai_assistant.chat.errors.voice_start_failed"),
           variant: "destructive"
         });
       }
@@ -372,8 +372,8 @@ export function AIAssistantWidget({
     }
     
     toast({
-      title: speechEnabled ? "Speech Disabled" : "Speech Enabled",
-      description: speechEnabled ? "AI responses will no longer be spoken" : "AI responses will now be spoken aloud",
+      title: speechEnabled ? t("ai_assistant.chat.speech.disabled") : t("ai_assistant.chat.speech.enabled"),
+      description: speechEnabled ? t("ai_assistant.chat.speech.disabled_desc") : t("ai_assistant.chat.speech.enabled_desc"),
     });
   };
 
@@ -387,8 +387,8 @@ export function AIAssistantWidget({
     }
     
     toast({
-      title: "Voice Language Changed",
-      description: newLanguage === 'ar-SA' ? "Voice commands now in Arabic" : "Voice commands now in English",
+      title: t("ai_assistant.chat.speech.language_changed"),
+      description: newLanguage === 'ar-SA' ? t("ai_assistant.chat.speech.arabic_mode") : t("ai_assistant.chat.speech.english_mode"),
     });
   };
 
@@ -528,7 +528,7 @@ export function AIAssistantWidget({
                     "px-2",
                     isListening && "animate-pulse"
                   )}
-                  title={isListening ? "Stop listening" : "Start voice command"}
+                  title={isListening ? t("ai_assistant.chat.buttons.stop_listening") : t("ai_assistant.chat.buttons.start_voice_command")}
                 >
                   {isListening ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
                 </Button>
@@ -540,7 +540,7 @@ export function AIAssistantWidget({
                   size="sm"
                   variant="outline"
                   className="px-2"
-                  title={speechEnabled ? "Disable voice responses" : "Enable voice responses"}
+                  title={speechEnabled ? t("ai_assistant.chat.buttons.disable_voice_responses") : t("ai_assistant.chat.buttons.enable_voice_responses")}
                 >
                   {speechEnabled ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
                 </Button>
@@ -552,7 +552,7 @@ export function AIAssistantWidget({
                   size="sm"
                   variant="outline"
                   className="px-2 font-bold"
-                  title={voiceLanguage === 'ar-SA' ? "Switch to English voice" : "Switch to Arabic voice"}
+                  title={voiceLanguage === 'ar-SA' ? t("ai_assistant.chat.buttons.switch_to_english") : t("ai_assistant.chat.buttons.switch_to_arabic")}
                 >
                   {voiceLanguage === 'ar-SA' ? 'ع' : 'EN'}
                 </Button>
@@ -570,11 +570,11 @@ export function AIAssistantWidget({
             <div className="text-xs text-muted-foreground mt-2 text-center">
               {isListening ? (
                 <span className="text-primary">
-                  🎤 {voiceLanguage === 'ar-SA' ? 'يستمع للأوامر الصوتية...' : 'Listening for your voice command...'}
+                  🎤 {t("ai_assistant.chat.voice.listening_for_command")}
                 </span>
               ) : (
                 <span>
-                  {voiceLanguage === 'ar-SA' ? 'انقر على الميكروفون لاستخدام الأوامر الصوتية' : 'Click the microphone to use voice commands'} ({voiceLanguage === 'ar-SA' ? 'عربي' : 'English'})
+                  {t("ai_assistant.chat.voice.click_microphone")} ({voiceLanguage === 'ar-SA' ? t("ai_assistant.chat.voice.arabic") : t("ai_assistant.chat.voice.english")})
                 </span>
               )}
             </div>

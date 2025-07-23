@@ -3464,6 +3464,61 @@
           "all": "All Departments"
         }
       }
+    },
+    "ai_assistant": {
+      "chat": {
+        "title": "AI Assistant",
+        "placeholder": "Ask me anything about production...",
+        "voice": {
+          "processing": "Processing your request...",
+          "listening": "Listening...",
+          "listening_for_command": "Listening for your voice command...",
+          "click_microphone": "Click the microphone to use voice commands",
+          "english": "English",
+          "arabic": "Arabic"
+        },
+        "buttons": {
+          "stop_listening": "Stop listening",
+          "start_voice_command": "Start voice command",
+          "disable_voice_responses": "Disable voice responses",
+          "enable_voice_responses": "Enable voice responses",
+          "switch_to_english": "Switch to English voice",
+          "switch_to_arabic": "Switch to Arabic voice"
+        },
+        "welcome": {
+          "message": "Hello {{username}}! I'm your AI Production Assistant. I can help you with production planning, quality insights, order management, and system navigation. What would you like to know?",
+          "suggestions": {
+            "production_analysis": {
+              "title": "Production Analysis",
+              "description": "Get current production efficiency and bottleneck analysis"
+            },
+            "quality_dashboard": {
+              "title": "Quality Dashboard", 
+              "description": "View quality metrics and recent checks"
+            },
+            "schedule_optimization": {
+              "title": "Schedule Optimization",
+              "description": "Optimize production schedule for pending orders"
+            }
+          }
+        },
+        "errors": {
+          "voice_recognition": "Voice Recognition Error",
+          "voice_recognition_desc": "Could not process your voice command. Please try again.",
+          "voice_start_failed": "Failed to start voice recognition. Please try again.",
+          "assistant_error": "Assistant Error",
+          "assistant_error_desc": "Failed to process your request. Please try again."
+        },
+        "speech": {
+          "disabled": "Speech Disabled",
+          "disabled_desc": "AI responses will no longer be spoken",
+          "enabled": "Speech Enabled", 
+          "enabled_desc": "AI responses will now be spoken aloud",
+          "language_changed": "Voice Language Changed",
+          "arabic_mode": "Voice commands now in Arabic",
+          "english_mode": "Voice commands now in English"
+        }
+      }
     }
   }
 }
