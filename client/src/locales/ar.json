@@ -1325,20 +1325,20 @@
                   "production": "تحليل الإنتاج",
                   "quality": "تحليل الجودة",
                   "warehouse": "تحليل المستودع",
-                  "maintenance": "تحليل الصيانة",
-                }
+                  "maintenance": "تحليل الصيانة"
+                },
                 "title": "تحليل الإنتاج",
                 "production_analysis": "تحليل الإنتاج",
                   "production_analysis":{
                     "title": "تحليل الإنتاج",
                     "description": "تحليل الإنتاج",
                     "message": "تحليل الإنتاج",
-                    "production_analysis": "تحليل الإنتاج",
+                    "production_analysis": "تحليل الإنتاج"
                   }
-                }
+                },
                 "quality_analysis": "تحليل الجودة",
                 "warehouse_analysis": "تحليل المستودع",
-                "maintenance_analysis": "تحليل الصيانة",
+                "maintenance_analysis": "تحليل الصيانة"
               }
           }
         }
@@ -5114,5 +5114,4 @@
         }
       }
     }
-  }
 }
