@@ -1273,6 +1273,35 @@
       "submitting": "جاري التقديم...",
       "submit_request": "تقديم الطلب"
     },
+
+    "ai_assistant"{
+      "title": "مساعد الذكاء الاصطناعي",
+      "description": "مساعد ذكي يساعدك في اتخاذ القرارات",
+      "production": "الإنتاج",
+      "quality": "الجودة",
+      "warehouse": "المستودع",
+      "maintenance": "الصيانة",
+      "system": "النظام",
+      "production_insights": "رؤى الإنتاج",
+      "quality_insights": "رؤى الجودة",
+      "warehouse_insights": "رؤى المستودع",
+      "maintenance_insights": "رؤى الصيانة",
+      "system_insights": "رؤى النظام",
+      "production_insights_description": "رؤى الإنتاج",
+      "quality_insights_description": "رؤى الجودة",
+      "warehouse_insights_description": "رؤى المستودع",
+      "maintenance_insights_description": "رؤى الصيانة",
+      "system_insights_description": "رؤى النظام",
+      "production_insights": "رؤى الإنتاج",
+      "quality_insights": "رؤى الجودة",
+      "warehouse_insights": "رؤى المستودع",
+      "maintenance_insights": "رؤى الصيانة",
+      "system_insights": "رؤى النظام",
+      "production_insights_description": "رؤى الإنتاج",
+      "quality_insights_description": "رؤى الجودة",
+      "warehouse_insights_description": "رؤى المستودع"
+    },
+    "chat"
     "maintenance": {
       "title": "إدارة الصيانة",
       "description": "نظام شامل لإدارة صيانة معدات الإنتاج",
