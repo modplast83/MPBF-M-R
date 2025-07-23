@@ -625,7 +625,7 @@ export class AIAssistantService {
       // Get production and system data for context-aware suggestions
       const [orders, qualityChecks, maintenance, rolls] = await Promise.all([
         this.getOrdersOverview(),
-        this.getQualityMetrics(),
+        this.getQualityMetricsOverview(),
         this.getMaintenanceStatus(),
         this.getRollsStatus()
       ]);
@@ -825,6 +825,21 @@ Return only the JSON array, no additional text.`;
       return result.rows[0];
     } catch (error) {
       return { extrusion: 0, printing: 0, cutting: 0, completed: 0 };
+    }
+  }
+
+  private async getQualityMetricsOverview(): Promise<any> {
+    try {
+      const result = await this.db.query(`
+        SELECT 
+          COUNT(CASE WHEN result = 'failed' THEN 1 END) as recentIssues,
+          ROUND(AVG(CASE WHEN result = 'passed' THEN 100 ELSE 0 END)::numeric, 0) as score
+        FROM quality_checks 
+        WHERE check_date >= CURRENT_DATE - INTERVAL '30 days'
+      `);
+      return result.rows[0] || { recentIssues: 0, score: 95 };
+    } catch (error) {
+      return { recentIssues: 0, score: 95 };
     }
   }
 

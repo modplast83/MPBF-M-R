@@ -3518,6 +3518,30 @@
           "arabic_mode": "Voice commands now in Arabic",
           "english_mode": "Voice commands now in English"
         },
+        "chat": {
+          "welcome": {
+            "message": "Hello! I'm your AI production assistant. I can help you with orders, quality control, production planning, and system navigation. How can I assist you today?",
+            "suggestions": {
+              "production_analysis": {
+                "title": "Production Analysis",
+                "description": "Get insights on current production performance and bottlenecks"
+              },
+              "quality_dashboard": {
+                "title": "Quality Dashboard", 
+                "description": "Review quality metrics and improvement recommendations"
+              },
+              "schedule_optimization": {
+                "title": "Schedule Optimization",
+                "description": "Optimize production schedules for better efficiency"
+              }
+            }
+          },
+          "voice": {
+            "click_microphone": "Click microphone to start voice input",
+            "english": "English voice mode active",
+            "arabic": "Arabic voice mode active"
+          }
+        },
         "workflows": {
           "title": "Workflow Suggestions",
           "suggestions": "suggestions",
