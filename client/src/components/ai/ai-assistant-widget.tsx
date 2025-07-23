@@ -10,6 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth-v2";
 import { useLocation } from "wouter";
+import { useTranslation } from "react-i18next";
 import {
   Bot,
   Send,
@@ -69,6 +70,7 @@ export function AIAssistantWidget({
   minimized = false, 
   onToggleMinimize 
 }: AIAssistantWidgetProps) {
+  const { t } = useTranslation();
   const [messages, setMessages] = useState<AssistantMessage[]>([]);
   const [input, setInput] = useState("");
   const [location] = useLocation();
@@ -409,7 +411,7 @@ export function AIAssistantWidget({
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
         <CardTitle className="flex items-center gap-2 text-lg">
           <Bot className="h-5 w-5 text-primary" />
-          AI Assistant
+          {t("ai_assistant.chat.title")}
         </CardTitle>
         <div className="flex items-center gap-1">
           <Button
@@ -495,7 +497,7 @@ export function AIAssistantWidget({
                 <div className="bg-muted rounded-lg px-3 py-2 max-w-[85%]">
                   <div className="flex items-center gap-2 text-sm">
                     <RefreshCw className="h-4 w-4 animate-spin" />
-                    Thinking...
+                    {t("ai_assistant.chat.voice.processing")}
                   </div>
                 </div>
               </div>
@@ -512,7 +514,7 @@ export function AIAssistantWidget({
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyPress={handleKeyPress}
-                placeholder={isListening ? "Listening..." : "Ask about production, orders, quality..."}
+                placeholder={isListening ? t("ai_assistant.chat.voice.listening") : t("ai_assistant.chat.placeholder")}
                 className="flex-1"
                 disabled={assistantMutation.isPending || isListening}
               />

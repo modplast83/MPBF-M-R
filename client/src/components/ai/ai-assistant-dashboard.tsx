@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { AIAssistantWidget } from "./ai-assistant-widget";
 import { ProductionInsightsWidget } from "./production-insights-widget";
 import { useQuery } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import {
   Bot,
   BarChart3,
@@ -24,6 +25,7 @@ interface AIAssistantDashboardProps {
 }
 
 export function AIAssistantDashboard({ className }: AIAssistantDashboardProps) {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState("chat");
   const [assistantMinimized, setAssistantMinimized] = useState(false);
 
@@ -89,14 +91,16 @@ export function AIAssistantDashboard({ className }: AIAssistantDashboardProps) {
     <div className={cn("w-full space-y-6", className)}>
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">AI Production Assistant</h1>
-          <p className="text-muted-foreground">
-            Intelligent insights and automation for your production management
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+            {t("ai_assistant.title")}
+          </h1>
+          <p className="text-muted-foreground text-lg">
+            {t("ai_assistant.subtitle")}
           </p>
         </div>
         <Button onClick={handleRefreshAll} variant="outline">
           <RefreshCw className="h-4 w-4 mr-2" />
-          Refresh All
+          {t("ai_assistant.common.refresh_all")}
         </Button>
       </div>
 
@@ -104,15 +108,15 @@ export function AIAssistantDashboard({ className }: AIAssistantDashboardProps) {
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="chat" className="flex items-center gap-2">
             <Bot className="h-4 w-4" />
-            AI Chat
+            {t("ai_assistant.tabs.chat")}
           </TabsTrigger>
           <TabsTrigger value="insights" className="flex items-center gap-2">
             <BarChart3 className="h-4 w-4" />
-            Production Insights
+            {t("ai_assistant.tabs.insights")}
           </TabsTrigger>
           <TabsTrigger value="automation" className="flex items-center gap-2">
             <Wrench className="h-4 w-4" />
-            Smart Automation
+            {t("ai_assistant.tabs.automation")}
           </TabsTrigger>
         </TabsList>
 

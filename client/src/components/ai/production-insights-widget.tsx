@@ -6,6 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Progress } from "@/components/ui/progress";
 import { useQuery } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import {
   TrendingUp,
   TrendingDown,
@@ -48,6 +49,7 @@ export function ProductionInsightsWidget({
   className, 
   timeframe = '7d' 
 }: ProductionInsightsWidgetProps) {
+  const { t } = useTranslation();
   const [selectedTimeframe, setSelectedTimeframe] = useState(timeframe);
 
   const { data: analysis, isLoading, error, refetch } = useQuery({

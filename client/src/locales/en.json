@@ -837,6 +837,116 @@
       "submitting": "Submitting...",
       "submit_request": "Submit Request"
     },
+    "ai_assistant": {
+      "title": "AI Production Assistant",
+      "subtitle": "Intelligent insights and automation for your production management",
+      "tabs": {
+        "chat": "AI Chat",
+        "insights": "Production Insights",
+        "automation": "Smart Automation"
+      },
+      "chat": {
+        "title": "AI Chat Assistant",
+        "placeholder": "Ask me anything about production management...",
+        "examples": {
+          "title": "Try asking:",
+          "create_order": "Create a new order for customer ABC",
+          "production_status": "What's the current production status?",
+          "quality_issues": "Show me recent quality issues",
+          "efficiency_tips": "How can I improve production efficiency?"
+        },
+        "voice": {
+          "start_recording": "Start Voice Recording",
+          "stop_recording": "Stop Recording",
+          "language_toggle": "Switch Language",
+          "volume_control": "Volume Control",
+          "listening": "Listening...",
+          "processing": "Processing...",
+          "speaking": "Speaking...",
+          "english_mode": "English Mode",
+          "arabic_mode": "Arabic Mode"
+        }
+      },
+      "insights": {
+        "title": "Production Insights",
+        "subtitle": "AI-powered analysis and recommendations",
+        "bottlenecks": {
+          "title": "Bottleneck Analysis",
+          "no_bottlenecks": "No significant bottlenecks detected",
+          "severity": {
+            "high": "High Priority",
+            "medium": "Medium Priority", 
+            "low": "Low Priority"
+          }
+        },
+        "efficiency": {
+          "title": "Efficiency Analysis",
+          "overall": "Overall Efficiency",
+          "by_section": "By Section",
+          "target": "Target",
+          "current": "Current"
+        },
+        "predictions": {
+          "title": "Predictive Analysis",
+          "next_bottleneck": "Next Bottleneck",
+          "recommended_action": "Recommended Action",
+          "timeframe": "Timeframe"
+        },
+        "quality": {
+          "title": "Quality Recommendations",
+          "no_recommendations": "No quality recommendations at this time",
+          "improvement_suggestions": "Improvement Suggestions"
+        },
+        "schedule": {
+          "title": "Schedule Optimization",
+          "no_optimizations": "Current schedule is optimized",
+          "suggestions": "Optimization Suggestions"
+        },
+        "maintenance": {
+          "title": "Predictive Maintenance",
+          "no_predictions": "No maintenance issues predicted",
+          "upcoming": "Upcoming Maintenance",
+          "recommendations": "Maintenance Recommendations"
+        }
+      },
+      "automation": {
+        "title": "Smart Automation",
+        "subtitle": "Automated workflows and intelligent suggestions",
+        "workflows": {
+          "title": "Active Workflows",
+          "no_workflows": "No active automation workflows",
+          "create_new": "Create New Workflow"
+        },
+        "suggestions": {
+          "title": "Smart Suggestions",
+          "no_suggestions": "No suggestions available",
+          "types": {
+            "optimization": "Optimization",
+            "action": "Action Required",
+            "insight": "Insight"
+          }
+        }
+      },
+      "common": {
+        "refresh_all": "Refresh All",
+        "loading": "Loading AI insights...",
+        "error": "Failed to load AI data",
+        "retry": "Try Again",
+        "minimize": "Minimize",
+        "maximize": "Maximize",
+        "close": "Close",
+        "send": "Send",
+        "clear": "Clear Chat",
+        "export": "Export",
+        "settings": "AI Settings"
+      },
+      "floating": {
+        "title": "AI Assistant",
+        "tooltip": "Click to open AI Assistant",
+        "minimize_tooltip": "Minimize Assistant",
+        "maximize_tooltip": "Maximize Assistant"
+      }
+    },
     "dashboard": {
       "title": "Dashboard",
       "standard": "Standard",

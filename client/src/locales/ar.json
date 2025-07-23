@@ -318,6 +318,16 @@
       "resolved_violations": "المخالفات المحلولة",
       "recent_quality_inspections": "فحوصات الجودة الأخيرة",
       "inventory_status": "حالة المخزون",
+      "raw_materials": "المواد الخام",
+      "final_products": "المنتجات النهائية",
+      "shipping": "الشحن",
+      "material_consumption": "استهلاك المواد",
+      "pending_shipments": "الشحنات المعلقة",
+      "productivity_metrics": "مقاييس الإنتاجية",
+      "standard": "قياسي",
+      "custom": "مخصص",
+      "customizable_dashboard": "لوحة تحكم قابلة للتخصيص",
+      "customize": "تخصيص",
       "customizable": "قابل للتخصيص"
     },
     "setup": {
@@ -810,6 +820,116 @@
       "iot_monitor": {
         "title": "مراقب إنترنت الأشياء",
         "description": "مراقبة الأجهزة المتصلة والتحليلات"
+      }
+    },
+    "ai_assistant": {
+      "title": "مساعد الإنتاج الذكي",
+      "subtitle": "رؤى ذكية وأتمتة لإدارة الإنتاج الخاص بك",
+      "tabs": {
+        "chat": "محادثة AI",
+        "insights": "رؤى الإنتاج",
+        "automation": "الأتمتة الذكية"
+      },
+      "chat": {
+        "title": "مساعد المحادثة الذكي",
+        "placeholder": "اسألني أي شيء عن إدارة الإنتاج...",
+        "examples": {
+          "title": "جرب السؤال:",
+          "create_order": "إنشاء طلب جديد للعميل ABC",
+          "production_status": "ما هو وضع الإنتاج الحالي؟",
+          "quality_issues": "أظهر لي مشكلات الجودة الأخيرة",
+          "efficiency_tips": "كيف يمكنني تحسين كفاءة الإنتاج؟"
+        },
+        "voice": {
+          "start_recording": "بدء التسجيل الصوتي",
+          "stop_recording": "إيقاف التسجيل",
+          "language_toggle": "تبديل اللغة",
+          "volume_control": "التحكم في مستوى الصوت",
+          "listening": "أستمع...",
+          "processing": "معالجة...",
+          "speaking": "أتحدث...",
+          "english_mode": "الوضع الإنجليزي",
+          "arabic_mode": "الوضع العربي"
+        }
+      },
+      "insights": {
+        "title": "رؤى الإنتاج",
+        "subtitle": "تحليلات وتوصيات مدعومة بالذكاء الاصطناعي",
+        "bottlenecks": {
+          "title": "تحليل الاختناقات",
+          "no_bottlenecks": "لم يتم اكتشاف اختناقات مهمة",
+          "severity": {
+            "high": "أولوية عالية",
+            "medium": "أولوية متوسطة",
+            "low": "أولوية منخفضة"
+          }
+        },
+        "efficiency": {
+          "title": "تحليل الكفاءة",
+          "overall": "الكفاءة الإجمالية",
+          "by_section": "حسب القسم",
+          "target": "الهدف",
+          "current": "الحالي"
+        },
+        "predictions": {
+          "title": "التحليل التنبؤي",
+          "next_bottleneck": "الاختناق التالي",
+          "recommended_action": "الإجراء الموصى به",
+          "timeframe": "الإطار الزمني"
+        },
+        "quality": {
+          "title": "توصيات الجودة",
+          "no_recommendations": "لا توجد توصيات جودة في هذا الوقت",
+          "improvement_suggestions": "اقتراحات التحسين"
+        },
+        "schedule": {
+          "title": "تحسين الجدولة",
+          "no_optimizations": "الجدول الحالي محسن",
+          "suggestions": "اقتراحات التحسين"
+        },
+        "maintenance": {
+          "title": "الصيانة التنبؤية",
+          "no_predictions": "لم يتم التنبؤ بمشكلات صيانة",
+          "upcoming": "صيانة قادمة",
+          "recommendations": "توصيات الصيانة"
+        }
+      },
+      "automation": {
+        "title": "الأتمتة الذكية",
+        "subtitle": "سير العمل الآلي والاقتراحات الذكية",
+        "workflows": {
+          "title": "سير العمل النشط",
+          "no_workflows": "لا توجد سير عمل أتمتة نشطة",
+          "create_new": "إنشاء سير عمل جديد"
+        },
+        "suggestions": {
+          "title": "الاقتراحات الذكية",
+          "no_suggestions": "لا توجد اقتراحات متاحة",
+          "types": {
+            "optimization": "تحسين",
+            "action": "إجراء مطلوب",
+            "insight": "رؤية"
+          }
+        }
+      },
+      "common": {
+        "refresh_all": "تحديث الكل",
+        "loading": "تحميل رؤى AI...",
+        "error": "فشل في تحميل بيانات AI",
+        "retry": "حاول مرة أخرى",
+        "minimize": "تصغير",
+        "maximize": "تكبير",
+        "close": "إغلاق",
+        "send": "إرسال",
+        "clear": "مسح المحادثة",
+        "export": "تصدير",
+        "settings": "إعدادات AI"
+      },
+      "floating": {
+        "title": "المساعد الذكي",
+        "tooltip": "اضغط لفتح المساعد الذكي",
+        "minimize_tooltip": "تصغير المساعد",
+        "maximize_tooltip": "تكبير المساعد"
       }
     },
     "orders": {
