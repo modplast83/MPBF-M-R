@@ -15,7 +15,7 @@ export function setupNotificationRoutes(app: Express) {
     async (req: Request, res: Response) => {
       try {
         const userId = req.user?.id;
-        const userRole = req.user?.role;
+        const userRole = req.user?.isAdmin ? 'admin' : 'user';
 
         if (!userId) {
           return res.status(401).json({ message: "User not authenticated" });
@@ -77,7 +77,7 @@ export function setupNotificationRoutes(app: Express) {
     async (req: Request, res: Response) => {
       try {
         const userId = req.user?.id;
-        const userRole = req.user?.role;
+        const userRole = req.user?.isAdmin ? 'admin' : 'user';
 
         if (!userId) {
           return res.status(401).json({ message: "User not authenticated" });
@@ -224,7 +224,7 @@ export function setupNotificationRoutes(app: Express) {
     async (req: Request, res: Response) => {
       try {
         const userId = req.user?.id;
-        const userRole = req.user?.role;
+        const userRole = req.user?.isAdmin ? 'admin' : 'user';
 
         if (
           !userId ||
@@ -260,7 +260,7 @@ export function setupNotificationRoutes(app: Express) {
     async (req: Request, res: Response) => {
       try {
         const userId = req.user?.id;
-        const userRole = req.user?.role;
+        const userRole = req.user?.isAdmin ? 'admin' : 'user';
 
         if (
           !userId ||
@@ -324,7 +324,7 @@ export function setupNotificationRoutes(app: Express) {
     async (req: Request, res: Response) => {
       try {
         const userId = req.user?.id;
-        const userRole = req.user?.role;
+        const userRole = req.user?.isAdmin ? 'admin' : 'user';
 
         if (
           !userId ||
@@ -362,7 +362,7 @@ export function setupNotificationRoutes(app: Express) {
     async (req: Request, res: Response) => {
       try {
         const userId = req.user?.id;
-        const userRole = req.user?.role;
+        const userRole = req.user?.isAdmin ? 'admin' : 'user';
         const templateId = req.params.id;
 
         if (
@@ -406,7 +406,7 @@ export function setupNotificationRoutes(app: Express) {
     async (req: Request, res: Response) => {
       try {
         const userId = req.user?.id;
-        const userRole = req.user?.role;
+        const userRole = req.user?.isAdmin ? 'admin' : 'user';
         const templateId = req.params.id;
 
         if (
@@ -439,7 +439,7 @@ export function setupNotificationRoutes(app: Express) {
     async (req: Request, res: Response) => {
       try {
         const userId = req.user?.id;
-        const userRole = req.user?.role;
+        const userRole = req.user?.isAdmin ? 'admin' : 'user';
 
         if (
           !userId ||

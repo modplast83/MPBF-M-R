@@ -118,7 +118,7 @@ export class NotificationService {
         return bPriority - aPriority; // Higher priority first
       }
 
-      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      return new Date(b.createdAt || new Date()).getTime() - new Date(a.createdAt || new Date()).getTime();
     });
   }
 

@@ -3373,6 +3373,8 @@ export class DatabaseStorage implements IStorage {
     return true;
   }
 
+
+
   async generateMixNumber(): Promise<string> {
     const today = new Date();
     const dateStr = today.toISOString().slice(0, 10).replace(/-/g, "");
@@ -3389,8 +3391,8 @@ export class DatabaseStorage implements IStorage {
       today.getDate() + 1,
     );
 
-    const todayMixes = await db
-      .select()
+    const todayCount = await db
+      .select({ count: sql<number>`COUNT(*)` })
       .from(joMixes)
       .where(
         and(
@@ -3399,8 +3401,8 @@ export class DatabaseStorage implements IStorage {
         ),
       );
 
-    const sequence = String(todayMixes.length + 1).padStart(3, "0");
-    return `MIX${dateStr}${sequence}`;
+    const sequence = (todayCount[0]?.count || 0) + 1;
+    return `MIX${dateStr}${sequence.toString().padStart(3, "0")}`;
   }
 
   // JO Mix Items methods
@@ -3499,27 +3501,7 @@ export class DatabaseStorage implements IStorage {
     };
   }
 
-  async createJoMix(mix: InsertJoMix): Promise<JoMix> {
-    const [created] = await db.insert(joMixes).values(mix).returning();
-    return created;
-  }
 
-  async updateJoMix(
-    id: number,
-    updates: Partial<InsertJoMix>,
-  ): Promise<JoMix | undefined> {
-    const [updated] = await db
-      .update(joMixes)
-      .set(updates)
-      .where(eq(joMixes.id, id))
-      .returning();
-    return updated || undefined;
-  }
-
-  async deleteJoMix(id: number): Promise<boolean> {
-    await db.delete(joMixes).where(eq(joMixes.id, id));
-    return true;
-  }
 
   // JO Mix Items methods
   async getJoMixItems(joMixId: number): Promise<any[]> {

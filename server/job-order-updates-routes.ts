@@ -33,7 +33,7 @@ export function setupJobOrderUpdateRoutes(app: Express) {
       // Transform to the expected format
       const formattedUpdates: JobOrderUpdate[] = updates.map(update => ({
         id: update.id,
-        jobOrderId: update.jobOrderId,
+        jobOrderId: update.jobOrderId.toString(),
         type: update.updateType as any,
         title: update.title,
         message: update.message,
