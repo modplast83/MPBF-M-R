@@ -95,39 +95,53 @@ export function AIAssistantWidget({
   // Initialize speech recognition and synthesis
   useEffect(() => {
     const initializeSpeech = () => {
+      console.log('Initializing speech functionality...');
+      
       // Check for speech recognition support
       const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
       
+      console.log('SpeechRecognition available:', !!SpeechRecognition);
+      console.log('speechSynthesis available:', 'speechSynthesis' in window);
+      
+      // Always set speech supported to true to show the buttons
+      setSpeechSupported(true);
+      
       if (SpeechRecognition) {
-        setSpeechSupported(true);
-        recognitionRef.current = new SpeechRecognition();
-        recognitionRef.current.continuous = false;
-        recognitionRef.current.interimResults = false;
-        recognitionRef.current.lang = voiceLanguage;
-        
-        recognitionRef.current.onstart = () => {
-          setIsListening(true);
-        };
-        
-        recognitionRef.current.onresult = (event: any) => {
-          const transcript = event.results[0][0].transcript;
-          setInput(transcript);
-          setIsListening(false);
-        };
-        
-        recognitionRef.current.onerror = (event: any) => {
-          console.error('Speech recognition error:', event.error);
-          setIsListening(false);
-          toast({
-            title: t("ai_assistant.chat.errors.voice_recognition"),
-            description: t("ai_assistant.chat.errors.voice_recognition_desc"),
-            variant: "destructive"
-          });
-        };
-        
-        recognitionRef.current.onend = () => {
-          setIsListening(false);
-        };
+        try {
+          recognitionRef.current = new SpeechRecognition();
+          recognitionRef.current.continuous = false;
+          recognitionRef.current.interimResults = false;
+          recognitionRef.current.lang = voiceLanguage;
+          
+          recognitionRef.current.onstart = () => {
+            console.log('Speech recognition started');
+            setIsListening(true);
+          };
+          
+          recognitionRef.current.onresult = (event: any) => {
+            const transcript = event.results[0][0].transcript;
+            console.log('Speech recognized:', transcript);
+            setInput(transcript);
+            setIsListening(false);
+          };
+          
+          recognitionRef.current.onerror = (event: any) => {
+            console.error('Speech recognition error:', event.error);
+            setIsListening(false);
+            toast({
+              title: "Voice Recognition Error",
+              description: `Speech recognition failed: ${event.error}`,
+              variant: "destructive"
+            });
+          };
+          
+          recognitionRef.current.onend = () => {
+            console.log('Speech recognition ended');
+            setIsListening(false);
+          };
+        } catch (error) {
+          console.error('Failed to initialize speech recognition:', error);
+        }
       }
       
       // Check for speech synthesis support
@@ -303,17 +317,29 @@ export function AIAssistantWidget({
 
   // Voice functionality methods
   const startListening = () => {
-    if (recognitionRef.current && speechSupported) {
+    console.log('Attempting to start listening...');
+    console.log('Recognition ref:', !!recognitionRef.current);
+    console.log('Speech supported:', speechSupported);
+    
+    if (recognitionRef.current) {
       try {
         recognitionRef.current.start();
+        console.log('Speech recognition start called');
       } catch (error) {
         console.error('Failed to start speech recognition:', error);
         toast({
-          title: t("ai_assistant.chat.errors.voice_recognition"),
-          description: t("ai_assistant.chat.errors.voice_start_failed"),
+          title: "Voice Recognition Error",
+          description: `Failed to start speech recognition: ${(error as Error).message}`,
           variant: "destructive"
         });
       }
+    } else {
+      // Show error if speech recognition is not available
+      toast({
+        title: "Voice Recognition Unavailable",
+        description: "Speech recognition is not supported in your browser. Please use Chrome, Edge, or Safari.",
+        variant: "destructive"
+      });
     }
   };
 
@@ -566,19 +592,23 @@ export function AIAssistantWidget({
               <Send className="h-4 w-4" />
             </Button>
           </div>
-          {speechSupported && (
-            <div className="text-xs text-muted-foreground mt-2 text-center">
-              {isListening ? (
-                <span className="text-primary">
-                  🎤 {t("ai_assistant.chat.voice.listening_for_command")}
+          <div className="text-xs text-muted-foreground mt-2 text-center">
+            {speechSupported ? (
+              isListening ? (
+                <span className="text-primary font-medium">
+                  🎤 Listening... ({voiceLanguage === 'ar-SA' ? 'Arabic' : 'English'})
                 </span>
               ) : (
                 <span>
-                  {t("ai_assistant.chat.voice.click_microphone")} ({voiceLanguage === 'ar-SA' ? t("ai_assistant.chat.voice.arabic") : t("ai_assistant.chat.voice.english")})
+                  Click microphone to speak ({voiceLanguage === 'ar-SA' ? 'Arabic' : 'English'} mode)
                 </span>
-              )}
-            </div>
-          )}
+              )
+            ) : (
+              <span className="text-orange-600">
+                Voice recognition unavailable - use Chrome, Edge, or Safari
+              </span>
+            )}
+          </div>
         </div>
       </CardContent>
     </Card>
