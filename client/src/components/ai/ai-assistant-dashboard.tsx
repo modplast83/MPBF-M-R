@@ -5,6 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { AIAssistantWidget } from "./ai-assistant-widget";
 import { ProductionInsightsWidget } from "./production-insights-widget";
+import { WorkflowSuggestionCarousel } from "./workflow-suggestion-carousel";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import {
@@ -259,6 +260,14 @@ export function AIAssistantDashboard({ className }: AIAssistantDashboardProps) {
         </TabsContent>
 
         <TabsContent value="automation" className="space-y-6">
+          {/* Interactive Workflow Suggestion Carousel */}
+          <WorkflowSuggestionCarousel 
+            className="mb-8"
+            maxVisibleItems={3}
+            autoRotate={true}
+            rotationInterval={10000}
+          />
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <Card>
               <CardHeader>

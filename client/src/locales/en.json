@@ -3517,6 +3517,57 @@
           "language_changed": "Voice Language Changed",
           "arabic_mode": "Voice commands now in Arabic",
           "english_mode": "Voice commands now in English"
+        },
+        "workflows": {
+          "title": "Workflow Suggestions",
+          "suggestions": "suggestions",
+          "loading": "Loading workflow suggestions...",
+          "recommended": "Recommended",
+          "start_workflow": "Start Workflow",
+          "progress": "Progress",
+          "steps": "Steps",
+          "benefits": "Benefits",
+          "close": "Close",
+          "priority": {
+            "low": "Low",
+            "medium": "Medium", 
+            "high": "High",
+            "urgent": "Urgent"
+          },
+          "difficulty": {
+            "easy": "Easy",
+            "medium": "Medium",
+            "advanced": "Advanced"
+          },
+          "optimize_order_flow": {
+            "title": "Optimize Order Processing Flow",
+            "description": "Streamline your order management process for better efficiency",
+            "step1": "Review current order status and priorities",
+            "step2": "Identify bottlenecks in the workflow",
+            "step3": "Implement process improvements",
+            "benefit1": "Reduce order processing time by 25%"
+          },
+          "quality_improvement": {
+            "title": "Quality Control Enhancement",
+            "description": "Implement advanced quality control measures",
+            "step1": "Analyze recent quality metrics and issues",
+            "step2": "Deploy corrective action plans",
+            "benefit1": "Improve quality score and reduce defects"
+          },
+          "daily_production_check": {
+            "title": "Daily Production Health Check",
+            "description": "Monitor and optimize daily production performance",
+            "step1": "Review production metrics and KPIs",
+            "step2": "Check machine status and efficiency",
+            "benefit1": "Maintain optimal production performance"
+          },
+          "preventive_maintenance": {
+            "title": "Preventive Maintenance Schedule",
+            "description": "Proactive maintenance to prevent equipment failures",
+            "step1": "Review equipment status and maintenance history",
+            "step2": "Schedule and execute preventive maintenance tasks",
+            "benefit1": "Reduce downtime and extend equipment life"
+          }
         }
       }
     }

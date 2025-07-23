@@ -68,6 +68,22 @@ router.get("/quality-recommendations", async (req, res) => {
   }
 });
 
+// Workflow suggestions endpoint
+router.post("/workflow-suggestions", async (req, res) => {
+  try {
+    const { context } = req.body;
+    
+    const suggestions = await aiService.generateWorkflowSuggestions(context);
+    res.json({ suggestions });
+  } catch (error) {
+    console.error("Workflow suggestions error:", error);
+    res.status(500).json({ 
+      error: "Failed to get workflow suggestions",
+      details: error.message 
+    });
+  }
+});
+
 // Create records endpoint
 router.post("/create-records", async (req, res) => {
   try {

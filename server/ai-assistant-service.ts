@@ -617,4 +617,228 @@ export class AIAssistantService {
       throw new Error(`Failed to create order: ${error.message}`);
     }
   }
+
+  async generateWorkflowSuggestions(context: any): Promise<any[]> {
+    try {
+      const { currentPage, userId, userRole, timestamp } = context;
+
+      // Get production and system data for context-aware suggestions
+      const [orders, qualityChecks, maintenance, rolls] = await Promise.all([
+        this.getOrdersOverview(),
+        this.getQualityMetrics(),
+        this.getMaintenanceStatus(),
+        this.getRollsStatus()
+      ]);
+
+      const systemData = { orders, qualityChecks, maintenance, rolls };
+
+      // Generate contextual workflow suggestions using OpenAI
+      const prompt = `You are an AI production management assistant. Generate 4-6 contextual workflow suggestions based on the current system state and user context.
+
+Current Context:
+- Page: ${currentPage}
+- User Role: ${userRole}
+- Time: ${timestamp}
+
+System Data:
+- Orders: ${orders.total} total, ${orders.pending} pending, ${orders.processing} processing
+- Quality Issues: ${qualityChecks.recentIssues} recent issues, ${qualityChecks.score}% quality score
+- Maintenance: ${maintenance.urgentTasks} urgent tasks, ${maintenance.overdueItems} overdue items
+- Production: ${rolls.extrusion} in extrusion, ${rolls.printing} in printing, ${rolls.cutting} in cutting
+
+Generate workflow suggestions as a JSON array with this structure:
+[{
+  "id": "unique-id",
+  "title": "Suggestion Title",
+  "description": "Brief description",
+  "category": "production|quality|maintenance|efficiency|planning|safety",
+  "priority": "low|medium|high|urgent",
+  "estimatedTime": "X mins",
+  "difficulty": "easy|medium|advanced",
+  "steps": ["Step 1", "Step 2", "Step 3"],
+  "benefits": ["Benefit 1", "Benefit 2"],
+  "contextRelevance": 85,
+  "actionUrl": "/optional/navigation/url",
+  "isRecommended": true|false
+}]
+
+Focus on actionable workflows that address current bottlenecks, improve efficiency, or prevent issues. Prioritize suggestions relevant to the current page context.
+
+Return only the JSON array, no additional text.`;
+
+      const completion = await this.openai.chat.completions.create({
+        model: "gpt-4o",
+        messages: [
+          {
+            role: "system",
+            content: "You are an intelligent production management assistant specialized in workflow optimization and process improvement. Generate contextual, actionable workflow suggestions."
+          },
+          {
+            role: "user",
+            content: prompt
+          }
+        ],
+        temperature: 0.7,
+        max_tokens: 2000
+      });
+
+      let suggestions = [];
+      try {
+        const responseText = completion.choices[0]?.message?.content?.trim();
+        suggestions = JSON.parse(responseText);
+      } catch (parseError) {
+        console.error('Error parsing workflow suggestions:', parseError);
+        // Fallback to static suggestions
+        suggestions = this.getFallbackWorkflowSuggestions(currentPage, systemData);
+      }
+
+      // Sort by context relevance and priority
+      return suggestions.sort((a, b) => {
+        const priorityWeight = { urgent: 4, high: 3, medium: 2, low: 1 };
+        const aPriority = priorityWeight[a.priority] || 1;
+        const bPriority = priorityWeight[b.priority] || 1;
+        
+        return (b.contextRelevance + bPriority * 5) - (a.contextRelevance + aPriority * 5);
+      });
+
+    } catch (error) {
+      console.error('Error generating workflow suggestions:', error);
+      // Return fallback suggestions
+      return this.getFallbackWorkflowSuggestions(context.currentPage, {});
+    }
+  }
+
+  private getFallbackWorkflowSuggestions(currentPage: string, systemData: any): any[] {
+    const suggestions = [];
+
+    // Page-specific suggestions
+    if (currentPage?.includes('/orders')) {
+      suggestions.push({
+        id: 'optimize-order-processing',
+        title: 'Optimize Order Processing Flow',
+        description: 'Review and streamline the order processing workflow for better efficiency',
+        category: 'efficiency',
+        priority: 'medium',
+        estimatedTime: '20 mins',
+        difficulty: 'medium',
+        steps: [
+          'Review current order queue and priorities',
+          'Identify workflow bottlenecks',
+          'Implement process improvements'
+        ],
+        benefits: ['Reduce order processing time', 'Improve customer satisfaction'],
+        contextRelevance: 95,
+        actionUrl: '/orders',
+        isRecommended: true
+      });
+    }
+
+    if (currentPage?.includes('/quality')) {
+      suggestions.push({
+        id: 'quality-improvement-plan',
+        title: 'Quality Improvement Action Plan',
+        description: 'Implement systematic quality control improvements',
+        category: 'quality',
+        priority: 'high',
+        estimatedTime: '30 mins',
+        difficulty: 'medium',
+        steps: [
+          'Analyze recent quality metrics',
+          'Identify root causes of defects',
+          'Deploy corrective measures'
+        ],
+        benefits: ['Improve quality scores', 'Reduce defect rates'],
+        contextRelevance: 90,
+        actionUrl: '/quality',
+        isRecommended: true
+      });
+    }
+
+    // General suggestions
+    suggestions.push(
+      {
+        id: 'daily-production-review',
+        title: 'Daily Production Health Check',
+        description: 'Comprehensive review of production metrics and performance',
+        category: 'production',
+        priority: 'medium',
+        estimatedTime: '15 mins',
+        difficulty: 'easy',
+        steps: [
+          'Review production dashboard metrics',
+          'Check machine status and efficiency',
+          'Identify potential issues'
+        ],
+        benefits: ['Maintain optimal performance', 'Early issue detection'],
+        contextRelevance: 75
+      },
+      {
+        id: 'preventive-maintenance-check',
+        title: 'Preventive Maintenance Schedule',
+        description: 'Review and schedule preventive maintenance activities',
+        category: 'maintenance',
+        priority: 'high',
+        estimatedTime: '25 mins',
+        difficulty: 'advanced',
+        steps: [
+          'Review equipment maintenance history',
+          'Schedule upcoming maintenance tasks',
+          'Coordinate with production schedule'
+        ],
+        benefits: ['Reduce downtime', 'Extend equipment life'],
+        contextRelevance: 80,
+        actionUrl: '/maintenance'
+      }
+    );
+
+    return suggestions.slice(0, 6);
+  }
+
+  private async getOrdersOverview(): Promise<any> {
+    try {
+      const result = await this.db.query(`
+        SELECT 
+          COUNT(*) as total,
+          COUNT(CASE WHEN status = 'pending' THEN 1 END) as pending,
+          COUNT(CASE WHEN status = 'processing' THEN 1 END) as processing,
+          COUNT(CASE WHEN status = 'completed' THEN 1 END) as completed
+        FROM orders
+        WHERE date >= CURRENT_DATE - INTERVAL '30 days'
+      `);
+      return result.rows[0];
+    } catch (error) {
+      return { total: 0, pending: 0, processing: 0, completed: 0 };
+    }
+  }
+
+  private async getRollsStatus(): Promise<any> {
+    try {
+      const result = await this.db.query(`
+        SELECT 
+          COUNT(CASE WHEN current_stage = 'extrusion' THEN 1 END) as extrusion,
+          COUNT(CASE WHEN current_stage = 'printing' THEN 1 END) as printing,
+          COUNT(CASE WHEN current_stage = 'cutting' THEN 1 END) as cutting,
+          COUNT(CASE WHEN current_stage = 'completed' THEN 1 END) as completed
+        FROM rolls
+        WHERE created_at >= CURRENT_DATE - INTERVAL '7 days'
+      `);
+      return result.rows[0];
+    } catch (error) {
+      return { extrusion: 0, printing: 0, cutting: 0, completed: 0 };
+    }
+  }
+
+  private async getMaintenanceStatus(): Promise<any> {
+    try {
+      const result = await this.db.query(`
+        SELECT 
+          COUNT(CASE WHEN priority = 'urgent' AND status != 'completed' THEN 1 END) as urgentTasks,
+          COUNT(CASE WHEN requested_date < CURRENT_DATE - INTERVAL '7 days' AND status != 'completed' THEN 1 END) as overdueItems
+        FROM maintenance_requests
+      `);
+      return result.rows[0];
+    } catch (error) {
+      return { urgentTasks: 0, overdueItems: 0 };
+    }
+  }
 }
