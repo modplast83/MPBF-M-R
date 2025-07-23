@@ -273,7 +273,7 @@ export function QuickActions() {
   ];
 
   // Filter actions based on user role
-  const userRole = user?.role?.toLowerCase();
+  const userRole = (user as any)?.role?.toLowerCase();
   const filteredActions = quickActions.filter(
     (action) =>
       !action.requiredRole ||

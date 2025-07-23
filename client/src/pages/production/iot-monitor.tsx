@@ -104,6 +104,13 @@ interface SensorAnalytics {
   }>;
 }
 
+interface Machine {
+  id: string;
+  name: string;
+  sectionId: string;
+  isActive: boolean;
+}
+
 export default function IoTMonitor() {
   const { t } = useTranslation();
   const { toast } = useToast();
@@ -125,24 +132,24 @@ export default function IoTMonitor() {
     data: sensors = [],
     isLoading: sensorsLoading,
     refetch: refetchSensors,
-  } = useQuery({
+  } = useQuery<MachineSensor[]>({
     queryKey: ["/api/iot/sensors"],
     refetchInterval: 30000, // Refresh every 30 seconds
   });
 
   // Fetch machines for sensor creation
-  const { data: machines = [] } = useQuery({
+  const { data: machines = [] } = useQuery<Machine[]>({
     queryKey: ["/api/machines"],
   });
 
   // Fetch active alerts
-  const { data: activeAlerts = [], refetch: refetchAlerts } = useQuery({
+  const { data: activeAlerts = [], refetch: refetchAlerts } = useQuery<IotAlert[]>({
     queryKey: ["/api/iot/alerts/active"],
     refetchInterval: 10000, // Refresh every 10 seconds
   });
 
   // Fetch sensor analytics for selected sensor
-  const { data: sensorAnalytics, isLoading: analyticsLoading } = useQuery({
+  const { data: sensorAnalytics, isLoading: analyticsLoading } = useQuery<SensorAnalytics>({
     queryKey: ["/api/iot/analytics", selectedSensor],
     enabled: !!selectedSensor,
     refetchInterval: 15000,
