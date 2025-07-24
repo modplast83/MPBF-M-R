@@ -770,7 +770,20 @@ export class MemStorage {
   async createUser(user: UpsertUser): Promise<User> {
     // For new users without an ID, generate one
     const id = user.id || `U${this.users.size + 1}`.padStart(4, "0");
-    const newUser: User = { ...user, id };
+    const newUser: User = { 
+      ...user, 
+      id,
+      isActive: user.isActive ?? true,
+      sectionId: user.sectionId ?? null,
+      email: user.email ?? null,
+      firstName: user.firstName ?? null,
+      lastName: user.lastName ?? null,
+      bio: user.bio ?? null,
+      profileImageUrl: user.profileImageUrl ?? null,
+      phone: user.phone ?? null,
+      createdAt: user.createdAt ?? new Date(),
+      updatedAt: user.updatedAt ?? new Date(),
+    };
     this.users.set(id, newUser);
     return newUser;
   }
@@ -827,7 +840,10 @@ export class MemStorage {
   }
 
   async createCategory(category: InsertCategory): Promise<Category> {
-    const newCategory: Category = { ...category };
+    const newCategory: Category = { 
+      ...category,
+      nameAr: category.nameAr ?? null
+    };
     this.categories.set(category.id, newCategory);
     return newCategory;
   }
@@ -929,7 +945,15 @@ export class MemStorage {
   }
 
   async createMachine(machine: InsertMachine): Promise<Machine> {
-    const newMachine: Machine = { ...machine };
+    const newMachine: Machine = { 
+      ...machine,
+      isActive: machine.isActive ?? true,
+      sectionId: machine.sectionId ?? null,
+      serialNumber: machine.serialNumber ?? null,
+      supplier: machine.supplier ?? null,
+      dateOfManufacturing: machine.dateOfManufacturing ?? null,
+      modelNumber: machine.modelNumber ?? null
+    };
     this.machines.set(machine.id, newMachine);
     return newMachine;
   }
@@ -999,7 +1023,12 @@ export class MemStorage {
   }
 
   async createCustomer(customer: InsertCustomer): Promise<Customer> {
-    const newCustomer: Customer = { ...customer };
+    const newCustomer: Customer = { 
+      ...customer,
+      userId: customer.userId ?? null,
+      nameAr: customer.nameAr ?? null,
+      plateDrawerCode: customer.plateDrawerCode ?? null
+    };
     this.customers.set(customer.id, newCustomer);
     return newCustomer;
   }
@@ -1041,7 +1070,11 @@ export class MemStorage {
     customerProduct: InsertCustomerProduct,
   ): Promise<CustomerProduct> {
     const id = this.currentCustomerProductId++;
-    const newCustomerProduct: CustomerProduct = { ...customerProduct, id };
+    const newCustomerProduct: CustomerProduct = { 
+      ...customerProduct, 
+      id,
+      sizeCaption: customerProduct.sizeCaption ?? null
+    };
     this.customerProducts.set(id, newCustomerProduct);
     return newCustomerProduct;
   }
@@ -1079,6 +1112,8 @@ export class MemStorage {
     const newOrder: Order = {
       ...order,
       id,
+      userId: order.userId ?? null,
+      note: order.note ?? null,
       date: new Date(),
       status: "pending",
     };
@@ -1209,7 +1244,7 @@ export class MemStorage {
       ...jobOrder,
       id,
       status: jobOrder.status || "pending",
-      customerId,
+      customerId: customerId ?? null,
     };
 
     this.jobOrders.set(id, newJobOrder);
@@ -1261,7 +1296,11 @@ export class MemStorage {
   }
 
   async createRoll(roll: InsertRoll): Promise<Roll> {
-    const newRoll: Roll = { ...roll };
+    const newRoll: Roll = { 
+      ...roll,
+      createdAt: roll.createdAt ?? null,
+      status: roll.status ?? "pending"
+    };
     this.rolls.set(roll.id, newRoll);
     return newRoll;
   }
@@ -1295,6 +1334,7 @@ export class MemStorage {
     const newRawMaterial: RawMaterial = {
       ...rawMaterial,
       id,
+      quantity: rawMaterial.quantity ?? null,
       lastUpdated: new Date(),
     };
     this.rawMaterials.set(id, newRawMaterial);
@@ -1345,6 +1385,7 @@ export class MemStorage {
     const newFinalProduct: FinalProduct = {
       ...finalProduct,
       id,
+      status: finalProduct.status ?? "completed",
       completedDate: new Date(),
     };
     this.finalProducts.set(id, newFinalProduct);
@@ -1399,6 +1440,19 @@ export class MemStorage {
     const newMessage: SmsMessage = {
       ...message,
       id,
+      category: message.category ?? "general",
+      templateId: message.templateId ?? null,
+      priority: message.priority ?? "medium",
+      recipientName: message.recipientName ?? null,
+      customerId: message.customerId ?? null,
+      orderId: message.orderId ?? null,
+      jobOrderId: message.jobOrderId ?? null,
+      isScheduled: message.isScheduled ?? false,
+      scheduledAt: message.scheduledAt ?? null,
+      retryCount: message.retryCount ?? 0,
+      lastRetryAt: message.lastRetryAt ?? null,
+      errorMessage: message.errorMessage ?? null,
+      metadata: message.metadata ?? {},
       sentAt: new Date(),
       deliveredAt: null,
       twilioMessageId: null,
@@ -1439,6 +1493,8 @@ export class MemStorage {
     const newMix: MixMaterial = {
       ...mix,
       id,
+      orderId: mix.orderId ?? null,
+      mixScrew: mix.mixScrew ?? null,
       mixDate: new Date(),
       totalQuantity,
       createdAt: new Date(),
@@ -1553,7 +1609,7 @@ export class MemStorage {
     }
 
     // Update the mix total quantity
-    const newTotalQuantity = mix.totalQuantity + mixItem.quantity;
+    const newTotalQuantity = (mix.totalQuantity || 0) + mixItem.quantity;
     await this.updateMixMaterial(mix.id, { totalQuantity: newTotalQuantity });
 
     // Calculate the percentage of this item in the mix
@@ -1600,7 +1656,7 @@ export class MemStorage {
 
       // Calculate the new total quantity for the mix
       const quantityDiff = mixItemUpdate.quantity - existingMixItem.quantity;
-      const newTotalQuantity = mix.totalQuantity + quantityDiff;
+      const newTotalQuantity = (mix.totalQuantity || 0) + quantityDiff;
 
       // Update the raw material quantity
       if (quantityDiff !== 0) {
@@ -1680,7 +1736,7 @@ export class MemStorage {
     }
 
     // Update the mix total quantity
-    const newTotalQuantity = mix.totalQuantity - mixItem.quantity;
+    const newTotalQuantity = (mix.totalQuantity || 0) - mixItem.quantity;
     await this.updateMixMaterial(mix.id, { totalQuantity: newTotalQuantity });
 
     // Update percentages for remaining items in this mix
