@@ -5,6 +5,24 @@
       "subtitle": "Smart insights and automation to monitor the factory",
       "refresh": "Refresh",
       "chat": "Chat",
+      "production_analysis":{
+        "title": ""
+      },
+      "quality_check": {
+        "title": "فحص الجودة"
+      },
+      "maintenance_status": {
+        "title": "حالة الصيانة"
+      },
+      "quality_dashboard": {
+        "title": "لوحة تحكم الجودة"
+      },
+      "sechedule_optimization": {
+        "title": "تحسين الجدولة"
+      },
+      "welcome":{
+        "message": "مرحبًا بك! كيف يمكنني مساعدتك اليوم؟"
+      },
       "insights": "Insights",
       "automation": "Automation",
       "chat_assistant": "AI Assistant",

@@ -90,6 +90,25 @@
       "smart_scheduling": "جدولة ذكية",
       "smart_scheduling_desc": "جدولة تلقائية لأوامر الإنتاج بناءً على الأولوية.",
       "activate": "تشغيل",
+      "production_analysis":{
+        "title": "تحليل الإنتاج"
+      },
+      "quality_check": {
+        "title": "فحص الجودة"
+      },
+      "maintenance_status": {
+        "title": "حالة الصيانة"
+      },
+      "quality_dashboard": {
+        "title": "لوحة تحكم الجودة"
+      },
+      "sechedule_optimization": {
+        "title": "تحسين الجدولة"
+      },
+      "welcome":{
+        "message": "مرحبًا بك! كيف يمكنني مساعدتك اليوم؟"
+      },
+      "placeholder": "اكتب سؤالك هنا...",
       "predictive_alerts": "تنبيهات تنبؤية",
       "predictive_alerts_desc": "احصل على تنبيهات مبكرة قبل حدوث الأعطال.",
       "configure": "تهيئة",
