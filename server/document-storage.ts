@@ -382,13 +382,14 @@ export class DocumentStorage {
   async getDocumentViews(documentId: number): Promise<DocumentView[]> {
     return await db
       .select({
-        ...documentViews,
-        viewedByUser: {
-          id: users.id,
-          username: users.username,
-          firstName: users.firstName,
-          lastName: users.lastName,
-        },
+        id: documentViews.id,
+        documentId: documentViews.documentId,
+        viewedBy: documentViews.viewedBy,
+        viewedAt: documentViews.viewedAt,
+        viewDuration: documentViews.viewDuration,
+        deviceType: documentViews.deviceType,
+        ipAddress: documentViews.ipAddress,
+        userAgent: documentViews.userAgent,
       })
       .from(documentViews)
       .leftJoin(users, eq(documentViews.viewedBy, users.id))
@@ -444,7 +445,7 @@ export class DocumentStorage {
       .delete(documentComments)
       .where(eq(documentComments.id, id));
 
-    return result.rowCount > 0;
+    return (result.rowCount ?? 0) > 0;
   }
 
   // Document Statistics

@@ -1299,7 +1299,7 @@ export class HybridStorage implements IStorage {
         .insert(qualityChecks)
         .values({
           ...qualityCheck,
-          timestamp: new Date(),
+          checkedAt: new Date(),
         })
         .returning();
       return result;
