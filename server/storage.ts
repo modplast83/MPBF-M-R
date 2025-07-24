@@ -1477,7 +1477,7 @@ export class MemStorage {
 
   // Mix Materials
   async getMixMaterials(): Promise<MixMaterial[]> {
-    return Array.from(this.mixMaterials.values());
+    return Array.from(this.mixMaterials.values()).sort((a, b) => b.id - a.id);
   }
 
   async getMixMaterial(id: number): Promise<MixMaterial | undefined> {
