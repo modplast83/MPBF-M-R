@@ -952,6 +952,11 @@
       "server_management": "Server Management",
       "search_placeholder": "Search navigation...",
       "admin": "Administrator",
+      "policies": "Policies",
+      "procedures": "Procedures",
+      "forms": "Forms",
+      "reports": "Reports",
+      "memos": "Memos",
       "user": "User"
     },
 
