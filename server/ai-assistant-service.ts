@@ -74,7 +74,7 @@ export class AIAssistantService {
       `;
 
       const machineQuery = `
-        SELECT s.name as section_name, m.name as machine_name, m.status
+        SELECT s.name as section_name, m.name as machine_name, m.is_active
         FROM machines m
         JOIN sections s ON m.section_id = s.id
       `;
@@ -112,7 +112,7 @@ export class AIAssistantService {
         }
       `;
 
-      const response = await openai.create({
+      const response = await openai.chat.completions.create({
         model: "gpt-4o",
         messages: [
           {
@@ -200,7 +200,7 @@ export class AIAssistantService {
         }
       `;
 
-      const response = await openai.create({
+      const response = await openai.chat.completions.create({
         model: "gpt-4o",
         messages: [
           {
@@ -289,7 +289,7 @@ export class AIAssistantService {
         ]
       `;
 
-      const response = await openai.create({
+      const response = await openai.chat.completions.create({
         model: "gpt-4o",
         messages: [
           {
@@ -327,7 +327,7 @@ export class AIAssistantService {
         SELECT m.*, s.name as section_name 
         FROM machines m 
         JOIN sections s ON m.section_id = s.id 
-        WHERE m.status = 'active'
+        WHERE m.is_active = true
       `);
 
       const optimizationPrompt = `
@@ -346,7 +346,7 @@ export class AIAssistantService {
         ]
       `;
 
-      const response = await openai.create({
+      const response = await openai.chat.completions.create({
         model: "gpt-4o",
         messages: [
           {
@@ -380,7 +380,7 @@ export class AIAssistantService {
               (SELECT COUNT(*) FROM orders WHERE status = 'pending') as pending_orders,
               (SELECT COUNT(*) FROM orders WHERE status = 'processing') as active_orders,
               (SELECT COUNT(*) FROM quality_checks WHERE DATE(created_at) = CURRENT_DATE) as todays_checks,
-              (SELECT COUNT(*) FROM machines WHERE status = 'active') as active_machines
+              (SELECT COUNT(*) FROM machines WHERE is_active = true) as active_machines
           `;
           const dashboardResult = await this.db.query(dashboardQuery);
           return `Dashboard metrics: ${JSON.stringify(dashboardResult.rows[0])}`;
@@ -414,13 +414,13 @@ export class AIAssistantService {
   async getPredictiveMaintenance(): Promise<AssistantSuggestion[]> {
     try {
       const maintenanceQuery = `
-        SELECT m.name, m.status, m.last_maintenance_date,
+        SELECT m.name, m.is_active, m.date_of_manufacturing,
                COUNT(mr.id) as recent_requests
         FROM machines m
         LEFT JOIN maintenance_requests mr ON m.id = mr.machine_id
         AND mr.created_at >= NOW() - INTERVAL '30 days'
-        GROUP BY m.id, m.name, m.status, m.last_maintenance_date
-        ORDER BY recent_requests DESC, last_maintenance_date ASC
+        GROUP BY m.id, m.name, m.is_active, m.date_of_manufacturing
+        ORDER BY recent_requests DESC, m.date_of_manufacturing ASC
       `;
       
       const result = await this.db.query(maintenanceQuery);
@@ -440,7 +440,7 @@ export class AIAssistantService {
         ]
       `;
 
-      const response = await openai.create({
+      const response = await openai.chat.completions.create({
         model: "gpt-4o",
         messages: [
           {
@@ -666,7 +666,7 @@ Focus on actionable workflows that address current bottlenecks, improve efficien
 
 Return only the JSON array, no additional text.`;
 
-      const completion = await this.openai.create({
+      const completion = await openai.chat.completions.create({
         model: "gpt-4o",
         messages: [
           {
