@@ -457,15 +457,13 @@ export function MixDetails({ mixId, rawMaterials, onClose }: MixDetailsProps) {
                         <SelectItem
                           key={material.id}
                           value={material.id.toString()}
-                          disabled={
-                            material.quantity === null || material.quantity <= 0
-                          }
+                          disabled={false}
                         >
                           {material.name} (
                           {material.quantity !== null
                             ? `${material.quantity.toFixed(2)} ${material.unit}`
                             : t("common.out_of_stock")}
-                          )
+                          ) {(material.quantity || 0) <= 0 && " - ⚠️ No stock - Negative balance allowed"}
                         </SelectItem>
                       ))}
                       {rawMaterials.length === 0 && (

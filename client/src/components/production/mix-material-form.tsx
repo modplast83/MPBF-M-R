@@ -249,6 +249,16 @@ export function MixMaterialForm({
             <h3 className="text-lg font-medium">
               {t("production.mix_materials.add_material")}
             </h3>
+            
+            {/* Info Alert about negative balance */}
+            <Alert className="bg-blue-50 border-blue-200">
+              <AlertTitle className="text-blue-800">
+                {t("production.mix_materials.negative_balance_allowed")}
+              </AlertTitle>
+              <AlertDescription className="text-blue-700">
+                {t("production.mix_materials.negative_balance_description")}
+              </AlertDescription>
+            </Alert>
 
             <div className="grid grid-cols-1 md:grid-cols-5 gap-2">
               <div className="md:col-span-2">
@@ -272,7 +282,8 @@ export function MixMaterialForm({
                         key={material.id}
                         value={material.id.toString()}
                       >
-                        {material.name} ({material.quantity} {material.unit})
+                        {material.name} ({material.quantity || 0} {material.unit})
+                        {(material.quantity || 0) <= 0 && " - ⚠️ No stock"}
                       </SelectItem>
                     ))}
                   </SelectContent>

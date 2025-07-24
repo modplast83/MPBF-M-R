@@ -4314,17 +4314,19 @@ COMMIT;
             .json({ message: "Quantity must be greater than zero" });
         }
 
-        // Validate raw material has enough quantity
-        if (
-          rawMaterial.quantity === null ||
-          rawMaterial.quantity < validatedData.quantity
-        ) {
-          return res.status(400).json({
-            message: `Insufficient quantity of raw material ${rawMaterial.name}`,
-            available: rawMaterial.quantity,
-            requested: validatedData.quantity,
-          });
-        }
+        // Allow negative balance - commented out stock validation to enable overuse
+        // Previous validation prevented usage when stock was insufficient
+        // Now allowing negative stock balance for production flexibility
+        // if (
+        //   rawMaterial.quantity === null ||
+        //   rawMaterial.quantity < validatedData.quantity
+        // ) {
+        //   return res.status(400).json({
+        //     message: `Insufficient quantity of raw material ${rawMaterial.name}`,
+        //     available: rawMaterial.quantity,
+        //     requested: validatedData.quantity,
+        //   });
+        // }
 
         // Using a transaction to ensure all operations succeed or fail together
         try {
@@ -4420,18 +4422,20 @@ COMMIT;
         // Calculate the quantity difference
         const quantityDifference = quantity - existingMixItem.quantity;
 
-        // Check if we have enough raw material for the increase
-        if (quantityDifference > 0) {
-          const availableQuantity =
-            rawMaterial.quantity !== null ? rawMaterial.quantity : 0;
-          if (availableQuantity < quantityDifference) {
-            return res.status(400).json({
-              message: `Insufficient quantity of raw material ${rawMaterial.name}`,
-              available: availableQuantity,
-              requested: quantityDifference,
-            });
-          }
-        }
+        // Allow negative balance - commented out stock validation to enable overuse
+        // Previous validation prevented quantity updates when stock was insufficient
+        // Now allowing negative stock balance for production flexibility
+        // if (quantityDifference > 0) {
+        //   const availableQuantity =
+        //     rawMaterial.quantity !== null ? rawMaterial.quantity : 0;
+        //   if (availableQuantity < quantityDifference) {
+        //     return res.status(400).json({
+        //       message: `Insufficient quantity of raw material ${rawMaterial.name}`,
+        //       available: availableQuantity,
+        //       requested: quantityDifference,
+        //     });
+        //   }
+        // }
 
         try {
           // 1. Update the mix item

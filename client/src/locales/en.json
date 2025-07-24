@@ -1384,7 +1384,9 @@
         "screw_description": "Select the extruder screw for this material mix",
         "select_screw": "Select extruder screw",
         "scaled_results_description": "Results scaled to specified quantity",
-        "input_summary": "Formula Summary"
+        "input_summary": "Formula Summary",
+        "negative_balance_allowed": "Negative Balance Allowed",
+        "negative_balance_description": "You can add raw materials even if there's insufficient stock. This will create a negative balance that must be replenished later."
       },
       "bottleneck_monitor": "Bottleneck Monitor",
       "bottleneck_monitor_description": "Monitor and analyze production bottlenecks and performance issues",
