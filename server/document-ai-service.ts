@@ -38,7 +38,7 @@ export class DocumentAIService {
       const userPatterns = this.analyzeUserPatterns(userDocuments);
       
       // Get existing templates for reference
-      const existingTemplates = await this.documentStorage.getDocumentTemplates();
+      const existingTemplates = await this.documentStorage.getTemplates();
       
       // Generate AI suggestions
       const suggestions = await this.generateAISuggestions(
@@ -85,7 +85,7 @@ export class DocumentAIService {
       }
       
       // Time patterns (day of week, time of day)
-      const createdAt = new Date(doc.createdAt);
+      const createdAt = new Date(doc.createdAt || new Date());
       const dayOfWeek = createdAt.toLocaleDateString('en-US', { weekday: 'long' });
       const hour = createdAt.getHours();
       const timeOfDay = hour < 12 ? 'morning' : hour < 17 ? 'afternoon' : 'evening';

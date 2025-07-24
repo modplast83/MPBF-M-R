@@ -73,7 +73,8 @@ export class TranslationService {
       
     } catch (error) {
       console.error('Translation service error:', error);
-      throw new Error(`Translation failed: ${error.message}`);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      throw new Error(`Translation failed: ${errorMessage}`);
     }
   }
 
@@ -95,7 +96,7 @@ export class TranslationService {
   }
 
   async batchTranslateCustomerNames(customers: Array<{ id: string; name: string; nameAr?: string | null }>): Promise<Array<{ id: string; translatedName: string }>> {
-    const results = [];
+    const results: Array<{ id: string; translatedName: string }> = [];
     
     for (const customer of customers) {
       try {

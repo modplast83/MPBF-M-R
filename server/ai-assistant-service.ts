@@ -131,7 +131,8 @@ export class AIAssistantService {
       return JSON.parse(response.choices[0].message.content || '{}');
     } catch (error) {
       console.error('Production analysis error:', error);
-      throw new Error(`Production analysis failed: ${error.message}`);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      throw new Error(`Production analysis failed: ${errorMessage}`);
     }
   }
 
@@ -237,7 +238,7 @@ export class AIAssistantService {
               actions[i] = {
                 ...action,
                 label: `❌ Failed to create ${action.type.replace('create_', '')}`,
-                data: { error: error.message }
+                data: { error: error instanceof Error ? error.message : String(error) }
               };
             }
           }
@@ -254,7 +255,8 @@ export class AIAssistantService {
       
     } catch (error) {
       console.error('Assistant query error:', error);
-      throw new Error(`Assistant query failed: ${error.message}`);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      throw new Error(`Assistant query failed: ${errorMessage}`);
     }
   }
 
@@ -508,7 +510,8 @@ export class AIAssistantService {
       return result.rows[0];
     } catch (error) {
       console.error('Error creating customer:', error);
-      throw new Error(`Failed to create customer: ${error.message}`);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      throw new Error(`Failed to create customer: ${errorMessage}`);
     }
   }
 
@@ -575,7 +578,8 @@ export class AIAssistantService {
       return result.rows[0];
     } catch (error) {
       console.error('Error creating product:', error);
-      throw new Error(`Failed to create product: ${error.message}`);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      throw new Error(`Failed to create product: ${errorMessage}`);
     }
   }
 
@@ -614,7 +618,8 @@ export class AIAssistantService {
       return result.rows[0];
     } catch (error) {
       console.error('Error creating order:', error);
-      throw new Error(`Failed to create order: ${error.message}`);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      throw new Error(`Failed to create order: ${errorMessage}`);
     }
   }
 
@@ -682,10 +687,10 @@ Return only the JSON array, no additional text.`;
         max_tokens: 2000
       });
 
-      let suggestions = [];
+      let suggestions: any[] = [];
       try {
         const responseText = completion.choices[0]?.message?.content?.trim();
-        suggestions = JSON.parse(responseText);
+        suggestions = JSON.parse(responseText || '[]');
       } catch (parseError) {
         console.error('Error parsing workflow suggestions:', parseError);
         // Fallback to static suggestions
@@ -709,7 +714,7 @@ Return only the JSON array, no additional text.`;
   }
 
   private getFallbackWorkflowSuggestions(currentPage: string, systemData: any): any[] {
-    const suggestions = [];
+    const suggestions: any[] = [];
 
     // Page-specific suggestions
     if (currentPage?.includes('/orders')) {
