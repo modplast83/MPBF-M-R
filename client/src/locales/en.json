@@ -6,23 +6,24 @@
       "refresh": "Refresh",
       "chat": "Chat",
       "production_analysis":{
-        "title": ""
+        "title": "Production Analysis"
       },
       "quality_check": {
-        "title": "فحص الجودة"
+        "title": "Quality Check"
       },
       "maintenance_status": {
-        "title": "حالة الصيانة"
+        "title": "Maintenance Status"
       },
       "quality_dashboard": {
-        "title": "لوحة تحكم الجودة"
+        "title": "Quality Dashboard"
       },
-      "sechedule_optimization": {
-        "title": "تحسين الجدولة"
+      "schedule_optimization": {
+        "title": "Schedule Optimization"
       },
       "welcome":{
-        "message": "مرحبًا بك! كيف يمكنني مساعدتك اليوم؟"
+        "message": "Welcome! How can I assist you today?"
       },
+      "placeholder": "Type your question here...",
       "insights": "Insights",
       "automation": "Automation",
       "chat_assistant": "AI Assistant",
