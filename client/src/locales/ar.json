@@ -19,7 +19,8 @@
     "production_insights": "رؤى الإنتاج",
     "efficiency": "الكفاءة",
     "output_rate": "معدل الإنتاج",
-
+    "start_voice_command": "ابدأ الأمر الصوتي",
+    "stop_voice_command": "أوقف الأمر الصوتي",
     "quality_metrics": "مقاييس الجودة",
     "quality_score": "درجة الجودة",
     "defect_rate": "معدل العيوب",
