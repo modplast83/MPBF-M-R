@@ -5,14 +5,13 @@
       "subtitle": "Smart insights and automation to monitor the factory",
       "refresh": "Refresh",
       "chat": "Chat",
-      "production_analysis":{
+      "production_analysis": {
         "title": "Production Analysis",
         "description": "Get current production efficiency and bottleneck analysis",
         "efficiency": "Efficiency",
         "output_rate": "Output Rate",
         "bottlenecks": "Bottlenecks",
         "production_analysis": "Production Analysis"
-        
       },
       "quality_check": {
         "title": "Quality Check",
@@ -32,7 +31,6 @@
         "performed_by": "Performed By",
         "check_date": "Check Date",
         "corrective_actions": "Corrective Actions"
-        
       },
       "maintenance_status": {
         "title": "Maintenance Status"
@@ -43,7 +41,7 @@
       "schedule_optimization": {
         "title": "Schedule Optimization"
       },
-      "welcome":{
+      "welcome": {
         "message": "Welcome! How can I assist you today?"
       },
       "placeholder": "Type your question here...",
@@ -183,10 +181,8 @@
       "schedule_optimization_description": "Optimize production schedule for pending orders",
       "production_analysis_description": "Get current production efficiency and bottleneck analysis",
       "quality_dashboard_description": "View quality metrics and recent checks",
-      
       "optimize": "Optimize"
     },
-
     "app": {
       "title": "MPBF System",
       "full_title": "Modern Plastic Bag Factory",
@@ -415,7 +411,6 @@
       }
     },
 
-    
     "my_dashboard": {
       "title": "My Dashboard",
       "page_header_title": "My Dashboard",
@@ -603,7 +598,7 @@
         "please_select_customer": "Please select a customer to view their products",
         "form": {
           "basic_information": "Basic Information",
-          "dimensions": "Dimensions & Measurements", 
+          "dimensions": "Dimensions & Measurements",
           "materials_technical": "Materials & Technical",
           "production_settings": "Production Settings",
           "design_files": "Design Files",
@@ -1092,7 +1087,7 @@
           "no_bottlenecks": "No significant bottlenecks detected",
           "severity": {
             "high": "High Priority",
-            "medium": "Medium Priority", 
+            "medium": "Medium Priority",
             "low": "Low Priority"
           }
         },
@@ -2669,7 +2664,7 @@
       "search_employees": "Search employees...",
       "showing_records": "Showing {{count}} records",
       "present_today": "Present Today",
-      "absent_today": "Absent Today", 
+      "absent_today": "Absent Today",
       "total_overtime": "Total Overtime",
       "selected_date": "Selected Date",
       "daily_attendance_report": "Daily Attendance Report",
@@ -3663,7 +3658,7 @@
       "title": "AI Assistant",
       "subtitle": "Your intelligent production helper",
       "chat": "Chat",
-      "insights": "Insights", 
+      "insights": "Insights",
       "automation": "Automation",
       "refresh": "Refresh",
       "welcome_message": "Hello! I'm your AI assistant. How can I help you today?",
@@ -3671,7 +3666,7 @@
       "chat_placeholder": "Type your message...",
       "thinking": "Thinking",
       "quick_actions": "Quick Actions",
-      "production_analysis": "Production Analysis", 
+      "production_analysis": "Production Analysis",
       "check_production_status": "Check current production status",
       "quality_check": "Quality Check",
       "review_quality_metrics": "Review quality metrics",
@@ -3731,7 +3726,7 @@
               "description": "Get current production efficiency and bottleneck analysis"
             },
             "quality_dashboard": {
-              "title": "Quality Dashboard", 
+              "title": "Quality Dashboard",
               "description": "View quality metrics and recent checks"
             },
             "schedule_optimization": {
@@ -3750,7 +3745,7 @@
         "speech": {
           "disabled": "Speech Disabled",
           "disabled_desc": "AI responses will no longer be spoken",
-          "enabled": "Speech Enabled", 
+          "enabled": "Speech Enabled",
           "enabled_desc": "AI responses will now be spoken aloud",
           "language_changed": "Voice Language Changed",
           "arabic_mode": "Voice commands now in Arabic",
@@ -3765,7 +3760,7 @@
                 "description": "Get insights on current production performance and bottlenecks"
               },
               "quality_dashboard": {
-                "title": "Quality Dashboard", 
+                "title": "Quality Dashboard",
                 "description": "Review quality metrics and improvement recommendations"
               },
               "schedule_optimization": {
@@ -3792,7 +3787,7 @@
           "close": "Close",
           "priority": {
             "low": "Low",
-            "medium": "Medium", 
+            "medium": "Medium",
             "high": "High",
             "urgent": "Urgent"
           },
@@ -3833,7 +3828,7 @@
         },
         "insights": {
           "quality_recommendations": "Quality Recommendations",
-          "schedule_optimization": "Schedule Optimization", 
+          "schedule_optimization": "Schedule Optimization",
           "predictive_maintenance": "Predictive Maintenance",
           "no_quality_recommendations": "No quality recommendations available",
           "no_optimization_suggestions": "No optimization suggestions available",

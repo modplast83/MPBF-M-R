@@ -90,7 +90,7 @@
       "smart_scheduling": "جدولة ذكية",
       "smart_scheduling_desc": "جدولة تلقائية لأوامر الإنتاج بناءً على الأولوية.",
       "activate": "تشغيل",
-      "production_analysis":{
+      "production_analysis": {
         "title": "تحليل الإنتاج"
       },
       "quality_check": {
@@ -105,9 +105,8 @@
       "schedule_optimization": {
         "title": "تحسين الجدولة"
       },
-      "welcome":{
+      "welcome": {
         "message": "مرحبًا بك! كيف يمكنني مساعدتك اليوم؟"
-        
       },
       "placeholder": "اكتب سؤالك هنا...",
       "predictive_alerts": "تنبيهات تنبؤية",
@@ -357,7 +356,7 @@
       "completed_orders": "الطلبات المكتملة",
       "total_rolls": "إجمالي الرولات",
       "production_efficiency": "كفاءة الإنتاج",
-      "active_roll_jobs": "مهام الرولات النشطة",
+      "active_roll_jobs": "مهام الرولات ال؆شطة",
       "raw_material_stock": "مخزون المواد الخام",
       "trend_from_last_month": "{{percent}} من الشهر الماضي",
       "trend_from_last_week": "{{percent}} من الأسبوع الماضي",
@@ -800,7 +799,7 @@
           "create_success": "تم إنشاء قطعة الآلة بنجاح",
           "update_success": "تم تحديث قطعة الآلة بنجاح",
           "delete_success": "تم حذف قطعة الآلة بنجاح",
-          "create_error": "فشل في إنشاء قطعة الآلة",
+          "create_error": "فشل في إنشاء قط��ة الآلة",
           "update_error": "فشل في تحديث قطعة الآلة",
           "delete_error": "فشل في حذف قطعة الآلة"
         }
@@ -2140,7 +2139,7 @@
           "color_required": "اللون مطلوب",
           "master_batch_required": "الماستر باتش مطلوب",
           "ink_coverage_required": "تغطية الحبر مطلوبة",
-          "print_colors_required": "ألوان الطباعة مطلوبة",
+          "print_colors_required": "ألوان الطباعة مطلوب �",
           "select_customer": "اختر العميل",
           "select_category": "اختر الفئة",
           "product_name": "اسم المنتج",
@@ -3168,7 +3167,7 @@
       "job_order_status": "حالة أمر العمل",
       "job_order_created_at": "تاريخ إنشاء أمر العمل",
       "job_order_updated_at": "تاريخ تحديث أمر العمل",
-      "job_order_material": "مادة أمر العمل",
+      "job_order_material": "مادة أمر الع:�ل",
       "job_order_material_qty": "كمية مادة أمر العمل",
       "new_order": "طلب جديد",
       "create_new_order": "إنشاء طلب جديد",
@@ -3795,7 +3794,7 @@
         "disciplinary_actions": "الإجراءات التأديبية",
         "benefits_entitlements": "المزايا والاستحقاقات",
         "document_management": "إدارة المستندات",
-        "employee_onboarding": "توجيه الموظفين الجدد",
+        "employee_onboarding": "توجيه الموظفين",
         "employee_directory": "دليل الموظفين",
         "organizational_chart": "الهيكل التنظيمي"
       },
@@ -3870,7 +3869,7 @@
         "compliance_certificates": "شهادات الامتثال",
         "safety_certifications": "شهادات السلامة",
         "technical_certifications": "الشهادات التقنية",
-        "certificate_templates": "e�والب الشهادات",
+        "certificate_templates": "قوالب الشهادات",
         "batch_processing": "المعالجة المجمعة",
         "certificate_analytics": "تحليلات الشهادات",
         "audit_trail": "مسار التدقيق"
@@ -4309,7 +4308,7 @@
       "page_header_description": "عرض معلومات العمل الشخصية والحضور والإجراءات السريعة",
       "description": "لوحة تحكم شخصية للوصول السريع إلى مهامك ومقاييسك",
       "current_status": "الحالة الحالية",
-      "currently_working": "يعمل حالياً",
+      "currently_working": "يعمل ح��لياً",
       "work_status": "حالة العمل",
       "todays_time": "وقت اليوم",
       "ready_to_check_out": "جاهز للتسجيل",
@@ -4652,7 +4651,7 @@
       "training_cancelled": "تدريب ملغي",
       "no_trainings": "لا توجد جلسات تدريب",
       "training_created": "تم إنشاء التدريب بنجاح",
-      "training_updated": "تم تحديث التدريب بنجاح",
+      "training_updated": "تم تحديث التدريب بنج٧ح",
       "training_deleted": "تم حذف التدريب بنجاح",
       "training_point_created": "تم إنشاء نقطة التدريب بنجاح",
       "training_point_updated": "تم تحديث نقطة التدريب بنجاح",
@@ -4813,7 +4812,7 @@
         "page_title": "لوحة تحكم الصيانة",
         "pending_requests": "الطلبات المعلقة",
         "in_progress": "قيد التنفيذ",
-        "completed_today": "اكتمل اليوم",
+        "completed_today": "اكتم؄ اليوم",
         "total_cost": "التكلفة الإجمالية",
         "maintenance_overview": "نظرة عامة على الصيانة",
         "recent_requests": "الطلبات الحديثة",
@@ -4984,7 +4983,7 @@
           "length": "الطول (سم)",
           "gusset": "الجانب (سم)",
           "thickness": "السماكة (ميكرون)",
-          "size_optimization": "تحسين الحجم",
+          "size_optimization": "تy�سين الحجم",
           "surface_area": "المساحة السطحية:",
           "aspect_ratio": "نسبة الأبعاد:",
           "recommended_ranges": "النطاقات الموصى بها",
