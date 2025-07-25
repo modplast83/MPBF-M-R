@@ -1062,6 +1062,7 @@
           "speaking": "Speaking...",
           "english_mode": "English Mode",
           "arabic_mode": "Arabic Mode",
+          "language_changed": "Voice Language Changed",
           "start_listening": "Start voice command",
           "stop_listening": "Stop listening",
           "enable_voice_responses": "Enable voice responses",

@@ -142,10 +142,19 @@ export function AIAssistantWidget({
             }
             
             // Auto-submit after brief delay for visual feedback
-            setTimeout(() => {
+            setTimeout(async () => {
               setIsProcessingVoice(false);
               if (transcript.trim()) {
-                handleSendMessage();
+                try {
+                  await handleSendMessage();
+                } catch (error) {
+                  console.error('Error submitting voice message:', error);
+                  toast({
+                    title: "Voice Message Error",
+                    description: "Failed to send voice message. Please try again.",
+                    variant: "destructive"
+                  });
+                }
               }
               setGestureAnimation('idle');
             }, 1200);
@@ -292,17 +301,30 @@ export function AIAssistantWidget({
   const handleSendMessage = async () => {
     if (!input.trim()) return;
 
+    const messageContent = input.trim();
     const userMessage: AssistantMessage = {
       id: Date.now().toString(),
       type: 'user',
-      content: input,
+      content: messageContent,
       timestamp: new Date()
     };
 
     setMessages(prev => [...prev, userMessage]);
     setInput("");
     
-    await assistantMutation.mutateAsync(input);
+    try {
+      await assistantMutation.mutateAsync(messageContent);
+    } catch (error) {
+      console.error('Error sending message:', error);
+      // Add error message to chat
+      const errorMessage: AssistantMessage = {
+        id: Date.now().toString() + '_error',
+        type: 'assistant',
+        content: t("ai.assistant_error_desc", "Sorry, I encountered an error processing your request. Please try again."),
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, errorMessage]);
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -388,17 +410,54 @@ export function AIAssistantWidget({
     console.log('Recognition ref:', !!recognitionRef.current);
     console.log('Speech supported:', speechSupported);
     
+    // Check if already listening
+    if (isListening) {
+      console.log('Already listening, stopping first...');
+      stopListening();
+      return;
+    }
+    
     if (recognitionRef.current) {
       try {
-        recognitionRef.current.start();
-        console.log('Speech recognition start called');
+        // Check if user has granted microphone permissions
+        navigator.mediaDevices?.getUserMedia?.({ audio: true })
+          .then(() => {
+            console.log('Microphone permission granted');
+            try {
+              recognitionRef.current.lang = voiceLanguage;
+              recognitionRef.current.start();
+              console.log('Speech recognition start called');
+            } catch (startError) {
+              console.error('Failed to start speech recognition:', startError);
+              toast({
+                title: "Voice Recognition Error",
+                description: `Cannot start speech recognition: ${(startError as Error).message}`,
+                variant: "destructive"
+              });
+            }
+          })
+          .catch((permissionError) => {
+            console.error('Microphone permission denied:', permissionError);
+            toast({
+              title: "Microphone Permission Required",
+              description: "Please allow microphone access to use voice recognition.",
+              variant: "destructive"
+            });
+          });
       } catch (error) {
-        console.error('Failed to start speech recognition:', error);
-        toast({
-          title: "Voice Recognition Error",
-          description: `Failed to start speech recognition: ${(error as Error).message}`,
-          variant: "destructive"
-        });
+        console.error('Failed to request microphone permission:', error);
+        // Try to start anyway for older browsers
+        try {
+          recognitionRef.current.lang = voiceLanguage;
+          recognitionRef.current.start();
+        } catch (fallbackError) {
+          console.error('Fallback speech recognition failed:', fallbackError);
+          toast({
+            title: "Voice Recognition Error",
+            description: `Voice recognition failed: ${(fallbackError as Error).message}`,
+            variant: "destructive"
+          });
+        }
       }
     } else {
       // Show error if speech recognition is not available
@@ -412,12 +471,25 @@ export function AIAssistantWidget({
 
   const stopListening = () => {
     if (recognitionRef.current) {
-      recognitionRef.current.stop();
+      try {
+        recognitionRef.current.stop();
+        setIsListening(false);
+        setGestureAnimation('idle');
+        console.log('Speech recognition stopped');
+      } catch (error) {
+        console.error('Error stopping speech recognition:', error);
+        setIsListening(false);
+        setGestureAnimation('idle');
+      }
     }
   };
 
   const speakText = (text: string) => {
-    if (speechSynthesisRef.current && 'speechSynthesis' in window) {
+    if (!speechEnabled || !speechSynthesisRef.current || !('speechSynthesis' in window)) {
+      return;
+    }
+
+    try {
       // Cancel any ongoing speech
       speechSynthesisRef.current.cancel();
       
@@ -452,8 +524,41 @@ export function AIAssistantWidget({
       if (preferredVoice) {
         utterance.voice = preferredVoice;
       }
+
+      // Add event listeners for speech events
+      utterance.onstart = () => {
+        console.log('Speech synthesis started');
+        setGestureAnimation('speaking');
+        // Gentle vibration when AI speaks
+        if (navigator.vibrate) {
+          navigator.vibrate([80]);
+        }
+      };
+
+      utterance.onend = () => {
+        console.log('Speech synthesis ended');
+        setGestureAnimation('idle');
+      };
+
+      utterance.onerror = (event) => {
+        console.error('Speech synthesis error:', event.error);
+        setGestureAnimation('idle');
+        toast({
+          title: "Voice Synthesis Error",
+          description: `Text-to-speech failed: ${event.error}`,
+          variant: "destructive"
+        });
+      };
       
       speechSynthesisRef.current.speak(utterance);
+    } catch (error) {
+      console.error('Error in speech synthesis:', error);
+      setGestureAnimation('idle');
+      toast({
+        title: "Voice Synthesis Error",
+        description: `Failed to speak text: ${(error as Error).message}`,
+        variant: "destructive"
+      });
     }
   };
 
@@ -473,6 +578,21 @@ export function AIAssistantWidget({
   const toggleLanguage = () => {
     const newLanguage = voiceLanguage === 'en-US' ? 'ar-SA' : 'en-US';
     setVoiceLanguage(newLanguage);
+    
+    // Update recognition language if it exists
+    if (recognitionRef.current) {
+      recognitionRef.current.lang = newLanguage;
+    }
+    
+    // Stop any ongoing speech
+    if (speechSynthesisRef.current) {
+      speechSynthesisRef.current.cancel();
+    }
+    
+    toast({
+      title: t("ai.voice.language_changed"),
+      description: newLanguage === 'ar-SA' ? 'Arabic voice mode activated' : 'English voice mode activated',
+    });
     
     // Update speech recognition language if available
     if (recognitionRef.current) {
