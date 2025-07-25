@@ -2025,14 +2025,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Customer not found" });
       }
 
-      if (validatedData.userId) {
-        // Verify user exists if provided
-        const user = await storage.getUser(validatedData.userId);
-        if (!user) {
-          return res.status(404).json({ message: "User not found" });
-        }
-      }
-
+      // Note: userId validation removed as it's not part of the order schema
       const order = await storage.createOrder(validatedData);
       res.status(201).json(order);
     } catch (error) {
@@ -2077,14 +2070,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Customer not found" });
       }
 
-      if (validatedData.userId) {
-        // Verify user exists if provided
-        const user = await storage.getUser(validatedData.userId);
-        if (!user) {
-          return res.status(404).json({ message: "User not found" });
-        }
-      }
-
+      // Note: userId validation removed as it's not part of the order schema
       const order = await storage.updateOrder(
         parseInt(req.params.id),
         validatedData,
@@ -6644,7 +6630,7 @@ COMMIT;
 
       const serverStatus = {
         status: "running",
-        uptime: process.uptime(),
+        uptime: uptimeSeconds,
         lastRestart: new Date(Date.now() - uptimeSeconds * 1000).toISOString(),
         processId: process.pid,
         memoryUsage: {
@@ -6883,7 +6869,7 @@ COMMIT;
         const jobOrderId = jobOrderIds[i];
         const quantity = jobOrderQuantities[i] || 0;
         totalQuantity += quantity;
-        jobOrderData.push({ jobOrderId, quantity });
+        jobOrderData.push({ jobOrderId, quantity } as any);
       }
 
       // Parse A:B ratio
@@ -7005,7 +6991,7 @@ COMMIT;
         }
       }
 
-      mixes.push(mix);
+      mixes.push(mix as any);
       remainingQuantity -= mixQuantity;
       mixCount++;
     }
@@ -7022,12 +7008,8 @@ COMMIT;
         return res.status(400).json({ message: "Status is required" });
       }
 
-      const updateData: any = { status };
-      if (status === "completed") {
-        updateData.completedAt = new Date();
-      }
-
-      const mix = await storage.updateJoMix(parseInt(id), updateData);
+      const updateData = { status, completedAt: status === "completed" ? new Date() : undefined };
+      const mix = await storage.updateJoMix(parseInt(id), updateData as any);
       if (!mix) {
         return res.status(404).json({ message: "JO mix not found" });
       }
@@ -7858,7 +7840,7 @@ COMMIT;
           status,
           notes: notes || existingViolation.notes,
           updatedAt: new Date(),
-        });
+        } as any);
 
         res.json(updatedViolation);
       } catch (error) {

@@ -1229,7 +1229,7 @@ export class DatabaseStorage implements IStorage {
       }
 
       // Convert all database records to frontend format
-      return result.rows.map((row) => adaptToFrontend(row));
+      return result.rows.map((row) => adaptToFrontend(row)) as QualityCheck[];
     } catch (error) {
       console.error("Error fetching quality checks:", error);
       return [];
@@ -1256,7 +1256,7 @@ export class DatabaseStorage implements IStorage {
       }
 
       // Convert all database records to frontend format
-      return result.rows.map((row) => adaptToFrontend(row));
+      return result.rows.map((row) => adaptToFrontend(row)) as QualityCheck[];
     } catch (error) {
       console.error(`Error fetching quality checks for roll ${rollId}:`, error);
       return [];
@@ -1285,7 +1285,7 @@ export class DatabaseStorage implements IStorage {
       }
 
       // Convert all database records to frontend format
-      return result.rows.map((row) => adaptToFrontend(row));
+      return result.rows.map((row) => adaptToFrontend(row)) as QualityCheck[];
     } catch (error) {
       console.error(
         `Error fetching quality checks for job order ${jobOrderId}:`,
@@ -1312,7 +1312,7 @@ export class DatabaseStorage implements IStorage {
       }
 
       // Map the database record to frontend format
-      return adaptToFrontend(result.rows[0]);
+      return adaptToFrontend(result.rows[0]) as QualityCheck;
     } catch (error) {
       console.error("Error fetching quality check:", error);
       throw error;
@@ -1415,55 +1415,55 @@ export class DatabaseStorage implements IStorage {
       const values = [];
       let paramIndex = 1;
 
-      // Only include fields that are provided in the update
+      // Only include fields that are provided in the update  
       if (dbQualityCheck.check_type_id !== undefined) {
         updateFields.push(`check_type_id = $${paramIndex++}`);
-        values.push(dbQualityCheck.check_type_id);
+        values.push(dbQualityCheck.check_type_id as any);
       }
 
       if (dbQualityCheck.checked_by !== undefined) {
         updateFields.push(`checked_by = $${paramIndex++}`);
-        values.push(dbQualityCheck.checked_by);
+        values.push(dbQualityCheck.checked_by as any);
       }
 
       if (dbQualityCheck.job_order_id !== undefined) {
         updateFields.push(`job_order_id = $${paramIndex++}`);
-        values.push(dbQualityCheck.job_order_id);
+        values.push(dbQualityCheck.job_order_id as any);
       }
 
       if (dbQualityCheck.roll_id !== undefined) {
         updateFields.push(`roll_id = $${paramIndex++}`);
-        values.push(dbQualityCheck.roll_id);
+        values.push(dbQualityCheck.roll_id as any);
       }
 
       if (dbQualityCheck.status !== undefined) {
         updateFields.push(`status = $${paramIndex++}`);
-        values.push(dbQualityCheck.status);
+        values.push(dbQualityCheck.status as any);
       }
 
       if (dbQualityCheck.notes !== undefined) {
         updateFields.push(`notes = $${paramIndex++}`);
-        values.push(dbQualityCheck.notes);
+        values.push(dbQualityCheck.notes as any);
       }
 
       if (dbQualityCheck.checklist_results !== undefined) {
         updateFields.push(`checklist_results = $${paramIndex++}`);
-        values.push(dbQualityCheck.checklist_results);
+        values.push(dbQualityCheck.checklist_results as any);
       }
 
       if (dbQualityCheck.parameter_values !== undefined) {
         updateFields.push(`parameter_values = $${paramIndex++}`);
-        values.push(dbQualityCheck.parameter_values);
+        values.push(dbQualityCheck.parameter_values as any);
       }
 
       if (dbQualityCheck.issue_severity !== undefined) {
         updateFields.push(`issue_severity = $${paramIndex++}`);
-        values.push(dbQualityCheck.issue_severity);
+        values.push(dbQualityCheck.issue_severity as any);
       }
 
       if (dbQualityCheck.image_urls !== undefined) {
         updateFields.push(`image_urls = $${paramIndex++}`);
-        values.push(dbQualityCheck.image_urls);
+        values.push(dbQualityCheck.image_urls as any);
       }
 
       // If no fields to update, return undefined
@@ -1472,7 +1472,7 @@ export class DatabaseStorage implements IStorage {
       }
 
       // Add the ID as the last parameter
-      values.push(id);
+      values.push(id as any);
 
       const query = `
         UPDATE quality_checks 
@@ -1488,7 +1488,7 @@ export class DatabaseStorage implements IStorage {
       }
 
       // Map the updated database record back to frontend format
-      return adaptToFrontend(result.rows[0]);
+      return adaptToFrontend(result.rows[0]) as QualityCheck;
     } catch (error) {
       console.error(`Error updating quality check ${id}:`, error);
       throw error;
@@ -2763,7 +2763,10 @@ export class DatabaseStorage implements IStorage {
       .leftJoin(users, eq(maintenanceActions.performedBy, users.id))
       .orderBy(desc(maintenanceActions.actionDate));
 
-    return actions;
+    return actions.map(action => ({
+      ...action,
+      machinePartId: action.partId || null
+    })) as MaintenanceAction[];
   }
 
   async getMaintenanceAction(
@@ -3237,7 +3240,7 @@ export class DatabaseStorage implements IStorage {
         aToB: this.parseAbRatio(formula.abRatio), // Convert "2:1" to 2
         abRatio: formula.abRatio, // Include original ratio text like "2:1"
         materials,
-      });
+      } as any);
     }
 
     return result;
@@ -3461,8 +3464,8 @@ export class DatabaseStorage implements IStorage {
     for (const mix of mixes) {
       const items = await this.getJoMixItems(mix.id);
       const materials = await this.getJoMixMaterials(mix.id);
-      mix.items = items;
-      mix.materials = materials;
+      (mix as any).items = items;
+      (mix as any).materials = materials;
     }
 
     return mixes;
@@ -3622,7 +3625,7 @@ export class DatabaseStorage implements IStorage {
     const result = await db
       .delete(customerInformation)
       .where(eq(customerInformation.id, id));
-    return result.rowCount > 0;
+    return (result.rowCount || 0) > 0;
   }
 
   // =============== WAREHOUSE MANAGEMENT METHODS ===============

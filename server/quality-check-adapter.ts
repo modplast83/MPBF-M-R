@@ -80,8 +80,8 @@ export function adaptToDatabase(
     dbCheck.parameter_values = frontendCheck.parameterValues;
   }
 
-  if (frontendCheck.issueSeverity) {
-    dbCheck.issue_severity = frontendCheck.issueSeverity;
+  if (frontendCheck.issueSeverity !== undefined) {
+    dbCheck.issue_severity = frontendCheck.issueSeverity || null;
   }
 
   if (frontendCheck.imageUrls) {
