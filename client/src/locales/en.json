@@ -6,10 +6,33 @@
       "refresh": "Refresh",
       "chat": "Chat",
       "production_analysis":{
-        "title": "Production Analysis"
+        "title": "Production Analysis",
+        "description": "Get current production efficiency and bottleneck analysis",
+        "efficiency": "Efficiency",
+        "output_rate": "Output Rate",
+        "bottlenecks": "Bottlenecks",
+        "production_analysis": "Production Analysis"
+        
       },
       "quality_check": {
-        "title": "Quality Check"
+        "title": "Quality Check",
+        "quality_check": "Quality Check",
+        "description": "Review quality metrics and recent checks",
+        "quality_score": "Quality Score",
+        "defect_rate": "Defect Rate",
+        "recent_checks": "Recent Checks",
+        "passed": "Passed",
+        "failed": "Failed",
+        "pending": "Pending",
+        "view_details": "View Details",
+        "check_type": "Check Type",
+        "stage": "Stage",
+        "roll": "Roll",
+        "result": "Result",
+        "performed_by": "Performed By",
+        "check_date": "Check Date",
+        "corrective_actions": "Corrective Actions"
+        
       },
       "maintenance_status": {
         "title": "Maintenance Status"
