@@ -32,7 +32,7 @@ import {
   X,
   Bot,
 } from "lucide-react";
-import companyLogo from "@client/public/assets/company-logo.png";
+import companyLogo from "@assets/FactoryLogoHPNGW Green.png";
 // import factoryLogo from "@assets/FactoryLogoHPNGW Green.png";
 
 interface SidebarProps {
@@ -209,7 +209,7 @@ export default function Sidebar({
               <div className="relative">
                 <div className="bg-gradient-to-br from-blue-500 to-indigo-600 p-3 rounded-2xl shadow-xl ring-2 ring-blue-400/30 backdrop-blur-sm">
                   <img
-                    src="attached_assets/FactoryLogoHPNGW Green.png"
+                    src={companyLogo}
                     alt="Modern Plastic Bag Factory"
                     className="h-16 w-16 object-contain"
                   />
@@ -230,7 +230,7 @@ export default function Sidebar({
               <div className="relative">
                 <div className="bg-gradient-to-br from-blue-500 to-indigo-600 p-2 rounded-xl shadow-lg ring-2 ring-blue-400/30">
                   <img
-                    src="attached_assets/FactoryLogoHPNGW Green.png"
+                    src={companyLogo}
                     alt="Modern Plastic Bag Factory"
                     className="h-10 w-10 object-contain"
                   />
