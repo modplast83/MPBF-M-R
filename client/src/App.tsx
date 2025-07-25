@@ -19,6 +19,7 @@ import WorkflowIndex from "@/pages/workflow/index";
 import ProductionIndex from "@/pages/production/index";
 import MixMaterialsPage from "@/pages/production/mix-materials";
 import JobOrdersPage from "@/pages/production/job-orders";
+import JobOrdersMonitorPage from "@/pages/production/job-orders-monitor";
 import JoMixPage from "@/pages/production/jo-mix";
 import RollsProPage from "@/pages/production/rolls-pro";
 import WarehouseIndex from "@/pages/warehouse/index";
@@ -514,6 +515,11 @@ function App() {
                         path="/production/job-orders"
                         component={JobOrdersPage}
                         module="Job Orders"
+                      />
+                      <ProtectedRoute
+                        path="/production/job-orders-monitor"
+                        component={JobOrdersMonitorPage}
+                        module="Job Orders Monitor"
                       />
                       <ProtectedRoute
                         path="/production/jo-mix"

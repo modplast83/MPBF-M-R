@@ -2342,6 +2342,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get rolls by stage for monitoring
+  app.get("/api/rolls/stage/:stage", async (req: Request, res: Response) => {
+    try {
+      const { stage } = req.params;
+      const rolls = await storage.getRollsByStage(stage);
+      res.json(rolls);
+    } catch (error) {
+      console.error("Error fetching rolls by stage:", error);
+      res.status(500).json({ message: "Failed to get rolls by stage" });
+    }
+  });
+
   app.get(
     "/api/job-orders/:jobOrderId/rolls",
     async (req: Request, res: Response) => {

@@ -29,6 +29,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Search,
   Filter,
@@ -47,7 +48,10 @@ import {
   Clock,
   Zap,
   Beaker,
+  BarChart3,
+  Activity,
 } from "lucide-react";
+import { Link } from "wouter";
 import type {
   JobOrder,
   Order,
@@ -465,18 +469,43 @@ export default function JobOrdersPage() {
             </p>
           </div>
 
-          {selectedJobOrders.size > 0 && (
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
-              <Badge variant="outline" className="bg-primary/10 justify-center">
-                {selectedJobOrders.size} {t("common.selected")}
-              </Badge>
-              <Button variant="outline" size="sm" className="w-full sm:w-auto">
-                {t("common.actions")}
+          <div className="flex gap-2">
+            <Link href="/production/job-orders-monitor">
+              <Button variant="outline" size="sm" className="flex items-center gap-2">
+                <BarChart3 className="h-4 w-4" />
+                Quantity Monitor
               </Button>
-            </div>
-          )}
+            </Link>
+            {selectedJobOrders.size > 0 && (
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                <Badge variant="outline" className="bg-primary/10 justify-center">
+                  {selectedJobOrders.size} {t("common.selected")}
+                </Badge>
+                <Button variant="outline" size="sm" className="w-full sm:w-auto">
+                  {t("common.actions")}
+                </Button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
+
+      {/* Tab Navigation */}
+      <Tabs defaultValue="list" className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="list" className="flex items-center gap-2">
+            <Package className="h-4 w-4" />
+            Job Orders List
+          </TabsTrigger>
+          <TabsTrigger value="monitor" asChild>
+            <Link href="/production/job-orders-monitor" className="flex items-center gap-2">
+              <Activity className="h-4 w-4" />
+              Quantity Monitor
+            </Link>
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="list" className="mt-6 space-y-6">
 
       {/* Filters - Mobile Optimized */}
       <Card>
@@ -894,6 +923,8 @@ export default function JobOrdersPage() {
           </div>
         )}
       </div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
