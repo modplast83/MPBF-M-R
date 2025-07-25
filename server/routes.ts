@@ -6876,12 +6876,12 @@ COMMIT;
 
       // Calculate total quantity for all job orders
       let totalQuantity = 0;
-      const jobOrderData = [];
+      const jobOrderData: { jobOrderId: string; quantity: number }[] = [];
       for (let i = 0; i < jobOrderIds.length; i++) {
         const jobOrderId = jobOrderIds[i];
         const quantity = jobOrderQuantities[i] || 0;
         totalQuantity += quantity;
-        jobOrderData.push({ jobOrderId, quantity } as any);
+        jobOrderData.push({ jobOrderId, quantity });
       }
 
       // Parse A:B ratio
@@ -7003,7 +7003,7 @@ COMMIT;
         }
       }
 
-      mixes.push(mix as any);
+      (mixes as any[]).push(mix);
       remainingQuantity -= mixQuantity;
       mixCount++;
     }
@@ -7524,7 +7524,7 @@ COMMIT;
   // Time Attendance Routes
   app.get("/api/time-attendance", async (req: Request, res: Response) => {
     try {
-      const timeAttendance = await storage.getTimeAttendance();
+      const timeAttendance = await storage.getTimeAttendance("all");
       res.json(timeAttendance);
     } catch (error) {
       console.error("Error fetching time attendance:", error);
@@ -7850,7 +7850,7 @@ COMMIT;
         // Update the violation with new status
         const updatedViolation = await storage.updateHrViolation(violationId, {
           status,
-          notes: notes || existingViolation.notes,
+          description: notes || existingViolation.description,
           updatedAt: new Date(),
         } as any);
 
@@ -8299,7 +8299,7 @@ COMMIT;
     async (req: Request, res: Response) => {
       try {
         const machines = await storage.getMachines();
-        const createdSchedules = [];
+        const createdSchedules: any[] = [];
 
         // Define maintenance templates for different machine types
         const maintenanceTemplates = {
@@ -8441,7 +8441,7 @@ COMMIT;
             };
 
             const schedule =
-              await storage.createMaintenanceSchedule(scheduleData);
+              await storage.createMaintenanceSchedule(scheduleData as any);
             createdSchedules.push(schedule);
           }
         }

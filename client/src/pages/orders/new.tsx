@@ -390,7 +390,7 @@ export default function NewOrderPage() {
       setProducts(updatedProducts);
       form.setValue('products', updatedProducts);
     } catch (error) {
-      handleError(error, 'Failed to add product');
+      handleError(error instanceof Error ? error : new Error(String(error)), { context: 'Failed to add product' });
     }
   };
 
@@ -421,14 +421,14 @@ export default function NewOrderPage() {
       setProducts(updatedProducts);
       form.setValue('products', updatedProducts);
     } catch (error) {
-      handleError(error, 'Failed to update product');
+      handleError(error instanceof Error ? error : new Error(String(error)), { context: 'Failed to update product' });
     }
   };
 
   // Get product details
-  const getProductDetails = (productId: number) => {
+  const getProductDetails = (productId: number): Product | null => {
     try {
-      return customerProducts.find(p => p.id === productId);
+      return customerProducts.find(p => p.id === productId) || null;
     } catch (error) {
       console.error('Error getting product details:', error);
       return null;
@@ -535,9 +535,9 @@ export default function NewOrderPage() {
         })),
       });
 
-      createOrderMutation.mutate(orderData);
+      createOrderMutation.mutate(orderData as OrderFormValues);
     } catch (error) {
-      handleError(error, 'Failed to submit order');
+      handleError(error instanceof Error ? error : new Error(String(error)), { context: 'Failed to submit order' });
       toast({
         title: t('orders.error'),
         description: 'An unexpected error occurred while submitting the order',
