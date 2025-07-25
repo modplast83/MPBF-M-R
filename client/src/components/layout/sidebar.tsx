@@ -209,7 +209,7 @@ export default function Sidebar({
               <div className="relative">
                 <div className="bg-gradient-to-br from-blue-500 to-indigo-600 p-3 rounded-2xl shadow-xl ring-2 ring-blue-400/30 backdrop-blur-sm">
                   <img
-                    src={companyLogo}
+                    src="https://replit.com/t/modern-plastic-bags-factory/repls/MPBF-M#client/public/assets/company-logo.png"
                     alt="Modern Plastic Bag Factory"
                     className="h-16 w-16 object-contain"
                   />
@@ -230,7 +230,7 @@ export default function Sidebar({
               <div className="relative">
                 <div className="bg-gradient-to-br from-blue-500 to-indigo-600 p-2 rounded-xl shadow-lg ring-2 ring-blue-400/30">
                   <img
-                    src={companyLogo}
+                    src="https://replit.com/t/modern-plastic-bags-factory/repls/MPBF-M#client/public/assets/company-logo.png"
                     alt="Modern Plastic Bag Factory"
                     className="h-10 w-10 object-contain"
                   />
