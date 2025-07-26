@@ -24,7 +24,7 @@ router.post("/assistant", async (req, res) => {
     console.error("AI Assistant error:", error);
     res.status(500).json({ 
       error: "Failed to process assistant query",
-      details: error.message 
+      details: error instanceof Error ? error.message : String(error)
     });
   }
 });
@@ -44,7 +44,7 @@ router.get("/production-insights", async (req, res) => {
     console.error("Production insights error:", error);
     res.status(500).json({ 
       error: "Failed to get production insights",
-      details: error.message 
+      details: error instanceof Error ? error.message : String(error)
     });
   }
 });
@@ -63,7 +63,7 @@ router.get("/quality-recommendations", async (req, res) => {
     console.error("Quality recommendations error:", error);
     res.status(500).json({ 
       error: "Failed to get quality recommendations",
-      details: error.message 
+      details: error instanceof Error ? error.message : String(error)
     });
   }
 });
@@ -79,7 +79,7 @@ router.post("/workflow-suggestions", async (req, res) => {
     console.error("Workflow suggestions error:", error);
     res.status(500).json({ 
       error: "Failed to get workflow suggestions",
-      details: error.message 
+      details: error instanceof Error ? error.message : String(error)
     });
   }
 });
@@ -105,7 +105,7 @@ router.post("/create-records", async (req, res) => {
     console.error("Create records error:", error);
     res.status(500).json({ 
       error: "Failed to create record",
-      details: error.message 
+      details: error instanceof Error ? error.message : String(error)
     });
   }
 });
@@ -124,7 +124,7 @@ router.get("/optimize-schedule", async (req, res) => {
     console.error("Schedule optimization error:", error);
     res.status(500).json({ 
       error: "Failed to optimize schedule",
-      details: error.message 
+      details: error instanceof Error ? error.message : String(error)
     });
   }
 });
@@ -138,7 +138,7 @@ router.get("/predictive-maintenance", async (req, res) => {
     console.error("Predictive maintenance error:", error);
     res.status(500).json({ 
       error: "Failed to get maintenance predictions",
-      details: error.message 
+      details: error instanceof Error ? error.message : String(error)
     });
   }
 });
@@ -148,7 +148,7 @@ router.post("/module-suggestions", async (req, res) => {
   try {
     const { module, data, userId } = req.body;
     
-    let suggestions = [];
+    let suggestions: any[] = [];
     
     switch (module) {
       case 'quality':
@@ -169,7 +169,7 @@ router.post("/module-suggestions", async (req, res) => {
     console.error("Module suggestions error:", error);
     res.status(500).json({ 
       error: "Failed to get module suggestions",
-      details: error.message 
+      details: error instanceof Error ? error.message : String(error)
     });
   }
 });
@@ -189,7 +189,7 @@ router.post("/analyze", async (req, res) => {
     console.error("AI analysis error:", error);
     res.status(500).json({ 
       error: "Failed to perform analysis",
-      details: error.message 
+      details: error instanceof Error ? error.message : String(error)
     });
   }
 });
@@ -208,7 +208,7 @@ router.post("/optimize", async (req, res) => {
     console.error("AI optimization error:", error);
     res.status(500).json({ 
       error: "Failed to perform optimization",
-      details: error.message 
+      details: error instanceof Error ? error.message : String(error)
     });
   }
 });
@@ -231,7 +231,7 @@ router.post("/workflow-suggestions", async (req, res) => {
     console.error("Workflow suggestions error:", error);
     res.status(500).json({ 
       error: "Failed to generate workflow suggestions",
-      details: error.message 
+      details: error instanceof Error ? error.message : String(error)
     });
   }
 });
@@ -266,7 +266,7 @@ router.post("/troubleshoot", async (req, res) => {
     console.error("Troubleshooting error:", error);
     res.status(500).json({ 
       error: "Failed to provide troubleshooting guidance",
-      details: error.message 
+      details: error instanceof Error ? error.message : String(error)
     });
   }
 });
@@ -299,7 +299,7 @@ router.get("/health", async (req, res) => {
     console.error("AI health check failed:", error);
     res.status(500).json({ 
       status: 'unhealthy',
-      error: error.message,
+      error: error instanceof Error ? error.message : String(error),
       timestamp: new Date().toISOString()
     });
   }
