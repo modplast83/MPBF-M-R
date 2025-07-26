@@ -174,6 +174,103 @@ router.post("/module-suggestions", async (req, res) => {
   }
 });
 
+// Advanced AI Analysis endpoints
+router.post("/analyze", async (req, res) => {
+  try {
+    const { analysisType, parameters } = req.body;
+    
+    if (!analysisType) {
+      return res.status(400).json({ error: "Analysis type is required" });
+    }
+    
+    const analysis = await aiService.performAnalysis({ analysisType, parameters });
+    res.json(analysis);
+  } catch (error) {
+    console.error("AI analysis error:", error);
+    res.status(500).json({ 
+      error: "Failed to perform analysis",
+      details: error.message 
+    });
+  }
+});
+
+router.post("/optimize", async (req, res) => {
+  try {
+    const { optimizationType, parameters } = req.body;
+    
+    if (!optimizationType) {
+      return res.status(400).json({ error: "Optimization type is required" });
+    }
+    
+    const optimization = await aiService.performOptimization({ optimizationType, parameters });
+    res.json(optimization);
+  } catch (error) {
+    console.error("AI optimization error:", error);
+    res.status(500).json({ 
+      error: "Failed to perform optimization",
+      details: error.message 
+    });
+  }
+});
+
+// Enhanced workflow suggestions
+router.post("/workflow-suggestions", async (req, res) => {
+  try {
+    const { currentPage, userId, userRole, timestamp } = req.body;
+    
+    const context = {
+      currentPage: currentPage || 'dashboard',
+      userId,
+      userRole: userRole || 'user',
+      timestamp: timestamp || new Date().toISOString()
+    };
+    
+    const suggestions = await aiService.generateWorkflowSuggestions(context);
+    res.json({ suggestions });
+  } catch (error) {
+    console.error("Workflow suggestions error:", error);
+    res.status(500).json({ 
+      error: "Failed to generate workflow suggestions",
+      details: error.message 
+    });
+  }
+});
+
+// Smart troubleshooting endpoint
+router.post("/troubleshoot", async (req, res) => {
+  try {
+    const { issue, context, systemData } = req.body;
+    
+    if (!issue) {
+      return res.status(400).json({ error: "Issue description is required" });
+    }
+    
+    const troubleshootingPrompt = `
+      You are an expert production management troubleshooter. Analyze this issue and provide step-by-step solutions.
+      
+      Issue: ${issue}
+      Context: ${JSON.stringify(context)}
+      System Data: ${JSON.stringify(systemData)}
+      
+      Provide detailed troubleshooting steps with priority levels and expected outcomes.
+      Format as JSON with: {"steps": [], "priority": "low|medium|high|urgent", "estimatedTime": "X minutes", "preventiveMeasures": []}
+    `;
+    
+    const response = await aiService.processAssistantQuery({
+      message: troubleshootingPrompt,
+      context
+    });
+    
+    res.json(response);
+  } catch (error) {
+    console.error("Troubleshooting error:", error);
+    res.status(500).json({ 
+      error: "Failed to provide troubleshooting guidance",
+      details: error.message 
+    });
+  }
+});
+
 // Health check for AI services
 router.get("/health", async (req, res) => {
   try {
@@ -186,6 +283,16 @@ router.get("/health", async (req, res) => {
     res.json({ 
       status: 'healthy',
       openai: 'connected',
+      capabilities: [
+        'Natural language processing',
+        'Production analysis',
+        'Quality optimization',
+        'Predictive maintenance',
+        'Cost analysis',
+        'Resource optimization',
+        'Workflow suggestions',
+        'Troubleshooting assistance'
+      ],
       timestamp: new Date().toISOString()
     });
   } catch (error) {
