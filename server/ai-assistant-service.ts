@@ -1795,4 +1795,85 @@ Return only the JSON array, no additional text.`;
       return { urgentTasks: 0, overdueItems: 0 };
     }
   }
+
+  // Enhanced customer suggestions with fuzzy search and AI scoring
+  async findCustomerSuggestions(query: string, limit: number = 5): Promise<any[]> {
+    try {
+      console.log(`Finding customer suggestions for query: "${query}"`);
+      
+      // Get all customers
+      const customers = await this.db.query('SELECT id, name, "name_ar" as "nameAr", code FROM customers ORDER BY name');
+      const allCustomers = customers.rows;
+
+      if (!allCustomers || allCustomers.length === 0) {
+        console.log('No customers found in database');
+        return [];
+      }
+
+      // Configure Fuse for fuzzy search
+      const fuse = new Fuse(allCustomers, {
+        keys: [
+          { name: 'name', weight: 0.4 },
+          { name: 'nameAr', weight: 0.3 },
+          { name: 'code', weight: 0.3 }
+        ],
+        threshold: 0.7, // More lenient threshold for suggestions
+        includeScore: true,
+        includeMatches: true,
+        ignoreLocation: true,
+        ignoreFieldNorm: false,
+        distance: 100
+      });
+
+      // Perform fuzzy search
+      const fuseResults = fuse.search(query);
+      
+      console.log(`Fuse search found ${fuseResults.length} results for "${query}"`);
+
+      // Convert results and add match information
+      const suggestions = fuseResults.slice(0, limit).map(result => {
+        const customer = result.item;
+        const score = 1 - (result.score || 0); // Convert to positive score
+        
+        // Determine match type based on the best match
+        let matchType = 'fuzzy';
+        let matchField = 'name';
+        
+        if (result.matches && result.matches.length > 0) {
+          const bestMatch = result.matches[0];
+          matchField = bestMatch.key || 'name';
+          
+          // Check if it's an exact match (case insensitive)
+          const fieldValue = customer[matchField as keyof typeof customer] as string;
+          if (fieldValue && fieldValue.toLowerCase().includes(query.toLowerCase())) {
+            matchType = query.toLowerCase() === fieldValue.toLowerCase() ? 'exact' : 'partial';
+          }
+        }
+
+        console.log(`Suggestion: ${customer.name} (${customer.id}) - Score: ${score.toFixed(3)} - Match: ${matchType} on ${matchField}`);
+
+        return {
+          ...customer,
+          score: parseFloat(score.toFixed(3)),
+          matchType,
+          matchField
+        };
+      });
+
+      // Sort by score (highest first) and then by name
+      suggestions.sort((a, b) => {
+        if (Math.abs(a.score - b.score) < 0.01) {
+          return a.name.localeCompare(b.name);
+        }
+        return b.score - a.score;
+      });
+
+      console.log(`Returning ${suggestions.length} customer suggestions`);
+      return suggestions;
+
+    } catch (error) {
+      console.error('Error finding customer suggestions:', error);
+      return [];
+    }
+  }
 }

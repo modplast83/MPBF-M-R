@@ -3,6 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { db, pool } from "./db";
 import { translationService } from "./translation-service";
+import { AIAssistantService } from "./ai-assistant-service";
 import { adaptToFrontend, adaptToDatabase } from "./quality-adapter";
 import {
   insertCategorySchema,
@@ -1563,6 +1564,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // AI-powered customer name suggestions (must be before :id route)
+  app.get("/api/customers/suggestions", async (req: Request, res: Response) => {
+    console.log("🎯 Customer suggestions endpoint hit with query:", req.query);
+    try {
+      const { query, limit = 5 } = req.query;
+      
+      if (!query || typeof query !== 'string' || query.trim().length === 0) {
+        return res.status(400).json({ message: "Query parameter is required" });
+      }
+
+      console.log(`Finding customer suggestions for: "${query}"`);
+      
+      // Find matches using the existing fuzzy search function
+      const aiService = new AIAssistantService(pool);
+      const suggestions = await aiService.findCustomerSuggestions(query as string, parseInt(limit as string) || 5);
+      
+      console.log(`Found ${suggestions.length} suggestions for "${query}"`);
+      
+      res.json({
+        query: query,
+        suggestions: suggestions.map(customer => ({
+          id: customer.id,
+          name: customer.name,
+          nameAr: customer.nameAr,
+          code: customer.code,
+          score: customer.score || 1.0,
+          matchType: customer.matchType || 'fuzzy'
+        }))
+      });
+    } catch (error) {
+      console.error("Error getting customer suggestions:", error);
+      res.status(500).json({ message: "Failed to get customer suggestions" });
+    }
+  });
+
   app.get("/api/customers/:id", async (req: Request, res: Response) => {
     try {
       const customer = await storage.getCustomer(req.params.id);
@@ -1740,6 +1776,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Failed to delete customer" });
     }
   });
+
+
 
   // Auto-translate customer Arabic names
   app.post("/api/customers/auto-translate", async (req: Request, res: Response) => {
