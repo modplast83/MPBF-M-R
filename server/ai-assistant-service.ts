@@ -1,5 +1,6 @@
 import OpenAI from "openai";
 import { Pool } from "pg";
+import Fuse from "fuse.js";
 
 // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
@@ -227,6 +228,12 @@ export class AIAssistantService {
         - Predictive insights and recommendations
         - Real-time problem solving
         
+        IMPORTANT FOR ORDER CREATION:
+        - When users mention customer names, use "customerName" field with exact name provided
+        - Support both English and Arabic customer names
+        - Handle misspelled customer names gracefully
+        - Examples: "Price House", "مركز 2000", "Safi Trading"
+        
         When users ask questions or need help:
         1. Provide expert-level guidance specific to their module/context
         2. Suggest related modules or features that might be helpful
@@ -255,7 +262,8 @@ export class AIAssistantService {
               "data": {
                 "name": "extracted or generated name",
                 "code": "auto-generated code if needed",
-                "customerId": "specific customer ID",
+                "customerName": "exact customer name from user input (for orders)",
+                "customerId": "only use if user specifically provides customer ID",
                 "categoryId": "specific category ID",
                 "itemId": "specific item ID",
                 "actionPath": "navigation path",
@@ -1435,15 +1443,89 @@ DOCUMENT MANAGEMENT:
     }
   }
 
+  async findCustomerByName(customerName: string): Promise<any> {
+    try {
+      // First, get all customers
+      const customersResult = await this.db.query(
+        'SELECT id, code, name, name_ar FROM customers'
+      );
+      
+      const customers = customersResult.rows;
+      
+      // Exact match first (case insensitive)
+      const exactMatch = customers.find(customer => 
+        customer.name?.toLowerCase() === customerName.toLowerCase() ||
+        customer.name_ar?.toLowerCase() === customerName.toLowerCase() ||
+        customer.code?.toLowerCase() === customerName.toLowerCase()
+      );
+      
+      if (exactMatch) {
+        return exactMatch;
+      }
+
+      // Use fuzzy search for partial matches
+      const fuse = new Fuse(customers, {
+        keys: [
+          { name: 'name', weight: 0.4 },
+          { name: 'name_ar', weight: 0.4 },
+          { name: 'code', weight: 0.2 }
+        ],
+        threshold: 0.6, // Lower threshold = more strict matching
+        includeScore: true,
+        ignoreLocation: true
+      });
+
+      const fuzzyResults = fuse.search(customerName);
+      
+      if (fuzzyResults.length > 0) {
+        // Return the best match
+        const bestMatch = fuzzyResults[0];
+        console.log(`Found customer by fuzzy search: "${customerName}" -> "${bestMatch.item.name}" (score: ${bestMatch.score})`);
+        return bestMatch.item;
+      }
+
+      return null;
+    } catch (error) {
+      console.error('Error finding customer by name:', error);
+      return null;
+    }
+  }
+
   async createOrderRecord(data: any): Promise<any> {
     try {
+      let customerId = data.customerId;
+      
+      // Try to resolve customer by name first
+      if (data.customerName) {
+        const customer = await this.findCustomerByName(data.customerName);
+        if (customer) {
+          customerId = customer.id;
+          console.log(`Resolved customer "${data.customerName}" to ID: ${customerId}`);
+        } else {
+          throw new Error(`Customer "${data.customerName}" not found. Available customers can be viewed in the customers module.`);
+        }
+      }
+      // If customerId is not provided or looks like a name, try to find customer by name
+      else if (!customerId || customerId.length > 10 || /[^\w-]/.test(customerId)) {
+        const customerName = data.customerId || data.customer;
+        if (customerName) {
+          const customer = await this.findCustomerByName(customerName);
+          if (customer) {
+            customerId = customer.id;
+            console.log(`Resolved customer "${customerName}" to ID: ${customerId}`);
+          } else {
+            throw new Error(`Customer "${customerName}" not found. Available customers can be viewed in the customers module.`);
+          }
+        }
+      }
+      
       // Validate required fields
-      if (!data.customerId) {
-        throw new Error('Customer ID is required for order creation');
+      if (!customerId) {
+        throw new Error('Customer ID or customer name is required for order creation');
       }
 
       const orderData = {
-        customerId: data.customerId,
+        customerId: customerId,
         note: data.note || data.notes || null,
         status: 'pending',
         userId: data.userId || null

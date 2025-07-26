@@ -50,6 +50,17 @@ This is a comprehensive production management system built with React, TypeScrip
 
 ## Recent Changes
 
+### July 26, 2025 - AI Assistant Customer Name Recognition Fixed ✅
+- **Smart Customer Name Matching**: Implemented fuzzy search with Fuse.js for intelligent customer name resolution
+- **Multi-language Support**: AI now handles both English and Arabic customer names with spelling error tolerance
+- **Exact Match Priority**: System first attempts exact name/code matches before falling back to fuzzy search
+- **Enhanced Error Messages**: Improved error handling with helpful suggestions when customers are not found
+- **Database Integration**: Added findCustomerByName function with comprehensive customer lookup capabilities
+- **AI Training**: Updated AI system prompts to use customerName field instead of assuming customer IDs
+- **Logging Enhancement**: Added detailed logging for customer resolution process for debugging
+- Fixed critical foreign key constraint error in order creation by resolving customer names to proper IDs
+- AI assistant now intelligently matches customer names like "Price House", "مركز 2000", even with typos
+
 ### July 25, 2025 - Job Order Quantity Monitoring System Implementation Completed ✅
 - **Comprehensive Job Order Monitor**: Created new `/production/job-orders-monitor` page with real-time quantity tracking across all production stages
 - **Production Stage Tabs**: Implemented interactive tabs for extrusion, printing, and cutting with detailed quantity monitoring
