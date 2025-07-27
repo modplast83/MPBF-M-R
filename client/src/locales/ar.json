@@ -53,6 +53,106 @@
     "thinking": "جارٍ التفكير"
   },
 
+  "ai_assistant_old": {
+    "title": "مساعد الذكاء الاصطناعي",
+    "subtitle": "تحليلات وأتمتة ذكية لإدارة الإنتاج",
+    "tabs": {
+      "chat": "المحادثة",
+      "insights": "رؤى الإنتاج",
+      "automation": "الأتمتة الذكية"
+    },
+    "chat": {
+      "assistant": "المساعد الذكي",
+      "welcome": "مرحباً! كيف يمكنني مساعدتك في إدارة المصنع اليوم؟",
+      "placeholder": "اكتب سؤالك هنا...",
+      "send": "إرسال",
+      "thinking": "جاري المعالجة...",
+      "quick_actions": "إجراءات سريعة",
+      "voice": {
+        "start": "بدء الأمر الصوتي",
+        "stop": "إيقاف الأمر الصوتي",
+        "listening": "أستمع...",
+        "processing": "جاري المعالجة...",
+        "speaking": "المساعد يتحدث...",
+        "enable_speech": "تفعيل النطق",
+        "disable_speech": "إيقاف النطق",
+        "language_toggle": "تغيير اللغة الصوتية"
+      },
+      "speech": {
+        "enabled": "تم تفعيل الاستجابة الصوتية",
+        "disabled": "تم إيقاف الاستجابة الصوتية",
+        "enabled_desc": "سيقوم المساعد بنطق الردود بصوت عالٍ",
+        "disabled_desc": "لن يقوم المساعد بنطق الردود",
+        "language_changed": "تم تغيير اللغة الصوتية",
+        "arabic_mode": "تم تفعيل الوضع العربي للصوت",
+        "english_mode": "تم تفعيل الوضع الإنجليزي للصوت"
+      },
+      "errors": {
+        "voice_recognition": "خطأ في التعرف على الصوت",
+        "voice_recognition_desc": "فشل في التعرف على الكلام",
+        "voice_start_failed": "فشل في بدء التعرف على الصوت",
+        "assistant_error": "خطأ في المساعد",
+        "assistant_error_desc": "عذراً، واجهت خطأ في معالجة طلبك. يرجى المحاولة مرة أخرى."
+      }
+    },
+    "suggestions": {
+      "production_analysis": {
+        "title": "تحليل الإنتاج",
+        "description": "راجع حالة الإنتاج الحالية والمؤشرات"
+      },
+      "quality_check": {
+        "title": "فحص الجودة",
+        "description": "عرض مؤشرات الجودة والتقارير"
+      },
+      "maintenance_status": {
+        "title": "حالة الصيانة",
+        "description": "تحقق من حالة المعدات والصيانة المطلوبة"
+      },
+      "quality_dashboard": {
+        "title": "لوحة تحكم الجودة",
+        "description": "مراقبة معايير الجودة والعيوب"
+      },
+      "schedule_optimization": {
+        "title": "تحسين الجدولة",
+        "description": "تحسين جدولة الإنتاج والموارد"
+      }
+    },
+    "insights": {
+      "title": "رؤى الإنتاج",
+      "loading": "جاري تحميل البيانات...",
+      "refresh": "تحديث البيانات",
+      "efficiency": "الكفاءة",
+      "output_rate": "معدل الإنتاج",
+      "quality_score": "درجة الجودة",
+      "bottlenecks": "الاختناقات",
+      "recommendations": "التوصيات",
+      "view_details": "عرض التفاصيل"
+    },
+    "automation": {
+      "title": "الأتمتة الذكية",
+      "auto_quality": {
+        "title": "فحوصات جودة تلقائية",
+        "description": "تفعيل الفحص التلقائي لاكتشاف العيوب مبكراً",
+        "button": "تفعيل"
+      },
+      "smart_scheduling": {
+        "title": "جدولة ذكية",
+        "description": "جدولة تلقائية لأوامر الإنتاج بناءً على الأولوية",
+        "button": "تشغيل"
+      },
+      "predictive_alerts": {
+        "title": "تنبيهات تنبؤية",
+        "description": "تلقي تنبيهات مبكرة قبل حدوث الأعطال",
+        "button": "تهيئة"
+      },
+      "workflow_optimization": {
+        "title": "تحسين سير العمل",
+        "description": "اقتراحات لتحسين الأداء وزيادة الكفاءة",
+        "button": "تحسين"
+      }
+    }
+  },
+
   "translation": {
     "ai": {
       "title": "مساعد الذكاء الصناعي",
@@ -173,6 +273,10 @@
       "out_of_stock": "غير متوفر",
       "are_you_sure": "هل أنت متأكد؟",
       "delete_confirmation": "سيتم حذف {{item}} نهائياً. لا يمكن التراجع عن هذا الإجراء.",
+      "voice_unavailable": "التعرف على الصوت غير متاح",
+      "voice_unsupported": "التعرف على الصوت غير مدعوم في هذا المتصفح",
+      "speech_error": "خطأ في النطق",
+      "speech_failed": "فشل في نطق الاستجابة",
       "submit": "إرسال",
       "logout": "تسجيل الخروج",
       "login": "تسجيل الدخول",
