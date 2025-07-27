@@ -125,10 +125,10 @@ export default function LoginPage() {
                   {isLoggingIn ? (
                     <>
                       <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                      Signing in...
+                      {t("auth.signing_in")}
                     </>
                   ) : (
-                    "Sign In"
+                    t("auth.sign_in")
                   )}
                 </Button>
               </form>
@@ -140,8 +140,7 @@ export default function LoginPage() {
                     info
                   </span>
                   <p>
-                    <span className="font-medium">Demo Note:</span> Enter any
-                    username and password to login.
+                    <span className="font-medium">{t("auth.demo_note")}</span> {t("auth.demo_instructions")}
                   </p>
                 </div>
               </div>

@@ -553,7 +553,7 @@ export function OrderForm() {
                   {fields.length > 0 && (
                     // @ts-ignore
                     (<Badge variant="secondary" className="ml-2">
-                      {fields.length} {fields.length === 1 ? 'Product' : 'Products'}
+                      {fields.length} {fields.length === 1 ? t('orders.product_single') : t('orders.product_plural')}
                     </Badge>)
                   )}
                 </CardTitle>

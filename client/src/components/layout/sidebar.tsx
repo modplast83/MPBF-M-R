@@ -210,7 +210,7 @@ export default function Sidebar({
                 <div className="bg-gradient-to-br from-blue-500 to-indigo-600 p-3 rounded-2xl shadow-xl ring-2 ring-blue-400/30 backdrop-blur-sm">
                   <img
                     src={companyLogo}
-                    alt="Modern Plastic Bag Factory"
+                    alt={t('translation.sidebar.company_logo_alt')}
                     className="h-16 w-16 object-contain"
                   />
                 </div>
@@ -231,7 +231,7 @@ export default function Sidebar({
                 <div className="bg-gradient-to-br from-blue-500 to-indigo-600 p-2 rounded-xl shadow-lg ring-2 ring-blue-400/30">
                   <img
                     src={companyLogo}
-                    alt="Modern Plastic Bag Factory"
+                    alt={t('translation.sidebar.company_logo_alt')}
                     className="h-10 w-10 object-contain"
                   />
                 </div>
@@ -485,9 +485,9 @@ export default function Sidebar({
             
             {/* Footer Info */}
             <div className="text-center space-y-1">
-              <p className="text-xs text-slate-400 font-medium">Version 2.0</p>
+              <p className="text-xs text-slate-400 font-medium">{t('translation.sidebar.version')}</p>
               <p className="text-xs text-slate-500">
-                © 2025 Modern Plastic
+                {t('translation.sidebar.copyright')}
               </p>
             </div>
           </div>
