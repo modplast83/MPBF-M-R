@@ -139,8 +139,8 @@ export default function AIAssistantPage() {
             setIsProcessingVoice(false);
             setGestureAnimation('idle');
             toast({
-              title: t('translation.ai_assistant_old.chat.errors.voice_recognition'),
-              description: t('translation.ai_assistant_old.chat.errors.voice_recognition_desc'),
+              title: t('ai_assistant.chat.errors.voice_recognition'),
+              description: t('ai_assistant.chat.errors.voice_recognition_desc'),
               variant: "destructive"
             });
           };
@@ -181,26 +181,26 @@ export default function AIAssistantPage() {
       const welcomeMessage: AssistantMessage = {
         id: 'welcome',
         type: 'assistant',
-        content: t('translation.ai_assistant_old.chat.welcome.message', { username: user.username }),
+        content: t('ai_assistant.chat.welcome.message', { username: user.username }),
         timestamp: new Date(),
         suggestions: [
           {
             type: 'insight',
-            title: t('translation.ai_assistant_old.chat.welcome.suggestions.production_analysis.title'),
-            description: t('translation.ai_assistant_old.chat.welcome.suggestions.production_analysis.description'),
+            title: t('ai_assistant.chat.welcome.suggestions.production_analysis.title'),
+            description: t('ai_assistant.chat.welcome.suggestions.production_analysis.description'),
             priority: 'high'
           },
           {
             type: 'navigation',
-            title: t('translation.ai_assistant_old.chat.welcome.suggestions.quality_dashboard.title'),
-            description: t('translation.ai_assistant_old.chat.welcome.suggestions.quality_dashboard.description'),
+            title: t('ai_assistant.chat.welcome.suggestions.quality_dashboard.title'),
+            description: t('ai_assistant.chat.welcome.suggestions.quality_dashboard.description'),
             actionUrl: '/quality',
             priority: 'medium'
           },
           {
             type: 'action',
-            title: t('translation.ai_assistant_old.chat.welcome.suggestions.schedule_optimization.title'),
-            description: t('translation.ai_assistant_old.chat.welcome.suggestions.schedule_optimization.description'),
+            title: t('ai_assistant.chat.welcome.suggestions.schedule_optimization.title'),
+            description: t('ai_assistant.chat.welcome.suggestions.schedule_optimization.description'),
             priority: 'medium'
           }
         ]
@@ -281,8 +281,8 @@ export default function AIAssistantPage() {
     },
     onError: () => {
       toast({
-        title: t('translation.ai_assistant_old.chat.errors.assistant_error'),
-        description: t('translation.ai_assistant_old.chat.errors.assistant_error_desc'),
+        title: t('ai_assistant.chat.errors.assistant_error'),
+        description: t('ai_assistant.chat.errors.assistant_error_desc'),
         variant: "destructive"
       });
     }
@@ -309,7 +309,7 @@ export default function AIAssistantPage() {
       const errorMessage: AssistantMessage = {
         id: Date.now().toString() + '_error',
         type: 'assistant',
-        content: t('translation.ai_assistant_old.chat.errors.assistant_error_desc'),
+        content: t('ai_assistant.chat.errors.assistant_error_desc'),
         timestamp: new Date()
       };
       setMessages(prev => [...prev, errorMessage]);
@@ -372,13 +372,13 @@ export default function AIAssistantPage() {
             recognitionRef.current.start();
             toast({
               title: t('common.voice_recognition_started', 'Voice Recognition Started'),
-              description: `${t('translation.ai_assistant_old.chat.voice.listening')} ${voiceLanguage === 'ar-SA' ? t('translation.ai_assistant_old.chat.voice.arabic') : t('translation.ai_assistant_old.chat.voice.english')} mode`,
+              description: `${t('ai_assistant.chat.voice.listening')} ${voiceLanguage === 'ar-SA' ? t('ai_assistant.chat.voice.arabic') : t('ai_assistant.chat.voice.english')} mode`,
             });
           })
           .catch((error) => {
             console.error('Microphone permission denied:', error);
             toast({
-              title: t('translation.ai_assistant_old.chat.errors.voice_start_failed', 'Microphone Permission Required'),
+              title: t('ai_assistant.chat.errors.voice_start_failed', 'Microphone Permission Required'),
               description: t('common.microphone_permission_required', 'Please allow microphone access to use voice commands'),
               variant: "destructive"
             });
@@ -386,8 +386,8 @@ export default function AIAssistantPage() {
       } catch (error) {
         console.error('Error starting speech recognition:', error);
         toast({
-          title: t('translation.ai_assistant_old.chat.errors.voice_recognition'),
-          description: t('translation.ai_assistant_old.chat.errors.voice_start_failed'),
+          title: t('ai_assistant.chat.errors.voice_recognition'),
+          description: t('ai_assistant.chat.errors.voice_start_failed'),
           variant: "destructive"
         });
       }
@@ -456,8 +456,8 @@ export default function AIAssistantPage() {
     }
     
     toast({
-      title: speechEnabled ? t('translation.ai_assistant_old.chat.speech.disabled') : t('translation.ai_assistant_old.chat.speech.enabled'),
-      description: speechEnabled ? t('translation.ai_assistant_old.chat.speech.disabled_desc') : t('translation.ai_assistant_old.chat.speech.enabled_desc'),
+      title: speechEnabled ? t('ai_assistant.chat.speech.disabled') : t('ai_assistant.chat.speech.enabled'),
+      description: speechEnabled ? t('ai_assistant.chat.speech.disabled_desc') : t('ai_assistant.chat.speech.enabled_desc'),
     });
   };
 
@@ -476,8 +476,8 @@ export default function AIAssistantPage() {
     }
     
     toast({
-      title: t('translation.ai_assistant_old.chat.speech.language_changed'),
-      description: newLanguage === 'ar-SA' ? t('translation.ai_assistant_old.chat.speech.arabic_mode') : t('translation.ai_assistant_old.chat.speech.english_mode'),
+      title: t('ai_assistant.chat.speech.language_changed'),
+      description: newLanguage === 'ar-SA' ? t('ai_assistant.chat.speech.arabic_mode') : t('ai_assistant.chat.speech.english_mode'),
     });
   };
 
@@ -493,10 +493,10 @@ export default function AIAssistantPage() {
               </div>
               <div>
                 <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
-                  {t('translation.ai.title')}
+                  {t('ai.title')}
                 </h1>
                 <p className="text-gray-600 text-lg">
-                  {t('translation.ai.subtitle')}
+                  {t('ai.subtitle')}
                 </p>
               </div>
             </div>
@@ -516,7 +516,7 @@ export default function AIAssistantPage() {
               </Badge>
               <Button variant="outline" size="sm">
                 <Settings className="h-4 w-4 mr-2" />
-                {t('translation.common.settings')}
+                {t('common.settings')}
               </Button>
             </div>
           </div>
@@ -528,15 +528,15 @@ export default function AIAssistantPage() {
           <TabsList className="grid w-full grid-cols-3 h-14 bg-white/50 backdrop-blur-sm">
             <TabsTrigger value="chat" className="flex items-center gap-3 text-base font-medium">
               <MessageCircle className="h-5 w-5" />
-              {t('translation.ai.chat')}
+              {t('ai.chat')}
             </TabsTrigger>
             <TabsTrigger value="insights" className="flex items-center gap-3 text-base font-medium">
               <BarChart3 className="h-5 w-5" />
-              {t('translation.ai.insights')}
+              {t('ai.insights')}
             </TabsTrigger>
             <TabsTrigger value="automation" className="flex items-center gap-3 text-base font-medium">
               <Cpu className="h-5 w-5" />
-              {t('translation.ai.automation')}
+              {t('ai.automation')}
             </TabsTrigger>
           </TabsList>
 
@@ -551,7 +551,7 @@ export default function AIAssistantPage() {
                       <div className="p-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg">
                         <Bot className="h-5 w-5 text-white" />
                       </div>
-                      {t('translation.ai.chat_assistant')}
+                      {t('ai.chat_assistant')}
                     </CardTitle>
                   </CardHeader>
                   
@@ -626,7 +626,7 @@ export default function AIAssistantPage() {
                             <div className="bg-white border border-gray-200 rounded-2xl px-4 py-3 max-w-[85%] shadow-sm">
                               <div className="flex items-center gap-3 text-sm">
                                 <RefreshCw className="h-4 w-4 animate-spin text-blue-500" />
-                                <span>{t('translation.ai.thinking')}</span>
+                                <span>{t('ai.thinking')}</span>
                               </div>
                             </div>
                           </div>
@@ -641,7 +641,7 @@ export default function AIAssistantPage() {
                             value={input}
                             onChange={(e) => setInput(e.target.value)}
                             onKeyPress={handleKeyPress}
-                            placeholder={isListening ? t('translation.ai_assistant_old.chat.voice.listening') : t('translation.ai_assistant_old.chat.placeholder')}
+                            placeholder={isListening ? t('ai_assistant.chat.voice.listening') : t('ai_assistant.chat.placeholder')}
                             className="flex-1 h-12 text-base bg-white"
                             disabled={assistantMutation.isPending || isListening}
                           />
@@ -655,7 +655,7 @@ export default function AIAssistantPage() {
                                 "px-3",
                                 isListening && "animate-pulse"
                               )}
-                              title={isListening ? t('translation.ai_assistant_old.chat.buttons.stop_listening') : t('translation.ai_assistant_old.chat.buttons.start_voice_command')}
+                              title={isListening ? t('ai_assistant.chat.buttons.stop_listening') : t('ai_assistant.chat.buttons.start_voice_command')}
                             >
                               {isListening ? <MicOff className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
                             </Button>
@@ -667,7 +667,7 @@ export default function AIAssistantPage() {
                               size="lg"
                               variant="outline"
                               className="px-3"
-                              title={speechEnabled ? t('translation.ai_assistant_old.chat.buttons.disable_voice_responses') : t('translation.ai_assistant_old.chat.buttons.enable_voice_responses')}
+                              title={speechEnabled ? t('ai_assistant.chat.buttons.disable_voice_responses') : t('ai_assistant.chat.buttons.enable_voice_responses')}
                             >
                               {speechEnabled ? <Volume2 className="h-5 w-5" /> : <VolumeX className="h-5 w-5" />}
                             </Button>
@@ -679,7 +679,7 @@ export default function AIAssistantPage() {
                               size="lg"
                               variant="outline"
                               className="px-3 font-bold text-sm"
-                              title={voiceLanguage === 'ar-SA' ? t('translation.ai_assistant_old.chat.buttons.switch_to_english') : t('translation.ai_assistant_old.chat.buttons.switch_to_arabic')}
+                              title={voiceLanguage === 'ar-SA' ? t('ai_assistant.chat.buttons.switch_to_english') : t('ai_assistant.chat.buttons.switch_to_arabic')}
                             >
                               {voiceLanguage === 'ar-SA' ? 'ع' : 'EN'}
                             </Button>
@@ -708,13 +708,13 @@ export default function AIAssistantPage() {
                             {isListening && (
                               <span className="font-medium flex items-center justify-center gap-2">
                                 <div className="w-2 h-2 bg-blue-500 rounded-full animate-ping"></div>
-                                🎤 {t('translation.ai_assistant_old.chat.voice.listening')} ({voiceLanguage === 'ar-SA' ? t('translation.ai_assistant_old.chat.voice.arabic') : t('translation.ai_assistant_old.chat.voice.english')})
+                                🎤 {t('ai_assistant.chat.voice.listening')} ({voiceLanguage === 'ar-SA' ? t('ai_assistant.chat.voice.arabic') : t('ai_assistant.chat.voice.english')})
                               </span>
                             )}
                             {isProcessingVoice && (
                               <span className="font-medium flex items-center justify-center gap-2">
                                 <div className="w-2 h-2 bg-yellow-500 rounded-full animate-bounce"></div>
-                                ⚡ {t('translation.ai_assistant_old.chat.voice.processing')}
+                                ⚡ {t('ai_assistant.chat.voice.processing')}
                               </span>
                             )}
                             {gestureAnimation === 'speaking' && (
@@ -725,7 +725,7 @@ export default function AIAssistantPage() {
                             )}
                             {gestureAnimation === 'idle' && (
                               <span>
-                                {t('translation.ai_assistant_old.chat.voice.click_microphone')} ({voiceLanguage === 'ar-SA' ? t('translation.ai_assistant_old.chat.voice.arabic') : t('translation.ai_assistant_old.chat.voice.english')} mode)
+                                {t('ai_assistant.chat.voice.click_microphone')} ({voiceLanguage === 'ar-SA' ? t('ai_assistant.chat.voice.arabic') : t('ai_assistant.chat.voice.english')} mode)
                               </span>
                             )}
                           </div>
@@ -746,15 +746,15 @@ export default function AIAssistantPage() {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-lg">
                       <Rocket className="h-5 w-5 text-blue-500" />
-                      {t('translation.ai.quick_actions')}
+                      {t('ai.quick_actions')}
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-3">
                     {[
-                      { icon: TrendingUp, label: t('translation.ai.production_analysis'), color: "text-green-600" },
-                      { icon: Target, label: t('translation.ai.quality_metrics'), color: "text-blue-600" },
+                      { icon: TrendingUp, label: t('ai.production_analysis'), color: "text-green-600" },
+                      { icon: Target, label: t('ai.quality_metrics'), color: "text-blue-600" },
                       { icon: Calendar, label: t('common.schedule_review', 'Schedule Review'), color: "text-purple-600" },
-                      { icon: Wrench, label: t('translation.ai.maintenance_status'), color: "text-orange-600" },
+                      { icon: Wrench, label: t('ai.maintenance_status'), color: "text-orange-600" },
                       { icon: PieChart, label: t('common.cost_analysis', 'Cost Analysis'), color: "text-red-600" }
                     ].map((action, index) => (
                       <Button
@@ -808,7 +808,7 @@ export default function AIAssistantPage() {
               ) : (
                 [
                   {
-                    title: t('translation.ai.efficiency'),
+                    title: t('ai.efficiency'),
                     icon: TrendingUp,
                     value: "87.5%",
                     change: "+5.2%",
@@ -816,7 +816,7 @@ export default function AIAssistantPage() {
                     bgColor: "bg-green-50"
                   },
                   {
-                    title: t('translation.ai.quality_score'),
+                    title: t('ai.quality_score'),
                     icon: Star,
                     value: "94.2%",
                     change: "+2.1%",
