@@ -553,7 +553,7 @@ export function OrderForm() {
                   {fields.length > 0 && (
                     // @ts-ignore
                     (<Badge variant="secondary" className="ml-2">
-                      {fields.length} {fields.length === 1 ? t('orders.product_single') : t('orders.product_plural')}
+                      {fields.length} {fields.length === 1 ? 'Product' : 'Products'}
                     </Badge>)
                   )}
                 </CardTitle>
@@ -612,7 +612,7 @@ export function OrderForm() {
                                           const item = items?.find(i => i.id === product.itemId);
                                           const category = categories?.find(c => c.id === product.categoryId);
                                           
-                                          const display = `${category?.name || t("orders.unknown")} - ${item?.name || t("orders.unknown")}${product.sizeCaption ? ` (${product.sizeCaption})` : ""}`;
+                                          const display = `${category?.name || "Unknown"} - ${item?.name || "Unknown"}${product.sizeCaption ? ` (${product.sizeCaption})` : ""}`;
                                           
                                           return (
                                             <SelectItem key={product.id} value={product.id.toString()} className="select-item-enhanced">
@@ -620,7 +620,7 @@ export function OrderForm() {
                                                 <span className="font-medium text-left">{display}</span>
                                                 {product.thickness && (
                                                   <span className="text-xs text-muted-foreground text-left mt-1">
-                                                    {t("orders.thickness")}: {product.thickness}μm
+                                                    Thickness: {product.thickness}μm
                                                   </span>
                                                 )}
                                               </div>
@@ -629,7 +629,7 @@ export function OrderForm() {
                                         })}
                                         {(!customerProducts || customerProducts.length === 0) && (
                                           <SelectItem value="no-products" disabled>
-                                            {productsLoading ? t("orders.loading_products") : t("orders.no_products")}
+                                            {productsLoading ? "Loading..." : "No products"}
                                           </SelectItem>
                                         )}
                                       </SelectContent>
@@ -647,7 +647,7 @@ export function OrderForm() {
                                 render={({ field }) => (
                                   <FormItem>
                                     <FormLabel className="text-sm font-medium">
-{t("orders.quantity")} ({t("orders.kg")})
+                                      {t("orders.quantity")} (كجم)
                                     </FormLabel>
                                     <FormControl>
                                       <Input
@@ -697,7 +697,7 @@ export function OrderForm() {
                       {t("orders.add_products_to_order")}
                     </p>
                     <p className="text-sm text-muted-foreground mt-1">
-                      {t("orders.click_add_product_to_start")}
+                      Click the "Add Product" button to start building your order
                     </p>
                   </div>
                 )
@@ -708,7 +708,7 @@ export function OrderForm() {
                     {t("orders.select_customer_first")}
                   </p>
                   <p className="text-sm text-muted-foreground mt-1">
-                    {t("orders.please_select_customer_to_view_products")}
+                    Please select a customer to view available products
                   </p>
                 </div>
               )}

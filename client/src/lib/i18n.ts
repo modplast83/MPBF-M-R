@@ -40,15 +40,10 @@ lng: undefined, // ← يتركه للكشف التلقائي
   });
 
 console.log("i18next resources loaded:", {
-  en: !!enJSON?.translation?.app,
-  ar: !!arJSON?.translation?.app,
+  en: !!enJSON?.translation?.auth,
+  ar: !!arJSON?.translation?.auth,
   ml: !!mlJSON?.translation?.auth,
   ur: !!urJSON?.translation?.auth,
-});
-
-console.log("Sample translations:", {
-  en_app_title: enJSON?.translation?.app?.title,
-  ar_app_title: arJSON?.translation?.app?.title,
 });
 
 export default i18n;

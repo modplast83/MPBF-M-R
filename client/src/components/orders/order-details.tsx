@@ -122,8 +122,8 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
         queryKey: [`${API_ENDPOINTS.ORDERS}/${orderId}`],
       });
       toast({
-        title: t("orders.order_updated"),
-        description: t("orders.order_updated_description"),
+        title: "Order Updated",
+        description: "Order status has been updated successfully.",
       });
     },
   });
@@ -140,8 +140,8 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
       setJobOrderDialogOpen(false);
       setSelectedJobOrder(null);
       toast({
-        title: t("orders.job_order_created"),
-        description: t("orders.job_order_created_description"),
+        title: "Job Order Created",
+        description: "New job order has been created successfully.",
       });
     },
   });
@@ -163,8 +163,8 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
       setJobOrderDialogOpen(false);
       setSelectedJobOrder(null);
       toast({
-        title: t("orders.job_order_updated"),
-        description: t("orders.job_order_updated_description"),
+        title: "Job Order Updated",
+        description: "Job order has been updated successfully.",
       });
     },
   });
@@ -185,8 +185,8 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
       setDeleteDialogOpen(false);
       setSelectedJobOrder(null);
       toast({
-        title: t("orders.job_order_deleted"),
-        description: t("orders.job_order_deleted_description"),
+        title: "Job Order Deleted",
+        description: "Job order has been deleted successfully.",
       });
     },
   });
@@ -211,8 +211,8 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
       setRollDialogOpen(false);
       setRollQuantity(0);
       toast({
-        title: t("orders.roll_created"),
-        description: t("orders.roll_created_description"),
+        title: "Roll Created",
+        description: "New roll has been created successfully.",
       });
     },
   });
@@ -236,13 +236,13 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
       <Card>
         <CardContent className="py-10 text-center">
           <h3 className="text-xl font-medium text-secondary-800 mb-2">
-            {t("orders.order_not_found")}
+            Order Not Found
           </h3>
           <p className="text-secondary-600 mb-6">
-            {t("orders.order_not_found_description")}
+            The order you're looking for does not exist or has been deleted.
           </p>
           <Link href="/orders">
-            <Button>{t("orders.return_to_orders")}</Button>
+            <Button>Return to Orders</Button>
           </Link>
         </CardContent>
       </Card>
@@ -644,8 +644,8 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
     printWindow.document.close();
 
     toast({
-      title: t("orders.print_ready"),
-      description: t("orders.print_ready_description"),
+      title: "Print Ready",
+      description: "Order print view has been prepared.",
     });
   };
 

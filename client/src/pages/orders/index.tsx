@@ -230,7 +230,7 @@ const OrderCard = ({
           <div className="flex items-center gap-2">
             <User className="h-4 w-4 text-gray-400 flex-shrink-0" />
             <div className="flex-1 min-w-0">
-              <p className="text-gray-900 font-bold text-sm sm:text-base truncate">{customer?.name || t("orders.unknown_customer")}</p>
+              <p className="text-gray-900 font-bold text-sm sm:text-base truncate">{customer?.name || 'Unknown Customer'}</p>
               {customer?.nameAr && (
                 <p className="font-extrabold text-base sm:text-lg text-[#000000] truncate" dir="rtl">{customer.nameAr}</p>
               )}
@@ -321,7 +321,7 @@ const QuickFilterButton = ({
 // Smart Search Component with fuzzy matching and recent searches
 const SmartSearchBox = ({ 
   onSearch, 
-  placeholder = "",
+  placeholder = "Search orders...", 
   recentSearches = [], 
   onRecentSearchSelect,
   searchSuggestions = []

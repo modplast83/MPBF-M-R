@@ -230,18 +230,9 @@ export class AIAssistantService {
         
         IMPORTANT FOR ORDER CREATION:
         - When users mention customer names, use "customerName" field with exact name provided
-        - Support both English and Arabic customer names with fuzzy matching
-        - Handle misspelled customer names gracefully using intelligent matching
+        - Support both English and Arabic customer names
+        - Handle misspelled customer names gracefully
         - Examples: "Price House", "مركز 2000", "Safi Trading"
-        
-        SMART PRODUCT MATCHING FOR ORDERS:
-        - When users mention products, use "product_name" field with description provided
-        - Understand products by size, dimensions, category, material, and common names
-        - Handle misspelled product names, sizes, and dimensions intelligently
-        - Support partial descriptions like "30x40 bag", "small t-shirt", "hdpe material"
-        - Match products by category (Roll Trash Bag, T-Shirt Bag), items, sizes, and materials
-        - Parse dimensions from text like "30cm x 40cm", "25 by 35", "thickness 2mm"
-        - Examples: "30x40 roll bag", "t-shirt 25x35", "hdpe 20x30", "banana bag small"
         
         When users ask questions or need help:
         1. Provide expert-level guidance specific to their module/context
@@ -1500,206 +1491,13 @@ DOCUMENT MANAGEMENT:
     }
   }
 
-  async findProductByDescription(customerId: string, productDescription: string): Promise<any> {
-    try {
-      console.log(`Searching for product: "${productDescription}" for customer: ${customerId}`);
-      
-      // Get all products for the customer with full details
-      const productsResult = await this.db.query(`
-        SELECT 
-          cp.id,
-          cp.size_caption,
-          cp.width,
-          cp.thickness,
-          cp.length_cm,
-          cp.cutting_length_cm,
-          cp.raw_material,
-          cp.printed,
-          cp.cutting_unit,
-          cp.unit_weight_kg,
-          cp.packing,
-          cp.punching,
-          cp.cover,
-          c.name as category_name,
-          c.name_ar as category_name_ar,
-          i.name as item_name,
-          i.full_name as item_full_name,
-          mb.name as master_batch_name
-        FROM customer_products cp
-        LEFT JOIN categories c ON cp.category_id = c.id
-        LEFT JOIN items i ON cp.item_id = i.id
-        LEFT JOIN master_batches mb ON cp.master_batch_id = mb.id
-        WHERE cp.customer_id = $1
-      `, [customerId]);
-      
-      const products = productsResult.rows;
-      
-      if (products.length === 0) {
-        console.log(`No products found for customer: ${customerId}`);
-        return null;
-      }
-
-      // Create searchable text for each product
-      const searchableProducts = products.map(product => ({
-        ...product,
-        searchableText: [
-          product.size_caption,
-          product.category_name,
-          product.category_name_ar,
-          product.item_name,
-          product.item_full_name,
-          product.master_batch_name,
-          product.raw_material,
-          product.printed,
-          product.cutting_unit,
-          product.packing,
-          product.punching,
-          product.cover,
-          // Add dimensional info as searchable text
-          product.width ? `${product.width}cm width` : '',
-          product.thickness ? `${product.thickness}mm thick` : '',
-          product.length_cm ? `${product.length_cm}cm length` : '',
-          product.cutting_length_cm ? `${product.cutting_length_cm}cm cutting` : '',
-          product.unit_weight_kg ? `${product.unit_weight_kg}kg weight` : '',
-          // Add common variations
-          product.size_caption?.includes('x') ? product.size_caption.replace('x', ' by ') : '',
-          product.raw_material?.toLowerCase().includes('hdpe') ? 'hdpe plastic' : '',
-          product.raw_material?.toLowerCase().includes('ldpe') ? 'ldpe plastic' : '',
-        ].filter(Boolean).join(' ').toLowerCase()
-      }));
-
-      // Try exact match first on size caption and main identifiers
-      const exactMatch = searchableProducts.find(product => {
-        const desc = productDescription.toLowerCase();
-        return (
-          product.size_caption?.toLowerCase() === desc ||
-          product.item_name?.toLowerCase() === desc ||
-          product.item_full_name?.toLowerCase() === desc ||
-          product.category_name?.toLowerCase() === desc ||
-          product.category_name_ar?.toLowerCase() === desc
-        );
-      });
-
-      if (exactMatch) {
-        console.log(`Found exact product match: "${productDescription}" -> "${exactMatch.size_caption}"`);
-        return exactMatch;
-      }
-
-      // Use fuzzy search with multiple strategies
-      const fuse = new Fuse(searchableProducts, {
-        keys: [
-          { name: 'size_caption', weight: 0.3 },
-          { name: 'category_name', weight: 0.2 },
-          { name: 'category_name_ar', weight: 0.2 },
-          { name: 'item_name', weight: 0.15 },
-          { name: 'item_full_name', weight: 0.15 },
-          { name: 'searchableText', weight: 0.4 }
-        ],
-        threshold: 0.7, // More lenient for product matching
-        includeScore: true,
-        ignoreLocation: true,
-        minMatchCharLength: 2
-      });
-
-      const fuzzyResults = fuse.search(productDescription);
-      
-      if (fuzzyResults.length > 0) {
-        const bestMatch = fuzzyResults[0];
-        console.log(`Found product by fuzzy search: "${productDescription}" -> "${bestMatch.item.size_caption}" (score: ${bestMatch.score})`);
-        return bestMatch.item;
-      }
-
-      // Try parsing dimensions from description
-      const dimensionMatch = await this.parseProductDimensions(productDescription, searchableProducts);
-      if (dimensionMatch) {
-        console.log(`Found product by dimension parsing: "${productDescription}" -> "${dimensionMatch.size_caption}"`);
-        return dimensionMatch;
-      }
-
-      console.log(`No product match found for: "${productDescription}"`);
-      return null;
-    } catch (error) {
-      console.error('Error finding product by description:', error);
-      return null;
-    }
-  }
-
-  private async parseProductDimensions(description: string, products: any[]): Promise<any> {
-    try {
-      // Extract numbers and dimensions from description
-      const numberRegex = /(\d+(?:\.\d+)?)\s*(?:x|×|by|\*)\s*(\d+(?:\.\d+)?)/i;
-      const singleNumberRegex = /(\d+(?:\.\d+)?)\s*(cm|mm|inch|kg|g)/i;
-      
-      const dimensionMatch = description.match(numberRegex);
-      const singleMatch = description.match(singleNumberRegex);
-      
-      if (dimensionMatch) {
-        const [, dim1, dim2] = dimensionMatch;
-        const num1 = parseFloat(dim1);
-        const num2 = parseFloat(dim2);
-        
-        // Find products with matching dimensions
-        const matchingProducts = products.filter(product => {
-          const width = product.width;
-          const length = product.length_cm;
-          const thickness = product.thickness;
-          
-          // Check various dimension combinations
-          return (
-            (Math.abs(width - num1) < 1 && Math.abs(length - num2) < 1) ||
-            (Math.abs(width - num2) < 1 && Math.abs(length - num1) < 1) ||
-            (Math.abs(width - num1) < 1 && Math.abs(thickness - num2) < 0.1) ||
-            (Math.abs(width - num2) < 1 && Math.abs(thickness - num1) < 0.1)
-          );
-        });
-        
-        if (matchingProducts.length > 0) {
-          return matchingProducts[0];
-        }
-      }
-      
-      if (singleMatch) {
-        const [, value, unit] = singleMatch;
-        const numValue = parseFloat(value);
-        
-        // Find products with matching single dimension
-        const matchingProducts = products.filter(product => {
-          switch (unit.toLowerCase()) {
-            case 'cm':
-              return Math.abs(product.width - numValue) < 1 || 
-                     Math.abs(product.length_cm - numValue) < 1 ||
-                     Math.abs(product.cutting_length_cm - numValue) < 1;
-            case 'mm':
-              return Math.abs(product.thickness - numValue) < 0.1;
-            case 'kg':
-            case 'g':
-              const weightValue = unit === 'g' ? numValue / 1000 : numValue;
-              return Math.abs(product.unit_weight_kg - weightValue) < 0.1;
-            default:
-              return false;
-          }
-        });
-        
-        if (matchingProducts.length > 0) {
-          return matchingProducts[0];
-        }
-      }
-      
-      return null;
-    } catch (error) {
-      console.error('Error parsing product dimensions:', error);
-      return null;
-    }
-  }
-
   async createOrderRecord(data: any): Promise<any> {
     try {
       let customerId = data.customerId;
-      let customer = null;
       
       // Try to resolve customer by name first
       if (data.customerName) {
-        customer = await this.findCustomerByName(data.customerName);
+        const customer = await this.findCustomerByName(data.customerName);
         if (customer) {
           customerId = customer.id;
           console.log(`Resolved customer "${data.customerName}" to ID: ${customerId}`);
@@ -1711,7 +1509,7 @@ DOCUMENT MANAGEMENT:
       else if (!customerId || customerId.length > 10 || /[^\w-]/.test(customerId)) {
         const customerName = data.customerId || data.customer;
         if (customerName) {
-          customer = await this.findCustomerByName(customerName);
+          const customer = await this.findCustomerByName(customerName);
           if (customer) {
             customerId = customer.id;
             console.log(`Resolved customer "${customerName}" to ID: ${customerId}`);
@@ -1739,91 +1537,23 @@ DOCUMENT MANAGEMENT:
         [orderData.customerId, orderData.note, orderData.status, orderData.userId]
       );
 
-      const orderId = result.rows[0].id;
-      const createdProducts = [];
-
-      // If products are provided, create job orders with intelligent product matching
+      // If products are provided, create job orders
       if (data.products && Array.isArray(data.products)) {
-        for (const productData of data.products) {
-          let customerProductId = productData.customerProductId;
-          let foundProduct = null;
-          
-          // If no customer product ID provided, use intelligent product matching
-          if (!customerProductId && (productData.product_name || productData.productName || productData.name)) {
-            const productDescription = productData.product_name || productData.productName || productData.name;
-            foundProduct = await this.findProductByDescription(customerId, productDescription);
-            if (foundProduct) {
-              customerProductId = foundProduct.id;
-              console.log(`Matched product "${productDescription}" to "${foundProduct.size_caption}"`);
-            }
-          }
-
-          if (!customerProductId) {
-            const productName = productData.product_name || productData.productName || productData.name || 'Unknown';
-            console.warn(`Product not found for customer ${customer?.name || customerId}: ${productName}`);
-            
-            // Suggest similar products if available
-            const allProducts = await this.db.query(
-              'SELECT id, size_caption FROM customer_products WHERE customer_id = $1 LIMIT 5',
-              [customerId]
-            );
-            
-            const suggestions = allProducts.rows.map(p => p.size_caption).join(', ');
-            throw new Error(
-              `Product "${productName}" not found for customer "${customer?.name || customerId}". ` +
-              `Available products include: ${suggestions || 'No products found for this customer'}`
-            );
-          }
-
-          // Calculate quantity with extra based on punching type if foundProduct has this info
-          let finalQuantity = productData.quantity || 100;
-          if (foundProduct?.punching) {
-            const extraPercentage = this.getExtraQuantityPercentage(foundProduct.punching);
-            finalQuantity = finalQuantity * (1 + extraPercentage / 100);
-            console.log(`Applied ${extraPercentage}% extra for ${foundProduct.punching} punching: ${productData.quantity} -> ${finalQuantity}`);
-          }
-
-          // Create job order for this product
-          const jobOrder = await this.db.query(
-            `INSERT INTO job_orders (order_id, customer_product_id, quantity, customer_id, status) 
-             VALUES ($1, $2, $3, $4, 'pending') RETURNING id`,
-            [orderId, customerProductId, finalQuantity, customerId]
+        const orderId = result.rows[0].id;
+        for (const product of data.products) {
+          await this.db.query(
+            `INSERT INTO job_orders (order_id, customer_product_id, quantity, status) 
+             VALUES ($1, $2, $3, 'pending')`,
+            [orderId, product.customerProductId, product.quantity || 100]
           );
-
-          createdProducts.push({
-            product_name: foundProduct?.size_caption || productData.product_name || productData.productName || productData.name,
-            quantity: finalQuantity,
-            original_quantity: productData.quantity,
-            job_order_id: jobOrder.rows[0].id
-          });
         }
       }
 
-      return {
-        ...result.rows[0],
-        products: createdProducts,
-        customer_name: customer?.name,
-        success: true,
-        message: `Order created successfully for ${customer?.name || customerId} with ${createdProducts.length} product(s)`
-      };
+      return result.rows[0];
     } catch (error) {
       console.error('Error creating order:', error);
       const errorMessage = error instanceof Error ? error.message : String(error);
       throw new Error(`Failed to create order: ${errorMessage}`);
-    }
-  }
-
-  private getExtraQuantityPercentage(punching: string): number {
-    switch (punching?.toLowerCase()) {
-      case 't-shirt':
-      case 't-shirt w/hook':
-        return 20; // 20% extra for T-shirt types
-      case 'banana':
-        return 10; // 10% extra for banana punching
-      case 'none':
-        return 5;  // 5% extra for no punching
-      default:
-        return 5;  // Default 5% extra
     }
   }
 

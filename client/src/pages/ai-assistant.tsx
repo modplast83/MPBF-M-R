@@ -139,8 +139,8 @@ export default function AIAssistantPage() {
             setIsProcessingVoice(false);
             setGestureAnimation('idle');
             toast({
-              title: t('translation.ai_assistant.chat.errors.voice_recognition'),
-              description: t('translation.ai_assistant.chat.errors.voice_recognition_desc'),
+              title: "Voice Recognition Error",
+              description: `Speech recognition failed: ${event.error}`,
               variant: "destructive"
             });
           };
@@ -181,26 +181,26 @@ export default function AIAssistantPage() {
       const welcomeMessage: AssistantMessage = {
         id: 'welcome',
         type: 'assistant',
-        content: t('translation.ai_assistant.chat.welcome.message', { username: user.username }),
+        content: `Welcome to the AI Production Assistant, ${user.username}! I'm here to help you optimize production, analyze performance, and solve challenges. How can I assist you today?`,
         timestamp: new Date(),
         suggestions: [
           {
             type: 'insight',
-            title: t('translation.ai_assistant.chat.welcome.suggestions.production_analysis.title'),
-            description: t('translation.ai_assistant.chat.welcome.suggestions.production_analysis.description'),
+            title: 'Production Analysis',
+            description: 'Get detailed insights about current production performance',
             priority: 'high'
           },
           {
             type: 'navigation',
-            title: t('translation.ai_assistant.chat.welcome.suggestions.quality_dashboard.title'),
-            description: t('translation.ai_assistant.chat.welcome.suggestions.quality_dashboard.description'),
+            title: 'Quality Dashboard',
+            description: 'View quality metrics and recommendations',
             actionUrl: '/quality',
             priority: 'medium'
           },
           {
             type: 'action',
-            title: t('translation.ai_assistant.chat.welcome.suggestions.schedule_optimization.title'),
-            description: t('translation.ai_assistant.chat.welcome.suggestions.schedule_optimization.description'),
+            title: 'Schedule Optimization',
+            description: 'Optimize production schedules for better efficiency',
             priority: 'medium'
           }
         ]
@@ -281,8 +281,8 @@ export default function AIAssistantPage() {
     },
     onError: () => {
       toast({
-        title: t('translation.ai_assistant.chat.errors.assistant_error'),
-        description: t('translation.ai_assistant.chat.errors.assistant_error_desc'),
+        title: "Error",
+        description: "Failed to process your request. Please try again.",
         variant: "destructive"
       });
     }
@@ -309,7 +309,7 @@ export default function AIAssistantPage() {
       const errorMessage: AssistantMessage = {
         id: Date.now().toString() + '_error',
         type: 'assistant',
-        content: t('translation.ai_assistant.chat.errors.assistant_error_desc'),
+        content: "Sorry, I encountered an error processing your request. Please try again.",
         timestamp: new Date()
       };
       setMessages(prev => [...prev, errorMessage]);
@@ -371,30 +371,30 @@ export default function AIAssistantPage() {
             console.log('Microphone permission granted');
             recognitionRef.current.start();
             toast({
-              title: t('common.voice_recognition_started', 'Voice Recognition Started'),
-              description: `${t('translation.ai_assistant.chat.voice.listening')} ${voiceLanguage === 'ar-SA' ? t('translation.ai_assistant.chat.voice.arabic') : t('translation.ai_assistant.chat.voice.english')} mode`,
+              title: "Voice Recognition Started",
+              description: `Listening in ${voiceLanguage === 'ar-SA' ? 'Arabic' : 'English'} mode`,
             });
           })
           .catch((error) => {
             console.error('Microphone permission denied:', error);
             toast({
-              title: t('translation.ai_assistant.chat.errors.voice_start_failed', 'Microphone Permission Required'),
-              description: t('common.microphone_permission_required', 'Please allow microphone access to use voice commands'),
+              title: "Microphone Permission Required",
+              description: "Please allow microphone access to use voice commands",
               variant: "destructive"
             });
           });
       } catch (error) {
         console.error('Error starting speech recognition:', error);
         toast({
-          title: t('translation.ai_assistant.chat.errors.voice_recognition'),
-          description: t('translation.ai_assistant.chat.errors.voice_start_failed'),
+          title: "Voice Recognition Error",
+          description: "Failed to start voice recognition",
           variant: "destructive"
         });
       }
     } else {
       toast({
-        title: t('common.voice_unavailable', 'Voice Recognition Unavailable'),
-        description: t('common.voice_unsupported', 'Voice recognition is not supported in this browser'),
+        title: "Voice Recognition Unavailable",
+        description: "Voice recognition is not supported in this browser",
         variant: "destructive"
       });
     }
@@ -438,8 +438,8 @@ export default function AIAssistantPage() {
       console.error('Speech synthesis error:', event.error);
       setGestureAnimation('idle');
       toast({
-        title: t('common.speech_error', 'Speech Error'),
-        description: t('common.speech_failed', 'Failed to speak the response'),
+        title: "Speech Error",
+        description: "Failed to speak the response",
         variant: "destructive"
       });
     };
@@ -456,8 +456,8 @@ export default function AIAssistantPage() {
     }
     
     toast({
-      title: speechEnabled ? t('translation.ai_assistant.chat.speech.disabled') : t('translation.ai_assistant.chat.speech.enabled'),
-      description: speechEnabled ? t('translation.ai_assistant.chat.speech.disabled_desc') : t('translation.ai_assistant.chat.speech.enabled_desc'),
+      title: speechEnabled ? "Voice Responses Disabled" : "Voice Responses Enabled",
+      description: speechEnabled ? "AI will no longer speak responses" : "AI will speak responses aloud",
     });
   };
 
@@ -476,8 +476,8 @@ export default function AIAssistantPage() {
     }
     
     toast({
-      title: t('translation.ai_assistant.chat.speech.language_changed'),
-      description: newLanguage === 'ar-SA' ? t('translation.ai_assistant.chat.speech.arabic_mode') : t('translation.ai_assistant.chat.speech.english_mode'),
+      title: "Language Changed",
+      description: newLanguage === 'ar-SA' ? 'Arabic voice mode activated' : 'English voice mode activated',
     });
   };
 
@@ -493,10 +493,10 @@ export default function AIAssistantPage() {
               </div>
               <div>
                 <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
-                  {t('translation.ai.title')}
+                  AI Production Assistant
                 </h1>
                 <p className="text-gray-600 text-lg">
-                  {t('translation.ai.subtitle')}
+                  Intelligent production management and optimization
                 </p>
               </div>
             </div>
@@ -505,18 +505,18 @@ export default function AIAssistantPage() {
                 {aiHealth?.status === 'healthy' ? (
                   <span className="flex items-center gap-2">
                     <CheckCircle className="h-4 w-4 text-green-500" />
-                    {t('common.online', 'AI Online')}
+                    AI Online
                   </span>
                 ) : (
                   <span className="flex items-center gap-2">
                     <AlertTriangle className="h-4 w-4 text-yellow-500" />
-                    {t('common.connecting', 'Connecting...')}
+                    Connecting...
                   </span>
                 )}
               </Badge>
               <Button variant="outline" size="sm">
                 <Settings className="h-4 w-4 mr-2" />
-                {t('common.settings')}
+                Settings
               </Button>
             </div>
           </div>
@@ -528,15 +528,15 @@ export default function AIAssistantPage() {
           <TabsList className="grid w-full grid-cols-3 h-14 bg-white/50 backdrop-blur-sm">
             <TabsTrigger value="chat" className="flex items-center gap-3 text-base font-medium">
               <MessageCircle className="h-5 w-5" />
-              {t('translation.ai.chat')}
+              AI Chat
             </TabsTrigger>
             <TabsTrigger value="insights" className="flex items-center gap-3 text-base font-medium">
               <BarChart3 className="h-5 w-5" />
-              {t('translation.ai.insights')}
+              Production Insights
             </TabsTrigger>
             <TabsTrigger value="automation" className="flex items-center gap-3 text-base font-medium">
               <Cpu className="h-5 w-5" />
-              {t('translation.ai.automation')}
+              Smart Automation
             </TabsTrigger>
           </TabsList>
 
@@ -551,7 +551,7 @@ export default function AIAssistantPage() {
                       <div className="p-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg">
                         <Bot className="h-5 w-5 text-white" />
                       </div>
-                      {t('translation.ai.chat_assistant')}
+                      Production Assistant Chat
                     </CardTitle>
                   </CardHeader>
                   
@@ -626,7 +626,7 @@ export default function AIAssistantPage() {
                             <div className="bg-white border border-gray-200 rounded-2xl px-4 py-3 max-w-[85%] shadow-sm">
                               <div className="flex items-center gap-3 text-sm">
                                 <RefreshCw className="h-4 w-4 animate-spin text-blue-500" />
-                                <span>{t('translation.ai.thinking')}</span>
+                                <span>AI is thinking...</span>
                               </div>
                             </div>
                           </div>
@@ -641,7 +641,7 @@ export default function AIAssistantPage() {
                             value={input}
                             onChange={(e) => setInput(e.target.value)}
                             onKeyPress={handleKeyPress}
-                            placeholder={isListening ? t('translation.ai_assistant.chat.voice.listening') : t('translation.ai_assistant.chat.placeholder')}
+                            placeholder={isListening ? "Listening..." : "Ask me about production, quality, scheduling, or anything else..."}
                             className="flex-1 h-12 text-base bg-white"
                             disabled={assistantMutation.isPending || isListening}
                           />
@@ -655,7 +655,7 @@ export default function AIAssistantPage() {
                                 "px-3",
                                 isListening && "animate-pulse"
                               )}
-                              title={isListening ? t('translation.ai_assistant.chat.buttons.stop_listening') : t('translation.ai_assistant.chat.buttons.start_voice_command')}
+                              title={isListening ? "Stop listening" : "Start voice command"}
                             >
                               {isListening ? <MicOff className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
                             </Button>
@@ -667,7 +667,7 @@ export default function AIAssistantPage() {
                               size="lg"
                               variant="outline"
                               className="px-3"
-                              title={speechEnabled ? t('translation.ai_assistant.chat.buttons.disable_voice_responses') : t('translation.ai_assistant.chat.buttons.enable_voice_responses')}
+                              title={speechEnabled ? "Disable voice responses" : "Enable voice responses"}
                             >
                               {speechEnabled ? <Volume2 className="h-5 w-5" /> : <VolumeX className="h-5 w-5" />}
                             </Button>
@@ -679,7 +679,7 @@ export default function AIAssistantPage() {
                               size="lg"
                               variant="outline"
                               className="px-3 font-bold text-sm"
-                              title={voiceLanguage === 'ar-SA' ? t('translation.ai_assistant.chat.buttons.switch_to_english') : t('translation.ai_assistant.chat.buttons.switch_to_arabic')}
+                              title={voiceLanguage === 'ar-SA' ? "Switch to English" : "Switch to Arabic"}
                             >
                               {voiceLanguage === 'ar-SA' ? 'ع' : 'EN'}
                             </Button>
@@ -708,30 +708,30 @@ export default function AIAssistantPage() {
                             {isListening && (
                               <span className="font-medium flex items-center justify-center gap-2">
                                 <div className="w-2 h-2 bg-blue-500 rounded-full animate-ping"></div>
-                                🎤 {t('translation.ai_assistant.chat.voice.listening')} ({voiceLanguage === 'ar-SA' ? t('translation.ai_assistant.chat.voice.arabic') : t('translation.ai_assistant.chat.voice.english')})
+                                🎤 Listening... ({voiceLanguage === 'ar-SA' ? 'Arabic' : 'English'})
                               </span>
                             )}
                             {isProcessingVoice && (
                               <span className="font-medium flex items-center justify-center gap-2">
                                 <div className="w-2 h-2 bg-yellow-500 rounded-full animate-bounce"></div>
-                                ⚡ {t('translation.ai_assistant.chat.voice.processing')}
+                                ⚡ Processing voice command...
                               </span>
                             )}
                             {gestureAnimation === 'speaking' && (
                               <span className="font-medium flex items-center justify-center gap-2">
                                 <div className="w-2 h-2 bg-green-500 rounded-full animate-ping"></div>
-                                🔊 {t('common.speaking', 'AI is speaking...')}
+                                🔊 AI is speaking...
                               </span>
                             )}
                             {gestureAnimation === 'idle' && (
                               <span>
-                                {t('translation.ai_assistant.chat.voice.click_microphone')} ({voiceLanguage === 'ar-SA' ? t('translation.ai_assistant.chat.voice.arabic') : t('translation.ai_assistant.chat.voice.english')} mode)
+                                Click microphone to speak ({voiceLanguage === 'ar-SA' ? 'Arabic' : 'English'} mode)
                               </span>
                             )}
                           </div>
                         ) : (
                           <span className="text-orange-600 bg-orange-50 border border-orange-200 rounded-md px-3 py-2 inline-block">
-                            {t('common.voice_unavailable', 'Voice recognition unavailable - use Chrome, Edge, or Safari')}
+                            Voice recognition unavailable - use Chrome, Edge, or Safari
                           </span>
                         )}
                       </div>
@@ -746,16 +746,16 @@ export default function AIAssistantPage() {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-lg">
                       <Rocket className="h-5 w-5 text-blue-500" />
-                      {t('translation.ai.quick_actions')}
+                      Quick Actions
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-3">
                     {[
-                      { icon: TrendingUp, label: t('translation.ai.production_analysis'), color: "text-green-600" },
-                      { icon: Target, label: t('translation.ai.quality_metrics'), color: "text-blue-600" },
-                      { icon: Calendar, label: t('common.schedule_review', 'Schedule Review'), color: "text-purple-600" },
-                      { icon: Wrench, label: t('translation.ai.maintenance_status'), color: "text-orange-600" },
-                      { icon: PieChart, label: t('common.cost_analysis', 'Cost Analysis'), color: "text-red-600" }
+                      { icon: TrendingUp, label: "Production Analysis", color: "text-green-600" },
+                      { icon: Target, label: "Quality Metrics", color: "text-blue-600" },
+                      { icon: Calendar, label: "Schedule Review", color: "text-purple-600" },
+                      { icon: Wrench, label: "Maintenance Check", color: "text-orange-600" },
+                      { icon: PieChart, label: "Cost Analysis", color: "text-red-600" }
                     ].map((action, index) => (
                       <Button
                         key={index}
@@ -774,7 +774,7 @@ export default function AIAssistantPage() {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-lg">
                       <Brain className="h-5 w-5 text-purple-500" />
-                      {t('common.ai_capabilities', 'AI Capabilities')}
+                      AI Capabilities
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-2 text-sm text-gray-600">
@@ -808,7 +808,7 @@ export default function AIAssistantPage() {
               ) : (
                 [
                   {
-                    title: t('translation.ai.efficiency'),
+                    title: "Production Efficiency",
                     icon: TrendingUp,
                     value: "87.5%",
                     change: "+5.2%",
@@ -816,7 +816,7 @@ export default function AIAssistantPage() {
                     bgColor: "bg-green-50"
                   },
                   {
-                    title: t('translation.ai.quality_score'),
+                    title: "Quality Score",
                     icon: Star,
                     value: "94.2%",
                     change: "+2.1%",
@@ -824,7 +824,7 @@ export default function AIAssistantPage() {
                     bgColor: "bg-blue-50"
                   },
                   {
-                    title: t('common.machine_utilization', 'Machine Utilization'),
+                    title: "Machine Utilization",
                     icon: Activity,
                     value: "78.9%",
                     change: "-1.3%",
@@ -832,7 +832,7 @@ export default function AIAssistantPage() {
                     bgColor: "bg-orange-50"
                   },
                   {
-                    title: t('common.order_completion', 'Order Completion'),
+                    title: "Order Completion",
                     icon: CheckCircle,
                     value: "92.7%",
                     change: "+3.8%",
@@ -840,7 +840,7 @@ export default function AIAssistantPage() {
                     bgColor: "bg-purple-50"
                   },
                   {
-                    title: t('common.cost_efficiency', 'Cost Efficiency'),
+                    title: "Cost Efficiency",
                     icon: PieChart,
                     value: "€2.45/unit",
                     change: "-0.15€",
@@ -848,7 +848,7 @@ export default function AIAssistantPage() {
                     bgColor: "bg-green-50"
                   },
                   {
-                    title: t('common.downtime', 'Downtime'),
+                    title: "Downtime",
                     icon: Clock,
                     value: "2.3 hrs",
                     change: "-0.7 hrs",
@@ -886,14 +886,14 @@ export default function AIAssistantPage() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-3">
                     <Settings className="h-6 w-6 text-blue-500" />
-                    {t('common.active_workflows', 'Active Workflows')}
+                    Active Workflows
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {[
-                    { name: t('common.quality_alert_system', 'Quality Alert System'), status: t('common.active', 'Active'), icon: Shield },
-                    { name: t('common.inventory_optimization', 'Inventory Optimization'), status: t('common.running', 'Running'), icon: Package },
-                    { name: t('common.maintenance_scheduler', 'Maintenance Scheduler'), status: t('common.monitoring', 'Monitoring'), icon: Wrench }
+                    { name: "Quality Alert System", status: "Active", icon: Shield },
+                    { name: "Inventory Optimization", status: "Running", icon: Package },
+                    { name: "Maintenance Scheduler", status: "Monitoring", icon: Wrench }
                   ].map((workflow, index) => (
                     <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                       <div className="flex items-center gap-3">
@@ -912,24 +912,24 @@ export default function AIAssistantPage() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-3">
                     <Lightbulb className="h-6 w-6 text-yellow-500" />
-                    {t('common.smart_suggestions', 'Smart Suggestions')}
+                    Smart Suggestions
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {[
                     {
-                      title: t('common.optimize_machine_schedule', 'Optimize Machine Schedule'),
-                      description: t('common.reduce_idle_time', 'Reduce idle time by 15% with better scheduling'),
+                      title: "Optimize Machine Schedule",
+                      description: "Reduce idle time by 15% with better scheduling",
                       priority: "high"
                     },
                     {
-                      title: t('common.quality_check_enhancement', 'Quality Check Enhancement'),
-                      description: t('common.automated_quality_monitoring', 'Implement automated quality monitoring'),
+                      title: "Quality Check Enhancement",
+                      description: "Implement automated quality monitoring",
                       priority: "medium"
                     },
                     {
-                      title: t('common.inventory_rebalancing', 'Inventory Rebalancing'),
-                      description: t('common.adjust_stock_levels', 'Adjust stock levels based on demand forecast'),
+                      title: "Inventory Rebalancing",
+                      description: "Adjust stock levels based on demand forecast",
                       priority: "low"
                     }
                   ].map((suggestion, index) => (
@@ -942,7 +942,7 @@ export default function AIAssistantPage() {
                       <h4 className="font-medium">{suggestion.title}</h4>
                       <p className="text-sm text-gray-600 mt-1">{suggestion.description}</p>
                       <Button size="sm" variant="outline" className="mt-3">
-                        {t('common.implement', 'Implement')}
+                        Implement
                       </Button>
                     </div>
                   ))}
