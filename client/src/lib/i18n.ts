@@ -17,13 +17,13 @@ i18nInstance
   .use(initReactI18next)
   .init({
     resources: {
-      en: enJSON,
-      ar: arJSON,
-      ml: mlJSON,
-      ur: urJSON,
+      en: { translation: enJSON },
+      ar: { translation: arJSON },
+      ml: { translation: mlJSON },
+      ur: { translation: urJSON },
     },
     fallbackLng: "en",
-    debug: false,
+    debug: true,
 lng: undefined, // ← يتركه للكشف التلقائي
     defaultNS: "translation",
     ns: ["translation"],
