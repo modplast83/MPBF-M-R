@@ -1,0 +1,875 @@
+ 
+      /////////////////////
+   ///////////////////////////
+  ////////@@@@@@@//////////////
+  ////////@@@@@@@//////////////
+  ////////@@@@@@@//////////////        Curious and driven?
+  ///////////////@@@@@@@///////        Work with us!
+  ///////////////@@@@@@@///////
+  ///////////////@@@@@@@///////        https://join.replit.com/hack.with.us
+  ////////@@@@@@@//////////////
+  ////////@@@@@@@//////////////
+  ////////@@@@@@#//////////////
+   ///////////////////////////
+      /////////////////////
+      
+ [LaunchDarkly] LaunchDarkly client initialized
+ Adding extension: API Request Tester Object
+ Adding extension: JSON Editor Object
+ Adding extension: Prettier - Code Formatter Object
+ Adding extension: Javascript Commands Object
+ Adding extension: GPT-Replit - ChatGPT in your Repl. Object
+ Adding extension: ReplDB Export and Import Object
+ Adding extension: AI Playground Object
+MPBF-M:1 [GroupMarkerNotSet(crbug.com/242999)!:A0E02C0004120000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader (about:flags#enable-unsafe-swiftshader) flag to opt in to lower security guarantees for trusted content.
+MPBF-M:1 [GroupMarkerNotSet(crbug.com/242999)!:A0802C0004120000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader (about:flags#enable-unsafe-swiftshader) flag to opt in to lower security guarantees for trusted content.
+ Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+_ @ framework-3696f0681438c975.js:1
+ Unrecognized feature: 'ambient-light-sensor'.
+_ @ framework-3696f0681438c975.js:1
+ Unrecognized feature: 'battery'.
+_ @ framework-3696f0681438c975.js:1
+ Unrecognized feature: 'execution-while-not-rendered'.
+_ @ framework-3696f0681438c975.js:1
+ Unrecognized feature: 'execution-while-out-of-viewport'.
+_ @ framework-3696f0681438c975.js:1
+ Unrecognized feature: 'layout-animations'.
+_ @ framework-3696f0681438c975.js:1
+ Unrecognized feature: 'legacy-image-formats'.
+_ @ framework-3696f0681438c975.js:1
+ Unrecognized feature: 'navigation-override'.
+_ @ framework-3696f0681438c975.js:1
+ Unrecognized feature: 'oversized-images'.
+_ @ framework-3696f0681438c975.js:1
+ Unrecognized feature: 'publickey-credentials'.
+_ @ framework-3696f0681438c975.js:1
+ Unrecognized feature: 'speaker-selection'.
+_ @ framework-3696f0681438c975.js:1
+ Unrecognized feature: 'unoptimized-images'.
+_ @ framework-3696f0681438c975.js:1
+ Unrecognized feature: 'unsized-media'.
+_ @ framework-3696f0681438c975.js:1
+ Unrecognized feature: 'pointer-lock'.
+_ @ framework-3696f0681438c975.js:1
+ Allow attribute will take precedence over 'allowfullscreen'.
+_ @ framework-3696f0681438c975.js:1
+ Allow attribute will take precedence over 'allowpaymentrequest'.
+_ @ framework-3696f0681438c975.js:1
+ Command: javascript-root-command has unrecognized contributions: commandbar. Valid contributions are commandbar,filetree-context-menu,sidebar-search,editor-context-menu Object
+push.21223.e2 @ _app-fa2bbf2ef2a04535.js:18
+ Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+_ @ framework-3696f0681438c975.js:1
+anchor?ar=1&k=6Ldqhw…jQ0Mw..&hl=en&v=…:1 Uncaught (in promise) 
+index.html:1 Uncaught (in promise) 
+m.stripe.network/inn…_[version]=acacia:1 Uncaught (in promise) 
+MPBF-M:1 Uncaught (in promise) 
+11411994397?random=1…ync=1&en=gtag.co…:1 Uncaught (in promise) 
+sw_iframe.html?origi…A%2F%2Freplit.com:1 Uncaught (in promise) 
+js.stripe.com/v3/con…ipeController5951:1 Uncaught (in promise) 
+js.stripe.com/v3/m-o…_[version]=acacia:1 Uncaught (in promise) 
+anchor?ar=1&k=6Ldqhw…jQ0Mw..&hl=en&v=…:1 Uncaught (in promise) 
+index.html:1 Uncaught (in promise) 
+m.stripe.network/inn…_[version]=acacia:1 Uncaught (in promise) 
+MPBF-M:1 Uncaught (in promise) 
+sw_iframe.html?origi…A%2F%2Freplit.com:1 Uncaught (in promise) 
+11411994397?random=1…ync=1&en=gtag.co…:1 Uncaught (in promise) 
+js.stripe.com/v3/con…ipeController5951:1 Uncaught (in promise) 
+js.stripe.com/v3/m-o…_[version]=acacia:1 Uncaught (in promise) 
+MPBF-M:1 [GroupMarkerNotSet(crbug.com/242999)!:A0C0AB0204120000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader (about:flags#enable-unsafe-swiftshader) flag to opt in to lower security guarantees for trusted content.
+MPBF-M:1 [GroupMarkerNotSet(crbug.com/242999)!:A0F0AB0204120000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader (about:flags#enable-unsafe-swiftshader) flag to opt in to lower security guarantees for trusted content.
+ Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+_ @ framework-3696f0681438c975.js:1
+workspace_iframe.html?initialPath=%2F&id=%3Arkl%3A:32 Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+workspace_iframe.html?initialPath=%2F&id=%3Arkl%3A:32 Unrecognized feature: 'ambient-light-sensor'.
+workspace_iframe.html?initialPath=%2F&id=%3Arkl%3A:32 Unrecognized feature: 'battery'.
+workspace_iframe.html?initialPath=%2F&id=%3Arkl%3A:32 Unrecognized feature: 'execution-while-not-rendered'.
+workspace_iframe.html?initialPath=%2F&id=%3Arkl%3A:32 Unrecognized feature: 'execution-while-out-of-viewport'.
+workspace_iframe.html?initialPath=%2F&id=%3Arkl%3A:32 Unrecognized feature: 'layout-animations'.
+workspace_iframe.html?initialPath=%2F&id=%3Arkl%3A:32 Unrecognized feature: 'legacy-image-formats'.
+workspace_iframe.html?initialPath=%2F&id=%3Arkl%3A:32 Unrecognized feature: 'navigation-override'.
+workspace_iframe.html?initialPath=%2F&id=%3Arkl%3A:32 Unrecognized feature: 'oversized-images'.
+workspace_iframe.html?initialPath=%2F&id=%3Arkl%3A:32 Unrecognized feature: 'publickey-credentials'.
+workspace_iframe.html?initialPath=%2F&id=%3Arkl%3A:32 Unrecognized feature: 'speaker-selection'.
+workspace_iframe.html?initialPath=%2F&id=%3Arkl%3A:32 Unrecognized feature: 'unoptimized-images'.
+workspace_iframe.html?initialPath=%2F&id=%3Arkl%3A:32 Unrecognized feature: 'unsized-media'.
+workspace_iframe.html?initialPath=%2F&id=%3Arkl%3A:32 Allow attribute will take precedence over 'allowfullscreen'.
+workspace_iframe.html?initialPath=%2F&id=%3Arkl%3A:32 Allow attribute will take precedence over 'allowpaymentrequest'.
+ [vite] connecting...
+ [vite] connected.
+m.stripe.network/inn…_[version]=acacia:1 Uncaught (in promise) 
+index.html:1 Uncaught (in promise) 
+workspace_iframe.htm…=%2F&id=%3Arkl%3A:1 Uncaught (in promise) 
+anchor?ar=1&k=6Ldqhw…jQ0Mw..&hl=en&v=…:1 Uncaught (in promise) 
+MPBF-M:1 Uncaught (in promise) 
+11411994397?random=1…ync=1&en=gtag.co…:1 Uncaught (in promise) 
+js.stripe.com/v3/con…ipeController5951:1 Uncaught (in promise) 
+js.stripe.com/v3/m-o…_[version]=acacia:1 Uncaught (in promise) 
+sw_iframe.html?origi…A%2F%2Freplit.com:1 Uncaught (in promise) 
+anchor?ar=1&k=6Ldqhw…jQ0Mw..&hl=en&v=…:1 Uncaught (in promise) 
+index.html:1 Uncaught (in promise) 
+sw_iframe.html?origi…A%2F%2Freplit.com:1 Uncaught (in promise) 
+workspace_iframe.htm…=%2F&id=%3Arkl%3A:1 Uncaught (in promise) 
+m.stripe.network/inn…_[version]=acacia:1 Uncaught (in promise) 
+11411994397?random=1…ync=1&en=gtag.co…:1 Uncaught (in promise) 
+js.stripe.com/v3/con…ipeController5951:1 Uncaught (in promise) 
+js.stripe.com/v3/m-o…_[version]=acacia:1 Uncaught (in promise) 
+MPBF-M:1 Uncaught (in promise) 
+ i18next resources loaded: Object
+ i18next configuration: Object
+ setLanguage called with: ar
+ Current i18n language: ar
+ Language changed to: ar
+ Available resources for ar : true
+ After changeLanguage, i18n.language: ar
+ Stored in localStorage: ar
+ Updated language state to: ar
+ Admin access granted for module: AI Assistant
+ Admin access granted for module: Categories
+ Admin access granted for module: Products
+ Admin access granted for module: Customers
+ Admin access granted for module: Items
+ Admin access granted for module: Sections
+ Admin access granted for module: Machines
+ Admin access granted for module: Machine Parts
+ Admin access granted for module: Users
+ Admin access granted for module: ABA Formulas
+ Admin access granted for module: Geofence Management
+ Admin access granted for module: Quality Check Types
+ Admin access granted for module: Orders
+ Admin access granted for module: Job Orders
+ Admin access granted for module: JO Mix
+ Admin access granted for module: Workflow
+ Admin access granted for module: Rolls-Pro
+ Admin access granted for module: Mix Materials
+ Admin access granted for module: Bottleneck Monitor
+ Admin access granted for module: Production Metrics
+ Admin access granted for module: IoT Monitor
+ Admin access granted for module: Raw Materials
+ Admin access granted for module: Final Products
+ Admin access granted for module: Unified Dashboard
+ Admin access granted for module: Checks
+ Admin access granted for module: Reports
+ Admin access granted for module: attendance
+ Admin access granted for module: overtime_leave
+ Admin access granted for module: employee_of_the_month
+ Admin access granted for module: violation_and_complaint
+Console.js:61 Admin access granted for module: training_management
+Console.js:61 Admin access granted for module: Maintenance Requests
+Console.js:61 Admin access granted for module: Maintenance Actions
+Console.js:61 Admin access granted for module: Maintenance Schedule
+Console.js:61 Admin access granted for module: Dashboard
+Console.js:61 Admin access granted for module: Categories
+Console.js:61 Admin access granted for module: Products
+Console.js:61 Admin access granted for module: Customers
+Console.js:61 Admin access granted for module: Items
+Console.js:61 Admin access granted for module: Sections
+Console.js:61 Admin access granted for module: Machines
+Console.js:61 Admin access granted for module: Machine Parts
+Console.js:61 Admin access granted for module: Users
+Console.js:61 Admin access granted for module: ABA Formulas
+Console.js:61 Admin access granted for module: Geofence Management
+Console.js:61 Admin access granted for module: Quality Check Types
+Console.js:61 Admin access granted for module: Orders
+Console.js:61 Admin access granted for module: Job Orders
+Console.js:61 Admin access granted for module: JO Mix
+Console.js:61 Admin access granted for module: Workflow
+Console.js:61 Admin access granted for module: Rolls-Pro
+Console.js:61 Admin access granted for module: Mix Materials
+Console.js:61 Admin access granted for module: Bottleneck Monitor
+Console.js:61 Admin access granted for module: Production Metrics
+Console.js:61 Admin access granted for module: IoT Monitor
+Console.js:61 Admin access granted for module: Raw Materials
+Console.js:61 Admin access granted for module: Final Products
+Console.js:61 Admin access granted for module: Unified Dashboard
+Console.js:61 Admin access granted for module: Checks
+Console.js:61 Admin access granted for module: Reports
+Console.js:61 Admin access granted for module: attendance
+Console.js:61 Admin access granted for module: overtime_leave
+Console.js:61 Admin access granted for module: employee_of_the_month
+Console.js:61 Admin access granted for module: violation_and_complaint
+Console.js:61 Admin access granted for module: training_management
+Console.js:61 Admin access granted for module: Maintenance Requests
+Console.js:61 Admin access granted for module: Maintenance Actions
+Console.js:61 Admin access granted for module: Maintenance Schedule
+Console.js:61 Admin access granted for module: Dashboard
+Console.js:61 Admin access granted for module: My Dashboard
+Console.js:61 Admin access granted for module: Reports
+Console.js:61 Admin access granted for module: Order Design
+Console.js:61 Admin access granted for module: Bag Weight Calculator
+Console.js:61 Admin access granted for module: Ink Consumption
+Console.js:61 Admin access granted for module: Mix Colors
+Console.js:61 Admin access granted for module: Utility Tools
+Console.js:61 Admin access granted for module: Cost
+Console.js:61 Admin access granted for module: Cliches
+Console.js:61 Admin access granted for module: All Documents
+Console.js:61 Admin access granted for module: New Document
+Console.js:61 Admin access granted for module: Templates
+Console.js:61 Admin access granted for module: Archive
+Console.js:61 Admin access granted for module: Instructions
+Console.js:61 Admin access granted for module: Policies
+Console.js:61 Admin access granted for module: Procedures
+Console.js:61 Admin access granted for module: Forms
+Console.js:61 Admin access granted for module: Contracts
+Console.js:61 Admin access granted for module: Reports
+Console.js:61 Admin access granted for module: Database
+Console.js:61 Admin access granted for module: Permissions
+Console.js:61 Admin access granted for module: Import & Export
+Console.js:61 Admin access granted for module: SMS Management
+Console.js:61 Admin access granted for module: Server Management
+Console.js:61 Admin access granted for module: Order Design
+Console.js:61 Admin access granted for module: Bag Weight Calculator
+Console.js:61 Admin access granted for module: Ink Consumption
+Console.js:61 Admin access granted for module: Mix Colors
+Console.js:61 Admin access granted for module: Utility Tools
+Console.js:61 Admin access granted for module: Cost
+Console.js:61 Admin access granted for module: Cliches
+Console.js:61 Admin access granted for module: All Documents
+Console.js:61 Admin access granted for module: New Document
+Console.js:61 Admin access granted for module: Templates
+Console.js:61 Admin access granted for module: Archive
+Console.js:61 Admin access granted for module: Instructions
+Console.js:61 Admin access granted for module: Policies
+Console.js:61 Admin access granted for module: Procedures
+Console.js:61 Admin access granted for module: Forms
+Console.js:61 Admin access granted for module: Contracts
+Console.js:61 Admin access granted for module: Reports
+Console.js:61 Admin access granted for module: Database
+Console.js:61 Admin access granted for module: Permissions
+ Admin access granted for module: Import & Export
+ Admin access granted for module: SMS Management
+ Admin access granted for module: Server Management
+ [Console Filter] Suppressed: React Beautiful DnD isCombineEnabled prop issue - fixed in configuration Object
+ Initializing speech functionality...
+ SpeechRecognition available: true
+ speechSynthesis available: true
+ API Request: GET /api/dashboard-stats Object
+ Fetching /api/dashboard-stats with options: Object
+ [Console Filter] Suppressed: React Beautiful DnD isCombineEnabled prop issue - fixed in configuration Object
+ Admin access granted for module: AI Assistant
+ Admin access granted for module: Categories
+ Admin access granted for module: Products
+ Admin access granted for module: Customers
+ Admin access granted for module: Items
+ Admin access granted for module: Sections
+ Admin access granted for module: Machines
+ Admin access granted for module: Machine Parts
+ Admin access granted for module: Users
+ Admin access granted for module: ABA Formulas
+ Admin access granted for module: Geofence Management
+ Admin access granted for module: Quality Check Types
+ Admin access granted for module: Orders
+ Admin access granted for module: Job Orders
+ Admin access granted for module: JO Mix
+ Admin access granted for module: Workflow
+ Admin access granted for module: Rolls-Pro
+ Admin access granted for module: Mix Materials
+ Admin access granted for module: Bottleneck Monitor
+ Admin access granted for module: Production Metrics
+ Admin access granted for module: IoT Monitor
+ Admin access granted for module: Raw Materials
+ Admin access granted for module: Final Products
+ Admin access granted for module: Unified Dashboard
+ Admin access granted for module: Checks
+ Admin access granted for module: Reports
+ Admin access granted for module: attendance
+ Admin access granted for module: overtime_leave
+ Admin access granted for module: employee_of_the_month
+ Admin access granted for module: violation_and_complaint
+ Admin access granted for module: training_management
+ Admin access granted for module: Maintenance Requests
+ Admin access granted for module: Maintenance Actions
+ Admin access granted for module: Maintenance Schedule
+ Admin access granted for module: Dashboard
+ Admin access granted for module: Categories
+ Admin access granted for module: Products
+ Admin access granted for module: Customers
+ Admin access granted for module: Items
+ Admin access granted for module: Sections
+ Admin access granted for module: Machines
+ Admin access granted for module: Machine Parts
+ Admin access granted for module: Users
+ Admin access granted for module: ABA Formulas
+ Admin access granted for module: Geofence Management
+ Admin access granted for module: Quality Check Types
+ Admin access granted for module: Orders
+ Admin access granted for module: Job Orders
+ Admin access granted for module: JO Mix
+ Admin access granted for module: Workflow
+ Admin access granted for module: Rolls-Pro
+ Admin access granted for module: Mix Materials
+ Admin access granted for module: Bottleneck Monitor
+ Admin access granted for module: Production Metrics
+ Admin access granted for module: IoT Monitor
+ Admin access granted for module: Raw Materials
+ Admin access granted for module: Final Products
+ Admin access granted for module: Unified Dashboard
+ Admin access granted for module: Checks
+ Admin access granted for module: Reports
+ Admin access granted for module: attendance
+ Admin access granted for module: overtime_leave
+ Admin access granted for module: employee_of_the_month
+ Admin access granted for module: violation_and_complaint
+ Admin access granted for module: training_management
+ Admin access granted for module: Maintenance Requests
+ Admin access granted for module: Maintenance Actions
+ Admin access granted for module: Maintenance Schedule
+ Admin access granted for module: Dashboard
+ Admin access granted for module: My Dashboard
+ Admin access granted for module: Reports
+ Admin access granted for module: Order Design
+ Admin access granted for module: Bag Weight Calculator
+ Admin access granted for module: Ink Consumption
+ Admin access granted for module: Mix Colors
+ Admin access granted for module: Utility Tools
+ Admin access granted for module: Cost
+ Admin access granted for module: Cliches
+ Admin access granted for module: All Documents
+ Admin access granted for module: New Document
+ Admin access granted for module: Templates
+ Admin access granted for module: Archive
+ Admin access granted for module: Instructions
+ Admin access granted for module: Policies
+ Admin access granted for module: Procedures
+ Admin access granted for module: Forms
+ Admin access granted for module: Contracts
+ Admin access granted for module: Reports
+ Admin access granted for module: Database
+ Admin access granted for module: Permissions
+ Admin access granted for module: Import & Export
+ Admin access granted for module: SMS Management
+ Admin access granted for module: Server Management
+ Admin access granted for module: Order Design
+ Admin access granted for module: Bag Weight Calculator
+ Admin access granted for module: Ink Consumption
+ Admin access granted for module: Mix Colors
+ Admin access granted for module: Utility Tools
+ Admin access granted for module: Cost
+ Admin access granted for module: Cliches
+ Admin access granted for module: All Documents
+ Admin access granted for module: New Document
+ Admin access granted for module: Templates
+ Admin access granted for module: Archive
+ Admin access granted for module: Instructions
+ Admin access granted for module: Policies
+ Admin access granted for module: Procedures
+ Admin access granted for module: Forms
+ Admin access granted for module: Contracts
+ Admin access granted for module: Reports
+ Admin access granted for module: Database
+ Admin access granted for module: Permissions
+ Admin access granted for module: Import & Export
+ Admin access granted for module: SMS Management
+ Admin access granted for module: Server Management
+ [Console Filter] Suppressed: React Beautiful DnD isCombineEnabled prop issue - fixed in configuration Object
+ Admin access granted for module: AI Assistant
+ Admin access granted for module: Categories
+ Admin access granted for module: Products
+ Admin access granted for module: Customers
+ Admin access granted for module: Items
+ Admin access granted for module: Sections
+ Admin access granted for module: Machines
+ Admin access granted for module: Machine Parts
+ Admin access granted for module: Users
+ Admin access granted for module: ABA Formulas
+ Admin access granted for module: Geofence Management
+ Admin access granted for module: Quality Check Types
+ Admin access granted for module: Orders
+ Admin access granted for module: Job Orders
+ Admin access granted for module: JO Mix
+ Admin access granted for module: Workflow
+ Admin access granted for module: Rolls-Pro
+ Admin access granted for module: Mix Materials
+ Admin access granted for module: Bottleneck Monitor
+ Admin access granted for module: Production Metrics
+ Admin access granted for module: IoT Monitor
+ Admin access granted for module: Raw Materials
+ Admin access granted for module: Final Products
+ Admin access granted for module: Unified Dashboard
+ Admin access granted for module: Checks
+ Admin access granted for module: Reports
+ Admin access granted for module: attendance
+ Admin access granted for module: overtime_leave
+ Admin access granted for module: employee_of_the_month
+ Admin access granted for module: violation_and_complaint
+ Admin access granted for module: training_management
+ Admin access granted for module: Maintenance Requests
+ Admin access granted for module: Maintenance Actions
+ Admin access granted for module: Maintenance Schedule
+ Admin access granted for module: Dashboard
+ Admin access granted for module: Categories
+ Admin access granted for module: Products
+ Admin access granted for module: Customers
+ Admin access granted for module: Items
+ Admin access granted for module: Sections
+ Admin access granted for module: Machines
+ Admin access granted for module: Machine Parts
+ Admin access granted for module: Users
+ Admin access granted for module: ABA Formulas
+ Admin access granted for module: Geofence Management
+ Admin access granted for module: Quality Check Types
+ Admin access granted for module: Orders
+ Admin access granted for module: Job Orders
+ Admin access granted for module: JO Mix
+ Admin access granted for module: Workflow
+ Admin access granted for module: Rolls-Pro
+ Admin access granted for module: Mix Materials
+ Admin access granted for module: Bottleneck Monitor
+ Admin access granted for module: Production Metrics
+ Admin access granted for module: IoT Monitor
+ Admin access granted for module: Raw Materials
+ Admin access granted for module: Final Products
+ Admin access granted for module: Unified Dashboard
+ Admin access granted for module: Checks
+ Admin access granted for module: Reports
+ Admin access granted for module: attendance
+ Admin access granted for module: overtime_leave
+ Admin access granted for module: employee_of_the_month
+ Admin access granted for module: violation_and_complaint
+ Admin access granted for module: training_management
+ Admin access granted for module: Maintenance Requests
+ Admin access granted for module: Maintenance Actions
+ Admin access granted for module: Maintenance Schedule
+ Admin access granted for module: Dashboard
+ Admin access granted for module: My Dashboard
+ Admin access granted for module: Reports
+ Admin access granted for module: Order Design
+ Admin access granted for module: Bag Weight Calculator
+ Admin access granted for module: Ink Consumption
+ Admin access granted for module: Mix Colors
+ Admin access granted for module: Utility Tools
+ Admin access granted for module: Cost
+ Admin access granted for module: Cliches
+ Admin access granted for module: All Documents
+ Admin access granted for module: New Document
+ Admin access granted for module: Templates
+ Admin access granted for module: Archive
+ Admin access granted for module: Instructions
+ Admin access granted for module: Policies
+ Admin access granted for module: Procedures
+ Admin access granted for module: Forms
+ Admin access granted for module: Contracts
+ Admin access granted for module: Reports
+ Admin access granted for module: Database
+ Admin access granted for module: Permissions
+ Admin access granted for module: Import & Export
+ Admin access granted for module: SMS Management
+ Admin access granted for module: Server Management
+ Admin access granted for module: Order Design
+ Admin access granted for module: Bag Weight Calculator
+ Admin access granted for module: Ink Consumption
+ Admin access granted for module: Mix Colors
+ Admin access granted for module: Utility Tools
+ Admin access granted for module: Cost
+ Admin access granted for module: Cliches
+ Admin access granted for module: All Documents
+ Admin access granted for module: New Document
+ Admin access granted for module: Templates
+ Admin access granted for module: Archive
+ Admin access granted for module: Instructions
+ Admin access granted for module: Policies
+ Admin access granted for module: Procedures
+ Admin access granted for module: Forms
+ Admin access granted for module: Contracts
+ Admin access granted for module: Reports
+ Admin access granted for module: Database
+ Admin access granted for module: Permissions
+ Admin access granted for module: Import & Export
+ Admin access granted for module: SMS Management
+ Admin access granted for module: Server Management
+ Admin access granted for module: AI Assistant
+ Admin access granted for module: Categories
+ Admin access granted for module: Products
+ Admin access granted for module: Customers
+ Admin access granted for module: Items
+ Admin access granted for module: Sections
+ Admin access granted for module: Machines
+ Admin access granted for module: Machine Parts
+ Admin access granted for module: Users
+ Admin access granted for module: ABA Formulas
+ Admin access granted for module: Geofence Management
+ Admin access granted for module: Quality Check Types
+ Admin access granted for module: Orders
+ Admin access granted for module: Job Orders
+ Admin access granted for module: JO Mix
+ Admin access granted for module: Workflow
+ Admin access granted for module: Rolls-Pro
+ Admin access granted for module: Mix Materials
+ Admin access granted for module: Bottleneck Monitor
+ Admin access granted for module: Production Metrics
+ Admin access granted for module: IoT Monitor
+ Admin access granted for module: Raw Materials
+ Admin access granted for module: Final Products
+ Admin access granted for module: Unified Dashboard
+ Admin access granted for module: Checks
+ Admin access granted for module: Reports
+ Admin access granted for module: attendance
+ Admin access granted for module: overtime_leave
+ Admin access granted for module: employee_of_the_month
+ Admin access granted for module: violation_and_complaint
+ Admin access granted for module: training_management
+ Admin access granted for module: Maintenance Requests
+ Admin access granted for module: Maintenance Actions
+Console.js:61 Admin access granted for module: Maintenance Schedule
+Console.js:61 Admin access granted for module: Dashboard
+Console.js:61 Admin access granted for module: Categories
+Console.js:61 Admin access granted for module: Products
+Console.js:61 Admin access granted for module: Customers
+Console.js:61 Admin access granted for module: Items
+Console.js:61 Admin access granted for module: Sections
+Console.js:61 Admin access granted for module: Machines
+Console.js:61 Admin access granted for module: Machine Parts
+Console.js:61 Admin access granted for module: Users
+Console.js:61 Admin access granted for module: ABA Formulas
+Console.js:61 Admin access granted for module: Geofence Management
+Console.js:61 Admin access granted for module: Quality Check Types
+Console.js:61 Admin access granted for module: Orders
+Console.js:61 Admin access granted for module: Job Orders
+Console.js:61 Admin access granted for module: JO Mix
+Console.js:61 Admin access granted for module: Workflow
+Console.js:61 Admin access granted for module: Rolls-Pro
+Console.js:61 Admin access granted for module: Mix Materials
+Console.js:61 Admin access granted for module: Bottleneck Monitor
+Console.js:61 Admin access granted for module: Production Metrics
+Console.js:61 Admin access granted for module: IoT Monitor
+Console.js:61 Admin access granted for module: Raw Materials
+Console.js:61 Admin access granted for module: Final Products
+Console.js:61 Admin access granted for module: Unified Dashboard
+Console.js:61 Admin access granted for module: Checks
+Console.js:61 Admin access granted for module: Reports
+Console.js:61 Admin access granted for module: attendance
+Console.js:61 Admin access granted for module: overtime_leave
+Console.js:61 Admin access granted for module: employee_of_the_month
+Console.js:61 Admin access granted for module: violation_and_complaint
+Console.js:61 Admin access granted for module: training_management
+Console.js:61 Admin access granted for module: Maintenance Requests
+Console.js:61 Admin access granted for module: Maintenance Actions
+Console.js:61 Admin access granted for module: Maintenance Schedule
+Console.js:61 Admin access granted for module: Dashboard
+Console.js:61 Admin access granted for module: My Dashboard
+Console.js:61 Admin access granted for module: Reports
+Console.js:61 Admin access granted for module: Order Design
+Console.js:61 Admin access granted for module: Bag Weight Calculator
+Console.js:61 Admin access granted for module: Ink Consumption
+Console.js:61 Admin access granted for module: Mix Colors
+Console.js:61 Admin access granted for module: Utility Tools
+Console.js:61 Admin access granted for module: Cost
+Console.js:61 Admin access granted for module: Cliches
+Console.js:61 Admin access granted for module: All Documents
+Console.js:61 Admin access granted for module: New Document
+Console.js:61 Admin access granted for module: Templates
+Console.js:61 Admin access granted for module: Archive
+Console.js:61 Admin access granted for module: Instructions
+Console.js:61 Admin access granted for module: Policies
+Console.js:61 Admin access granted for module: Procedures
+Console.js:61 Admin access granted for module: Forms
+Console.js:61 Admin access granted for module: Contracts
+Console.js:61 Admin access granted for module: Reports
+Console.js:61 Admin access granted for module: Database
+Console.js:61 Admin access granted for module: Permissions
+Console.js:61 Admin access granted for module: Import & Export
+Console.js:61 Admin access granted for module: SMS Management
+Console.js:61 Admin access granted for module: Server Management
+Console.js:61 Admin access granted for module: Order Design
+Console.js:61 Admin access granted for module: Bag Weight Calculator
+Console.js:61 Admin access granted for module: Ink Consumption
+Console.js:61 Admin access granted for module: Mix Colors
+Console.js:61 Admin access granted for module: Utility Tools
+Console.js:61 Admin access granted for module: Cost
+Console.js:61 Admin access granted for module: Cliches
+Console.js:61 Admin access granted for module: All Documents
+Console.js:61 Admin access granted for module: New Document
+Console.js:61 Admin access granted for module: Templates
+Console.js:61 Admin access granted for module: Archive
+Console.js:61 Admin access granted for module: Instructions
+Console.js:61 Admin access granted for module: Policies
+Console.js:61 Admin access granted for module: Procedures
+Console.js:61 Admin access granted for module: Forms
+Console.js:61 Admin access granted for module: Contracts
+Console.js:61 Admin access granted for module: Reports
+Console.js:61 Admin access granted for module: Database
+Console.js:61 Admin access granted for module: Permissions
+Console.js:61 Admin access granted for module: Import & Export
+Console.js:61 Admin access granted for module: SMS Management
+Console.js:61 Admin access granted for module: Server Management
+Console.js:61 [Console Filter] Suppressed: React Beautiful DnD isCombineEnabled prop issue - fixed in configuration Object
+Console.js:61 Response status: 200 OK
+Console.js:61 API Response data: Object
+_app-fa2bbf2ef2a04535.js:18 Fetch failed loading: POST "https://analytics.google.com/g/collect?v=2&tid=G-MPJY3F1YEL&gtm=45je57n0v9135634466za200&_p=1753648350296&gcd=13l3l3l3l2l1&npa=0&dma=0&tag_exp=101509157~103116026~103200004~103233427~104684208~104684211~104948813&ul=en-us&sr=1067x667&cid=916480764.1747968652&ecid=997502590&ir=1&uaa=x86&uab=64&uafvl=Chromium%3B140.0.7312.0%7CNot%253DA%253FBrand%3B24.0.0.0%7CGoogle%2520Chrome%3B140.0.7312.0&uamb=0&uam=&uap=Windows&uapv=19.0.0&uaw=0&are=1&frm=0&pscdl=noapi&_eu=EBAIAAQ&_s=13&dl=https%3A%2F%2Freplit.com%2Ft%2Fmodern-plastic-bags-factory%2Frepls%2FMPBF-M&dp=%2Ft%2Fmodern-plastic-bags-factory%2Frepls%2FMPBF-M&dt=replEnvironmentDesktop&sid=1753644547&sct=276&seg=1&_tu=wAQ&en=Git%20Project%20Feature%20Used&_ee=1&ep.event_category=All&ep.value=0&_et=10468&tfd=394675".
+(anonymous) @ _app-fa2bbf2ef2a04535.js:18
+Vc @ js?id=G-MPJY3F1YEL&cx=c&_slc=1:226
+um @ js?id=G-MPJY3F1YEL&cx=c&_slc=1:416
+lN @ js?id=G-MPJY3F1YEL&cx=c&_slc=1:852
+k.flush @ js?id=G-MPJY3F1YEL&cx=c&_slc=1:860
+(anonymous) @ js?id=G-MPJY3F1YEL&cx=c&_slc=1:857
+n @ _app-fa2bbf2ef2a04535.js:18
+Fetch finished loading: POST "<URL>".
+Fetch finished loading: POST "<URL>".
+Fetch finished loading: POST "<URL>".
+Fetch finished loading: POST "<URL>".
+Fetch finished loading: POST "<URL>".
+Fetch finished loading: POST "<URL>".
+Fetch finished loading: POST "<URL>".
+Console.js:61 setLanguage called with: en
+Console.js:61 Current i18n language: ar
+Console.js:61 Language changed to: en
+Console.js:61 Available resources for en : true
+Console.js:61 After changeLanguage, i18n.language: en
+Console.js:61 Stored in localStorage: en
+Console.js:61 Updated language state to: en
+ Admin access granted for module: AI Assistant
+ Admin access granted for module: Categories
+ Admin access granted for module: Products
+ Admin access granted for module: Customers
+ Admin access granted for module: Items
+ Admin access granted for module: Sections
+ Admin access granted for module: Machines
+ Admin access granted for module: Machine Parts
+ Admin access granted for module: Users
+ Admin access granted for module: ABA Formulas
+ Admin access granted for module: Geofence Management
+ Admin access granted for module: Quality Check Types
+ Admin access granted for module: Orders
+ Admin access granted for module: Job Orders
+ Admin access granted for module: JO Mix
+ Admin access granted for module: Workflow
+ Admin access granted for module: Rolls-Pro
+ Admin access granted for module: Mix Materials
+ Admin access granted for module: Bottleneck Monitor
+ Admin access granted for module: Production Metrics
+ Admin access granted for module: IoT Monitor
+ Admin access granted for module: Raw Materials
+ Admin access granted for module: Final Products
+ Admin access granted for module: Unified Dashboard
+ Admin access granted for module: Checks
+ Admin access granted for module: Reports
+ Admin access granted for module: attendance
+ Admin access granted for module: overtime_leave
+ Admin access granted for module: employee_of_the_month
+ Admin access granted for module: violation_and_complaint
+ Admin access granted for module: training_management
+ Admin access granted for module: Maintenance Requests
+ Admin access granted for module: Maintenance Actions
+ Admin access granted for module: Maintenance Schedule
+Console.js:61 Admin access granted for module: Dashboard
+Console.js:61 Admin access granted for module: Categories
+Console.js:61 Admin access granted for module: Products
+Console.js:61 Admin access granted for module: Customers
+Console.js:61 Admin access granted for module: Items
+Console.js:61 Admin access granted for module: Sections
+Console.js:61 Admin access granted for module: Machines
+Console.js:61 Admin access granted for module: Machine Parts
+Console.js:61 Admin access granted for module: Users
+Console.js:61 Admin access granted for module: ABA Formulas
+Console.js:61 Admin access granted for module: Geofence Management
+Console.js:61 Admin access granted for module: Quality Check Types
+Console.js:61 Admin access granted for module: Orders
+Console.js:61 Admin access granted for module: Job Orders
+Console.js:61 Admin access granted for module: JO Mix
+Console.js:61 Admin access granted for module: Workflow
+Console.js:61 Admin access granted for module: Rolls-Pro
+Console.js:61 Admin access granted for module: Mix Materials
+Console.js:61 Admin access granted for module: Bottleneck Monitor
+Console.js:61 Admin access granted for module: Production Metrics
+Console.js:61 Admin access granted for module: IoT Monitor
+Console.js:61 Admin access granted for module: Raw Materials
+Console.js:61 Admin access granted for module: Final Products
+Console.js:61 Admin access granted for module: Unified Dashboard
+Console.js:61 Admin access granted for module: Checks
+Console.js:61 Admin access granted for module: Reports
+Console.js:61 Admin access granted for module: attendance
+Console.js:61 Admin access granted for module: overtime_leave
+Console.js:61 Admin access granted for module: employee_of_the_month
+Console.js:61 Admin access granted for module: violation_and_complaint
+Console.js:61 Admin access granted for module: training_management
+Console.js:61 Admin access granted for module: Maintenance Requests
+Console.js:61 Admin access granted for module: Maintenance Actions
+Console.js:61 Admin access granted for module: Maintenance Schedule
+Console.js:61 Admin access granted for module: Dashboard
+Console.js:61 Admin access granted for module: My Dashboard
+Console.js:61 Admin access granted for module: Reports
+Console.js:61 Admin access granted for module: Order Design
+Console.js:61 Admin access granted for module: Bag Weight Calculator
+Console.js:61 Admin access granted for module: Ink Consumption
+Console.js:61 Admin access granted for module: Mix Colors
+Console.js:61 Admin access granted for module: Utility Tools
+Console.js:61 Admin access granted for module: Cost
+Console.js:61 Admin access granted for module: Cliches
+Console.js:61 Admin access granted for module: All Documents
+Console.js:61 Admin access granted for module: New Document
+Console.js:61 Admin access granted for module: Templates
+Console.js:61 Admin access granted for module: Archive
+Console.js:61 Admin access granted for module: Instructions
+Console.js:61 Admin access granted for module: Policies
+Console.js:61 Admin access granted for module: Procedures
+Console.js:61 Admin access granted for module: Forms
+Console.js:61 Admin access granted for module: Contracts
+Console.js:61 Admin access granted for module: Reports
+Console.js:61 Admin access granted for module: Database
+Console.js:61 Admin access granted for module: Permissions
+Console.js:61 Admin access granted for module: Import & Export
+Console.js:61 Admin access granted for module: SMS Management
+Console.js:61 Admin access granted for module: Server Management
+Console.js:61 Admin access granted for module: Order Design
+Console.js:61 Admin access granted for module: Bag Weight Calculator
+Console.js:61 Admin access granted for module: Ink Consumption
+Console.js:61 Admin access granted for module: Mix Colors
+Console.js:61 Admin access granted for module: Utility Tools
+Console.js:61 Admin access granted for module: Cost
+Console.js:61 Admin access granted for module: Cliches
+Console.js:61 Admin access granted for module: All Documents
+Console.js:61 Admin access granted for module: New Document
+Console.js:61 Admin access granted for module: Templates
+Console.js:61 Admin access granted for module: Archive
+Console.js:61 Admin access granted for module: Instructions
+Console.js:61 Admin access granted for module: Policies
+Console.js:61 Admin access granted for module: Procedures
+Console.js:61 Admin access granted for module: Forms
+Console.js:61 Admin access granted for module: Contracts
+Console.js:61 Admin access granted for module: Reports
+Console.js:61 Admin access granted for module: Database
+Console.js:61 Admin access granted for module: Permissions
+Console.js:61 Admin access granted for module: Import & Export
+Console.js:61 Admin access granted for module: SMS Management
+Console.js:61 Admin access granted for module: Server Management
+Console.js:61 [Console Filter] Suppressed: React Beautiful DnD isCombineEnabled prop issue - fixed in configuration {originalMessage: '%creact-beautiful-dnd\n\n%cA setup problem was encou…nt-weight: bold; line-height: 1.5 color: #723874;'}
+Console.js:61 setLanguage called with: ar
+Console.js:61 Current i18n language: en
+Console.js:61 Language changed to: ar
+Console.js:61 Available resources for ar : true
+Console.js:61 After changeLanguage, i18n.language: ar
+Console.js:61 Stored in localStorage: ar
+Console.js:61 Updated language state to: ar
+ Admin access granted for module: AI Assistant
+ Admin access granted for module: Categories
+ Admin access granted for module: Products
+ Admin access granted for module: Customers
+ Admin access granted for module: Items
+ Admin access granted for module: Sections
+ Admin access granted for module: Machines
+ Admin access granted for module: Machine Parts
+ Admin access granted for module: Users
+ Admin access granted for module: ABA Formulas
+ Admin access granted for module: Geofence Management
+ Admin access granted for module: Quality Check Types
+ Admin access granted for module: Orders
+ Admin access granted for module: Job Orders
+ Admin access granted for module: JO Mix
+ Admin access granted for module: Workflow
+ Admin access granted for module: Rolls-Pro
+ Admin access granted for module: Mix Materials
+ Admin access granted for module: Bottleneck Monitor
+ Admin access granted for module: Production Metrics
+ Admin access granted for module: IoT Monitor
+ Admin access granted for module: Raw Materials
+ Admin access granted for module: Final Products
+ Admin access granted for module: Unified Dashboard
+ Admin access granted for module: Checks
+ Admin access granted for module: Reports
+ Admin access granted for module: attendance
+ Admin access granted for module: overtime_leave
+ Admin access granted for module: employee_of_the_month
+ Admin access granted for module: violation_and_complaint
+ Admin access granted for module: training_management
+ Admin access granted for module: Maintenance Requests
+ Admin access granted for module: Maintenance Actions
+ Admin access granted for module: Maintenance Schedule
+Console.js:61 Admin access granted for module: Dashboard
+Console.js:61 Admin access granted for module: Categories
+Console.js:61 Admin access granted for module: Products
+Console.js:61 Admin access granted for module: Customers
+Console.js:61 Admin access granted for module: Items
+Console.js:61 Admin access granted for module: Sections
+Console.js:61 Admin access granted for module: Machines
+Console.js:61 Admin access granted for module: Machine Parts
+Console.js:61 Admin access granted for module: Users
+Console.js:61 Admin access granted for module: ABA Formulas
+Console.js:61 Admin access granted for module: Geofence Management
+Console.js:61 Admin access granted for module: Quality Check Types
+Console.js:61 Admin access granted for module: Orders
+Console.js:61 Admin access granted for module: Job Orders
+Console.js:61 Admin access granted for module: JO Mix
+Console.js:61 Admin access granted for module: Workflow
+Console.js:61 Admin access granted for module: Rolls-Pro
+Console.js:61 Admin access granted for module: Mix Materials
+Console.js:61 Admin access granted for module: Bottleneck Monitor
+Console.js:61 Admin access granted for module: Production Metrics
+Console.js:61 Admin access granted for module: IoT Monitor
+Console.js:61 Admin access granted for module: Raw Materials
+Console.js:61 Admin access granted for module: Final Products
+Console.js:61 Admin access granted for module: Unified Dashboard
+Console.js:61 Admin access granted for module: Checks
+Console.js:61 Admin access granted for module: Reports
+Console.js:61 Admin access granted for module: attendance
+Console.js:61 Admin access granted for module: overtime_leave
+Console.js:61 Admin access granted for module: employee_of_the_month
+Console.js:61 Admin access granted for module: violation_and_complaint
+Console.js:61 Admin access granted for module: training_management
+Console.js:61 Admin access granted for module: Maintenance Requests
+Console.js:61 Admin access granted for module: Maintenance Actions
+Console.js:61 Admin access granted for module: Maintenance Schedule
+Console.js:61 Admin access granted for module: Dashboard
+Console.js:61 Admin access granted for module: My Dashboard
+Console.js:61 Admin access granted for module: Reports
+Console.js:61 Admin access granted for module: Order Design
+Console.js:61 Admin access granted for module: Bag Weight Calculator
+Console.js:61 Admin access granted for module: Ink Consumption
+Console.js:61 Admin access granted for module: Mix Colors
+Console.js:61 Admin access granted for module: Utility Tools
+Console.js:61 Admin access granted for module: Cost
+Console.js:61 Admin access granted for module: Cliches
+Console.js:61 Admin access granted for module: All Documents
+Console.js:61 Admin access granted for module: New Document
+Console.js:61 Admin access granted for module: Templates
+Console.js:61 Admin access granted for module: Archive
+Console.js:61 Admin access granted for module: Instructions
+Console.js:61 Admin access granted for module: Policies
+Console.js:61 Admin access granted for module: Procedures
+Console.js:61 Admin access granted for module: Forms
+Console.js:61 Admin access granted for module: Contracts
+Console.js:61 Admin access granted for module: Reports
+Console.js:61 Admin access granted for module: Database
+Console.js:61 Admin access granted for module: Permissions
+Console.js:61 Admin access granted for module: Import & Export
+Console.js:61 Admin access granted for module: SMS Management
+Console.js:61 Admin access granted for module: Server Management
+Console.js:61 Admin access granted for module: Order Design
+Console.js:61 Admin access granted for module: Bag Weight Calculator
+Console.js:61 Admin access granted for module: Ink Consumption
+Console.js:61 Admin access granted for module: Mix Colors
+Console.js:61 Admin access granted for module: Utility Tools
+Console.js:61 Admin access granted for module: Cost
+Console.js:61 Admin access granted for module: Cliches
+Console.js:61 Admin access granted for module: All Documents
+Console.js:61 Admin access granted for module: New Document
+Console.js:61 Admin access granted for module: Templates
+Console.js:61 Admin access granted for module: Archive
+Console.js:61 Admin access granted for module: Instructions
+Console.js:61 Admin access granted for module: Policies
+Console.js:61 Admin access granted for module: Procedures
+Console.js:61 Admin access granted for module: Forms
+Console.js:61 Admin access granted for module: Contracts
+Console.js:61 Admin access granted for module: Reports
+Console.js:61 Admin access granted for module: Database
+Console.js:61 Admin access granted for module: Permissions
+Console.js:61 Admin access granted for module: Import & Export
+Console.js:61 Admin access granted for module: SMS Management
+Console.js:61 Admin access granted for module: Server Management
+Console.js:61 [Console Filter] Suppressed: React Beautiful DnD isCombineEnabled prop issue - fixed in configuration {originalMessage: '%creact-beautiful-dnd\n\n%cA setup problem was encou…nt-weight: bold; line-height: 1.5 color: #723874;'}
+Network.js:219 Fetch finished loading: GET "https://011969c2-0d61-458f-be12-a650c28c1ec4-00-1hnxwefdzf33k.sisko.replit.dev/api/notifications/unread-count".
+window.fetch @ Network.js:219
+(anonymous) @ queryClient.ts:100
+fetchFn @ query.ts:457
+run @ retryer.ts:153
+start @ retryer.ts:218
+fetch @ query.ts:576
+#executeFetch @ queryObserver.ts:333
+(anonymous) @ queryObserver.ts:396
+Network.js:219 Fetch finished loading: GET "https://011969c2-0d61-458f-be12-a650c28c1ec4-00-1hnxwefdzf33k.sisko.replit.dev/api/notifications".
+window.fetch @ Network.js:219
+(anonymous) @ queryClient.ts:100
+fetchFn @ query.ts:457
+run @ retryer.ts:153
+start @ retryer.ts:218
+fetch @ query.ts:576
+#executeFetch @ queryObserver.ts:333
+(anonymous) @ queryObserver.ts:396

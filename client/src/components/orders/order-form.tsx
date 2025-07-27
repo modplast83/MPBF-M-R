@@ -612,7 +612,7 @@ export function OrderForm() {
                                           const item = items?.find(i => i.id === product.itemId);
                                           const category = categories?.find(c => c.id === product.categoryId);
                                           
-                                          const display = `${category?.name || "Unknown"} - ${item?.name || "Unknown"}${product.sizeCaption ? ` (${product.sizeCaption})` : ""}`;
+                                          const display = `${category?.name || t("orders.unknown")} - ${item?.name || t("orders.unknown")}${product.sizeCaption ? ` (${product.sizeCaption})` : ""}`;
                                           
                                           return (
                                             <SelectItem key={product.id} value={product.id.toString()} className="select-item-enhanced">
@@ -620,7 +620,7 @@ export function OrderForm() {
                                                 <span className="font-medium text-left">{display}</span>
                                                 {product.thickness && (
                                                   <span className="text-xs text-muted-foreground text-left mt-1">
-                                                    Thickness: {product.thickness}μm
+                                                    {t("orders.thickness")}: {product.thickness}μm
                                                   </span>
                                                 )}
                                               </div>
@@ -629,7 +629,7 @@ export function OrderForm() {
                                         })}
                                         {(!customerProducts || customerProducts.length === 0) && (
                                           <SelectItem value="no-products" disabled>
-                                            {productsLoading ? "Loading..." : "No products"}
+                                            {productsLoading ? t("orders.loading_products") : t("orders.no_products")}
                                           </SelectItem>
                                         )}
                                       </SelectContent>
@@ -647,7 +647,7 @@ export function OrderForm() {
                                 render={({ field }) => (
                                   <FormItem>
                                     <FormLabel className="text-sm font-medium">
-                                      {t("orders.quantity")} (كجم)
+{t("orders.quantity")} ({t("orders.kg")})
                                     </FormLabel>
                                     <FormControl>
                                       <Input
@@ -697,7 +697,7 @@ export function OrderForm() {
                       {t("orders.add_products_to_order")}
                     </p>
                     <p className="text-sm text-muted-foreground mt-1">
-                      Click the "Add Product" button to start building your order
+                      {t("orders.click_add_product_to_start")}
                     </p>
                   </div>
                 )
@@ -708,7 +708,7 @@ export function OrderForm() {
                     {t("orders.select_customer_first")}
                   </p>
                   <p className="text-sm text-muted-foreground mt-1">
-                    Please select a customer to view available products
+                    {t("orders.please_select_customer_to_view_products")}
                   </p>
                 </div>
               )}

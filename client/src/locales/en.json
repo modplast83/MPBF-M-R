@@ -2220,6 +2220,11 @@
       "print_ready_description": "Order print view has been prepared.",
       "product_single": "Product",
       "product_plural": "Products",
+      "kg": "kg",
+      "unknown": "Unknown",
+      "unknown_customer": "Unknown Customer",
+      "click_add_product_to_start": "Click the \"Add Product\" button to start building your order",
+      "please_select_customer_to_view_products": "Please select a customer to view available products",
       "add_first_product": "Add Your First Product",
       "add_first_product_description": "Click the button above to add products to this order.",
       "no_products_available": "No products available for this customer",
@@ -2639,6 +2644,12 @@
       "calculationDeletedSuccess": "Calculation has been deleted successfully",
       "calculationDetails": "Calculation Details",
       "calculationSummary": "Summary"
+    },
+    "production": {
+      "total_orders": "Total Orders",
+      "total_quantity": "Total Quantity",
+      "completed": "Completed",
+      "completion_rate": "Completion Rate"
     },
     "hr": {
       "title": "Human Resources",

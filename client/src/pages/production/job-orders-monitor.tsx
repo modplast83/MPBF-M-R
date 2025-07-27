@@ -127,7 +127,7 @@ const ProductionStats = ({ jobOrders }: { jobOrders: JobOrderWithDetails[] }) =>
         <CardContent className="p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">Total Orders</p>
+              <p className="text-sm text-muted-foreground">{t("production.total_orders")}</p>
               <p className="text-2xl font-bold">{stats.totalOrders}</p>
             </div>
             <Package className="h-8 w-8 text-blue-600" />
@@ -139,8 +139,8 @@ const ProductionStats = ({ jobOrders }: { jobOrders: JobOrderWithDetails[] }) =>
         <CardContent className="p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">Total Quantity</p>
-              <p className="text-2xl font-bold">{stats.totalQuantity.toLocaleString()} kg</p>
+              <p className="text-sm text-muted-foreground">{t("production.total_quantity")}</p>
+              <p className="text-2xl font-bold">{stats.totalQuantity.toLocaleString()} {t("orders.kg")}</p>
             </div>
             <Weight className="h-8 w-8 text-green-600" />
           </div>
@@ -151,8 +151,8 @@ const ProductionStats = ({ jobOrders }: { jobOrders: JobOrderWithDetails[] }) =>
         <CardContent className="p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">Completed</p>
-              <p className="text-2xl font-bold">{stats.completedQuantity.toLocaleString()} kg</p>
+              <p className="text-sm text-muted-foreground">{t("production.completed")}</p>
+              <p className="text-2xl font-bold">{stats.completedQuantity.toLocaleString()} {t("orders.kg")}</p>
             </div>
             <CheckCircle className="h-8 w-8 text-emerald-600" />
           </div>
@@ -163,7 +163,7 @@ const ProductionStats = ({ jobOrders }: { jobOrders: JobOrderWithDetails[] }) =>
         <CardContent className="p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">Completion Rate</p>
+              <p className="text-sm text-muted-foreground">{t("production.completion_rate")}</p>
               <p className="text-2xl font-bold">{stats.completionRate.toFixed(1)}%</p>
             </div>
             <Target className="h-8 w-8 text-purple-600" />

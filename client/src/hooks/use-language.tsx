@@ -35,21 +35,12 @@ export function LanguageProvider({ children }: LanguageProviderProps) {
 
   // Function to set language
   const setLanguage = (newLanguage: Language) => {
-    console.log("setLanguage called with:", newLanguage);
-    console.log("Current i18n language:", i18n.language);
-    
     // Change language in i18next
     i18n.changeLanguage(newLanguage);
-    console.log("After changeLanguage, i18n.language:", i18n.language);
-    
     // Store in localStorage
     localStorage.setItem("language", newLanguage);
-    console.log("Stored in localStorage:", localStorage.getItem("language"));
-    
     // Update state
     setLanguageState(newLanguage);
-    console.log("Updated language state to:", newLanguage);
-    
     // Update HTML lang and dir attributes
     updateHtmlAttributes(newLanguage);
   };

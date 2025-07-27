@@ -1190,6 +1190,11 @@
       "print_ready_description": "تم تحضير عرض طباعة الطلب.",
       "product_single": "منتج",
       "product_plural": "منتجات",
+      "kg": "كجم",
+      "unknown": "غير معروف",
+      "unknown_customer": "عميل غير معروف",
+      "click_add_product_to_start": "انقر على زر \"إضافة منتج\" لبدء بناء طلبك",
+      "please_select_customer_to_view_products": "يرجى اختيار عميل لعرض المنتجات المتاحة",
       "orders_statistics": "إحصائيات الطلبات",
       "delete_orders": "حذف الطلبات",
       "bulk_delete_completed": "تم إنجاز الحذف المتعدد",
@@ -2825,6 +2830,12 @@
       "calculationDeletedSuccess": "تم حذف الحساب بنجاح",
       "calculationDetails": "تفاصيل الحساب",
       "calculationSummary": "ملخص"
+    },
+    "production": {
+      "total_orders": "إجمالي الطلبات",
+      "total_quantity": "إجمالي الكمية",
+      "completed": "مكتمل",
+      "completion_rate": "معدل الإنجاز"
     },
     "hr": {
       "title": "الموارد البشرية",
