@@ -698,9 +698,7 @@ export function AIAssistantWidget({
                     </div>
                   )}
                   
-                  <div className="text-xs opacity-50 mt-2">
-                    {message.timestamp.toLocaleTimeString()}
-                  </div>
+                  
                 </div>
               </div>
             ))}
