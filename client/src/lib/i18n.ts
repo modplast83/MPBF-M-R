@@ -17,10 +17,10 @@ i18nInstance
   .use(initReactI18next)
   .init({
     resources: {
-      en: { translation: enJSON },
-      ar: { translation: arJSON },
-      ml: { translation: mlJSON },
-      ur: { translation: urJSON },
+      en: enJSON,
+      ar: arJSON,
+      ml: mlJSON,
+      ur: urJSON,
     },
     fallbackLng: "en",
     debug: false,
@@ -40,10 +40,15 @@ lng: undefined, // ← يتركه للكشف التلقائي
   });
 
 console.log("i18next resources loaded:", {
-  en: !!enJSON?.translation?.auth,
-  ar: !!arJSON?.translation?.auth,
+  en: !!enJSON?.translation?.app,
+  ar: !!arJSON?.translation?.app,
   ml: !!mlJSON?.translation?.auth,
   ur: !!urJSON?.translation?.auth,
+});
+
+console.log("Sample translations:", {
+  en_app_title: enJSON?.translation?.app?.title,
+  ar_app_title: arJSON?.translation?.app?.title,
 });
 
 export default i18n;
