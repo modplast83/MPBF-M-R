@@ -1188,6 +1188,8 @@
       "return_to_orders": "العودة إلى الطلبات",
       "print_ready": "جاهز للطباعة",
       "print_ready_description": "تم تحضير عرض طباعة الطلب.",
+      "product_single": "منتج",
+      "product_plural": "منتجات",
       "orders_statistics": "إحصائيات الطلبات",
       "delete_orders": "حذف الطلبات",
       "bulk_delete_completed": "تم إنجاز الحذف المتعدد",

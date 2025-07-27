@@ -46,4 +46,16 @@ console.log("i18next resources loaded:", {
   ur: !!urJSON?.translation?.auth,
 });
 
+console.log("i18next configuration:", {
+  language: i18n.language,
+  fallbackLng: i18n.options.fallbackLng,
+  resources: Object.keys(i18n.options.resources || {}),
+});
+
+// Add language change event listener
+i18n.on('languageChanged', (lng) => {
+  console.log('Language changed to:', lng);
+  console.log('Available resources for', lng, ':', !!i18n.getResourceBundle(lng, 'translation'));
+});
+
 export default i18n;

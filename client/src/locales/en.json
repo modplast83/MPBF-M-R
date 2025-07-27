@@ -2218,6 +2218,8 @@
       "return_to_orders": "Return to Orders",
       "print_ready": "Print Ready",
       "print_ready_description": "Order print view has been prepared.",
+      "product_single": "Product",
+      "product_plural": "Products",
       "add_first_product": "Add Your First Product",
       "add_first_product_description": "Click the button above to add products to this order.",
       "no_products_available": "No products available for this customer",
