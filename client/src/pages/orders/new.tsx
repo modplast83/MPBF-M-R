@@ -750,53 +750,104 @@ export default function NewOrderPage() {
                               <SelectTrigger className="mt-1">
                                 <SelectValue placeholder={t('orders.select_product')} />
                               </SelectTrigger>
-                              <SelectContent className="max-h-60 overflow-y-auto">
-                                {customerProducts.map((p) => {
+                              <SelectContent className="max-h-96 overflow-y-auto w-full min-w-[500px]">
+                                {customerProducts
+                                  .sort((a, b) => {
+                                    // Sort by category first
+                                    const categoryA = getCategoryName(a.categoryId);
+                                    const categoryB = getCategoryName(b.categoryId);
+                                    return categoryA.localeCompare(categoryB);
+                                  })
+                                  .map((p, index) => {
                                   const itemName = getItemName(p.itemId);
                                   const categoryName = getCategoryName(p.categoryId);
                                   const masterBatchName = p.masterBatchId ? getMasterBatchName(p.masterBatchId) : '';
                                   const rawMaterial = p.rawMaterial || '';
-                                  const cuttingLength = p.cuttingLength || '';
+                                  const thickness = p.thickness || '';
+                                  const width = safeStringAccess(p, 'width', '');
+                                  const lengthCm = safeStringAccess(p, 'lengthCm', '');
+                                  const sizeCaption = safeStringAccess(p, 'sizeCaption', '');
                                   
-                                  const displayText = safeSync(
-                                    () => {
-                                      const sizeCaption = safeStringAccess(p, 'sizeCaption', 'Product');
-                                      const width = safeStringAccess(p, 'width', '');
-                                      const lengthCm = safeStringAccess(p, 'lengthCm', '');
-                                      return `${sizeCaption}${width ? ` (${width}x${lengthCm})` : ''}`;
-                                    },
-                                    "Unknown Product",
-                                    { productId: p.id }
-                                  );
                                   return (
-                                    <SelectItem key={p.id} value={p.id.toString()}>
-                                      <div className="flex flex-col gap-1 py-1">
-                                        <div className="font-medium">{displayText}</div>
-                                        <div className="text-sm text-muted-foreground">
-                                          {itemName}{rawMaterial && ` • ${rawMaterial}`}
+                                    <SelectItem key={p.id} value={p.id.toString()} className="min-h-[120px] p-3">
+                                      <div className="flex flex-col gap-2 w-full">
+                                        {/* Serial Number */}
+                                        <div className="flex items-center gap-2">
+                                          <span className="font-bold text-primary bg-primary/10 px-2 py-1 rounded text-xs">
+                                            #{index + 1}
+                                          </span>
                                         </div>
-                                        <div className="text-xs text-muted-foreground flex flex-wrap gap-2">
-                                          <span className="font-medium">{t('orders.category')}:</span>
-                                          <span>{categoryName}</span>
-                                          {masterBatchName && (
-                                            <>
-                                              <span>•</span>
-                                              <span className="font-medium">{t('orders.master_batch')}:</span>
-                                              <span>{masterBatchName}</span>
-                                            </>
-                                          )}
-                                          {cuttingLength && (
-                                            <>
-                                              <span>•</span>
-                                              <span className="font-medium">{t('orders.cutting_length')}:</span>
-                                              <span>{cuttingLength}</span>
-                                            </>
-                                          )}
+                                        
+                                        {/* Category */}
+                                        <div className="flex items-center gap-2">
+                                          <span className="text-xs font-medium text-muted-foreground min-w-[80px]">Category:</span>
+                                          <span className="text-sm font-semibold text-blue-700">{categoryName}</span>
                                         </div>
+                                        
+                                        {/* Item Name */}
+                                        <div className="flex items-center gap-2">
+                                          <span className="text-xs font-medium text-muted-foreground min-w-[80px]">Item Name:</span>
+                                          <span className="text-sm font-medium">{itemName}</span>
+                                        </div>
+                                        
+                                        {/* Size */}
+                                        {sizeCaption && (
+                                          <div className="flex items-center gap-2">
+                                            <span className="text-xs font-medium text-muted-foreground min-w-[80px]">Size:</span>
+                                            <span className="text-sm">{sizeCaption}</span>
+                                          </div>
+                                        )}
+                                        
+                                        {/* Length */}
+                                        {lengthCm && (
+                                          <div className="flex items-center gap-2">
+                                            <span className="text-xs font-medium text-muted-foreground min-w-[80px]">Length:</span>
+                                            <span className="text-sm">{lengthCm} cm</span>
+                                          </div>
+                                        )}
+                                        
+                                        {/* Raw Material */}
+                                        {rawMaterial && (
+                                          <div className="flex items-center gap-2">
+                                            <span className="text-xs font-medium text-muted-foreground min-w-[80px]">Raw Material:</span>
+                                            <span className="text-sm">{rawMaterial}</span>
+                                          </div>
+                                        )}
+                                        
+                                        {/* Thickness */}
+                                        {thickness && (
+                                          <div className="flex items-center gap-2">
+                                            <span className="text-xs font-medium text-muted-foreground min-w-[80px]">Thickness:</span>
+                                            <span className="text-sm">{thickness}μm</span>
+                                          </div>
+                                        )}
+                                        
+                                        {/* Master Batch */}
+                                        {masterBatchName && (
+                                          <div className="flex items-center gap-2">
+                                            <span className="text-xs font-medium text-muted-foreground min-w-[80px]">Master Batch:</span>
+                                            <span className="text-sm">{masterBatchName}</span>
+                                          </div>
+                                        )}
+                                        
+                                        {/* Dimensions */}
+                                        {width && (
+                                          <div className="flex items-center gap-2">
+                                            <span className="text-xs font-medium text-muted-foreground min-w-[80px]">Dimensions:</span>
+                                            <span className="text-sm">{width} x {lengthCm}</span>
+                                          </div>
+                                        )}
                                       </div>
                                     </SelectItem>
                                   );
                                 })}
+                                {(!customerProducts || customerProducts.length === 0) && (
+                                  <SelectItem value="no-products" disabled className="p-3">
+                                    <div className="text-center text-muted-foreground">
+                                      {customersLoading ? "Loading products..." : "No products available for this customer"}
+                                    </div>
+                                  </SelectItem>
+                                )}
                               </SelectContent>
                             </Select>
                           </div>
