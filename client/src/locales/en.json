@@ -192,58 +192,58 @@
       "schedule_optimization_description": "Optimize production schedule for pending orders",
       "production_analysis_description": "Get current production efficiency and bottleneck analysis",
       "quality_dashboard_description": "View quality metrics and recent checks",
-      "optimize": "Optimize"
-    },
-    "ai_assistant": {
-      "chat": {
-        "welcome": {
-          "message": "Welcome {{username}}! How can I assist you today?",
-          "suggestions": {
-            "production_analysis": {
-              "title": "Production Analysis",
-              "description": "Get current production efficiency and bottleneck analysis"
-            },
-            "quality_dashboard": {
-              "title": "Quality Dashboard", 
-              "description": "View quality metrics and recent checks"
-            },
-            "schedule_optimization": {
-              "title": "Schedule Optimization",
-              "description": "Optimize production schedule for pending orders"
+      "optimize": "Optimize",
+      "ai_assistant": {
+        "chat": {
+          "welcome": {
+            "message": "Welcome {{username}}! How can I assist you today?",
+            "suggestions": {
+              "production_analysis": {
+                "title": "Production Analysis",
+                "description": "Get current production efficiency and bottleneck analysis"
+              },
+              "quality_dashboard": {
+                "title": "Quality Dashboard", 
+                "description": "View quality metrics and recent checks"
+              },
+              "schedule_optimization": {
+                "title": "Schedule Optimization",
+                "description": "Optimize production schedule for pending orders"
+              }
             }
+          },
+          "placeholder": "Type your question here...",
+          "voice": {
+            "listening": "Listening...",
+            "processing": "Processing...",
+            "click_microphone": "Click microphone to start voice command",
+            "english": "English",
+            "arabic": "Arabic"
+          },
+          "buttons": {
+            "start_voice_command": "Start Voice Command",
+            "stop_listening": "Stop Listening",
+            "enable_voice_responses": "Enable Voice Responses",
+            "disable_voice_responses": "Disable Voice Responses",
+            "switch_to_english": "Switch to English",
+            "switch_to_arabic": "Switch to Arabic"
+          },
+          "speech": {
+            "enabled": "Voice Responses Enabled",
+            "disabled": "Voice Responses Disabled",
+            "enabled_desc": "AI responses will now be spoken aloud",
+            "disabled_desc": "AI responses will no longer be spoken",
+            "language_changed": "Voice Language Changed",
+            "english_mode": "Voice commands now in English mode",
+            "arabic_mode": "Voice commands now in Arabic mode"
+          },
+          "errors": {
+            "voice_recognition": "Voice Recognition Error",
+            "voice_recognition_desc": "There was an error with voice recognition",
+            "voice_start_failed": "Voice Start Failed",
+            "assistant_error": "Assistant Error",
+            "assistant_error_desc": "There was an error processing your request"
           }
-        },
-        "placeholder": "Type your question here...",
-        "voice": {
-          "listening": "Listening...",
-          "processing": "Processing...",
-          "click_microphone": "Click microphone to start voice command",
-          "english": "English",
-          "arabic": "Arabic"
-        },
-        "buttons": {
-          "start_voice_command": "Start Voice Command",
-          "stop_listening": "Stop Listening",
-          "enable_voice_responses": "Enable Voice Responses",
-          "disable_voice_responses": "Disable Voice Responses",
-          "switch_to_english": "Switch to English",
-          "switch_to_arabic": "Switch to Arabic"
-        },
-        "speech": {
-          "enabled": "Voice Responses Enabled",
-          "disabled": "Voice Responses Disabled",
-          "enabled_desc": "AI responses will now be spoken aloud",
-          "disabled_desc": "AI responses will no longer be spoken",
-          "language_changed": "Voice Language Changed",
-          "english_mode": "Voice commands now in English mode",
-          "arabic_mode": "Voice commands now in Arabic mode"
-        },
-        "errors": {
-          "voice_recognition": "Voice Recognition Error",
-          "voice_recognition_desc": "There was an error with voice recognition",
-          "voice_start_failed": "Voice Start Failed",
-          "assistant_error": "Assistant Error",
-          "assistant_error_desc": "There was an error processing your request"
         }
       }
     },

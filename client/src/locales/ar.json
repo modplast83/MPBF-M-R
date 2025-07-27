@@ -60,58 +60,58 @@
       "configure": "تهيئة",
       "workflow_optimization": "تحسين سير العمل",
       "workflow_optimization_desc": "اقتراحات لتحسين الأداء وزيادة الكفاءة.",
-      "optimize": "تحسين"
-    },
-    "ai_assistant": {
-      "chat": {
-        "welcome": {
-          "message": "مرحبًا {{username}}! كيف يمكنني مساعدتك اليوم؟",
-          "suggestions": {
-            "production_analysis": {
-              "title": "تحليل الإنتاج",
-              "description": "الحصول على كفاءة الإنتاج الحالية وتحليل الاختناقات"
-            },
-            "quality_dashboard": {
-              "title": "لوحة تحكم الجودة", 
-              "description": "عرض مقاييس الجودة والفحوصات الأخيرة"
-            },
-            "schedule_optimization": {
-              "title": "تحسين الجدولة",
-              "description": "تحسين جدولة الإنتاج للطلبات المعلقة"
+      "optimize": "تحسين",
+      "ai_assistant": {
+        "chat": {
+          "welcome": {
+            "message": "مرحبًا {{username}}! كيف يمكنني مساعدتك اليوم؟",
+            "suggestions": {
+              "production_analysis": {
+                "title": "تحليل الإنتاج",
+                "description": "الحصول على كفاءة الإنتاج الحالية وتحليل الاختناقات"
+              },
+              "quality_dashboard": {
+                "title": "لوحة تحكم الجودة", 
+                "description": "عرض مقاييس الجودة والفحوصات الأخيرة"
+              },
+              "schedule_optimization": {
+                "title": "تحسين الجدولة",
+                "description": "تحسين جدولة الإنتاج للطلبات المعلقة"
+              }
             }
+          },
+          "placeholder": "اكتب سؤالك هنا...",
+          "voice": {
+            "listening": "جاري الاستماع...",
+            "processing": "جاري المعالجة...",
+            "click_microphone": "انقر على الميكروفون لبدء الأمر الصوتي",
+            "english": "الإنجليزية",
+            "arabic": "العربية"
+          },
+          "buttons": {
+            "start_voice_command": "بدء الأمر الصوتي",
+            "stop_listening": "إيقاف الاستماع",
+            "enable_voice_responses": "تفعيل الردود الصوتية",
+            "disable_voice_responses": "إيقاف الردود الصوتية",
+            "switch_to_english": "التبديل إلى الإنجليزية",
+            "switch_to_arabic": "التبديل إلى العربية"
+          },
+          "speech": {
+            "enabled": "تم تفعيل الردود الصوتية",
+            "disabled": "تم إيقاف الردود الصوتية",
+            "enabled_desc": "سيتم نطق ردود الذكاء الاصطناعي بصوت عالٍ",
+            "disabled_desc": "لن يتم نطق ردود الذكاء الاصطناعي",
+            "language_changed": "تم تغيير لغة الصوت",
+            "english_mode": "الأوامر الصوتية الآن باللغة الإنجليزية",
+            "arabic_mode": "الأوامر الصوتية الآن باللغة العربية"
+          },
+          "errors": {
+            "voice_recognition": "خطأ في التعرف على الصوت",
+            "voice_recognition_desc": "حدث خطأ في التعرف على الصوت",
+            "voice_start_failed": "فشل في بدء الصوت",
+            "assistant_error": "خطأ في المساعد",
+            "assistant_error_desc": "حدث خطأ في معالجة طلبك"
           }
-        },
-        "placeholder": "اكتب سؤالك هنا...",
-        "voice": {
-          "listening": "جاري الاستماع...",
-          "processing": "جاري المعالجة...",
-          "click_microphone": "انقر على الميكروفون لبدء الأمر الصوتي",
-          "english": "الإنجليزية",
-          "arabic": "العربية"
-        },
-        "buttons": {
-          "start_voice_command": "بدء الأمر الصوتي",
-          "stop_listening": "إيقاف الاستماع",
-          "enable_voice_responses": "تفعيل الردود الصوتية",
-          "disable_voice_responses": "إيقاف الردود الصوتية",
-          "switch_to_english": "التبديل إلى الإنجليزية",
-          "switch_to_arabic": "التبديل إلى العربية"
-        },
-        "speech": {
-          "enabled": "تم تفعيل الردود الصوتية",
-          "disabled": "تم إيقاف الردود الصوتية",
-          "enabled_desc": "سيتم نطق ردود الذكاء الاصطناعي بصوت عالٍ",
-          "disabled_desc": "لن يتم نطق ردود الذكاء الاصطناعي",
-          "language_changed": "تم تغيير لغة الصوت",
-          "english_mode": "الأوامر الصوتية الآن باللغة الإنجليزية",
-          "arabic_mode": "الأوامر الصوتية الآن باللغة العربية"
-        },
-        "errors": {
-          "voice_recognition": "خطأ في التعرف على الصوت",
-          "voice_recognition_desc": "حدث خطأ في التعرف على الصوت",
-          "voice_start_failed": "فشل في بدء الصوت",
-          "assistant_error": "خطأ في المساعد",
-          "assistant_error_desc": "حدث خطأ في معالجة طلبك"
         }
       }
     },
