@@ -7126,23 +7126,5 @@
         "leadership": "تدريب القيادة"
       }
     }
-  },
-
-  "translation": {
-    "ai": {
-      "title": "مساعد الذكاء الاصطناعي",
-      "subtitle": "تحليلات وأتمتة ذكية لإدارة الإنتاج",
-      "chat": "المحادثة",
-      "insights": "رؤى الإنتاج",
-      "automation": "الأتمتة الذكية",
-      "chat_assistant": "المساعد الذكي",
-      "quick_actions": "إجراءات سريعة",
-      "production_analysis": "تحليل الإنتاج",
-      "quality_metrics": "مقاييس الجودة",
-      "maintenance_status": "حالة الصيانة"
-    },
-    "common": {
-      "settings": "الإعدادات"
-    }
   }
 }
