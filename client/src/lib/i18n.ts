@@ -23,7 +23,7 @@ i18nInstance
       ur: { translation: urJSON },
     },
     fallbackLng: "en",
-    debug: true,
+    debug: false,
 lng: undefined, // ← يتركه للكشف التلقائي
     defaultNS: "translation",
     ns: ["translation"],
