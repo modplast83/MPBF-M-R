@@ -5,6 +5,8 @@
       "subtitle": "تحليلات وتنبيهات ذكية لمراقبة المصنع",
       "refresh": "تحديث",
       "chat": "المحادثة",
+      "automation": "الأتمتة",
+      
       "insights": "تحليلات",
       "automation": "الأتمتة",
       "chat_assistant": "المساعد الذكي",
@@ -7140,6 +7142,33 @@
       "production_analysis": "تحليل الإنتاج",
       "quality_metrics": "مقاييس الجودة",
       "maintenance_status": "حالة الصيانة"
+    },
+    "auth": {
+      "username": "اسم المستخدم",
+      "password": "كلمة المرور",
+      "login": "تسجيل الدخول",
+      "register": "التسجيل",
+      "confirm_password": "تأكيد كلمة المرور",
+      "email": "البريد الإلكتروني",
+      "first_name": "الاسم الأول",
+      "last_name": "اسم العائلة",
+      "username_placeholder": "أدخل اسم المستخدم",
+      "password_placeholder": "أدخل كلمة المرور",
+      "confirm_password_placeholder": "تأكيد كلمة المرور",
+      "email_placeholder": "أدخل عنوان البريد الإلكتروني",
+      "first_name_placeholder": "أدخل الاسم الأول",
+      "last_name_placeholder": "أدخل اسم العائلة",
+      "remember_me": "تذكرني",
+      "forgot_password": "نسيت كلمة المرور؟",
+      "invalid_credentials": "اسم المستخدم أو كلمة المرور غير صحيحة",
+      "welcome": "مرحباً",
+      "sign_in_description": "سجل دخولك للوصول إلى نظام مصنع أكياس البلاستيك الحديث",
+      "logging_in": "جاري تسجيل الدخول...",
+      "welcome_back": "مرحباً بعودتك",
+      "enter_credentials_description": "أدخل بياناتك للوصول إلى النظام",
+      "enter_username": "أدخل اسم المستخدم",
+      "enter_password": "أدخل كلمة المرور",
+      "login_successful": "تم تسجيل الدخول بنجاح"
     },
     "common": {
       "settings": "الإعدادات"
