@@ -32,7 +32,7 @@ router.post('/voice-query', async (req, res) => {
         today.setHours(0, 0, 0, 0);
         const todayOrders = await storage.getOrders();
         const todaysOrders = todayOrders.filter(order => {
-          const orderDate = new Date(order.createdAt);
+          const orderDate = new Date(order.date);
           orderDate.setHours(0, 0, 0, 0);
           return orderDate.getTime() === today.getTime();
         });
@@ -98,14 +98,14 @@ router.post('/voice-create', async (req, res) => {
     
     switch (recordType) {
       case 'customer':
+        const customerCode = `VOICE_${Date.now()}`;
         const customerData = {
+          id: customerCode,
           name: recordData.name || recordData.extracted || 'Voice Created Customer',
-          email: recordData.email || '',
-          phone: recordData.phone || '',
-          address: recordData.address || '',
-          contactPerson: recordData.contactPerson || '',
-          code: `VOICE_${Date.now()}`,
-          status: 'active'
+          code: customerCode,
+          nameAr: null,
+          userId: null,
+          plateDrawerCode: null
         };
         
         const newCustomer = await storage.createCustomer(customerData);
@@ -172,16 +172,15 @@ router.post('/voice-update', async (req, res) => {
         break;
         
       case 'customer':
-        const customerId = parseInt(recordId);
-        if (isNaN(customerId)) {
+        if (!recordId || typeof recordId !== 'string') {
           throw new Error('Invalid customer ID');
         }
         
-        const updatedCustomer = await storage.updateCustomer(customerId, updates);
+        const updatedCustomer = await storage.updateCustomer(recordId, updates);
         result = {
           success: true,
           customer: updatedCustomer,
-          response: `Successfully updated customer #${customerId}.`
+          response: `Successfully updated customer #${recordId}.`
         };
         break;
         
