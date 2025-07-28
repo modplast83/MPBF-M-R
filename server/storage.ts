@@ -520,6 +520,16 @@ export interface IStorage {
   ): Promise<CustomerInformation>;
   deleteCustomerInformation(id: number): Promise<boolean>;
 
+  // Time Attendance
+  getTimeAttendance(): Promise<TimeAttendance[]>;
+  getTimeAttendance(id: number): Promise<TimeAttendance | undefined>;
+  getTimeAttendanceByUser(userId: string): Promise<TimeAttendance[]>;
+  getTimeAttendanceByDate(date: Date): Promise<TimeAttendance[]>;
+  getTimeAttendanceByUserAndDate(userId: string, date: Date): Promise<TimeAttendance | undefined>;
+  createTimeAttendance(attendance: InsertTimeAttendance): Promise<TimeAttendance>;
+  updateTimeAttendance(id: number, attendance: Partial<TimeAttendance>): Promise<TimeAttendance | undefined>;
+  deleteTimeAttendance(id: number): Promise<boolean>;
+
   // =============== WAREHOUSE MANAGEMENT METHODS ===============
   
   // Suppliers
@@ -773,6 +783,8 @@ export class MemStorage {
     const newUser: User = { 
       ...user, 
       id,
+      password: user.password ?? null,
+      isAdmin: user.isAdmin ?? false,
       isActive: user.isActive ?? true,
       sectionId: user.sectionId ?? null,
       email: user.email ?? null,
@@ -781,6 +793,7 @@ export class MemStorage {
       bio: user.bio ?? null,
       profileImageUrl: user.profileImageUrl ?? null,
       phone: user.phone ?? null,
+      position: user.position ?? null,
       createdAt: user.createdAt ?? new Date(),
       updatedAt: user.updatedAt ?? new Date(),
     };
@@ -1073,7 +1086,11 @@ export class MemStorage {
     const newCustomerProduct: CustomerProduct = { 
       ...customerProduct, 
       id,
-      sizeCaption: customerProduct.sizeCaption ?? null
+      notes: customerProduct.notes ?? null,
+      sizeCaption: customerProduct.sizeCaption ?? null,
+      rawMaterial: customerProduct.rawMaterial ?? null,
+      thickness: customerProduct.thickness ?? null,
+      clicheBackDesign: customerProduct.clicheBackDesign ?? null
     };
     this.customerProducts.set(id, newCustomerProduct);
     return newCustomerProduct;
@@ -1112,6 +1129,7 @@ export class MemStorage {
     const newOrder: Order = {
       ...order,
       id,
+      userId: null,
       customerId: order.customerId,
       note: order.note ?? null,
       date: new Date(),
@@ -1245,6 +1263,10 @@ export class MemStorage {
       id,
       status: jobOrder.status || "pending",
       customerId: customerId ?? null,
+      finishedQty: jobOrder.finishedQty ?? 0,
+      receivedQty: jobOrder.receivedQty ?? 0,
+      receiveDate: jobOrder.receiveDate ?? null,
+      receivedBy: jobOrder.receivedBy ?? null,
     };
 
     this.jobOrders.set(id, newJobOrder);
@@ -1299,7 +1321,12 @@ export class MemStorage {
     const newRoll: Roll = { 
       ...roll,
       createdAt: roll.createdAt ?? null,
-      status: roll.status ?? "pending"
+      status: roll.status ?? "pending",
+      extrudingQty: roll.extrudingQty ?? null,
+      printingQty: roll.printingQty ?? null,
+      cuttingQty: roll.cuttingQty ?? null,
+      printedAt: roll.printedAt ?? null,
+      cutAt: roll.cutAt ?? null
     };
     this.rolls.set(roll.id, newRoll);
     return newRoll;
@@ -1448,6 +1475,8 @@ export class MemStorage {
       orderId: message.orderId ?? null,
       jobOrderId: message.jobOrderId ?? null,
       retryCount: message.retryCount ?? 0,
+      lastRetryAt: null,
+      sentBy: message.sentBy ?? null,
       errorMessage: message.errorMessage ?? null,
       metadata: message.metadata ?? {},
       sentAt: new Date(),

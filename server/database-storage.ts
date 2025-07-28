@@ -2041,12 +2041,18 @@ export class DatabaseStorage implements IStorage {
     return attendance || undefined;
   }
 
-  async getTimeAttendance(id: number): Promise<TimeAttendance | undefined> {
-    const [attendance] = await db
-      .select()
-      .from(timeAttendance)
-      .where(eq(timeAttendance.id, id));
-    return attendance || undefined;
+  async getTimeAttendance(): Promise<TimeAttendance[]>;
+  async getTimeAttendance(id: number): Promise<TimeAttendance | undefined>;
+  async getTimeAttendance(id?: number): Promise<TimeAttendance[] | TimeAttendance | undefined> {
+    if (id !== undefined) {
+      const [attendance] = await db
+        .select()
+        .from(timeAttendance)
+        .where(eq(timeAttendance.id, id));
+      return attendance || undefined;
+    } else {
+      return await db.select().from(timeAttendance).orderBy(desc(timeAttendance.createdAt));
+    }
   }
 
   async createTimeAttendance(

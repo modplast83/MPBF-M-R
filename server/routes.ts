@@ -6675,14 +6675,14 @@ COMMIT;
   // Server Management API endpoints
   app.get("/api/system/server-status", async (req: Request, res: Response) => {
     try {
-      const uptimeSeconds = Math.floor(process.uptime());
-      const memoryUsage = process.memoryUsage();
+      const uptimeSeconds = Math.floor((process as any).uptime());
+      const memoryUsage = (process as any).memoryUsage();
 
       const serverStatus = {
         status: "running",
         uptime: uptimeSeconds,
         lastRestart: new Date(Date.now() - uptimeSeconds * 1000).toISOString(),
-        processId: process.pid,
+        processId: (process as any).pid,
         memoryUsage: {
           used: Math.round(memoryUsage.heapUsed / 1024 / 1024), // MB
           total: Math.round(memoryUsage.heapTotal / 1024 / 1024), // MB
@@ -7562,7 +7562,7 @@ COMMIT;
   // Time Attendance Routes
   app.get("/api/time-attendance", async (req: Request, res: Response) => {
     try {
-      const timeAttendance = await storage.getTimeAttendance("all");
+      const timeAttendance = await storage.getTimeAttendance();
       res.json(timeAttendance);
     } catch (error) {
       console.error("Error fetching time attendance:", error);
