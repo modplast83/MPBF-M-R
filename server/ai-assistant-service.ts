@@ -21,6 +21,23 @@ export interface AssistantResponse {
   actions?: AssistantAction[];
   confidence: number;
   context: string;
+  responseType?: 'confirmation_required' | 'selection_required' | 'completed_action' | 'information_only';
+  confirmation?: {
+    action: string;
+    summary: string;
+    details: string;
+  };
+  selections?: {
+    title: string;
+    options: Array<{
+      id: string;
+      title: string;
+      description: string;
+      data: any;
+    }>;
+    selectionType: string;
+    context?: any;
+  };
 }
 
 export interface AssistantSuggestion {
@@ -2012,7 +2029,7 @@ DOCUMENT MANAGEMENT:
         );
         
         const customerProducts = customerProductsResult.rows;
-        let selectedProduct = null;
+        let selectedProduct: any = null;
 
         // Try to match product based on description, type, or any text in the original data
         const searchTerms = [
@@ -2059,9 +2076,16 @@ DOCUMENT MANAGEMENT:
             }
           }));
           
+          // Get customer name for the error message
+          const customerResult = await this.db.query('SELECT name FROM customers WHERE id = $1', [customerId]);
+          const customerName = customerResult.rows[0]?.name || 'Unknown Customer';
+          
+          // Get default quantity
+          const defaultQuantity = data.quantity || data.qty || data.amount || 100;
+          
           throw new Error(`PRODUCT_SELECTION_REQUIRED:${JSON.stringify({
-            customerName: customer.name,
-            quantity: quantity,
+            customerName: customerName,
+            quantity: defaultQuantity,
             requestedProduct: data.productType || data.productDescription,
             availableProducts: productOptions
           })}`);
@@ -2098,7 +2122,7 @@ DOCUMENT MANAGEMENT:
             [orderId, selectedProduct.id, quantity]
           );
           jobOrdersCreated++;
-          console.log(`Auto-created job order for customer ${customerId}: ${selectedProduct.category_name} - ${selectedProduct.size_caption}, Quantity: ${quantity}kg`);
+          console.log(`Auto-created job order for customer ${customerId}: ${selectedProduct.category_name || 'Unknown'} - ${selectedProduct.size_caption || 'Unknown'}, Quantity: ${quantity}kg`);
         }
       }
 
