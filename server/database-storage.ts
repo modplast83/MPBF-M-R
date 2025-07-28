@@ -1229,7 +1229,7 @@ export class DatabaseStorage implements IStorage {
       }
 
       // Convert all database records to frontend format
-      return result.rows.map((row) => adaptToFrontend(row)) as QualityCheck[];
+      return result.rows.map((row) => adaptToFrontend(row) as QualityCheck);
     } catch (error) {
       console.error("Error fetching quality checks:", error);
       return [];
@@ -1256,7 +1256,7 @@ export class DatabaseStorage implements IStorage {
       }
 
       // Convert all database records to frontend format
-      return result.rows.map((row) => adaptToFrontend(row)) as QualityCheck[];
+      return result.rows.map((row) => adaptToFrontend(row) as QualityCheck);
     } catch (error) {
       console.error(`Error fetching quality checks for roll ${rollId}:`, error);
       return [];
@@ -1285,7 +1285,7 @@ export class DatabaseStorage implements IStorage {
       }
 
       // Convert all database records to frontend format
-      return result.rows.map((row) => adaptToFrontend(row)) as QualityCheck[];
+      return result.rows.map((row) => adaptToFrontend(row) as QualityCheck);
     } catch (error) {
       console.error(
         `Error fetching quality checks for job order ${jobOrderId}:`,
@@ -1389,7 +1389,7 @@ export class DatabaseStorage implements IStorage {
       console.log("Successfully created quality check:", result.rows[0]);
 
       // Map the database record back to the expected frontend format using the adapter
-      return adaptToFrontend(result.rows[0]);
+      return adaptToFrontend(result.rows[0]) as QualityCheck;
     } catch (error) {
       console.error("Database error creating quality check:", error);
       throw error;
@@ -1418,52 +1418,52 @@ export class DatabaseStorage implements IStorage {
       // Only include fields that are provided in the update  
       if (dbQualityCheck.check_type_id !== undefined) {
         updateFields.push(`check_type_id = $${paramIndex++}`);
-        values.push(dbQualityCheck.check_type_id as any);
+        values.push(dbQualityCheck.check_type_id);
       }
 
       if (dbQualityCheck.checked_by !== undefined) {
         updateFields.push(`checked_by = $${paramIndex++}`);
-        values.push(dbQualityCheck.checked_by as any);
+        values.push(dbQualityCheck.checked_by);
       }
 
       if (dbQualityCheck.job_order_id !== undefined) {
         updateFields.push(`job_order_id = $${paramIndex++}`);
-        values.push(dbQualityCheck.job_order_id as any);
+        values.push(dbQualityCheck.job_order_id);
       }
 
       if (dbQualityCheck.roll_id !== undefined) {
         updateFields.push(`roll_id = $${paramIndex++}`);
-        values.push(dbQualityCheck.roll_id as any);
+        values.push(dbQualityCheck.roll_id);
       }
 
       if (dbQualityCheck.status !== undefined) {
         updateFields.push(`status = $${paramIndex++}`);
-        values.push(dbQualityCheck.status as any);
+        values.push(dbQualityCheck.status);
       }
 
       if (dbQualityCheck.notes !== undefined) {
         updateFields.push(`notes = $${paramIndex++}`);
-        values.push(dbQualityCheck.notes as any);
+        values.push(dbQualityCheck.notes);
       }
 
       if (dbQualityCheck.checklist_results !== undefined) {
         updateFields.push(`checklist_results = $${paramIndex++}`);
-        values.push(dbQualityCheck.checklist_results as any);
+        values.push(JSON.stringify(dbQualityCheck.checklist_results));
       }
 
       if (dbQualityCheck.parameter_values !== undefined) {
         updateFields.push(`parameter_values = $${paramIndex++}`);
-        values.push(dbQualityCheck.parameter_values as any);
+        values.push(JSON.stringify(dbQualityCheck.parameter_values));
       }
 
       if (dbQualityCheck.issue_severity !== undefined) {
         updateFields.push(`issue_severity = $${paramIndex++}`);
-        values.push(dbQualityCheck.issue_severity as any);
+        values.push(dbQualityCheck.issue_severity);
       }
 
       if (dbQualityCheck.image_urls !== undefined) {
         updateFields.push(`image_urls = $${paramIndex++}`);
-        values.push(dbQualityCheck.image_urls as any);
+        values.push(JSON.stringify(dbQualityCheck.image_urls));
       }
 
       // If no fields to update, return undefined
@@ -1472,7 +1472,7 @@ export class DatabaseStorage implements IStorage {
       }
 
       // Add the ID as the last parameter
-      values.push(id as any);
+      values.push(id);
 
       const query = `
         UPDATE quality_checks 
@@ -3512,92 +3512,9 @@ export class DatabaseStorage implements IStorage {
 
 
 
-  // JO Mix Items methods
-  async getJoMixItems(joMixId: number): Promise<any[]> {
-    return await db
-      .select({
-        id: joMixItems.id,
-        joMixId: joMixItems.joMixId,
-        jobOrderId: joMixItems.jobOrderId,
-        quantity: joMixItems.quantity,
-        createdAt: joMixItems.createdAt,
-        jobOrderNumber: jobOrders.id,
-        jobOrderQty: jobOrders.quantity,
-      })
-      .from(joMixItems)
-      .leftJoin(jobOrders, eq(joMixItems.jobOrderId, jobOrders.id))
-      .where(eq(joMixItems.joMixId, joMixId))
-      .orderBy(joMixItems.id);
-  }
 
-  async createJoMixItem(item: InsertJoMixItem): Promise<JoMixItem> {
-    const [created] = await db.insert(joMixItems).values(item).returning();
-    return created;
-  }
 
-  async deleteJoMixItems(joMixId: number): Promise<boolean> {
-    await db.delete(joMixItems).where(eq(joMixItems.joMixId, joMixId));
-    return true;
-  }
 
-  // JO Mix Materials methods
-  async getJoMixMaterials(joMixId: number): Promise<any[]> {
-    return await db
-      .select({
-        id: joMixMaterials.id,
-        joMixId: joMixMaterials.joMixId,
-        materialId: joMixMaterials.materialId,
-        quantity: joMixMaterials.quantity,
-        percentage: joMixMaterials.percentage,
-        createdAt: joMixMaterials.createdAt,
-        materialName: rawMaterials.name,
-        materialType: rawMaterials.type,
-        materialUnit: rawMaterials.unit,
-      })
-      .from(joMixMaterials)
-      .leftJoin(rawMaterials, eq(joMixMaterials.materialId, rawMaterials.id))
-      .where(eq(joMixMaterials.joMixId, joMixId))
-      .orderBy(joMixMaterials.id);
-  }
-
-  async createJoMixMaterial(
-    material: InsertJoMixMaterial,
-  ): Promise<JoMixMaterial> {
-    const [created] = await db
-      .insert(joMixMaterials)
-      .values(material)
-      .returning();
-    return created;
-  }
-
-  async deleteJoMixMaterials(joMixId: number): Promise<boolean> {
-    await db.delete(joMixMaterials).where(eq(joMixMaterials.joMixId, joMixId));
-    return true;
-  }
-
-  // Generate unique mix number
-  async generateMixNumber(): Promise<string> {
-    const today = new Date();
-    const dateStr = today.toISOString().slice(0, 10).replace(/-/g, "");
-
-    // Get count of mixes created today
-    const todayStart = new Date(
-      today.getFullYear(),
-      today.getMonth(),
-      today.getDate(),
-    );
-    const todayEnd = new Date(todayStart.getTime() + 24 * 60 * 60 * 1000);
-
-    const todayMixes = await db
-      .select()
-      .from(joMixes)
-      .where(
-        sql`${joMixes.createdAt} >= ${todayStart} AND ${joMixes.createdAt} < ${todayEnd}`,
-      );
-
-    const sequenceNumber = (todayMixes.length + 1).toString().padStart(3, "0");
-    return `MIX${dateStr}${sequenceNumber}`;
-  }
 
   // Customer Information Registration (Public Form)
   async getAllCustomerInformation(): Promise<CustomerInformation[]> {

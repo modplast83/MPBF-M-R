@@ -794,6 +794,12 @@ export class MemStorage {
       profileImageUrl: user.profileImageUrl ?? null,
       phone: user.phone ?? null,
       position: user.position ?? null,
+      hireDate: user.hireDate ?? null,
+      contractType: user.contractType ?? "full_time",
+      workSchedule: user.workSchedule ?? null,
+      emergencyContact: user.emergencyContact ?? null,
+      bankDetails: user.bankDetails ?? null,
+      allowances: user.allowances ?? null,
       createdAt: user.createdAt ?? new Date(),
       updatedAt: user.updatedAt ?? new Date(),
     };
@@ -1086,11 +1092,29 @@ export class MemStorage {
     const newCustomerProduct: CustomerProduct = { 
       ...customerProduct, 
       id,
-      notes: customerProduct.notes ?? null,
       sizeCaption: customerProduct.sizeCaption ?? null,
       rawMaterial: customerProduct.rawMaterial ?? null,
       thickness: customerProduct.thickness ?? null,
-      clicheBackDesign: customerProduct.clicheBackDesign ?? null
+      clicheBackDesign: customerProduct.clicheBackDesign ?? null,
+      masterBatchId: customerProduct.masterBatchId ?? null,
+      width: customerProduct.width ?? null,
+      leftF: customerProduct.leftF ?? null,
+      rightF: customerProduct.rightF ?? null,
+      thicknessOne: customerProduct.thicknessOne ?? null,
+      printingCylinder: customerProduct.printingCylinder ?? null,
+      lengthCm: customerProduct.lengthCm ?? null,
+      cuttingLength: customerProduct.cuttingLength ?? null,
+      printed: customerProduct.printed ?? null,
+      cuttingUnit: customerProduct.cuttingUnit ?? null,
+      unitWeight: customerProduct.unitWeight ?? null,
+      unitQty: customerProduct.unitQty ?? null,
+      packageKg: customerProduct.packageKg ?? null,
+      packing: customerProduct.packing ?? null,
+      punching: customerProduct.punching ?? null,
+      clicheFrontDesign: customerProduct.clicheFrontDesign ?? null,
+      notes: customerProduct.notes ?? null,
+      cover: customerProduct.cover ?? null,
+      knife: customerProduct.knife ?? null
     };
     this.customerProducts.set(id, newCustomerProduct);
     return newCustomerProduct;
@@ -1320,11 +1344,18 @@ export class MemStorage {
   async createRoll(roll: InsertRoll): Promise<Roll> {
     const newRoll: Roll = { 
       ...roll,
-      createdAt: roll.createdAt ?? null,
+      createdAt: roll.createdAt ?? new Date(),
       status: roll.status ?? "pending",
-      extrudingQty: roll.extrudingQty ?? null,
-      printingQty: roll.printingQty ?? null,
-      cuttingQty: roll.cuttingQty ?? null,
+      currentStage: roll.currentStage ?? "extrusion",
+      serialNumber: roll.serialNumber ?? `R${Date.now()}`,
+      extrudingQty: roll.extrudingQty ?? 0,
+      printingQty: roll.printingQty ?? 0,
+      cuttingQty: roll.cuttingQty ?? 0,
+      wasteQty: roll.wasteQty ?? 0,
+      wastePercentage: roll.wastePercentage ?? 0,
+      createdById: roll.createdById ?? null,
+      printedById: roll.printedById ?? null,
+      cutById: roll.cutById ?? null,
       printedAt: roll.printedAt ?? null,
       cutAt: roll.cutAt ?? null
     };
@@ -1483,6 +1514,8 @@ export class MemStorage {
       deliveredAt: null,
       twilioMessageId: null,
       status: message.status || "pending",
+      scheduledFor: message.scheduledFor ?? null,
+      isScheduled: message.isScheduled ?? false,
     };
     this.smsMessages.set(id, newMessage);
     return newMessage;

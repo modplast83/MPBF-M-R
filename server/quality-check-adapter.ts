@@ -52,7 +52,7 @@ export function adaptToFrontend(
     timestamp: dbCheck.checked_at || dbCheck.created_at,
     checklistResults: dbCheck.checklist_results || [],
     parameterValues: dbCheck.parameter_values || [],
-    issueSeverity: dbCheck.issue_severity,
+    issueSeverity: dbCheck.issue_severity ?? null,
     imageUrls: dbCheck.image_urls || [],
   };
 }
