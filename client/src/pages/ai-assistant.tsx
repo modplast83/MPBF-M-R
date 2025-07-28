@@ -523,7 +523,7 @@ export default function AIAssistantPage() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
           <TabsList className="grid w-full grid-cols-3 h-14 bg-white/50 backdrop-blur-sm">
             <TabsTrigger value="chat" className="flex items-center gap-3 text-base font-medium">
