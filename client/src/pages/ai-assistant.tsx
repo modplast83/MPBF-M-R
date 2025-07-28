@@ -484,37 +484,49 @@ export default function AIAssistantPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       {/* Header Section */}
-      <div className="bg-white/80 backdrop-blur-sm border-b border-gray-200 sticky top-0 z-10">
+      <div className="bg-white/90 backdrop-blur-md border-b border-gray-200/50 sticky top-0 z-10 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
-              <div className="p-3 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl">
+              <div className="p-3 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl shadow-lg">
                 <Bot className="h-8 w-8 text-white" />
               </div>
-              <div>
+              <div className="flex flex-col">
                 <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
                   AI Production Assistant
                 </h1>
-                <p className="text-gray-600 text-lg">
+                <p className="text-gray-600 text-lg font-medium">
                   Intelligent production management and optimization
                 </p>
               </div>
             </div>
             <div className="flex items-center space-x-3">
-              <Badge variant="outline" className="px-3 py-1">
+              <Badge 
+                variant="outline" 
+                className={cn(
+                  "px-3 py-2 text-sm font-medium transition-all duration-200",
+                  aiHealth?.status === 'healthy' 
+                    ? "border-green-200 bg-green-50 text-green-700 hover:bg-green-100" 
+                    : "border-yellow-200 bg-yellow-50 text-yellow-700 hover:bg-yellow-100"
+                )}
+              >
                 {aiHealth?.status === 'healthy' ? (
-                  <span className="flex items-center gap-2">
-                    <CheckCircle className="h-4 w-4 text-green-500" />
-                    AI Online
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4 text-green-600" />
+                    <span className="font-semibold">AI Online</span>
+                  </div>
                 ) : (
-                  <span className="flex items-center gap-2">
-                    <AlertTriangle className="h-4 w-4 text-yellow-500" />
-                    Connecting...
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <AlertTriangle className="h-4 w-4 text-yellow-600 animate-pulse" />
+                    <span className="font-semibold">Connecting...</span>
+                  </div>
                 )}
               </Badge>
-              <Button variant="outline" size="sm">
+              <Button 
+                variant="outline" 
+                size="sm"
+                className="hover:bg-gray-50 transition-colors duration-200"
+              >
                 <Settings className="h-4 w-4 mr-2" />
                 Settings
               </Button>
@@ -523,18 +535,27 @@ export default function AIAssistantPage() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
-          <TabsList className="grid w-full grid-cols-3 h-14 bg-white/50 backdrop-blur-sm">
-            <TabsTrigger value="chat" className="flex items-center gap-3 text-base font-medium">
+          <TabsList className="grid w-full grid-cols-3 h-16 bg-white/80 backdrop-blur-sm shadow-lg rounded-xl border border-gray-200/50">
+            <TabsTrigger 
+              value="chat" 
+              className="flex items-center gap-3 text-base font-medium data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white transition-all duration-300 rounded-lg m-1"
+            >
               <MessageCircle className="h-5 w-5" />
               AI Chat
             </TabsTrigger>
-            <TabsTrigger value="insights" className="flex items-center gap-3 text-base font-medium">
+            <TabsTrigger 
+              value="insights" 
+              className="flex items-center gap-3 text-base font-medium data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white transition-all duration-300 rounded-lg m-1"
+            >
               <BarChart3 className="h-5 w-5" />
               Production Insights
             </TabsTrigger>
-            <TabsTrigger value="automation" className="flex items-center gap-3 text-base font-medium">
+            <TabsTrigger 
+              value="automation" 
+              className="flex items-center gap-3 text-base font-medium data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-purple-600 data-[state=active]:text-white transition-all duration-300 rounded-lg m-1"
+            >
               <Cpu className="h-5 w-5" />
               Smart Automation
             </TabsTrigger>
