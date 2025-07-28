@@ -64,6 +64,410 @@ export class AIAssistantService {
     this.db = db;
   }
 
+  // Comprehensive database schema knowledge for AI assistant
+  private getDatabaseSchema(): string {
+    return `
+## COMPLETE PRODUCTION MANAGEMENT DATABASE SCHEMA
+
+### CORE SETUP TABLES (12 tables)
+1. **categories** - Product categories (Roll Trash Bag, T-Shirt Bag, etc.)
+   - id (text), name (text), code (text), nameAr (text)
+
+2. **items** - Product items within categories
+   - id (text), categoryId (FK), name (text), fullName (text)
+
+3. **sections** - Factory sections/departments
+   - id (text), name (text)
+
+4. **master_batches** - Master batch materials
+   - id (text), name (text)
+
+5. **customers** - Customer information
+   - id (text), code (text), name (text), nameAr (text), userId (FK), plateDrawerCode (text)
+
+6. **customer_products** - Product specifications for each customer
+   - id (serial), customerId (FK), categoryId (FK), itemId (FK), sizeCaption, width, leftF, rightF, thickness, thicknessOne, printingCylinder, lengthCm, cuttingLength, rawMaterial, masterBatchId (FK), printed, cuttingUnit, unitWeight, unitQty, packageKg, packing, punching, cover, volum, knife, notes, clicheFrontDesign, clicheBackDesign
+
+7. **users** - System users and employees
+   - id (text), username, password, email, firstName, lastName, bio, profileImageUrl, isAdmin, phone, isActive, sectionId (FK), position, hireDate, contractType, workSchedule (jsonb), emergencyContact (jsonb), bankDetails (jsonb), allowances (jsonb)
+
+8. **machines** - Production machines
+   - id (text), name, serialNumber, sectionId (FK), isActive, supplier, dateOfManufacturing, modelNumber
+
+9. **machine_parts** - Machine spare parts
+   - id (text), name, description, partNumber, machineId (FK), stockQuantity, minStock, maxStock, unitCost, supplier
+
+10. **machine_machine_parts** - Many-to-many relationship between machines and parts
+    - machineId (FK), partId (FK)
+
+11. **spare_parts** - General spare parts inventory
+    - id (text), name, description, partNumber, stockQuantity, minStock, maxStock, unitCost, supplier
+
+12. **geofences** - Location-based attendance tracking
+    - id (serial), name, latitude, longitude, radius, isActive, createdAt
+
+### PRODUCTION WORKFLOW TABLES (8 tables)
+13. **orders** - Customer orders
+    - id (serial), date, customerId (FK), note, status (pending/processing/completed), userId (FK)
+
+14. **job_orders** - Manufacturing job orders from orders
+    - id (serial), orderId (FK), customerProductId (FK), quantity, finishedQty, receivedQty, status (pending/in_progress/extrusion_completed/completed/cancelled/received/partially_received), customerId (FK), receiveDate, receivedBy (FK)
+
+15. **rolls** - Individual production rolls from job orders
+    - id (text), jobOrderId (FK), serialNumber, extrudingQty, printingQty, cuttingQty, currentStage (extrusion/printing/cutting/completed), status (pending/processing/completed), wasteQty, wastePercentage, createdById (FK), printedById (FK), cutById (FK), createdAt, printedAt, cutAt
+
+16. **raw_materials** - Raw material inventory
+    - id (text), name, type, currentStock, minStock, maxStock, unitCost, supplier, lastRestockDate, expiryDate
+
+17. **final_products** - Finished products inventory
+    - id (text), name, description, category, currentStock, minStock, maxStock, unitCost, productionDate, expiryDate, status
+
+18. **mix_materials** - Material mixing operations
+    - id (serial), name, description, totalQuantity, unit, orderId (FK), mixScrew, createdAt, createdById (FK)
+
+19. **mix_items** - Items within material mixes
+    - id (serial), mixMaterialId (FK), rawMaterialId (FK), quantity, unit, notes
+
+20. **job_order_updates** - Desktop notifications for job order changes
+    - id (serial), jobOrderId (FK), updateType, title, message, priority, metadata (jsonb), createdBy (FK), createdAt, isRead, readAt
+
+### QUALITY CONTROL TABLES (4 tables)
+21. **quality_check_types** - Types of quality checks
+    - id (text), name, description, category, checklistItems (jsonb), parameterRanges (jsonb), isActive
+
+22. **quality_checks** - Quality inspection records
+    - id (text), typeId (FK), rollId (FK), jobOrderId (FK), checkedBy (FK), status (passed/failed/pending), issueType, issueDescription, correctiveAction, checkedAt, notes, checklistResults (jsonb), parameterValues (jsonb), issueSeverity, imageUrls (jsonb)
+
+23. **corrective_actions** - Quality corrective actions
+    - id (text), qualityCheckId (FK), actionType, description, assignedTo (FK), dueDate, status (pending/in_progress/completed), completedAt, completedBy (FK), notes
+
+### HR MANAGEMENT TABLES (12 tables)
+24. **time_attendance** - Employee attendance tracking
+    - id (serial), userId (FK), date, checkInTime, checkOutTime, breakStartTime, breakEndTime, totalHours, overtimeHours, status (present/absent/late/half_day), location (jsonb), notes, approvedBy (FK)
+
+25. **overtime_requests** - Employee overtime requests
+    - id (serial), userId (FK), date, startTime, endTime, reason, status (pending/approved/rejected), approvedBy (FK), approvedAt, notes
+
+26. **leave_requests** - Employee leave applications
+    - id (serial), userId (FK), leaveType, startDate, endDate, reason, status (pending/approved/rejected), approvedBy (FK), approvedAt, notes
+
+27. **hr_violations** - Employee violations tracking
+    - id (serial), userId (FK), violationType, description, severity (low/medium/high), reportedBy (FK), reportedAt, status (pending/reviewed/resolved), actionTaken, notes
+
+28. **hr_complaints** - Employee complaints system
+    - id (serial), userId (FK), complaintType, description, priority (low/medium/high), submittedAt, status (pending/investigating/resolved), assignedTo (FK), resolution, notes
+
+29. **employee_of_month** - Employee recognition program
+    - id (serial), userId (FK), month, year, nominatedBy (FK), reason, achievements (jsonb), awardDate
+
+30. **payroll_records** - Payroll management
+    - id (serial), userId (FK), payPeriod, basicSalary, overtime, allowances (jsonb), deductions (jsonb), netSalary, payDate, status (pending/paid)
+
+31. **performance_reviews** - Employee performance evaluations
+    - id (serial), userId (FK), reviewPeriod, reviewerId (FK), goals (jsonb), achievements (jsonb), areasForImprovement (jsonb), overallRating, reviewDate, nextReviewDate
+
+32. **trainings** - Training programs
+    - id (serial), title, description, category, duration, instructor, startDate, endDate, status (planned/ongoing/completed), participants (jsonb)
+
+33. **training_certificates** - Training completion certificates
+    - id (serial), userId (FK), trainingId (FK), completionDate, certificateNumber, expiryDate, score
+
+34. **training_evaluations** - Training feedback and evaluations
+    - id (serial), trainingId (FK), userId (FK), rating, feedback, suggestions, evaluationDate
+
+35. **training_field_evaluations** - Field-based training assessments
+    - id (serial), userId (FK), evaluatorId (FK), skillsAssessed (jsonb), performanceRating, comments, evaluationDate
+
+36. **training_points** - Training point system
+    - id (serial), userId (FK), points, reason, awardedBy (FK), awardedAt
+
+### MAINTENANCE MANAGEMENT TABLES (4 tables)
+37. **maintenance_requests** - Equipment maintenance requests
+    - id (serial), machineId (FK), requestedBy (FK), requestDate, description, priority (low/medium/high/urgent), status (pending/approved/in_progress/completed), assignedTo (FK), estimatedCost
+
+38. **maintenance_actions** - Maintenance work performed
+    - id (serial), requestId (FK), actionType, description, performedBy (FK), startTime, endTime, status (pending/in_progress/completed), notes, cost
+
+39. **maintenance_schedule** - Preventive maintenance scheduling
+    - id (serial), machineId (FK), scheduleType (daily/weekly/monthly/yearly), nextMaintenanceDate, lastMaintenanceDate, assignedTo (FK), notes
+
+40. **operator_tasks** - Machine operator tasks
+    - id (serial), userId (FK), machineId (FK), taskType, description, startTime, endTime, status (pending/in_progress/completed), notes
+
+41. **operator_updates** - Operator status updates
+    - id (serial), userId (FK), updateType, description, timestamp, metadata (jsonb)
+
+### IOT AND SENSOR TABLES (3 tables)
+42. **machine_sensors** - IoT sensors on machines
+    - id (text), machineId (FK), sensorType (temperature/pressure/vibration/speed), unit, minValue, maxValue, isActive
+
+43. **sensor_data** - Real-time sensor readings
+    - id (serial), sensorId (FK), value, timestamp, status (normal/warning/critical)
+
+44. **iot_alerts** - IoT-based alerts
+    - id (serial), sensorId (FK), alertType, message, severity (low/medium/high), triggeredAt, acknowledgedAt, acknowledgedBy (FK), status (active/acknowledged/resolved)
+
+### DOCUMENT MANAGEMENT TABLES (7 tables)
+45. **documents** - Document repository
+    - id (serial), title, content, type, category, status (draft/review/approved/archived), priority (low/medium/high), version, effectiveDate, expiryDate, approvalRequired, createdBy (FK), createdAt, updatedAt
+
+46. **document_templates** - Document templates
+    - id (serial), name, description, category, templateContent, fields (jsonb), isActive, createdBy (FK)
+
+47. **document_approvals** - Document approval workflow
+    - id (serial), documentId (FK), approverUserId (FK), status (pending/approved/rejected), approvedAt, comments
+
+48. **document_views** - Document access tracking
+    - id (serial), documentId (FK), userId (FK), viewedAt, ipAddress
+
+49. **document_comments** - Document collaboration
+    - id (serial), documentId (FK), userId (FK), comment, createdAt
+
+50. **document_subscriptions** - Document notifications
+    - id (serial), documentId (FK), userId (FK), subscriptionType (updates/comments/approvals), isActive
+
+### FORMULA AND CALCULATION TABLES (4 tables)
+51. **aba_formulas** - ABA material formulas
+    - id (text), name, description, layerAPercentage, layerBPercentage, extrusionTemperature, lineSpeed, notes
+
+52. **aba_formula_materials** - Materials in ABA formulas
+    - id (serial), formulaId (FK), materialType, percentage, notes
+
+53. **plate_calculations** - Plate/Cliché calculations
+    - id (serial), customerProductId (FK), calculatedAt, parameters (jsonb), results (jsonb)
+
+54. **plate_pricing_parameters** - Pricing calculation parameters
+    - id (serial), parameterName, value, unit, description, lastUpdated
+
+### JO MIX TABLES (3 tables)
+55. **jo_mixes** - Job order material mixes
+    - id (serial), jobOrderId (FK), mixName, totalQuantity, unit, status (pending/mixed/completed), createdAt, createdBy (FK)
+
+56. **jo_mix_materials** - Materials in JO mixes
+    - id (serial), joMixId (FK), rawMaterialId (FK), quantity, unit, notes
+
+57. **jo_mix_items** - Items in JO mixes
+    - id (serial), joMixId (FK), itemType, quantity, unit, specifications (jsonb)
+
+### NOTIFICATION AND SMS TABLES (6 tables)
+58. **notification_center** - System notifications
+    - id (serial), userId (FK), title, message, type, priority, isRead, readAt, createdAt, actionUrl, metadata (jsonb)
+
+59. **notification_templates** - Notification templates
+    - id (serial), name, subject, content, type, isActive, createdBy (FK)
+
+60. **sms_messages** - SMS communication log
+    - id (serial), phoneNumber, message, status (pending/sent/delivered/failed), sentAt, deliveredAt, provider, messageId, cost, direction (inbound/outbound), userId (FK), orderId (FK), customerId (FK), jobOrderId (FK), maintenanceId (FK), qualityCheckId (FK), hrRecordId (FK), scheduleId (FK), category (order/maintenance/quality/hr/general), priority (low/medium/high), templateId (FK)
+
+61. **sms_templates** - SMS message templates
+    - id (serial), name, content, category, isActive, createdBy (FK), createdAt
+
+62. **sms_provider_settings** - SMS provider configuration
+    - id (serial), providerName, apiKey, apiSecret, endpoint, isActive, dailyLimit, monthlyLimit, costPerSms
+
+63. **sms_notification_rules** - SMS notification automation
+    - id (serial), eventType, recipientRole, templateId (FK), isActive, conditions (jsonb)
+
+### CUSTOMER AND LOCATION TABLES (2 tables)
+64. **customer_information** - Extended customer information
+    - id (serial), customerId (FK), contactPerson, phone, email, address, city, country, paymentTerms, creditLimit, notes
+
+65. **mobile_devices** - Mobile device management
+    - id (serial), userId (FK), deviceId, deviceType, osVersion, appVersion, fcmToken, isActive, lastSeen
+
+### SYSTEM ADMINISTRATION TABLES (3 tables)
+66. **modules** - System modules and permissions
+    - id (serial), name, displayName, description, category, isActive, permissions (jsonb)
+
+67. **permissions** - User permissions matrix
+    - id (serial), sectionId (FK), moduleId (FK), canView, canCreate, canEdit, canDelete, canApprove
+
+68. **mix_machines** - Machine assignments for mixing operations
+    - id (serial), name, description, section, capacity, isActive
+
+### SESSION TABLE (1 table)
+69. **sessions** - User session management
+    - sid (varchar), sess (jsonb), expire (timestamp)
+
+## TOTAL: 69 DATABASE TABLES covering complete production management system
+## Relationships: 150+ foreign key relationships connecting all aspects of manufacturing operations
+
+### KEY PRODUCTION WORKFLOW:
+1. Customer → Customer Products → Orders → Job Orders → Rolls (with extrusion → printing → cutting stages)
+2. Quality Control integrated at each production stage
+3. Real-time IoT monitoring throughout production
+4. HR management for all personnel involved
+5. Maintenance scheduling for all equipment
+6. Document management for procedures and compliance
+7. SMS/notifications for real-time communication
+    `;
+  }
+
+  // Enhanced method to gather real-time database statistics for AI context
+  private async getDatabaseContext(): Promise<string> {
+    try {
+      const queries = [
+        { name: 'customers', query: 'SELECT COUNT(*) as count FROM customers' },
+        { name: 'orders', query: 'SELECT COUNT(*) as count, COUNT(CASE WHEN status = \'pending\' THEN 1 END) as pending, COUNT(CASE WHEN status = \'completed\' THEN 1 END) as completed FROM orders' },
+        { name: 'job_orders', query: 'SELECT COUNT(*) as count, COUNT(CASE WHEN status = \'pending\' THEN 1 END) as pending, COUNT(CASE WHEN status = \'completed\' THEN 1 END) as completed FROM job_orders' },
+        { name: 'rolls', query: 'SELECT COUNT(*) as count, COUNT(CASE WHEN current_stage = \'extrusion\' THEN 1 END) as extrusion, COUNT(CASE WHEN current_stage = \'printing\' THEN 1 END) as printing, COUNT(CASE WHEN current_stage = \'cutting\' THEN 1 END) as cutting FROM rolls' },
+        { name: 'quality_checks', query: 'SELECT COUNT(*) as count, COUNT(CASE WHEN status = \'passed\' THEN 1 END) as passed, COUNT(CASE WHEN status = \'failed\' THEN 1 END) as failed FROM quality_checks' },
+        { name: 'machines', query: 'SELECT COUNT(*) as count, COUNT(CASE WHEN is_active = true THEN 1 END) as active FROM machines' },
+        { name: 'users', query: 'SELECT COUNT(*) as count, COUNT(CASE WHEN is_active = true THEN 1 END) as active FROM users' },
+        { name: 'maintenance_requests', query: 'SELECT COUNT(*) as count, COUNT(CASE WHEN status = \'pending\' THEN 1 END) as pending FROM maintenance_requests' },
+        { name: 'time_attendance', query: 'SELECT COUNT(*) as count FROM time_attendance WHERE date >= CURRENT_DATE - INTERVAL \'7 days\'' },
+        { name: 'raw_materials', query: 'SELECT COUNT(*) as count FROM raw_materials' }
+      ];
+
+      const results = await Promise.all(
+        queries.map(async ({ name, query }) => {
+          try {
+            const result = await this.db.query(query);
+            return { name, data: result.rows[0] };
+          } catch (error) {
+            console.error(`Error querying ${name}:`, error);
+            return { name, data: { count: 0 } };
+          }
+        })
+      );
+
+      let context = "## REAL-TIME DATABASE STATUS:\\n\\n";
+      results.forEach(({ name, data }) => {
+        context += `**${name.toUpperCase()}**: ${JSON.stringify(data)}\\n`;
+      });
+
+      return context;
+    } catch (error) {
+      console.error('Error gathering database context:', error);
+      return "Database context unavailable";
+    }
+  }
+
+  // Enhanced method to find specific records by intelligent name matching
+  private async findCustomerByName(customerName: string): Promise<any> {
+    try {
+      // First try exact match
+      const exactQuery = `
+        SELECT * FROM customers 
+        WHERE LOWER(name) = LOWER($1) OR LOWER(name_ar) = LOWER($1) OR LOWER(code) = LOWER($1)
+        LIMIT 1
+      `;
+      const exactResult = await this.db.query(exactQuery, [customerName]);
+      
+      if (exactResult.rows.length > 0) {
+        return exactResult.rows[0];
+      }
+
+      // Then try fuzzy search
+      const fuzzyQuery = `
+        SELECT *, 
+        CASE 
+          WHEN LOWER(name) LIKE LOWER($1) THEN 1
+          WHEN LOWER(name_ar) LIKE LOWER($1) THEN 1
+          WHEN LOWER(name) LIKE LOWER('%' || $1 || '%') THEN 2
+          WHEN LOWER(name_ar) LIKE LOWER('%' || $1 || '%') THEN 2
+          ELSE 3
+        END as match_score
+        FROM customers 
+        WHERE LOWER(name) LIKE LOWER('%' || $1 || '%') 
+           OR LOWER(name_ar) LIKE LOWER('%' || $1 || '%')
+           OR LOWER(code) LIKE LOWER('%' || $1 || '%')
+        ORDER BY match_score, name
+        LIMIT 5
+      `;
+      const fuzzyResult = await this.db.query(fuzzyQuery, [customerName]);
+      
+      return fuzzyResult.rows.length > 0 ? fuzzyResult.rows[0] : null;
+    } catch (error) {
+      console.error('Error finding customer:', error);
+      return null;
+    }
+  }
+
+  // Enhanced method to get detailed record information
+  private async getRecordDetails(tableName: string, recordId: string | number): Promise<any> {
+    try {
+      const queries: Record<string, string> = {
+        'customer': `
+          SELECT c.*, COUNT(o.id) as order_count, COUNT(cp.id) as product_count
+          FROM customers c
+          LEFT JOIN orders o ON c.id = o.customer_id
+          LEFT JOIN customer_products cp ON c.id = cp.customer_id
+          WHERE c.id = $1
+          GROUP BY c.id
+        `,
+        'order': `
+          SELECT o.*, c.name as customer_name, u.username as created_by_name,
+                 COUNT(jo.id) as job_order_count
+          FROM orders o
+          LEFT JOIN customers c ON o.customer_id = c.id
+          LEFT JOIN users u ON o.user_id = u.id
+          LEFT JOIN job_orders jo ON o.id = jo.order_id
+          WHERE o.id = $1
+          GROUP BY o.id, c.name, u.username
+        `,
+        'job_order': `
+          SELECT jo.*, o.date as order_date, c.name as customer_name,
+                 cp.size_caption, cp.width, cp.thickness,
+                 COUNT(r.id) as roll_count
+          FROM job_orders jo
+          LEFT JOIN orders o ON jo.order_id = o.id
+          LEFT JOIN customers c ON jo.customer_id = c.id
+          LEFT JOIN customer_products cp ON jo.customer_product_id = cp.id
+          LEFT JOIN rolls r ON jo.id = r.job_order_id
+          WHERE jo.id = $1
+          GROUP BY jo.id, o.date, c.name, cp.size_caption, cp.width, cp.thickness
+        `,
+        'roll': `
+          SELECT r.*, jo.quantity as job_order_quantity, c.name as customer_name,
+                 cp.size_caption, u1.username as created_by_name,
+                 u2.username as printed_by_name, u3.username as cut_by_name
+          FROM rolls r
+          LEFT JOIN job_orders jo ON r.job_order_id = jo.id
+          LEFT JOIN customers c ON jo.customer_id = c.id
+          LEFT JOIN customer_products cp ON jo.customer_product_id = cp.id
+          LEFT JOIN users u1 ON r.created_by_id = u1.id
+          LEFT JOIN users u2 ON r.printed_by_id = u2.id
+          LEFT JOIN users u3 ON r.cut_by_id = u3.id
+          WHERE r.id = $1
+        `,
+        'machine': `
+          SELECT m.*, s.name as section_name,
+                 COUNT(ms.id) as sensor_count,
+                 COUNT(mr.id) as maintenance_requests
+          FROM machines m
+          LEFT JOIN sections s ON m.section_id = s.id
+          LEFT JOIN machine_sensors ms ON m.id = ms.machine_id
+          LEFT JOIN maintenance_requests mr ON m.id = mr.machine_id
+          WHERE m.id = $1
+          GROUP BY m.id, s.name
+        `,
+        'user': `
+          SELECT u.*, s.name as section_name,
+                 COUNT(ta.id) as attendance_records,
+                 COUNT(o.id) as orders_created
+          FROM users u
+          LEFT JOIN sections s ON u.section_id = s.id
+          LEFT JOIN time_attendance ta ON u.id = ta.user_id
+          LEFT JOIN orders o ON u.id = o.user_id
+          WHERE u.id = $1
+          GROUP BY u.id, s.name
+        `
+      };
+
+      const query = queries[tableName];
+      if (!query) {
+        return null;
+      }
+
+      const result = await this.db.query(query, [recordId]);
+      return result.rows.length > 0 ? result.rows[0] : null;
+    } catch (error) {
+      console.error(`Error getting ${tableName} details:`, error);
+      return null;
+    }
+  }
+
   async getProductionInsights(timeframe: string = '7d'): Promise<ProductionAnalysis> {
     try {
       // Get production data from database  
@@ -142,6 +546,10 @@ export class AIAssistantService {
   async processAssistantQuery(request: AssistantRequest): Promise<AssistantResponse> {
     try {
       const { message, context } = request;
+      
+      // Get comprehensive database context for AI
+      const databaseSchema = this.getDatabaseSchema();
+      const databaseContext = await this.getDatabaseContext();
 
       // Get relevant data based on context
       let contextData = "";
@@ -153,10 +561,14 @@ export class AIAssistantService {
       const moduleKnowledge = await this.getModuleKnowledge(context?.userId);
       
       const systemPrompt = `
-        You are an Expert Production Management AI Assistant for MPBF Manufacturing Company.
-        You are highly knowledgeable about ALL application modules and can provide expert guidance on any aspect of the system.
-        You support both English and Arabic languages. Respond in the same language as the user's message.
-        
+        You are an Expert Production Management AI Assistant with PERFECT UNDERSTANDING of a comprehensive manufacturing database containing 69+ tables and all production records.
+
+        ## YOUR COMPLETE DATABASE KNOWLEDGE:
+        ${databaseSchema}
+
+        ## CURRENT REAL-TIME DATABASE STATUS:
+        ${databaseContext}
+
         CURRENT CONTEXT:
         - Page: ${context?.currentPage || 'dashboard'}
         - User Role: ${context?.userRole || 'user'}
@@ -1443,53 +1855,6 @@ DOCUMENT MANAGEMENT:
     }
   }
 
-  async findCustomerByName(customerName: string): Promise<any> {
-    try {
-      // First, get all customers
-      const customersResult = await this.db.query(
-        'SELECT id, code, name, name_ar FROM customers'
-      );
-      
-      const customers = customersResult.rows;
-      
-      // Exact match first (case insensitive)
-      const exactMatch = customers.find(customer => 
-        customer.name?.toLowerCase() === customerName.toLowerCase() ||
-        customer.name_ar?.toLowerCase() === customerName.toLowerCase() ||
-        customer.code?.toLowerCase() === customerName.toLowerCase()
-      );
-      
-      if (exactMatch) {
-        return exactMatch;
-      }
-
-      // Use fuzzy search for partial matches
-      const fuse = new Fuse(customers, {
-        keys: [
-          { name: 'name', weight: 0.4 },
-          { name: 'name_ar', weight: 0.4 },
-          { name: 'code', weight: 0.2 }
-        ],
-        threshold: 0.6, // Lower threshold = more strict matching
-        includeScore: true,
-        ignoreLocation: true
-      });
-
-      const fuzzyResults = fuse.search(customerName);
-      
-      if (fuzzyResults.length > 0) {
-        // Return the best match
-        const bestMatch = fuzzyResults[0];
-        console.log(`Found customer by fuzzy search: "${customerName}" -> "${bestMatch.item.name}" (score: ${bestMatch.score})`);
-        return bestMatch.item;
-      }
-
-      return null;
-    } catch (error) {
-      console.error('Error finding customer by name:', error);
-      return null;
-    }
-  }
 
   async createOrderRecord(data: any): Promise<any> {
     try {

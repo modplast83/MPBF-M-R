@@ -74,3 +74,6 @@ defaultBucketID = "replit-objstore-b5d4e5d6-ce63-4b08-9ef0-8f6e8a4c54c8"
 
 [rules.formatter.fileExtensions.".json"]
 id = "module:nodejs-20/formatter:prettier"
+
+[agent]
+integrations = ["javascript_anthropic==1.0.0"]
