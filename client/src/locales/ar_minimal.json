@@ -1,0 +1,18 @@
+{
+  "translation": {
+    "app": {
+      "title": "نظام MPBF",
+      "full_title": "مصنع الأكياس البلاستيكية الحديث"
+    },
+    "common": {
+      "loading": "تحميل...",
+      "save": "حفظ",
+      "cancel": "إلغاء",
+      "delete": "حذف",
+      "edit": "تعديل",
+      "create": "إنشاء",
+      "search": "بحث",
+      "actions": "إجراءات"
+    }
+  }
+}

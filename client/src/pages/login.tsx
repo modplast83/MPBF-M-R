@@ -1,6 +1,13 @@
 import { FormEvent, useState } from "react";
 import { useLocation } from "wouter";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -19,30 +26,31 @@ export default function LoginPage() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setIsLoggingIn(true);
-    
+
     try {
       // Simple demo login - just accepts any credentials
       // In a real app, this would validate against a backend
-      
+
       if (username.trim() && password.trim()) {
         // Store login state in localStorage
-        localStorage.setItem('isLoggedIn', 'true');
-        localStorage.setItem('username', username);
-        
+        localStorage.setItem("isLoggedIn", "true");
+        localStorage.setItem("username", username);
+
         toast({
           title: t("auth.login_successful"),
           description: t("auth.welcome_message", { username }),
         });
-        
+
         // Redirect to dashboard
-        setLocation('/');
+        setLocation("/");
       } else {
         throw new Error(t("auth.enter_credentials"));
       }
     } catch (error) {
       toast({
         title: t("auth.login_failed"),
-        description: error instanceof Error ? error.message : t("auth.error_occurred"),
+        description:
+          error instanceof Error ? error.message : t("auth.error_occurred"),
         variant: "destructive",
       });
     } finally {
@@ -58,8 +66,12 @@ export default function LoginPage() {
           <Card className="border-0 shadow-none">
             <CardHeader className="space-y-1 p-0 mb-6">
               <div className="flex items-center mb-1">
-                <span className="material-icons text-primary-600 mr-2">vpn_key</span>
-                <CardTitle className="text-2xl font-bold text-gray-800">{t("auth.welcome_back")}</CardTitle>
+                <span className="material-icons text-primary-600 mr-2">
+                  vpn_key
+                </span>
+                <CardTitle className="text-2xl font-bold text-gray-800">
+                  {t("auth.welcome_back")}
+                </CardTitle>
               </div>
               <CardDescription className="text-gray-500">
                 {t("auth.enter_credentials_description")}
@@ -68,10 +80,14 @@ export default function LoginPage() {
             <CardContent className="p-0">
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div className="space-y-2">
-                  <Label htmlFor="username" className="text-gray-700">{t("auth.username")}</Label>
+                  <Label htmlFor="username" className="text-gray-700">
+                    {t("auth.username")}
+                  </Label>
                   <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 material-icons">person</span>
-                    <Input 
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 material-icons">
+                      person
+                    </span>
+                    <Input
                       id="username"
                       type="text"
                       placeholder={t("auth.enter_username")}
@@ -83,10 +99,14 @@ export default function LoginPage() {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="password" className="text-gray-700">{t("auth.password")}</Label>
+                  <Label htmlFor="password" className="text-gray-700">
+                    {t("auth.password")}
+                  </Label>
                   <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 material-icons">lock</span>
-                    <Input 
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 material-icons">
+                      lock
+                    </span>
+                    <Input
                       id="password"
                       type="password"
                       placeholder={t("auth.enter_password")}
@@ -97,9 +117,9 @@ export default function LoginPage() {
                     />
                   </div>
                 </div>
-                <Button 
-                  type="submit" 
-                  className="w-full bg-primary-600 hover:bg-primary-700 text-white py-6 rounded-lg text-base font-medium transition-colors" 
+                <Button
+                  type="submit"
+                  className="w-full bg-primary-600 hover:bg-primary-700 text-white py-6 rounded-lg text-base font-medium transition-colors"
                   disabled={isLoggingIn}
                 >
                   {isLoggingIn ? (
@@ -116,32 +136,35 @@ export default function LoginPage() {
             <CardFooter className="flex flex-col items-start pt-6 p-0 mt-8 border-t border-gray-100">
               <div className="bg-amber-50 text-amber-800 p-3 rounded-lg text-sm w-full">
                 <div className="flex items-start">
-                  <span className="material-icons text-amber-600 mr-2 mt-0.5">info</span>
+                  <span className="material-icons text-amber-600 mr-2 mt-0.5">
+                    info
+                  </span>
                   <p>
-                    <span className="font-medium">Demo Note:</span> Enter any username and password to login.
+                    <span className="font-medium">Demo Note:</span> Enter any
+                    username and password to login.
                   </p>
                 </div>
               </div>
             </CardFooter>
           </Card>
-          
+
           {/* Decorative elements */}
           <div className="absolute top-0 right-0 -mt-6 -mr-6 w-24 h-24 bg-primary-100 rounded-full opacity-70"></div>
           <div className="absolute bottom-0 left-0 -mb-6 -ml-6 w-24 h-24 bg-primary-50 rounded-full opacity-70"></div>
         </div>
-        
+
         {/* Right side - Features */}
         <div className="relative hidden md:flex flex-col justify-center bg-gradient-to-br from-primary-700 to-primary-800 text-white p-10 overflow-hidden">
           {/* Background decorative elements */}
           <div className="absolute top-0 right-0 w-96 h-96 bg-primary-600 rounded-full opacity-30 translate-x-1/2 -translate-y-1/2"></div>
           <div className="absolute bottom-0 left-0 w-80 h-80 bg-primary-900 rounded-full opacity-20 -translate-x-1/2 translate-y-1/2"></div>
-          
+
           <div className="relative z-10">
             {/* Logo */}
             <div className="text-center mb-10">
-              <img 
-                src="/assets/company-logo.png" 
-                alt="Modern Plastic Bag Factory" 
+              <img
+                src="/assets/company-logo.png"
+                alt="Modern Plastic Bag Factory"
                 className="w-40 h-40 mx-auto mb-6 drop-shadow-lg"
               />
               <h2 className="text-3xl font-bold mb-2 text-white">
@@ -149,28 +172,36 @@ export default function LoginPage() {
               </h2>
               <div className="h-1 w-20 bg-white/30 mx-auto rounded-full"></div>
             </div>
-            
+
             {/* Features */}
             <p className="text-white/90 mb-8 text-center max-w-md mx-auto">
-              A comprehensive solution for managing all aspects of your 
-              plastic bag manufacturing process from order to delivery.
+              A comprehensive solution for managing all aspects of your plastic
+              bag manufacturing process from order to delivery.
             </p>
-            
+
             <ul className="space-y-4 text-white/90 max-w-md mx-auto">
               <li className="flex items-center bg-white/10 p-3 rounded-lg backdrop-blur-sm">
-                <span className="material-icons mr-3 text-primary-200 bg-white/20 p-2 rounded-lg">receipt_long</span>
+                <span className="material-icons mr-3 text-primary-200 bg-white/20 p-2 rounded-lg">
+                  receipt_long
+                </span>
                 <span>Complete Order Management System</span>
               </li>
               <li className="flex items-center bg-white/10 p-3 rounded-lg backdrop-blur-sm">
-                <span className="material-icons mr-3 text-primary-200 bg-white/20 p-2 rounded-lg">precision_manufacturing</span>
+                <span className="material-icons mr-3 text-primary-200 bg-white/20 p-2 rounded-lg">
+                  precision_manufacturing
+                </span>
                 <span>Production Workflow Tracking</span>
               </li>
               <li className="flex items-center bg-white/10 p-3 rounded-lg backdrop-blur-sm">
-                <span className="material-icons mr-3 text-primary-200 bg-white/20 p-2 rounded-lg">verified</span>
+                <span className="material-icons mr-3 text-primary-200 bg-white/20 p-2 rounded-lg">
+                  verified
+                </span>
                 <span>Quality Control Integration</span>
               </li>
               <li className="flex items-center bg-white/10 p-3 rounded-lg backdrop-blur-sm">
-                <span className="material-icons mr-3 text-primary-200 bg-white/20 p-2 rounded-lg">insights</span>
+                <span className="material-icons mr-3 text-primary-200 bg-white/20 p-2 rounded-lg">
+                  insights
+                </span>
                 <span>Comprehensive Analytics & Reporting</span>
               </li>
             </ul>

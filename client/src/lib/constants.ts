@@ -2,7 +2,7 @@
 export const API_ENDPOINTS = {
   // Authentication
   USER: "/api/user",
-  
+
   // Setup
   CATEGORIES: "/api/categories",
   ITEMS: "/api/items",
@@ -10,55 +10,71 @@ export const API_ENDPOINTS = {
   CUSTOMER_PRODUCTS: "/api/customer-products",
   SECTIONS: "/api/sections",
   MACHINES: "/api/machines",
+  MACHINE_PARTS: "/api/machine-parts",
+  MACHINE_PARTS_RELATIONS: "/api/machine-parts-relations",
   USERS: "/api/users",
   MASTER_BATCHES: "/api/master-batches",
   ABA_FORMULAS: "/api/aba-formulas",
-  
+
   // Production
   ORDERS: "/api/orders",
   JOB_ORDERS: "/api/job-orders",
   ROLLS: "/api/rolls",
   MIX_MATERIALS: "/api/mix-materials",
   MIX_ITEMS: "/api/mix-items",
-  
+
   // Warehouse
   RAW_MATERIALS: "/api/raw-materials",
   FINAL_PRODUCTS: "/api/final-products",
   MATERIAL_INPUTS: "/api/material-inputs",
-  
+
   // Quality Management
   QUALITY_CHECK_TYPES: "/api/quality-check-types",
   QUALITY_CHECKS: "/api/quality-checks",
   CORRECTIVE_ACTIONS: "/api/corrective-actions",
-  
+
   // Communications
   SMS_MESSAGES: "/api/sms-messages",
-  
+
   // Cliché (Digital Photopolymer Printing Plates)
   PLATE_PRICING_PARAMETERS: "/api/plate-pricing-parameters",
   PLATE_CALCULATIONS: "/api/plate-calculations",
   CALCULATE_PLATE_PRICE: "/api/plate-calculations/calculate",
-  
 
-  
   // Database Management
   DATABASE_BACKUP: "/api/database/backup",
   DATABASE_RESTORE: "/api/database/restore",
   DATABASE_BACKUPS: "/api/database/backups",
-  
+
   // Demo
   INIT_DEMO_DATA: "/api/init-demo-data",
-  
+
   // HR Module
   TIME_ATTENDANCE: "/api/time-attendance",
   EMPLOYEE_OF_MONTH: "/api/employee-of-month",
   HR_VIOLATIONS: "/api/hr-violations",
   HR_COMPLAINTS: "/api/hr-complaints",
-  
+
   // Maintenance Module
   MAINTENANCE_REQUESTS: "/api/maintenance-requests",
-  MAINTENANCE_ACTIONS: "/api/maintenance-actions",
+  MAINTENANCE_ACTIONS: "/api/maintenance/actions",
   MAINTENANCE_SCHEDULE: "/api/maintenance-schedule",
+
+  // Documents Module
+  DOCUMENTS: "/api/documents",
+  DOCUMENT_TEMPLATES: "/api/document-templates",
+  DOCUMENT_VIEWS: "/api/document-views",
+  DOCUMENT_APPROVALS: "/api/document-approvals",
+  DOCUMENT_COMMENTS: "/api/document-comments",
+  DOCUMENT_SUBSCRIPTIONS: "/api/document-subscriptions",
+
+  // AI Assistant Module
+  AI_ASSISTANT: "/api/ai/assistant",
+  AI_PRODUCTION_INSIGHTS: "/api/ai/production-insights",
+  AI_QUALITY_RECOMMENDATIONS: "/api/ai/quality-recommendations",
+  AI_OPTIMIZE_SCHEDULE: "/api/ai/optimize-schedule",
+  AI_PREDICTIVE_MAINTENANCE: "/api/ai/predictive-maintenance",
+  AI_MODULE_SUGGESTIONS: "/api/ai/module-suggestions",
 };
 
 // Stage and status options
@@ -87,6 +103,11 @@ export const SIDEBAR_ITEMS = [
         icon: "dashboard",
       },
       {
+        title: "AI Assistant",
+        path: "/ai-assistant", 
+        icon: "smart_toy",
+      },
+      {
         title: "Setup",
         path: "/setup",
         icon: "settings",
@@ -97,6 +118,7 @@ export const SIDEBAR_ITEMS = [
           { title: "Items", path: "/setup/items" },
           { title: "Sections", path: "/setup/sections" },
           { title: "Machines", path: "/setup/machines" },
+          { title: "Machine Parts", path: "/setup/machine-parts" },
           { title: "Users", path: "/setup/users" },
           { title: "ABA Formulas", path: "/setup/aba-formulas" },
           { title: "Geofence Management", path: "/hr/geofences" },
@@ -112,8 +134,12 @@ export const SIDEBAR_ITEMS = [
           { title: "Job Orders", path: "/production/job-orders" },
           { title: "JO Mix", path: "/production/jo-mix" },
           { title: "Workflow", path: "/workflow" },
+          { title: "Rolls-Pro", path: "/production/rolls-pro" },
           { title: "Mix Materials", path: "/production/mix-materials" },
-          { title: "Bottleneck Monitor", path: "/production/bottleneck-dashboard" },
+          {
+            title: "Bottleneck Monitor",
+            path: "/production/bottleneck-dashboard",
+          },
           { title: "Production Metrics", path: "/production/metrics-input" },
           { title: "IoT Monitor", path: "/production/iot-monitor" },
         ],
@@ -145,7 +171,10 @@ export const SIDEBAR_ITEMS = [
           { title: "attendance", path: "/hr/enhanced-attendance" },
           { title: "overtime_leave", path: "/hr/overtime-leave" },
           { title: "employee_of_the_month", path: "/hr/employee-of-month" },
-          { title: "violation_and_complaint", path: "/hr/violations-complaints" },
+          {
+            title: "violation_and_complaint",
+            path: "/hr/violations-complaints",
+          },
           { title: "training_management", path: "/hr/training" },
         ],
       },
@@ -160,7 +189,6 @@ export const SIDEBAR_ITEMS = [
           { title: "Dashboard", path: "/maintenance/dashboard" },
         ],
       },
-
     ],
   },
   {
@@ -196,6 +224,23 @@ export const SIDEBAR_ITEMS = [
         ],
       },
       {
+        title: "Documents",
+        path: "/documents",
+        icon: "description",
+        subItems: [
+          { title: "All Documents", path: "/documents" },
+          { title: "New Document", path: "/documents/new" },
+          { title: "Templates", path: "/documents/templates" },
+          { title: "Archive", path: "/documents/archive" },
+          { title: "Instructions", path: "/documents/instruction" },
+          { title: "Policies", path: "/documents/policy" },
+          { title: "Procedures", path: "/documents/procedure" },
+          { title: "Forms", path: "/documents/form" },
+          { title: "Contracts", path: "/documents/contract" },
+          { title: "Reports", path: "/documents/report" },
+        ],
+      },
+      {
         title: "System Settings",
         path: "/system",
         icon: "admin_panel_settings",
@@ -217,14 +262,14 @@ export const PAGE_SIZE_OPTIONS = [5, 10, 20, 50, 100];
 
 // Chart colors
 export const CHART_COLORS = {
-  primary: "rgb(59, 130, 246)",      // Tailwind blue-500
+  primary: "rgb(59, 130, 246)", // Tailwind blue-500
   primaryLight: "rgba(59, 130, 246, 0.2)", // Tailwind blue-500 with opacity
-  secondary: "rgb(139, 92, 246)",    // Tailwind purple-500
-  success: "rgb(16, 185, 129)",      // Tailwind emerald-500
+  secondary: "rgb(139, 92, 246)", // Tailwind purple-500
+  success: "rgb(16, 185, 129)", // Tailwind emerald-500
   successLight: "rgba(16, 185, 129, 0.2)", // Tailwind emerald-500 with opacity
-  error: "rgb(239, 68, 68)",         // Tailwind red-500
-  warning: "rgb(245, 158, 11)",      // Tailwind amber-500
-  info: "rgb(14, 165, 233)",         // Tailwind sky-500
-  gray: "rgb(107, 114, 128)",        // Tailwind gray-500
+  error: "rgb(239, 68, 68)", // Tailwind red-500
+  warning: "rgb(245, 158, 11)", // Tailwind amber-500
+  info: "rgb(14, 165, 233)", // Tailwind sky-500
+  gray: "rgb(107, 114, 128)", // Tailwind gray-500
   grayLight: "rgba(243, 244, 246, 0.8)", // Tailwind gray-100 with opacity
 };

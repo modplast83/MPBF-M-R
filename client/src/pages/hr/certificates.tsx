@@ -3,10 +3,31 @@ import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Award, Search, Filter, Download, Eye, Plus, Calendar, Building, User } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Award,
+  Search,
+  Filter,
+  Download,
+  Eye,
+  Plus,
+  Calendar,
+  Building,
+  User,
+} from "lucide-react";
 import { format } from "date-fns";
 import CertificateGenerator from "@/components/hr/certificate-generator";
 import CertificateList from "@/components/hr/certificate-list";
@@ -53,11 +74,11 @@ export default function CertificatesPage() {
   const [showGenerator, setShowGenerator] = useState(false);
 
   const { data: certificates = [] } = useQuery<TrainingCertificate[]>({
-    queryKey: ["/api/training-certificates"]
+    queryKey: ["/api/training-certificates"],
   });
 
   const { data: trainings = [] } = useQuery<Training[]>({
-    queryKey: ["/api/trainings"]
+    queryKey: ["/api/trainings"],
   });
 
   // Calculate statistics
@@ -68,29 +89,38 @@ export default function CertificatesPage() {
     thisMonth: certificates.filter((c: any) => {
       const issueDate = new Date(c.issuedDate);
       const now = new Date();
-      return issueDate.getMonth() === now.getMonth() && issueDate.getFullYear() === now.getFullYear();
-    }).length
+      return (
+        issueDate.getMonth() === now.getMonth() &&
+        issueDate.getFullYear() === now.getFullYear()
+      );
+    }).length,
   };
 
   // Filter certificates based on search and status
   const filteredCertificates = certificates.filter((certificate: any) => {
-    const matchesSearch = certificate.certificateNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         certificate.issuerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         certificate.companyName.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesStatus = statusFilter === "all" || certificate.status === statusFilter;
-    
+    const matchesSearch =
+      certificate.certificateNumber
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+      certificate.issuerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      certificate.companyName.toLowerCase().includes(searchTerm.toLowerCase());
+
+    const matchesStatus =
+      statusFilter === "all" || certificate.status === statusFilter;
+
     return matchesSearch && matchesStatus;
   });
 
   const getTrainingInfo = (trainingId: number) => {
     const training = trainings.find((t: any) => t.id === trainingId);
-    return training ? {
-      id: training.id,
-      sections: training.trainingSection || "",
-      trainee: training.traineeId,
-      date: training.date
-    } : null;
+    return training
+      ? {
+          id: training.id,
+          sections: training.trainingSection || "",
+          trainee: training.traineeId,
+          date: training.date,
+        }
+      : null;
   };
 
   return (
@@ -98,10 +128,17 @@ export default function CertificatesPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Training Certificates</h1>
-          <p className="text-gray-600">Manage and track all training completion certificates</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            Training Certificates
+          </h1>
+          <p className="text-gray-600">
+            Manage and track all training completion certificates
+          </p>
         </div>
-        <Button onClick={() => setShowGenerator(true)} className="bg-blue-600 hover:bg-blue-700">
+        <Button
+          onClick={() => setShowGenerator(true)}
+          className="bg-blue-600 hover:bg-blue-700"
+        >
           <Plus className="h-4 w-4 mr-2" />
           Generate Certificate
         </Button>
@@ -113,8 +150,12 @@ export default function CertificatesPage() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Total Certificates</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
+                <p className="text-sm font-medium text-gray-600">
+                  Total Certificates
+                </p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {stats.total}
+                </p>
               </div>
               <div className="p-3 bg-blue-100 rounded-full">
                 <Award className="h-6 w-6 text-blue-600" />
@@ -128,7 +169,9 @@ export default function CertificatesPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Active</p>
-                <p className="text-2xl font-bold text-green-600">{stats.active}</p>
+                <p className="text-2xl font-bold text-green-600">
+                  {stats.active}
+                </p>
               </div>
               <div className="p-3 bg-green-100 rounded-full">
                 <Award className="h-6 w-6 text-green-600" />
@@ -142,7 +185,9 @@ export default function CertificatesPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Revoked</p>
-                <p className="text-2xl font-bold text-red-600">{stats.revoked}</p>
+                <p className="text-2xl font-bold text-red-600">
+                  {stats.revoked}
+                </p>
               </div>
               <div className="p-3 bg-red-100 rounded-full">
                 <Award className="h-6 w-6 text-red-600" />
@@ -156,7 +201,9 @@ export default function CertificatesPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">This Month</p>
-                <p className="text-2xl font-bold text-blue-600">{stats.thisMonth}</p>
+                <p className="text-2xl font-bold text-blue-600">
+                  {stats.thisMonth}
+                </p>
               </div>
               <div className="p-3 bg-blue-100 rounded-full">
                 <Calendar className="h-6 w-6 text-blue-600" />
@@ -205,13 +252,14 @@ export default function CertificatesPage() {
           <CardContent className="text-center py-12">
             <Award className="h-16 w-16 text-gray-400 mx-auto mb-4" />
             <h3 className="text-xl font-semibold text-gray-600 mb-2">
-              {searchTerm || statusFilter !== "all" ? "No certificates match your search" : "No certificates found"}
+              {searchTerm || statusFilter !== "all"
+                ? "No certificates match your search"
+                : "No certificates found"}
             </h3>
             <p className="text-gray-500 mb-6">
-              {searchTerm || statusFilter !== "all" 
+              {searchTerm || statusFilter !== "all"
                 ? "Try adjusting your search criteria or filters."
-                : "Start by generating your first training certificate."
-              }
+                : "Start by generating your first training certificate."}
             </p>
             {!searchTerm && statusFilter === "all" && (
               <Button onClick={() => setShowGenerator(true)}>
@@ -226,26 +274,38 @@ export default function CertificatesPage() {
           {filteredCertificates.map((certificate: any) => {
             const trainingInfo = getTrainingInfo(certificate.trainingId);
             return (
-              <Card key={certificate.id} className="hover:shadow-lg transition-shadow">
+              <Card
+                key={certificate.id}
+                className="hover:shadow-lg transition-shadow"
+              >
                 <CardHeader className="pb-3">
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-2">
                       <Award className="h-5 w-5 text-blue-500" />
                       <div>
-                        <CardTitle className="text-lg">{certificate.certificateNumber}</CardTitle>
+                        <CardTitle className="text-lg">
+                          {certificate.certificateNumber}
+                        </CardTitle>
                         <p className="text-sm text-gray-600">
-                          {format(new Date(certificate.issuedDate), "MMM dd, yyyy")}
+                          {format(
+                            new Date(certificate.issuedDate),
+                            "MMM dd, yyyy",
+                          )}
                         </p>
                       </div>
                     </div>
-                    <Badge 
-                      variant={certificate.status === "active" ? "default" : "secondary"}
+                    <Badge
+                      variant={
+                        certificate.status === "active"
+                          ? "default"
+                          : "secondary"
+                      }
                       className={
-                        certificate.status === "active" 
-                          ? "bg-green-100 text-green-800" 
+                        certificate.status === "active"
+                          ? "bg-green-100 text-green-800"
                           : certificate.status === "revoked"
-                          ? "bg-red-100 text-red-800"
-                          : "bg-gray-100 text-gray-800"
+                            ? "bg-red-100 text-red-800"
+                            : "bg-gray-100 text-gray-800"
                       }
                     >
                       {certificate.status}
@@ -255,13 +315,15 @@ export default function CertificatesPage() {
                 <CardContent className="space-y-3">
                   {trainingInfo && (
                     <div className="bg-blue-50 p-3 rounded-lg">
-                      <p className="text-sm font-medium text-blue-900">Training #{trainingInfo.id}</p>
+                      <p className="text-sm font-medium text-blue-900">
+                        Training #{trainingInfo.id}
+                      </p>
                       <p className="text-sm text-blue-700">
                         {trainingInfo.sections || "General Training"}
                       </p>
                     </div>
                   )}
-                  
+
                   <div className="space-y-2">
                     <div className="flex items-center gap-2 text-sm">
                       <User className="h-4 w-4 text-gray-400" />
@@ -279,7 +341,11 @@ export default function CertificatesPage() {
                       <div className="flex items-center gap-2 text-sm">
                         <Calendar className="h-4 w-4 text-gray-400" />
                         <span>
-                          <strong>Valid until:</strong> {format(new Date(certificate.validUntil), "MMM dd, yyyy")}
+                          <strong>Valid until:</strong>{" "}
+                          {format(
+                            new Date(certificate.validUntil),
+                            "MMM dd, yyyy",
+                          )}
                         </span>
                       </div>
                     )}

@@ -30,33 +30,37 @@ export function ResponsiveGrid({
 }: ResponsiveGridProps) {
   // Convert column counts to Tailwind classes
   const colClasses = {
-    xs: cols.xs ? `grid-cols-${cols.xs}` : '',
-    sm: cols.sm ? `sm:grid-cols-${cols.sm}` : '',
-    md: cols.md ? `md:grid-cols-${cols.md}` : '',
-    lg: cols.lg ? `lg:grid-cols-${cols.lg}` : '',
-    xl: cols.xl ? `xl:grid-cols-${cols.xl}` : '',
+    xs: cols.xs ? `grid-cols-${cols.xs}` : "",
+    sm: cols.sm ? `sm:grid-cols-${cols.sm}` : "",
+    md: cols.md ? `md:grid-cols-${cols.md}` : "",
+    lg: cols.lg ? `lg:grid-cols-${cols.lg}` : "",
+    xl: cols.xl ? `xl:grid-cols-${cols.xl}` : "",
   };
 
   // Calculate gap classes
   const gapX = colGap !== undefined ? colGap : gap.x;
   const gapY = rowGap !== undefined ? rowGap : gap.y;
-  
+
   const gapClasses = [
-    gapX !== undefined ? `gap-x-${gapX}` : '',
-    gapY !== undefined ? `gap-y-${gapY}` : '',
-  ].filter(Boolean).join(' ');
+    gapX !== undefined ? `gap-x-${gapX}` : "",
+    gapY !== undefined ? `gap-y-${gapY}` : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   return (
-    <div className={cn(
-      "grid w-full",
-      colClasses.xs,
-      colClasses.sm,
-      colClasses.md,
-      colClasses.lg,
-      colClasses.xl,
-      gapClasses,
-      className
-    )}>
+    <div
+      className={cn(
+        "grid w-full",
+        colClasses.xs,
+        colClasses.sm,
+        colClasses.md,
+        colClasses.lg,
+        colClasses.xl,
+        gapClasses,
+        className,
+      )}
+    >
       {children}
     </div>
   );
@@ -65,36 +69,33 @@ export function ResponsiveGrid({
 interface ResponsiveContainerProps {
   children: React.ReactNode;
   className?: string;
-  maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full' | 'none';
+  maxWidth?: "sm" | "md" | "lg" | "xl" | "2xl" | "full" | "none";
   padding?: boolean | number;
 }
 
 export function ResponsiveContainer({
   children,
   className,
-  maxWidth = 'xl',
+  maxWidth = "xl",
   padding = true,
 }: ResponsiveContainerProps) {
   const isMobile = useIsMobile();
-  
+
   // Convert maxWidth to Tailwind class
-  const maxWidthClass = maxWidth === 'none' ? '' : `max-w-${maxWidth}`;
-  
+  const maxWidthClass = maxWidth === "none" ? "" : `max-w-${maxWidth}`;
+
   // Calculate padding classes
-  let paddingClass = '';
+  let paddingClass = "";
   if (padding === true) {
-    paddingClass = isMobile ? 'px-3 py-3' : 'px-6 py-4';
-  } else if (typeof padding === 'number') {
+    paddingClass = isMobile ? "px-3 py-3" : "px-6 py-4";
+  } else if (typeof padding === "number") {
     paddingClass = `p-${padding}`;
   }
 
   return (
-    <div className={cn(
-      "w-full mx-auto",
-      maxWidthClass,
-      paddingClass,
-      className
-    )}>
+    <div
+      className={cn("w-full mx-auto", maxWidthClass, paddingClass, className)}
+    >
       {children}
     </div>
   );

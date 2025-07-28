@@ -1,28 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from "framer-motion";
 
 /**
  * AnimatedButton - Creates a pulsing effect when clicked
  */
-export const AnimatedButton = ({ 
-  children, 
-  onClick, 
+export const AnimatedButton = ({
+  children,
+  onClick,
   className = "",
-  ...props 
-}: React.ComponentProps<typeof Button>) => {
+  ...props
+}: React.ComponentProps<typeof Button> & {
+  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
+}) => {
   const [isPulsing, setIsPulsing] = useState(false);
-  
+
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     setIsPulsing(true);
     if (onClick) {
       onClick(e);
     }
-    
+
     // Reset pulsing state after animation completes
     setTimeout(() => setIsPulsing(false), 300);
   };
-  
+
   return (
     <div className="relative inline-block">
       {isPulsing && (
@@ -33,11 +35,7 @@ export const AnimatedButton = ({
           transition={{ duration: 0.3 }}
         />
       )}
-      <Button
-        className={className}
-        onClick={handleClick}
-        {...props}
-      >
+      <Button className={className} onClick={handleClick} {...props}>
         {children}
       </Button>
     </div>
@@ -49,7 +47,7 @@ export const AnimatedButton = ({
  */
 export const SuccessCheck = ({ className = "" }: { className?: string }) => {
   return (
-    <motion.div 
+    <motion.div
       className={`inline-flex items-center justify-center ${className}`}
       initial={{ scale: 0 }}
       animate={{ scale: 1 }}
@@ -85,12 +83,12 @@ export const SuccessCheck = ({ className = "" }: { className?: string }) => {
 /**
  * FadeInContent - Simple fade-in animation for elements
  */
-export const FadeInContent = ({ 
-  children, 
-  delay = 0, 
+export const FadeInContent = ({
+  children,
+  delay = 0,
   duration = 0.3,
-  className = "" 
-}: { 
+  className = "",
+}: {
   children: React.ReactNode;
   delay?: number;
   duration?: number;

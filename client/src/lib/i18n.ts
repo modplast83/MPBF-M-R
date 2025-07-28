@@ -1,20 +1,18 @@
-import i18n from 'i18next';
-import { initReactI18next } from 'react-i18next';
-import LanguageDetector from 'i18next-browser-languagedetector';
+import i18n from "i18next";
+import { initReactI18next } from "react-i18next";
+import LanguageDetector from "i18next-browser-languagedetector";
 
 // Import translation files
-import enJSON from '@/locales/en.json';
-import arJSON from '@/locales/ar.json';
-import mlJSON from '@/locales/ml.json';
-import urJSON from '@/locales/ur.json';
+import enJSON from "@/locales/en.json";
+import arJSON from "@/locales/ar.json";
+import mlJSON from "@/locales/ml.json";
+import urJSON from "@/locales/ur.json";
 
-// Clear any existing i18n instance
-if (i18n.isInitialized) {
-  i18n.changeLanguage('en');
-}
+// Type assertion to fix TypeScript issues
+const i18nInstance = i18n as any;
 
 // Set up i18next
-i18n
+i18nInstance
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
@@ -22,30 +20,30 @@ i18n
       en: enJSON,
       ar: arJSON,
       ml: mlJSON,
-      ur: urJSON
+      ur: urJSON,
     },
-    fallbackLng: 'en',
+    fallbackLng: "en",
     debug: false,
-    lng: 'en',
-    defaultNS: 'translation',
-    ns: ['translation'],
+lng: undefined, // ← يتركه للكشف التلقائي
+    defaultNS: "translation",
+    ns: ["translation"],
     interpolation: {
-      escapeValue: false
+      escapeValue: false,
     },
     detection: {
-      order: ['localStorage', 'navigator'],
-      caches: ['localStorage']
+      order: ["localStorage", "navigator"],
+      caches: ["localStorage"],
     },
     react: {
-      useSuspense: false
-    }
+      useSuspense: false,
+    },
   });
 
-console.log('i18next resources loaded:', {
+console.log("i18next resources loaded:", {
   en: !!enJSON?.translation?.auth,
   ar: !!arJSON?.translation?.auth,
   ml: !!mlJSON?.translation?.auth,
-  ur: !!urJSON?.translation?.auth
+  ur: !!urJSON?.translation?.auth,
 });
 
 export default i18n;

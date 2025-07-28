@@ -52,45 +52,58 @@ interface AbaCalculationItem {
 
 export function AbaCalculator({ onPrint }: AbaCalculatorProps) {
   const { t } = useTranslation();
-  const [selectedJobOrderId, setSelectedJobOrderId] = useState<number | null>(null);
-  const [calculationResult, setCalculationResult] = useState<AbaCalculationResult | null>(null);
+  const [selectedJobOrderId, setSelectedJobOrderId] = useState<number | null>(
+    null,
+  );
+  const [calculationResult, setCalculationResult] =
+    useState<AbaCalculationResult | null>(null);
   const [manualQuantity, setManualQuantity] = useState<number>(1000);
 
   // Fetch all pending and in_progress job orders
-  const { data: jobOrders, isLoading: jobOrdersLoading } = useQuery<JobOrder[]>({
-    queryKey: [API_ENDPOINTS.JOB_ORDERS],
-  });
+  const { data: jobOrders, isLoading: jobOrdersLoading } = useQuery<JobOrder[]>(
+    {
+      queryKey: [API_ENDPOINTS.JOB_ORDERS],
+    },
+  );
 
   // Fetch all customer products
-  const { data: customerProducts, isLoading: customerProductsLoading } = useQuery<CustomerProduct[]>({
-    queryKey: [API_ENDPOINTS.CUSTOMER_PRODUCTS],
-    enabled: !!selectedJobOrderId,
-  });
+  const { data: customerProducts, isLoading: customerProductsLoading } =
+    useQuery<CustomerProduct[]>({
+      queryKey: [API_ENDPOINTS.CUSTOMER_PRODUCTS],
+      enabled: !!selectedJobOrderId,
+    });
 
   // Fetch all customers
-  const { data: customers, isLoading: customersLoading } = useQuery<Customer[]>({
-    queryKey: [API_ENDPOINTS.CUSTOMERS],
-    enabled: !!selectedJobOrderId && !!customerProducts,
-  });
+  const { data: customers, isLoading: customersLoading } = useQuery<Customer[]>(
+    {
+      queryKey: [API_ENDPOINTS.CUSTOMERS],
+      enabled: !!selectedJobOrderId && !!customerProducts,
+    },
+  );
 
   // Filter job orders for pending and in_progress status
-  const pendingJobOrders = jobOrders?.filter(job => 
-    job.status === "pending" || job.status === "in_progress"
-  ) || [];
+  const pendingJobOrders =
+    jobOrders?.filter(
+      (job) => job.status === "pending" || job.status === "in_progress",
+    ) || [];
 
   // Get customer name for a job order
   const getCustomerName = (jobOrder: JobOrder): string => {
     // If customerId is directly on the job order, use it
     if (jobOrder.customerId && customers) {
-      const customer = customers.find(c => c.id === jobOrder.customerId);
+      const customer = customers.find((c) => c.id === jobOrder.customerId);
       if (customer) return customer.name;
     }
 
     // Otherwise, try to get customer through customer product relation
     if (customerProducts && customers) {
-      const customerProduct = customerProducts.find(cp => cp.id === jobOrder.customerProductId);
+      const customerProduct = customerProducts.find(
+        (cp) => cp.id === jobOrder.customerProductId,
+      );
       if (customerProduct) {
-        const customer = customers.find(c => c.id === customerProduct.customerId);
+        const customer = customers.find(
+          (c) => c.id === customerProduct.customerId,
+        );
         if (customer) return customer.name;
       }
     }
@@ -101,24 +114,40 @@ export function AbaCalculator({ onPrint }: AbaCalculatorProps) {
   // Get raw material for a job order
   const getRawMaterial = (jobOrder: JobOrder): string => {
     if (!customerProducts) return "Unknown";
-    
-    const product = customerProducts.find(cp => cp.id === jobOrder.customerProductId);
+
+    const product = customerProducts.find(
+      (cp) => cp.id === jobOrder.customerProductId,
+    );
     if (!product) return "Unknown";
-    
+
     return product.rawMaterial || "Unknown";
   };
 
   // Calculate ABA formula when job order is selected
   useEffect(() => {
-    if (!selectedJobOrderId || !jobOrders || jobOrdersLoading || customerProductsLoading || customersLoading) {
+    if (
+      !selectedJobOrderId ||
+      !jobOrders ||
+      jobOrdersLoading ||
+      customerProductsLoading ||
+      customersLoading
+    ) {
       return;
     }
 
-    const selectedOrder = jobOrders.find(job => job.id === selectedJobOrderId);
+    const selectedOrder = jobOrders.find(
+      (job) => job.id === selectedJobOrderId,
+    );
     if (!selectedOrder) return;
 
     calculateAbaFormula(selectedOrder);
-  }, [selectedJobOrderId, jobOrders, jobOrdersLoading, customerProductsLoading, customersLoading]);
+  }, [
+    selectedJobOrderId,
+    jobOrders,
+    jobOrdersLoading,
+    customerProductsLoading,
+    customersLoading,
+  ]);
 
   const calculateAbaFormula = (jobOrder: JobOrder) => {
     // Get raw material type (HDPE, LDPE, etc)
@@ -150,8 +179,10 @@ export function AbaCalculator({ onPrint }: AbaCalculatorProps) {
       const screwBMasterBatch = masterBatchAmount * 0.73; // 73% of MasterBatch goes to screw B
 
       // Calculate totals
-      const totalScrewA = screwAHdpe + screwALldpe + screwAFiller + screwAMasterBatch;
-      const totalScrewB = screwBHdpe + screwBLldpe + screwBFiller + screwBMasterBatch;
+      const totalScrewA =
+        screwAHdpe + screwALldpe + screwAFiller + screwAMasterBatch;
+      const totalScrewB =
+        screwBHdpe + screwBLldpe + screwBFiller + screwBMasterBatch;
       const total = totalScrewA + totalScrewB;
 
       // Calculate percentages
@@ -168,7 +199,7 @@ export function AbaCalculator({ onPrint }: AbaCalculatorProps) {
           screwAPercentage: 33.0, // These are fixed values from the example
           screwBPercentage: 6.1,
           screwAAbsPercentage: 13, // Values from the provided example
-          screwBAbsPercentage: 13
+          screwBAbsPercentage: 13,
         },
         {
           material: "LLDPE",
@@ -179,7 +210,7 @@ export function AbaCalculator({ onPrint }: AbaCalculatorProps) {
           screwAPercentage: 33.0,
           screwBPercentage: 6.1,
           screwAAbsPercentage: 12.0,
-          screwBAbsPercentage: 10.0
+          screwBAbsPercentage: 10.0,
         },
         {
           material: "Filler",
@@ -190,7 +221,7 @@ export function AbaCalculator({ onPrint }: AbaCalculatorProps) {
           screwAPercentage: 33.0,
           screwBPercentage: 86.0,
           screwAAbsPercentage: 5.0,
-          screwBAbsPercentage: 46.0
+          screwBAbsPercentage: 46.0,
         },
         {
           material: "MasterBatch",
@@ -201,12 +232,12 @@ export function AbaCalculator({ onPrint }: AbaCalculatorProps) {
           screwAPercentage: 1.1,
           screwBPercentage: 1.7,
           screwAAbsPercentage: 0.0,
-          screwBAbsPercentage: 1.0
-        }
+          screwBAbsPercentage: 1.0,
+        },
       ];
 
       setCalculationResult({
-        mixId: `Mix${String(jobOrder.id).padStart(3, '0')}`,
+        mixId: `Mix${String(jobOrder.id).padStart(3, "0")}`,
         mixDate: formatDateString(new Date().toISOString()),
         customer,
         quantity,
@@ -219,8 +250,8 @@ export function AbaCalculator({ onPrint }: AbaCalculatorProps) {
           screwAPercentage: Math.round(screwAPercentage),
           screwBPercentage: Math.round(screwBPercentage),
           screwAAbsPercentage: 30,
-          screwBAbsPercentage: 70
-        }
+          screwBAbsPercentage: 70,
+        },
       });
     }
     // Add other material calculation logic here
@@ -261,7 +292,7 @@ export function AbaCalculator({ onPrint }: AbaCalculatorProps) {
           screwAPercentage: 33.0,
           screwBPercentage: 6.1,
           screwAAbsPercentage: 13.0,
-          screwBAbsPercentage: 13.0
+          screwBAbsPercentage: 13.0,
         },
         {
           material: "Raw Material 2",
@@ -272,7 +303,7 @@ export function AbaCalculator({ onPrint }: AbaCalculatorProps) {
           screwAPercentage: 33.0,
           screwBPercentage: 6.1,
           screwAAbsPercentage: 12.0,
-          screwBAbsPercentage: 10.0
+          screwBAbsPercentage: 10.0,
         },
         {
           material: "Filler",
@@ -283,7 +314,7 @@ export function AbaCalculator({ onPrint }: AbaCalculatorProps) {
           screwAPercentage: 33.0,
           screwBPercentage: 86.0,
           screwAAbsPercentage: 5.0,
-          screwBAbsPercentage: 46.0
+          screwBAbsPercentage: 46.0,
         },
         {
           material: "MasterBatch",
@@ -294,12 +325,12 @@ export function AbaCalculator({ onPrint }: AbaCalculatorProps) {
           screwAPercentage: 1.1,
           screwBPercentage: 1.7,
           screwAAbsPercentage: 0.0,
-          screwBAbsPercentage: 1.0
-        }
+          screwBAbsPercentage: 1.0,
+        },
       ];
 
       setCalculationResult({
-        mixId: `Mix${String(jobOrder.id).padStart(3, '0')}`,
+        mixId: `Mix${String(jobOrder.id).padStart(3, "0")}`,
         mixDate: formatDateString(new Date().toISOString()),
         customer,
         quantity,
@@ -312,8 +343,8 @@ export function AbaCalculator({ onPrint }: AbaCalculatorProps) {
           screwAPercentage: Math.round(screwAPercentage),
           screwBPercentage: Math.round(screwBPercentage),
           screwAAbsPercentage: 30,
-          screwBAbsPercentage: 70
-        }
+          screwBAbsPercentage: 70,
+        },
       });
     }
   };
@@ -329,7 +360,7 @@ export function AbaCalculator({ onPrint }: AbaCalculatorProps) {
       customerProductId: 0,
       quantity: manualQuantity,
       status: "pending",
-      customerId: null
+      customerId: null,
     };
 
     // For manual calculation, create a calculation result directly with HDPE
@@ -353,8 +384,10 @@ export function AbaCalculator({ onPrint }: AbaCalculatorProps) {
     const screwBMasterBatch = masterBatchAmount * 0.73; // 73% of MasterBatch goes to screw B
 
     // Calculate totals
-    const totalScrewA = screwAHdpe + screwALldpe + screwAFiller + screwAMasterBatch;
-    const totalScrewB = screwBHdpe + screwBLldpe + screwBFiller + screwBMasterBatch;
+    const totalScrewA =
+      screwAHdpe + screwALldpe + screwAFiller + screwAMasterBatch;
+    const totalScrewB =
+      screwBHdpe + screwBLldpe + screwBFiller + screwBMasterBatch;
     const total = totalScrewA + totalScrewB;
 
     // Calculate percentages
@@ -371,7 +404,7 @@ export function AbaCalculator({ onPrint }: AbaCalculatorProps) {
         screwAPercentage: 33.0, // These are fixed values from the example
         screwBPercentage: 6.1,
         screwAAbsPercentage: 13.0,
-        screwBAbsPercentage: 13.0
+        screwBAbsPercentage: 13.0,
       },
       {
         material: "LLDPE",
@@ -382,7 +415,7 @@ export function AbaCalculator({ onPrint }: AbaCalculatorProps) {
         screwAPercentage: 33.0,
         screwBPercentage: 6.1,
         screwAAbsPercentage: 12.0,
-        screwBAbsPercentage: 10.0
+        screwBAbsPercentage: 10.0,
       },
       {
         material: "Filler",
@@ -393,7 +426,7 @@ export function AbaCalculator({ onPrint }: AbaCalculatorProps) {
         screwAPercentage: 33.0,
         screwBPercentage: 86.0,
         screwAAbsPercentage: 5.0,
-        screwBAbsPercentage: 46.0
+        screwBAbsPercentage: 46.0,
       },
       {
         material: "MasterBatch",
@@ -404,12 +437,12 @@ export function AbaCalculator({ onPrint }: AbaCalculatorProps) {
         screwAPercentage: 1.1,
         screwBPercentage: 1.7,
         screwAAbsPercentage: 0.0,
-        screwBAbsPercentage: 1.0
-      }
+        screwBAbsPercentage: 1.0,
+      },
     ];
 
     setCalculationResult({
-      mixId: `Mix${String(0).padStart(3, '0')}`,
+      mixId: `Mix${String(0).padStart(3, "0")}`,
       mixDate: formatDateString(new Date().toISOString()),
       customer: "Manual Calculation",
       quantity: manualQuantity,
@@ -422,27 +455,27 @@ export function AbaCalculator({ onPrint }: AbaCalculatorProps) {
         screwAPercentage: Math.round(screwAPercentage),
         screwBPercentage: Math.round(screwBPercentage),
         screwAAbsPercentage: 30,
-        screwBAbsPercentage: 70
-      }
+        screwBAbsPercentage: 70,
+      },
     });
   };
 
   // Handle print button click
   const handlePrint = () => {
     if (!calculationResult) return;
-    
+
     // Create printable content
-    const printWindow = window.open('', '_blank');
+    const printWindow = window.open("", "_blank");
     if (!printWindow) {
-      alert(t('production.roll_management.popup_blocked'));
+      alert(t("production.roll_management.popup_blocked"));
       return;
     }
-    
+
     // Apply styles and content to print window
     printWindow.document.write(`
       <html>
         <head>
-          <title>${t('production.aba_calculator.title')} - ${calculationResult.mixId}</title>
+          <title>${t("production.aba_calculator.title")} - ${calculationResult.mixId}</title>
           <style>
             body { font-family: Arial, sans-serif; margin: 20px; }
             h1 { font-size: 18px; text-align: center; margin-bottom: 15px; }
@@ -462,37 +495,37 @@ export function AbaCalculator({ onPrint }: AbaCalculatorProps) {
           </style>
         </head>
         <body>
-          <h1>${t('production.aba_calculator.title')} - ${t('production.aba_calculator.result')}</h1>
+          <h1>${t("production.aba_calculator.title")} - ${t("production.aba_calculator.result")}</h1>
           
           <div class="header">
             <div>
               <div class="header-item">
-                <div class="label">${t('production.aba_calculator.mix_id')}</div>
+                <div class="label">${t("production.aba_calculator.mix_id")}</div>
                 <div class="value">${calculationResult.mixId}</div>
               </div>
               <div class="header-item">
-                <div class="label">${t('common.customer')}</div>
+                <div class="label">${t("common.customer")}</div>
                 <div class="value">${calculationResult.customer}</div>
               </div>
             </div>
             <div>
               <div class="header-item">
-                <div class="label">${t('production.aba_calculator.date')}</div>
+                <div class="label">${t("production.aba_calculator.date")}</div>
                 <div class="value">${calculationResult.mixDate}</div>
               </div>
               <div class="header-item">
-                <div class="label">${t('common.quantity')}</div>
+                <div class="label">${t("common.quantity")}</div>
                 <div class="value">${calculationResult.quantity} kg</div>
               </div>
             </div>
           </div>
           
           <div class="header-item">
-            <div class="label">${t('common.raw_material')}</div>
+            <div class="label">${t("common.raw_material")}</div>
             <div class="value">${calculationResult.rawMaterial}</div>
           </div>
           
-          <h3>${t('production.aba_calculator.aba_formula')}</h3>
+          <h3>${t("production.aba_calculator.aba_formula")}</h3>
           
           <table>
             <thead>
@@ -509,7 +542,9 @@ export function AbaCalculator({ onPrint }: AbaCalculatorProps) {
               </tr>
             </thead>
             <tbody>
-              ${calculationResult.items.map((item, idx) => `
+              ${calculationResult.items
+                .map(
+                  (item, idx) => `
                 <tr>
                   <td class="screwA">${item.screwA} KG</td>
                   <td class="material">${item.material}</td>
@@ -521,7 +556,9 @@ export function AbaCalculator({ onPrint }: AbaCalculatorProps) {
                   <td class="text-orange-500">${item.screwAAbsPercentage}%</td>
                   <td class="text-teal-500">${item.screwBAbsPercentage}%</td>
                 </tr>
-              `).join('')}
+              `,
+                )
+                .join("")}
               <tr class="total-row">
                 <td>${calculationResult.totals.screwA} KG</td>
                 <td>Total</td>
@@ -538,12 +575,12 @@ export function AbaCalculator({ onPrint }: AbaCalculatorProps) {
           
           <div class="footer">
             ${new Date().toLocaleString()}<br />
-            ${t('production.aba_calculator.title')} - ${calculationResult.mixId}
+            ${t("production.aba_calculator.title")} - ${calculationResult.mixId}
           </div>
         </body>
       </html>
     `);
-    
+
     // Focus and print
     printWindow.document.close();
     printWindow.focus();
@@ -557,18 +594,28 @@ export function AbaCalculator({ onPrint }: AbaCalculatorProps) {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="md:col-span-1">
           <CardHeader>
-            <CardTitle>{t('production.aba_calculator.job_order_selection')}</CardTitle>
+            <CardTitle>
+              {t("production.aba_calculator.job_order_selection")}
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               <div>
-                <Label htmlFor="job-order">{t('production.aba_calculator.select_job_order')}</Label>
+                <Label htmlFor="job-order">
+                  {t("production.aba_calculator.select_job_order")}
+                </Label>
                 <Select
-                  onValueChange={(value) => setSelectedJobOrderId(parseInt(value))}
+                  onValueChange={(value) =>
+                    setSelectedJobOrderId(parseInt(value))
+                  }
                   disabled={jobOrdersLoading}
                 >
                   <SelectTrigger id="job-order">
-                    <SelectValue placeholder={t('production.aba_calculator.select_job_order')} />
+                    <SelectValue
+                      placeholder={t(
+                        "production.aba_calculator.select_job_order",
+                      )}
+                    />
                   </SelectTrigger>
                   <SelectContent>
                     {pendingJobOrders.map((job) => (
@@ -579,25 +626,28 @@ export function AbaCalculator({ onPrint }: AbaCalculatorProps) {
                   </SelectContent>
                 </Select>
               </div>
-              
+
               <div className="border-t pt-4">
-                <h3 className="font-medium mb-2">{t('production.aba_calculator.manual_calculation')}</h3>
+                <h3 className="font-medium mb-2">
+                  {t("production.aba_calculator.manual_calculation")}
+                </h3>
                 <div className="flex items-end gap-2">
                   <div className="flex-1">
-                    <Label htmlFor="manual-quantity">{t('production.aba_calculator.quantity')}</Label>
+                    <Label htmlFor="manual-quantity">
+                      {t("production.aba_calculator.quantity")}
+                    </Label>
                     <Input
                       id="manual-quantity"
                       type="number"
                       value={manualQuantity}
-                      onChange={(e) => setManualQuantity(parseFloat(e.target.value))}
+                      onChange={(e) =>
+                        setManualQuantity(parseFloat(e.target.value))
+                      }
                       min="1"
                     />
                   </div>
-                  <Button 
-                    variant="outline" 
-                    onClick={calculateManualAba}
-                  >
-                    {t('production.aba_calculator.calculate')}
+                  <Button variant="outline" onClick={calculateManualAba}>
+                    {t("production.aba_calculator.calculate")}
                   </Button>
                 </div>
               </div>
@@ -608,40 +658,61 @@ export function AbaCalculator({ onPrint }: AbaCalculatorProps) {
         {calculationResult && (
           <Card className="md:col-span-2">
             <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle>{t('production.aba_calculator.result')}</CardTitle>
-              <Button onClick={handlePrint} variant="outline" size="sm" className="ml-auto">
+              <CardTitle>{t("production.aba_calculator.result")}</CardTitle>
+              <Button
+                onClick={handlePrint}
+                variant="outline"
+                size="sm"
+                className="ml-auto"
+              >
                 <span className="material-icons text-sm mr-1">print</span>
-                {t('common.print')}
+                {t("common.print")}
               </Button>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <p className="text-sm text-muted-foreground">{t('production.aba_calculator.mix_id')}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {t("production.aba_calculator.mix_id")}
+                    </p>
                     <p className="font-medium">{calculationResult.mixId}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">{t('production.aba_calculator.date')}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {t("production.aba_calculator.date")}
+                    </p>
                     <p className="font-medium">{calculationResult.mixDate}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">{t('common.customer')}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {t("common.customer")}
+                    </p>
                     <p className="font-medium">{calculationResult.customer}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">{t('common.quantity')}</p>
-                    <p className="font-medium">{calculationResult.quantity} kg</p>
+                    <p className="text-sm text-muted-foreground">
+                      {t("common.quantity")}
+                    </p>
+                    <p className="font-medium">
+                      {calculationResult.quantity} kg
+                    </p>
                   </div>
                   <div className="col-span-2">
-                    <p className="text-sm text-muted-foreground">{t('common.raw_material')}</p>
-                    <p className="font-medium">{calculationResult.rawMaterial}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {t("common.raw_material")}
+                    </p>
+                    <p className="font-medium">
+                      {calculationResult.rawMaterial}
+                    </p>
                   </div>
                 </div>
 
                 <div className="border-t pt-4">
-                  <h3 className="font-medium mb-2">{t('production.aba_calculator.aba_formula')}</h3>
-                  
+                  <h3 className="font-medium mb-2">
+                    {t("production.aba_calculator.aba_formula")}
+                  </h3>
+
                   <div className="overflow-x-auto">
                     <table className="min-w-full border-collapse">
                       <thead>
@@ -678,15 +749,33 @@ export function AbaCalculator({ onPrint }: AbaCalculatorProps) {
                       <tbody>
                         {calculationResult.items.map((item, index) => (
                           <tr key={index} className="text-center">
-                            <td className="p-2 border text-sm bg-red-100">{item.screwA} KG</td>
-                            <td className="p-2 border text-sm font-medium bg-yellow-50">{item.material}</td>
-                            <td className="p-2 border text-sm bg-orange-100">{item.screwB} KG</td>
-                            <td className="p-2 border text-sm bg-yellow-50">{item.total} KG</td>
-                            <td className="p-2 border text-sm">{item.percentage}%</td>
-                            <td className="p-2 border text-sm">{item.screwAPercentage}%</td>
-                            <td className="p-2 border text-sm">{item.screwBPercentage}%</td>
-                            <td className="p-2 border text-sm text-orange-500">{item.screwAAbsPercentage}%</td>
-                            <td className="p-2 border text-sm text-teal-500">{item.screwBAbsPercentage}%</td>
+                            <td className="p-2 border text-sm bg-red-100">
+                              {item.screwA} KG
+                            </td>
+                            <td className="p-2 border text-sm font-medium bg-yellow-50">
+                              {item.material}
+                            </td>
+                            <td className="p-2 border text-sm bg-orange-100">
+                              {item.screwB} KG
+                            </td>
+                            <td className="p-2 border text-sm bg-yellow-50">
+                              {item.total} KG
+                            </td>
+                            <td className="p-2 border text-sm">
+                              {item.percentage}%
+                            </td>
+                            <td className="p-2 border text-sm">
+                              {item.screwAPercentage}%
+                            </td>
+                            <td className="p-2 border text-sm">
+                              {item.screwBPercentage}%
+                            </td>
+                            <td className="p-2 border text-sm text-orange-500">
+                              {item.screwAAbsPercentage}%
+                            </td>
+                            <td className="p-2 border text-sm text-teal-500">
+                              {item.screwBAbsPercentage}%
+                            </td>
                           </tr>
                         ))}
                         {/* Total row */}
@@ -695,7 +784,7 @@ export function AbaCalculator({ onPrint }: AbaCalculatorProps) {
                             {calculationResult.totals.screwA} KG
                           </td>
                           <td className="p-2 border text-sm font-bold">
-                            {t('common.total')}
+                            {t("common.total")}
                           </td>
                           <td className="p-2 border text-sm font-bold">
                             {calculationResult.totals.screwB} KG
@@ -703,9 +792,7 @@ export function AbaCalculator({ onPrint }: AbaCalculatorProps) {
                           <td className="p-2 border text-sm font-bold">
                             {calculationResult.totals.total} KG
                           </td>
-                          <td className="p-2 border text-sm font-bold">
-                            100%
-                          </td>
+                          <td className="p-2 border text-sm font-bold">100%</td>
                           <td className="p-2 border text-sm font-bold">
                             {calculationResult.totals.screwAPercentage}%
                           </td>
@@ -739,9 +826,11 @@ export function AbaPrintTemplate({ data }: { data: AbaCalculationResult }) {
     <div className="print-template p-4 max-w-[750px] bg-white">
       <div className="bg-yellow-100 p-2 mb-4">
         <h1 className="text-xl font-bold text-center">Test ABA</h1>
-        <h2 className="text-lg font-bold text-center">ABA Formula {data.rawMaterial}</h2>
+        <h2 className="text-lg font-bold text-center">
+          ABA Formula {data.rawMaterial}
+        </h2>
       </div>
-      
+
       <div className="flex justify-between mb-4">
         <div className="text-sm">
           <span className="font-bold">{data.mixId}</span>
@@ -758,7 +847,9 @@ export function AbaPrintTemplate({ data }: { data: AbaCalculationResult }) {
         <thead>
           <tr>
             <th className="p-2 border bg-red-200 text-center">Screw A</th>
-            <th className="p-2 border bg-yellow-100 text-center">Raw Materials</th>
+            <th className="p-2 border bg-yellow-100 text-center">
+              Raw Materials
+            </th>
             <th className="p-2 border bg-orange-200 text-center">Screw B</th>
             <th className="p-2 border bg-yellow-200 text-center">A+B Kg</th>
             <th className="p-2 border bg-yellow-50 text-center">A+B %</th>
@@ -771,27 +862,57 @@ export function AbaPrintTemplate({ data }: { data: AbaCalculationResult }) {
         <tbody>
           {data.items.map((item, index) => (
             <tr key={index}>
-              <td className="p-2 border bg-red-100 text-center">{item.screwA} KG</td>
-              <td className="p-2 border bg-yellow-50 text-center font-medium">{item.material}</td>
-              <td className="p-2 border bg-orange-100 text-center">{item.screwB} KG</td>
-              <td className="p-2 border bg-yellow-50 text-center">{item.total} KG</td>
+              <td className="p-2 border bg-red-100 text-center">
+                {item.screwA} KG
+              </td>
+              <td className="p-2 border bg-yellow-50 text-center font-medium">
+                {item.material}
+              </td>
+              <td className="p-2 border bg-orange-100 text-center">
+                {item.screwB} KG
+              </td>
+              <td className="p-2 border bg-yellow-50 text-center">
+                {item.total} KG
+              </td>
               <td className="p-2 border text-center">{item.percentage}%</td>
-              <td className="p-2 border text-center">{item.screwAPercentage}%</td>
-              <td className="p-2 border text-center">{item.screwBPercentage}%</td>
-              <td className="p-2 border text-center text-orange-500">{item.screwAAbsPercentage}%</td>
-              <td className="p-2 border text-center text-teal-500">{item.screwBAbsPercentage}%</td>
+              <td className="p-2 border text-center">
+                {item.screwAPercentage}%
+              </td>
+              <td className="p-2 border text-center">
+                {item.screwBPercentage}%
+              </td>
+              <td className="p-2 border text-center text-orange-500">
+                {item.screwAAbsPercentage}%
+              </td>
+              <td className="p-2 border text-center text-teal-500">
+                {item.screwBAbsPercentage}%
+              </td>
             </tr>
           ))}
           <tr className="bg-gray-200">
-            <td className="p-2 border text-center font-bold">{data.totals.screwA} KG</td>
+            <td className="p-2 border text-center font-bold">
+              {data.totals.screwA} KG
+            </td>
             <td className="p-2 border text-center font-bold">Total</td>
-            <td className="p-2 border text-center font-bold">{data.totals.screwB} KG</td>
-            <td className="p-2 border text-center font-bold">{data.totals.total} KG</td>
+            <td className="p-2 border text-center font-bold">
+              {data.totals.screwB} KG
+            </td>
+            <td className="p-2 border text-center font-bold">
+              {data.totals.total} KG
+            </td>
             <td className="p-2 border text-center font-bold">100%</td>
-            <td className="p-2 border text-center font-bold">{data.totals.screwAPercentage}%</td>
-            <td className="p-2 border text-center font-bold">{data.totals.screwBPercentage}%</td>
-            <td className="p-2 border text-center font-bold text-orange-500">{data.totals.screwAAbsPercentage}%</td>
-            <td className="p-2 border text-center font-bold text-teal-500">{data.totals.screwBAbsPercentage}%</td>
+            <td className="p-2 border text-center font-bold">
+              {data.totals.screwAPercentage}%
+            </td>
+            <td className="p-2 border text-center font-bold">
+              {data.totals.screwBPercentage}%
+            </td>
+            <td className="p-2 border text-center font-bold text-orange-500">
+              {data.totals.screwAAbsPercentage}%
+            </td>
+            <td className="p-2 border text-center font-bold text-teal-500">
+              {data.totals.screwBAbsPercentage}%
+            </td>
           </tr>
         </tbody>
       </table>

@@ -1,25 +1,25 @@
-import React, { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { 
+import React, { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/ui/popover';
-import { 
-  Bell, 
-  AlertTriangle, 
-  Info, 
-  CheckCircle, 
+} from "@/components/ui/popover";
+import {
+  Bell,
+  AlertTriangle,
+  Info,
+  CheckCircle,
   AlertCircle,
-  ExternalLink
-} from 'lucide-react';
-import { formatDistanceToNow } from 'date-fns';
-import { useAuth } from '@/hooks/use-auth-v2';
-import { Link } from 'wouter';
+  ExternalLink,
+} from "lucide-react";
+import { formatDistanceToNow } from "date-fns";
+import { useAuth } from "@/hooks/use-auth-v2";
+import { Link } from "wouter";
 
 interface Notification {
   id: number;
@@ -36,11 +36,11 @@ interface Notification {
 }
 
 const priorityConfig = {
-  urgent: { color: 'text-red-600', bgColor: 'bg-red-600' },
-  critical: { color: 'text-red-500', bgColor: 'bg-red-500' },
-  high: { color: 'text-orange-500', bgColor: 'bg-orange-500' },
-  medium: { color: 'text-blue-500', bgColor: 'bg-blue-500' },
-  low: { color: 'text-gray-500', bgColor: 'bg-gray-500' }
+  urgent: { color: "text-red-600", bgColor: "bg-red-600" },
+  critical: { color: "text-red-500", bgColor: "bg-red-500" },
+  high: { color: "text-orange-500", bgColor: "bg-orange-500" },
+  medium: { color: "text-blue-500", bgColor: "bg-blue-500" },
+  low: { color: "text-gray-500", bgColor: "bg-gray-500" },
 };
 
 const typeIcons = {
@@ -48,7 +48,7 @@ const typeIcons = {
   warning: AlertCircle,
   info: Info,
   success: CheckCircle,
-  system: Info
+  system: Info,
 };
 
 export function NotificationBell() {
@@ -57,16 +57,16 @@ export function NotificationBell() {
 
   // Fetch recent notifications
   const { data: notifications = [] } = useQuery({
-    queryKey: ['/api/notifications', { limit: 5, unreadOnly: true }],
+    queryKey: ["/api/notifications", { limit: 5, unreadOnly: true }],
     enabled: !!user,
-    refetchInterval: 30000 // Refetch every 30 seconds for real-time updates
+    refetchInterval: 30000, // Refetch every 30 seconds for real-time updates
   });
 
   // Fetch unread count
   const { data: unreadCount = 0 } = useQuery({
-    queryKey: ['/api/notifications/unread-count'],
+    queryKey: ["/api/notifications/unread-count"],
     enabled: !!user,
-    refetchInterval: 30000
+    refetchInterval: 30000,
   });
 
   const getTypeIcon = (type: string) => {
@@ -75,7 +75,10 @@ export function NotificationBell() {
   };
 
   const getPriorityColor = (priority: string) => {
-    return priorityConfig[priority as keyof typeof priorityConfig]?.color || 'text-gray-500';
+    return (
+      priorityConfig[priority as keyof typeof priorityConfig]?.color ||
+      "text-gray-500"
+    );
   };
 
   const handleNotificationClick = (notification: Notification) => {
@@ -88,28 +91,20 @@ export function NotificationBell() {
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="relative"
-        >
+        <Button variant="ghost" size="sm" className="relative">
           <Bell className="h-5 w-5" />
           {unreadCount > 0 && (
-            <Badge 
-              variant="destructive" 
+            <Badge
+              variant="destructive"
               className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs"
             >
-              {unreadCount > 99 ? '99+' : unreadCount}
+              {unreadCount > 99 ? "99+" : unreadCount}
             </Badge>
           )}
         </Button>
       </PopoverTrigger>
-      
-      <PopoverContent 
-        className="w-80 p-0" 
-        align="end"
-        sideOffset={5}
-      >
+
+      <PopoverContent className="w-80 p-0" align="end" sideOffset={5}>
         <Card className="border-0 shadow-lg">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
@@ -122,7 +117,7 @@ export function NotificationBell() {
               </Link>
             </div>
           </CardHeader>
-          
+
           <CardContent className="p-0">
             <ScrollArea className="max-h-96">
               {notifications.length === 0 ? (
@@ -133,50 +128,64 @@ export function NotificationBell() {
                 <div className="divide-y">
                   {notifications.map((notification: Notification) => {
                     const IconComponent = getTypeIcon(notification.type);
-                    const priorityColor = getPriorityColor(notification.priority);
-                    
+                    const priorityColor = getPriorityColor(
+                      notification.priority,
+                    );
+
                     return (
                       <div
                         key={notification.id}
                         className={`p-3 hover:bg-gray-50 cursor-pointer transition-colors ${
-                          !notification.isRead ? 'bg-blue-50 border-l-4 border-blue-500' : ''
+                          !notification.isRead
+                            ? "bg-blue-50 border-l-4 border-blue-500"
+                            : ""
                         }`}
                         onClick={() => handleNotificationClick(notification)}
                       >
                         <div className="flex items-start gap-3">
                           <div className="flex items-center gap-1 mt-0.5">
-                            <IconComponent className={`h-4 w-4 ${priorityColor}`} />
+                            <IconComponent
+                              className={`h-4 w-4 ${priorityColor}`}
+                            />
                           </div>
-                          
+
                           <div className="flex-1 space-y-1">
                             <div className="flex items-start justify-between">
-                              <h4 className={`text-sm font-medium leading-tight ${
-                                !notification.isRead ? 'font-semibold' : ''
-                              }`}>
+                              <h4
+                                className={`text-sm font-medium leading-tight ${
+                                  !notification.isRead ? "font-semibold" : ""
+                                }`}
+                              >
                                 {notification.title}
                               </h4>
                               <div className="flex items-center gap-1 ml-2">
-                                <Badge 
-                                  variant="outline" 
+                                <Badge
+                                  variant="outline"
                                   className={`text-xs ${priorityColor}`}
                                 >
                                   {notification.priority}
                                 </Badge>
                                 {notification.actionRequired && (
-                                  <Badge variant="destructive" className="text-xs">
+                                  <Badge
+                                    variant="destructive"
+                                    className="text-xs"
+                                  >
                                     Action
                                   </Badge>
                                 )}
                               </div>
                             </div>
-                            
+
                             <p className="text-xs text-gray-600 line-clamp-2">
                               {notification.message}
                             </p>
-                            
+
                             <div className="flex items-center justify-between text-xs text-gray-500">
                               <span>
-                                {formatDistanceToNow(new Date(notification.createdAt))} ago
+                                {formatDistanceToNow(
+                                  new Date(notification.createdAt),
+                                )}{" "}
+                                ago
                               </span>
                               <Badge variant="outline" className="text-xs">
                                 {notification.category}
@@ -190,7 +199,7 @@ export function NotificationBell() {
                 </div>
               )}
             </ScrollArea>
-            
+
             {notifications.length > 0 && (
               <div className="p-3 border-t">
                 <Link href="/notifications">

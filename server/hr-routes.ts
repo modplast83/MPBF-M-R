@@ -2,7 +2,6 @@ import type { Express } from "express";
 import { storage } from "./storage";
 
 export function setupHRRoutes(app: Express) {
-
   // Employee profile data is now integrated into users - use /api/users endpoints instead
 
   // Geofences
@@ -40,6 +39,20 @@ export function setupHRRoutes(app: Express) {
     }
   });
 
+  app.delete("/api/hr/geofences/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const deleted = await storage.deleteGeofence(id);
+      if (!deleted) {
+        return res.status(404).json({ error: "Geofence not found" });
+      }
+      res.json({ message: "Geofence deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting geofence:", error);
+      res.status(500).json({ error: "Failed to delete geofence" });
+    }
+  });
+
   // Geofence checking endpoint
   app.post("/api/hr/check-geofence", async (req, res) => {
     try {
@@ -57,7 +70,7 @@ export function setupHRRoutes(app: Express) {
     try {
       const { userId, status } = req.query;
       let requests;
-      
+
       if (userId) {
         requests = await storage.getLeaveRequestsByUser(userId as string);
       } else if (status) {
@@ -65,7 +78,7 @@ export function setupHRRoutes(app: Express) {
       } else {
         requests = await storage.getLeaveRequests();
       }
-      
+
       res.json(requests);
     } catch (error) {
       console.error("Error fetching leave requests:", error);
@@ -102,7 +115,7 @@ export function setupHRRoutes(app: Express) {
     try {
       const { userId, status } = req.query;
       let requests;
-      
+
       if (userId) {
         requests = await storage.getOvertimeRequestsByUser(userId as string);
       } else if (status) {
@@ -110,7 +123,7 @@ export function setupHRRoutes(app: Express) {
       } else {
         requests = await storage.getOvertimeRequests();
       }
-      
+
       res.json(requests);
     } catch (error) {
       console.error("Error fetching overtime requests:", error);
@@ -147,15 +160,15 @@ export function setupHRRoutes(app: Express) {
     try {
       const { userId } = req.params;
       const { year, month } = req.query;
-      
+
       if (!year || !month) {
         return res.status(400).json({ error: "Year and month are required" });
       }
-      
+
       const analysis = await storage.getMonthlyOvertimeByUser(
-        userId, 
-        parseInt(year as string), 
-        parseInt(month as string)
+        userId,
+        parseInt(year as string),
+        parseInt(month as string),
       );
       res.json(analysis);
     } catch (error) {
@@ -169,7 +182,7 @@ export function setupHRRoutes(app: Express) {
     try {
       const { userId, status } = req.query;
       let records;
-      
+
       if (userId) {
         records = await storage.getPayrollRecordsByUser(userId as string);
       } else if (status) {
@@ -177,7 +190,7 @@ export function setupHRRoutes(app: Express) {
       } else {
         records = await storage.getPayrollRecords();
       }
-      
+
       res.json(records);
     } catch (error) {
       console.error("Error fetching payroll records:", error);
@@ -214,15 +227,17 @@ export function setupHRRoutes(app: Express) {
     try {
       const { userId, reviewerId } = req.query;
       let reviews;
-      
+
       if (userId) {
         reviews = await storage.getPerformanceReviewsByUser(userId as string);
       } else if (reviewerId) {
-        reviews = await storage.getPerformanceReviewsByReviewer(reviewerId as string);
+        reviews = await storage.getPerformanceReviewsByReviewer(
+          reviewerId as string,
+        );
       } else {
         reviews = await storage.getPerformanceReviews();
       }
-      
+
       res.json(reviews);
     } catch (error) {
       console.error("Error fetching performance reviews:", error);
@@ -257,42 +272,55 @@ export function setupHRRoutes(app: Express) {
   // Enhanced Time Attendance with geofencing and overtime validation
   app.post("/api/hr/check-in", async (req, res) => {
     try {
-      const { userId, latitude, longitude, manualEntry = false } = req.body;
-      
-      // Skip geofence validation for manual entries or when coordinates are default (0,0)
-      const skipGeofenceValidation = manualEntry || (latitude === 0 && longitude === 0);
-      
-      if (!skipGeofenceValidation) {
-        // Check if user is within geofence for GPS-based check-ins
-        const geofences = await storage.checkUserInGeofence(latitude, longitude);
-        if (geofences.length === 0) {
-          return res.status(400).json({ error: "You are not within the factory area" });
-        }
+      const { userId, latitude, longitude } = req.body;
+
+      // Validate that coordinates are provided
+      if (latitude === undefined || longitude === undefined || latitude === 0 && longitude === 0) {
+        return res
+          .status(400)
+          .json({ error: "Location coordinates are required for check-in" });
       }
-      
+
+      // Always check if user is within geofence
+      const geofences = await storage.checkUserInGeofence(
+        latitude,
+        longitude,
+      );
+      if (geofences.length === 0) {
+        return res
+          .status(400)
+          .json({ error: "You are not within the factory area" });
+      }
+
       // Check if already checked in today
       const today = new Date();
-      const existingAttendance = await storage.getTimeAttendanceByUserAndDate(userId, today);
+      const existingAttendance = await storage.getTimeAttendanceByUserAndDate(
+        userId,
+        today,
+      );
       if (existingAttendance && existingAttendance.checkInTime) {
         return res.status(400).json({ error: "Already checked in today" });
       }
-      
+
       // Create or update attendance record
       const attendanceData = {
         userId,
         date: today,
         checkInTime: new Date(),
         checkInLocation: `${latitude},${longitude}`,
-        status: 'present'
+        status: "present",
       };
-      
+
       let attendance;
       if (existingAttendance) {
-        attendance = await storage.updateTimeAttendance(existingAttendance.id, attendanceData);
+        attendance = await storage.updateTimeAttendance(
+          existingAttendance.id,
+          attendanceData,
+        );
       } else {
         attendance = await storage.createTimeAttendance(attendanceData);
       }
-      
+
       res.json(attendance);
     } catch (error) {
       console.error("Error checking in:", error);
@@ -303,33 +331,73 @@ export function setupHRRoutes(app: Express) {
   // Break start endpoint
   app.post("/api/hr/break-start", async (req, res) => {
     try {
-      const { userId } = req.body;
-      
+      const { userId, latitude, longitude } = req.body;
+
       if (!userId) {
         return res.status(400).json({ error: "User ID is required" });
       }
-      
+
+      // Validate that coordinates are provided
+      if (latitude === undefined || longitude === undefined || latitude === 0 && longitude === 0) {
+        return res
+          .status(400)
+          .json({ error: "Location coordinates are required to start break" });
+      }
+
+      // Always check if user is within geofence
+      const geofences = await storage.checkUserInGeofence(
+        latitude,
+        longitude,
+      );
+      if (geofences.length === 0) {
+        return res
+          .status(400)
+          .json({
+            error: "You must be within the factory area to start break",
+          });
+      }
+
       // Get today's attendance record
       const today = new Date();
-      const attendance = await storage.getTimeAttendanceByUserAndDate(userId, today);
-      
+      const attendance = await storage.getTimeAttendanceByUserAndDate(
+        userId,
+        today,
+      );
+
       if (!attendance || !attendance.checkInTime) {
-        return res.status(400).json({ error: "No check-in record found for today" });
+        return res
+          .status(400)
+          .json({ error: "No check-in record found for today" });
       }
-      
+
       if (attendance.checkOutTime) {
         return res.status(400).json({ error: "Already checked out today" });
       }
-      
+
       if (attendance.breakStartTime && !attendance.breakEndTime) {
         return res.status(400).json({ error: "Break already in progress" });
       }
-      
+
+      // Check if break was already taken today (only one break per day allowed)
+      if (attendance.breakStartTime && attendance.breakEndTime) {
+        return res
+          .status(400)
+          .json({
+            error:
+              "Break already taken today. Only one break per day is allowed.",
+          });
+      }
+
       const updateData = {
-        breakStartTime: new Date()
+        breakStartTime: new Date(),
+        breakStartLocation:
+          latitude && longitude ? `${latitude},${longitude}` : null,
       };
-      
-      const updatedAttendance = await storage.updateTimeAttendance(attendance.id, updateData);
+
+      const updatedAttendance = await storage.updateTimeAttendance(
+        attendance.id,
+        updateData,
+      );
       res.json(updatedAttendance);
     } catch (error) {
       console.error("Error starting break:", error);
@@ -340,37 +408,69 @@ export function setupHRRoutes(app: Express) {
   // Break end endpoint
   app.post("/api/hr/break-end", async (req, res) => {
     try {
-      const { userId } = req.body;
-      
+      const { userId, latitude, longitude } = req.body;
+
       if (!userId) {
         return res.status(400).json({ error: "User ID is required" });
       }
-      
+
+      // Validate that coordinates are provided
+      if (latitude === undefined || longitude === undefined || latitude === 0 && longitude === 0) {
+        return res
+          .status(400)
+          .json({ error: "Location coordinates are required to end break" });
+      }
+
+      // Always check if user is within geofence
+      const geofences = await storage.checkUserInGeofence(
+        latitude,
+        longitude,
+      );
+      if (geofences.length === 0) {
+        return res
+          .status(400)
+          .json({
+            error: "You must be within the factory area to end break",
+          });
+      }
+
       // Get today's attendance record
       const today = new Date();
-      const attendance = await storage.getTimeAttendanceByUserAndDate(userId, today);
-      
+      const attendance = await storage.getTimeAttendanceByUserAndDate(
+        userId,
+        today,
+      );
+
       if (!attendance || !attendance.checkInTime) {
-        return res.status(400).json({ error: "No check-in record found for today" });
+        return res
+          .status(400)
+          .json({ error: "No check-in record found for today" });
       }
-      
+
       if (!attendance.breakStartTime) {
         return res.status(400).json({ error: "No break in progress" });
       }
-      
+
       if (attendance.breakEndTime) {
         return res.status(400).json({ error: "Break already ended" });
       }
-      
+
       const breakEndTime = new Date();
-      const breakDuration = (breakEndTime.getTime() - attendance.breakStartTime.getTime()) / (1000 * 60 * 60);
-      
+      const breakDuration =
+        (breakEndTime.getTime() - attendance.breakStartTime.getTime()) /
+        (1000 * 60 * 60);
+
       const updateData = {
         breakEndTime,
-        breakDuration
+        breakDuration,
+        breakEndLocation:
+          latitude && longitude ? `${latitude},${longitude}` : null,
       };
-      
-      const updatedAttendance = await storage.updateTimeAttendance(attendance.id, updateData);
+
+      const updatedAttendance = await storage.updateTimeAttendance(
+        attendance.id,
+        updateData,
+      );
       res.json(updatedAttendance);
     } catch (error) {
       console.error("Error ending break:", error);
@@ -380,44 +480,86 @@ export function setupHRRoutes(app: Express) {
 
   app.post("/api/hr/check-out", async (req, res) => {
     try {
-      const { userId, latitude, longitude, isAutomatic = false } = req.body;
-      
+      const {
+        userId,
+        latitude,
+        longitude,
+        isAutomatic = false,
+      } = req.body;
+
+      // Allow automatic check-out to skip geofence validation (for leaving factory area)
+      if (!isAutomatic) {
+        // Validate that coordinates are provided for manual check-outs
+        if (latitude === undefined || longitude === undefined || latitude === 0 && longitude === 0) {
+          return res
+            .status(400)
+            .json({ error: "Location coordinates are required for check-out" });
+        }
+
+        // Check if user is within geofence for manual check-out
+        const geofences = await storage.checkUserInGeofence(
+          latitude,
+          longitude,
+        );
+        if (geofences.length === 0) {
+          return res
+            .status(400)
+            .json({
+              error: "You must be within the factory area to check out",
+            });
+        }
+      }
+
       // Get today's attendance record
       const today = new Date();
-      const attendance = await storage.getTimeAttendanceByUserAndDate(userId, today);
+      const attendance = await storage.getTimeAttendanceByUserAndDate(
+        userId,
+        today,
+      );
       if (!attendance || !attendance.checkInTime) {
-        return res.status(400).json({ error: "No check-in record found for today" });
+        return res
+          .status(400)
+          .json({ error: "No check-in record found for today" });
       }
-      
+
       if (attendance.checkOutTime) {
         return res.status(400).json({ error: "Already checked out today" });
       }
-      
+
       // Calculate working hours
       const checkOutTime = new Date();
-      const workingHours = (checkOutTime.getTime() - attendance.checkInTime.getTime()) / (1000 * 60 * 60);
-      
+      const workingHours =
+        (checkOutTime.getTime() - attendance.checkInTime.getTime()) /
+        (1000 * 60 * 60);
+
       // Calculate break duration if breaks were taken
       let breakDuration = 0;
       if (attendance.breakStartTime && attendance.breakEndTime) {
-        breakDuration = (attendance.breakEndTime.getTime() - attendance.breakStartTime.getTime()) / (1000 * 60 * 60);
+        breakDuration =
+          (attendance.breakEndTime.getTime() -
+            attendance.breakStartTime.getTime()) /
+          (1000 * 60 * 60);
       }
-      
+
       const netWorkingHours = workingHours - breakDuration;
       const standardWorkingHours = 8; // configurable
       const overtimeHours = Math.max(0, netWorkingHours - standardWorkingHours);
-      
+
       const updateData = {
         checkOutTime,
-        checkOutLocation: latitude && longitude ? `${latitude},${longitude}` : null,
+        checkOutLocation:
+          latitude && longitude ? `${latitude},${longitude}` : null,
         workingHours: netWorkingHours,
         overtimeHours,
         breakDuration,
         isAutoCheckedOut: isAutomatic,
-        autoCheckOutReason: isAutomatic ? "Left factory area" : null
+        autoCheckOutReason: isAutomatic ? "Left factory area" : null,
       };
-      
-      const updatedAttendance = await storage.updateTimeAttendance(attendance.id, updateData);
+
+      const updatedAttendance = await storage.updateTimeAttendance(
+        attendance.id,
+        updateData,
+      );
       res.json(updatedAttendance);
     } catch (error) {
       console.error("Error checking out:", error);
@@ -452,7 +594,7 @@ export function setupHRRoutes(app: Express) {
       if (isNaN(id)) {
         return res.status(400).json({ error: "Invalid attendance ID" });
       }
-      
+
       const attendance = await storage.updateTimeAttendance(id, req.body);
       if (!attendance) {
         return res.status(404).json({ error: "Attendance record not found" });

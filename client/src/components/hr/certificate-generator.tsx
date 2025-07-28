@@ -4,14 +4,35 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Calendar, Download, Eye, Palette, Save, Settings, Award } from "lucide-react";
+import {
+  Calendar,
+  Download,
+  Eye,
+  Palette,
+  Save,
+  Settings,
+  Award,
+} from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { useTranslation } from "react-i18next";
@@ -26,16 +47,18 @@ const certificateSchema = z.object({
   templateId: z.string().default("default"),
   validUntil: z.string().optional(),
   logoUrl: z.string().optional(),
-  customDesign: z.object({
-    primaryColor: z.string().default("#1f2937"),
-    secondaryColor: z.string().default("#3b82f6"),
-    accentColor: z.string().default("#f59e0b"),
-    fontFamily: z.string().default("Arial, sans-serif"),
-    borderStyle: z.string().default("elegant"),
-    layout: z.string().default("modern"),
-    includeQR: z.boolean().default(true),
-    customText: z.string().optional()
-  }).optional()
+  customDesign: z
+    .object({
+      primaryColor: z.string().default("#1f2937"),
+      secondaryColor: z.string().default("#3b82f6"),
+      accentColor: z.string().default("#f59e0b"),
+      fontFamily: z.string().default("Arial, sans-serif"),
+      borderStyle: z.string().default("elegant"),
+      layout: z.string().default("modern"),
+      includeQR: z.boolean().default(true),
+      customText: z.string().optional(),
+    })
+    .optional(),
 });
 
 type CertificateFormData = z.infer<typeof certificateSchema>;
@@ -73,19 +96,48 @@ const templates = [
   { id: "default", name: "Default", description: "Clean and professional" },
   { id: "elegant", name: "Elegant", description: "Sophisticated with borders" },
   { id: "modern", name: "Modern", description: "Contemporary design" },
-  { id: "classic", name: "Classic", description: "Traditional certificate style" }
+  {
+    id: "classic",
+    name: "Classic",
+    description: "Traditional certificate style",
+  },
 ];
 
 const colorSchemes = [
-  { name: "Professional Blue", primary: "#1f2937", secondary: "#3b82f6", accent: "#f59e0b" },
-  { name: "Corporate Green", primary: "#065f46", secondary: "#10b981", accent: "#f59e0b" },
-  { name: "Royal Purple", primary: "#581c87", secondary: "#8b5cf6", accent: "#f59e0b" },
-  { name: "Classic Black", primary: "#000000", secondary: "#6b7280", accent: "#dc2626" }
+  {
+    name: "Professional Blue",
+    primary: "#1f2937",
+    secondary: "#3b82f6",
+    accent: "#f59e0b",
+  },
+  {
+    name: "Corporate Green",
+    primary: "#065f46",
+    secondary: "#10b981",
+    accent: "#f59e0b",
+  },
+  {
+    name: "Royal Purple",
+    primary: "#581c87",
+    secondary: "#8b5cf6",
+    accent: "#f59e0b",
+  },
+  {
+    name: "Classic Black",
+    primary: "#000000",
+    secondary: "#6b7280",
+    accent: "#dc2626",
+  },
 ];
 
-export default function CertificateGenerator({ trainingId, onClose }: CertificateGeneratorProps) {
+export default function CertificateGenerator({
+  trainingId,
+  onClose,
+}: CertificateGeneratorProps) {
   const [previewMode, setPreviewMode] = useState(false);
-  const [selectedColorScheme, setSelectedColorScheme] = useState(colorSchemes[0]);
+  const [selectedColorScheme, setSelectedColorScheme] = useState(
+    colorSchemes[0],
+  );
   const certificateRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
   const { t } = useTranslation();
@@ -106,23 +158,23 @@ export default function CertificateGenerator({ trainingId, onClose }: Certificat
         fontFamily: "Arial, sans-serif",
         borderStyle: "elegant",
         layout: "modern",
-        includeQR: true
-      }
-    }
+        includeQR: true,
+      },
+    },
   });
 
   const { data: trainings } = useQuery<Training[]>({
     queryKey: ["/api/trainings"],
-    enabled: !trainingId
+    enabled: !trainingId,
   });
 
   const { data: selectedTraining } = useQuery<Training>({
     queryKey: ["/api/trainings", form.watch("trainingId")],
-    enabled: !!form.watch("trainingId")
+    enabled: !!form.watch("trainingId"),
   });
 
   const { data: users } = useQuery<User[]>({
-    queryKey: ["/api/users"]
+    queryKey: ["/api/users"],
   });
 
   const createCertificateMutation = useMutation({
@@ -130,22 +182,24 @@ export default function CertificateGenerator({ trainingId, onClose }: Certificat
       const response = await fetch("/api/training-certificates", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
+        body: JSON.stringify(data),
       });
       if (!response.ok) throw new Error("Failed to create certificate");
       return response.json();
     },
     onSuccess: () => {
       toast({ title: "Certificate created successfully" });
-      queryClient.invalidateQueries({ queryKey: ["/api/training-certificates"] });
+      queryClient.invalidateQueries({
+        queryKey: ["/api/training-certificates"],
+      });
       onClose?.();
     },
     onError: () => {
       toast({ title: "Failed to create certificate", variant: "destructive" });
-    }
+    },
   });
 
-  const handleColorSchemeChange = (scheme: typeof colorSchemes[0]) => {
+  const handleColorSchemeChange = (scheme: (typeof colorSchemes)[0]) => {
     setSelectedColorScheme(scheme);
     form.setValue("customDesign.primaryColor", scheme.primary);
     form.setValue("customDesign.secondaryColor", scheme.secondary);
@@ -154,29 +208,32 @@ export default function CertificateGenerator({ trainingId, onClose }: Certificat
 
   const downloadCertificate = async () => {
     if (!certificateRef.current) return;
-    
+
     try {
       const canvas = await html2canvas(certificateRef.current, {
         scale: 2,
-        backgroundColor: "#ffffff"
+        backgroundColor: "#ffffff",
       });
-      
+
       const pdf = new jsPDF({
         orientation: "landscape",
         unit: "mm",
-        format: "a4"
+        format: "a4",
       });
-      
+
       const imgData = canvas.toDataURL("image/png");
       const pdfWidth = pdf.internal.pageSize.getWidth();
       const pdfHeight = pdf.internal.pageSize.getHeight();
-      
+
       pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-      pdf.save(`certificate-${selectedTraining?.id || 'draft'}.pdf`);
-      
+      pdf.save(`certificate-${selectedTraining?.id || "draft"}.pdf`);
+
       toast({ title: "Certificate downloaded successfully" });
     } catch (error) {
-      toast({ title: "Failed to download certificate", variant: "destructive" });
+      toast({
+        title: "Failed to download certificate",
+        variant: "destructive",
+      });
     }
   };
 
@@ -184,7 +241,7 @@ export default function CertificateGenerator({ trainingId, onClose }: Certificat
     createCertificateMutation.mutate(data);
   };
 
-  const trainee = users?.find(u => u.id === selectedTraining?.traineeId);
+  const trainee = users?.find((u) => u.id === selectedTraining?.traineeId);
 
   return (
     <div className="space-y-6">
@@ -200,7 +257,9 @@ export default function CertificateGenerator({ trainingId, onClose }: Certificat
             onClick={() => setPreviewMode(!previewMode)}
           >
             <Eye className="h-4 w-4 mr-1" />
-            {previewMode ? t("hr.certificate.edit") : t("hr.certificate.preview")}
+            {previewMode
+              ? t("hr.certificate.edit")
+              : t("hr.certificate.preview")}
           </Button>
           {previewMode && (
             <Button variant="outline" size="sm" onClick={downloadCertificate}>
@@ -222,28 +281,43 @@ export default function CertificateGenerator({ trainingId, onClose }: Certificat
           </CardHeader>
           <CardContent>
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-4"
+              >
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <FormField
                     control={form.control}
                     name="trainingId"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{t("hr.certificate.training_session")}</FormLabel>
+                        <FormLabel>
+                          {t("hr.certificate.training_session")}
+                        </FormLabel>
                         <Select
                           value={field.value?.toString()}
-                          onValueChange={(value) => field.onChange(parseInt(value))}
+                          onValueChange={(value) =>
+                            field.onChange(parseInt(value))
+                          }
                           disabled={!!trainingId}
                         >
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder={t("hr.certificate.select_training")} />
+                              <SelectValue
+                                placeholder={t(
+                                  "hr.certificate.select_training",
+                                )}
+                              />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
                             {trainings?.map((training: any) => (
-                              <SelectItem key={training.id} value={training.id.toString()}>
-                                Training #{training.id} - {training.trainingSection}
+                              <SelectItem
+                                key={training.id}
+                                value={training.id.toString()}
+                              >
+                                Training #{training.id} -{" "}
+                                {training.trainingSection}
                               </SelectItem>
                             ))}
                           </SelectContent>
@@ -259,7 +333,10 @@ export default function CertificateGenerator({ trainingId, onClose }: Certificat
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Template</FormLabel>
-                        <Select value={field.value} onValueChange={field.onChange}>
+                        <Select
+                          value={field.value}
+                          onValueChange={field.onChange}
+                        >
                           <FormControl>
                             <SelectTrigger>
                               <SelectValue />
@@ -350,7 +427,11 @@ export default function CertificateGenerator({ trainingId, onClose }: Certificat
                       <Button
                         key={scheme.name}
                         type="button"
-                        variant={selectedColorScheme.name === scheme.name ? "default" : "outline"}
+                        variant={
+                          selectedColorScheme.name === scheme.name
+                            ? "default"
+                            : "outline"
+                        }
                         size="sm"
                         onClick={() => handleColorSchemeChange(scheme)}
                         className="h-auto p-2"
@@ -396,9 +477,14 @@ export default function CertificateGenerator({ trainingId, onClose }: Certificat
                 </div>
 
                 <div className="flex gap-2">
-                  <Button type="submit" disabled={createCertificateMutation.isPending}>
+                  <Button
+                    type="submit"
+                    disabled={createCertificateMutation.isPending}
+                  >
                     <Save className="h-4 w-4 mr-1" />
-                    {createCertificateMutation.isPending ? "Creating..." : "Create Certificate"}
+                    {createCertificateMutation.isPending
+                      ? "Creating..."
+                      : "Create Certificate"}
                   </Button>
                   {onClose && (
                     <Button type="button" variant="outline" onClick={onClose}>
@@ -428,7 +514,7 @@ export default function CertificateGenerator({ trainingId, onClose }: Certificat
                   style={{
                     fontFamily: form.watch("customDesign.fontFamily"),
                     minHeight: "420px",
-                    background: `linear-gradient(135deg, ${form.watch("customDesign.primaryColor")}10, ${form.watch("customDesign.secondaryColor")}10)`
+                    background: `linear-gradient(135deg, ${form.watch("customDesign.primaryColor")}10, ${form.watch("customDesign.secondaryColor")}10)`,
                   }}
                 >
                   {/* Certificate Header */}
@@ -441,7 +527,9 @@ export default function CertificateGenerator({ trainingId, onClose }: Certificat
                     </div>
                     <div
                       className="w-24 h-1 mx-auto mb-4"
-                      style={{ backgroundColor: form.watch("customDesign.accentColor") }}
+                      style={{
+                        backgroundColor: form.watch("customDesign.accentColor"),
+                      }}
                     />
                     <div className="text-lg text-gray-600">
                       This is to certify that
@@ -454,10 +542,11 @@ export default function CertificateGenerator({ trainingId, onClose }: Certificat
                       className="text-4xl font-elegant mb-2 border-b-2 inline-block pb-2"
                       style={{
                         color: form.watch("customDesign.secondaryColor"),
-                        borderColor: form.watch("customDesign.accentColor")
+                        borderColor: form.watch("customDesign.accentColor"),
                       }}
                     >
-                      {trainee?.firstName} {trainee?.lastName || "[Trainee Name]"}
+                      {trainee?.firstName}{" "}
+                      {trainee?.lastName || "[Trainee Name]"}
                     </div>
                   </div>
 
@@ -470,7 +559,8 @@ export default function CertificateGenerator({ trainingId, onClose }: Certificat
                       className="text-2xl font-semibold mb-4"
                       style={{ color: form.watch("customDesign.primaryColor") }}
                     >
-                      {selectedTraining?.trainingSection || "[Training Section]"}
+                      {selectedTraining?.trainingSection ||
+                        "[Training Section]"}
                     </div>
                     <div className="text-gray-600">
                       Duration: {selectedTraining?.numberOfDays || "[X]"} days
@@ -491,7 +581,9 @@ export default function CertificateGenerator({ trainingId, onClose }: Certificat
                     <div className="text-center">
                       <div
                         className="border-t-2 pt-2 mb-2"
-                        style={{ borderColor: form.watch("customDesign.primaryColor") }}
+                        style={{
+                          borderColor: form.watch("customDesign.primaryColor"),
+                        }}
                       >
                         <div className="font-semibold">
                           {form.watch("issuerName") || "[Issuer Name]"}
@@ -508,7 +600,7 @@ export default function CertificateGenerator({ trainingId, onClose }: Certificat
                           variant="outline"
                           style={{
                             borderColor: form.watch("customDesign.accentColor"),
-                            color: form.watch("customDesign.accentColor")
+                            color: form.watch("customDesign.accentColor"),
                           }}
                         >
                           <Calendar className="h-3 w-3 mr-1" />
@@ -526,7 +618,7 @@ export default function CertificateGenerator({ trainingId, onClose }: Certificat
                     className="absolute inset-4 border-4 rounded-lg pointer-events-none"
                     style={{
                       borderColor: form.watch("customDesign.secondaryColor"),
-                      opacity: 0.3
+                      opacity: 0.3,
                     }}
                   />
                 </div>

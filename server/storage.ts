@@ -1,29 +1,99 @@
 import {
-  User, UpsertUser, Customer, InsertCustomer, Category, InsertCategory,
-  Item, InsertItem, Section, InsertSection, Machine, InsertMachine,
-  MasterBatch, InsertMasterBatch, CustomerProduct, InsertCustomerProduct,
-  Order, InsertOrder, JobOrder, InsertJobOrder, Roll, InsertRoll,
-  RawMaterial, InsertRawMaterial, FinalProduct, InsertFinalProduct,
-  QualityCheckType, InsertQualityCheckType, QualityCheck, InsertQualityCheck,
-  CorrectiveAction, InsertCorrectiveAction, SmsMessage, InsertSmsMessage,
-  MixMaterial, InsertMixMaterial, MixItem, InsertMixItem,
-  MixMachine, InsertMixMachine, mixMachines, permissions, modules,
-  Permission, InsertPermission, Module, InsertModule,
-  MaterialInput, InsertMaterialInput,
-  MaterialInputItem, InsertMaterialInputItem,
-  PlatePricingParameter, InsertPlatePricingParameter,
-  PlateCalculation, InsertPlateCalculation,
-
-
-  SmsTemplate, InsertSmsTemplate,
-  SmsNotificationRule, InsertSmsNotificationRule,
-  TimeAttendance, InsertTimeAttendance,
-  Training, InsertTraining,
-  TrainingPoint, InsertTrainingPoint,
-  TrainingEvaluation, InsertTrainingEvaluation,
-  CustomerInformation, InsertCustomerInformation
+  User,
+  UpsertUser,
+  Customer,
+  InsertCustomer,
+  Category,
+  InsertCategory,
+  Item,
+  InsertItem,
+  Section,
+  InsertSection,
+  Machine,
+  InsertMachine,
+  MachinePart,
+  InsertMachinePart,
+  MachinePartToMachine,
+  InsertMachinePartToMachine,
+  MasterBatch,
+  InsertMasterBatch,
+  CustomerProduct,
+  InsertCustomerProduct,
+  Order,
+  InsertOrder,
+  JobOrder,
+  InsertJobOrder,
+  Roll,
+  InsertRoll,
+  RawMaterial,
+  InsertRawMaterial,
+  FinalProduct,
+  InsertFinalProduct,
+  QualityCheckType,
+  InsertQualityCheckType,
+  QualityCheck,
+  InsertQualityCheck,
+  CorrectiveAction,
+  InsertCorrectiveAction,
+  SmsMessage,
+  InsertSmsMessage,
+  MixMaterial,
+  InsertMixMaterial,
+  MixItem,
+  InsertMixItem,
+  MixMachine,
+  InsertMixMachine,
+  mixMachines,
+  permissions,
+  modules,
+  Permission,
+  InsertPermission,
+  Module,
+  InsertModule,
+  MaterialInput,
+  InsertMaterialInput,
+  MaterialInputItem,
+  InsertMaterialInputItem,
+  PlatePricingParameter,
+  InsertPlatePricingParameter,
+  PlateCalculation,
+  InsertPlateCalculation,
+  SmsTemplate,
+  InsertSmsTemplate,
+  SmsNotificationRule,
+  InsertSmsNotificationRule,
+  TimeAttendance,
+  InsertTimeAttendance,
+  Training,
+  InsertTraining,
+  TrainingPoint,
+  InsertTrainingPoint,
+  TrainingEvaluation,
+  InsertTrainingEvaluation,
+  CustomerInformation,
+  InsertCustomerInformation,
+  // Warehouse Management Types
+  Supplier,
+  InsertSupplier,
+  StockMovement,
+  InsertStockMovement,
+  PurchaseOrder,
+  InsertPurchaseOrder,
+  PurchaseOrderItem,
+  InsertPurchaseOrderItem,
+  DeliveryOrder,
+  InsertDeliveryOrder,
+  DeliveryOrderItem,
+  InsertDeliveryOrderItem,
+  StockAdjustment,
+  InsertStockAdjustment,
+  StockAdjustmentItem,
+  InsertStockAdjustmentItem,
+  WarehouseLocation,
+  InsertWarehouseLocation,
 } from "../shared/schema";
 import session from "express-session";
+import MemoryStore from "memorystore";
 
 // Interface for storage operations
 export interface IStorage {
@@ -37,24 +107,30 @@ export interface IStorage {
   updateUser(id: string, user: Partial<User>): Promise<User | undefined>;
   deleteUser(id: string): Promise<boolean>;
   upsertUser(user: UpsertUser): Promise<User>;
-  
+
   // Permissions management (section-based)
   getPermissions(): Promise<Permission[]>;
   getPermissionsBySection(sectionId: string): Promise<Permission[]>;
   getPermissionsByModule(moduleId: number): Promise<Permission[]>;
   getPermission(id: number): Promise<Permission | undefined>;
   createPermission(permission: InsertPermission): Promise<Permission>;
-  updatePermission(id: number, permission: Partial<Permission>): Promise<Permission | undefined>;
+  updatePermission(
+    id: number,
+    permission: Partial<Permission>,
+  ): Promise<Permission | undefined>;
   deletePermission(id: number): Promise<boolean>;
-  
+
   // Modules management
   getModules(): Promise<Module[]>;
   getModulesByCategory(category: string): Promise<Module[]>;
   getModule(id: number): Promise<Module | undefined>;
   createModule(module: InsertModule): Promise<Module>;
-  updateModule(id: number, module: Partial<Module>): Promise<Module | undefined>;
+  updateModule(
+    id: number,
+    module: Partial<Module>,
+  ): Promise<Module | undefined>;
   deleteModule(id: number): Promise<boolean>;
-  
+
   // SMS Messages
   getSmsMessages(): Promise<SmsMessage[]>;
   getSmsMessagesByOrder(orderId: number): Promise<SmsMessage[]>;
@@ -62,52 +138,72 @@ export interface IStorage {
   getSmsMessagesByCustomer(customerId: string): Promise<SmsMessage[]>;
   getSmsMessage(id: number): Promise<SmsMessage | undefined>;
   createSmsMessage(message: InsertSmsMessage): Promise<SmsMessage>;
-  updateSmsMessage(id: number, message: Partial<SmsMessage>): Promise<SmsMessage | undefined>;
+  updateSmsMessage(
+    id: number,
+    message: Partial<SmsMessage>,
+  ): Promise<SmsMessage | undefined>;
   deleteSmsMessage(id: number): Promise<boolean>;
-  
+
   // SMS Templates
   getSmsTemplates(): Promise<SmsTemplate[]>;
   getSmsTemplate(id: string): Promise<SmsTemplate | undefined>;
   createSmsTemplate(template: InsertSmsTemplate): Promise<SmsTemplate>;
-  updateSmsTemplate(id: string, template: Partial<SmsTemplate>): Promise<SmsTemplate | undefined>;
+  updateSmsTemplate(
+    id: string,
+    template: Partial<SmsTemplate>,
+  ): Promise<SmsTemplate | undefined>;
   deleteSmsTemplate(id: string): Promise<boolean>;
-  
+
   // SMS Notification Rules
   getSmsNotificationRules(): Promise<SmsNotificationRule[]>;
   getSmsNotificationRule(id: number): Promise<SmsNotificationRule | undefined>;
-  createSmsNotificationRule(rule: InsertSmsNotificationRule): Promise<SmsNotificationRule>;
-  updateSmsNotificationRule(id: number, rule: Partial<SmsNotificationRule>): Promise<SmsNotificationRule | undefined>;
+  createSmsNotificationRule(
+    rule: InsertSmsNotificationRule,
+  ): Promise<SmsNotificationRule>;
+  updateSmsNotificationRule(
+    id: number,
+    rule: Partial<SmsNotificationRule>,
+  ): Promise<SmsNotificationRule | undefined>;
   deleteSmsNotificationRule(id: number): Promise<boolean>;
-  
+
   // Mix Materials
   getMixMaterials(): Promise<MixMaterial[]>;
   getMixMaterial(id: number): Promise<MixMaterial | undefined>;
   createMixMaterial(mix: InsertMixMaterial): Promise<MixMaterial>;
-  updateMixMaterial(id: number, mix: Partial<MixMaterial>): Promise<MixMaterial | undefined>;
+  updateMixMaterial(
+    id: number,
+    mix: Partial<MixMaterial>,
+  ): Promise<MixMaterial | undefined>;
   deleteMixMaterial(id: number): Promise<boolean>;
-  
+
   // Mix Machines
   getMixMachines(): Promise<MixMachine[]>;
-  getMixMachinesByMixId(mixId: number): Promise<MixMachine[]>; 
+  getMixMachinesByMixId(mixId: number): Promise<MixMachine[]>;
   createMixMachine(mixMachine: InsertMixMachine): Promise<MixMachine>;
   deleteMixMachinesByMixId(mixId: number): Promise<boolean>;
-  
+
   // Mix Items
   getMixItems(): Promise<MixItem[]>;
   getMixItemsByMix(mixId: number): Promise<MixItem[]>;
   getMixItem(id: number): Promise<MixItem | undefined>;
   createMixItem(mixItem: InsertMixItem): Promise<MixItem>;
-  updateMixItem(id: number, mixItem: Partial<MixItem>): Promise<MixItem | undefined>;
+  updateMixItem(
+    id: number,
+    mixItem: Partial<MixItem>,
+  ): Promise<MixItem | undefined>;
   deleteMixItem(id: number): Promise<boolean>;
-  
+
   // Categories
   getCategories(): Promise<Category[]>;
   getCategory(id: string): Promise<Category | undefined>;
   getCategoryByCode(code: string): Promise<Category | undefined>;
   createCategory(category: InsertCategory): Promise<Category>;
-  updateCategory(id: string, category: Partial<Category>): Promise<Category | undefined>;
+  updateCategory(
+    id: string,
+    category: Partial<Category>,
+  ): Promise<Category | undefined>;
   deleteCategory(id: string): Promise<boolean>;
-  
+
   // Items
   getItems(): Promise<Item[]>;
   getItemsByCategory(categoryId: string): Promise<Item[]>;
@@ -115,60 +211,97 @@ export interface IStorage {
   createItem(item: InsertItem): Promise<Item>;
   updateItem(id: string, item: Partial<Item>): Promise<Item | undefined>;
   deleteItem(id: string): Promise<boolean>;
-  
+
   // Sections
   getSections(): Promise<Section[]>;
   getSection(id: string): Promise<Section | undefined>;
   createSection(section: InsertSection): Promise<Section>;
-  updateSection(id: string, section: Partial<Section>): Promise<Section | undefined>;
+  updateSection(
+    id: string,
+    section: Partial<Section>,
+  ): Promise<Section | undefined>;
   deleteSection(id: string): Promise<boolean>;
-  
+
   // Machines
   getMachines(): Promise<Machine[]>;
   getMachinesBySection(sectionId: string): Promise<Machine[]>;
   getMachine(id: string): Promise<Machine | undefined>;
   createMachine(machine: InsertMachine): Promise<Machine>;
-  updateMachine(id: string, machine: Partial<Machine>): Promise<Machine | undefined>;
+  updateMachine(
+    id: string,
+    machine: Partial<Machine>,
+  ): Promise<Machine | undefined>;
   deleteMachine(id: string): Promise<boolean>;
-  
+
+  // Machine Parts
+  getMachineParts(): Promise<MachinePart[]>;
+  getMachinePartsBySection(sectionId: string): Promise<MachinePart[]>;
+  getMachinePartsByMachine(machineId: string): Promise<MachinePart[]>;
+  getMachinePart(id: number): Promise<MachinePart | undefined>;
+  createMachinePart(machinePart: InsertMachinePart): Promise<MachinePart>;
+  updateMachinePart(
+    id: number,
+    machinePart: Partial<MachinePart>,
+  ): Promise<MachinePart | undefined>;
+  deleteMachinePart(id: number): Promise<boolean>;
+
+  // Machine Parts to Machines Relations
+  getMachinePartToMachineRelations(): Promise<MachinePartToMachine[]>;
+  createMachinePartToMachineRelation(relation: InsertMachinePartToMachine): Promise<MachinePartToMachine>;
+  deleteMachinePartToMachineRelation(machineId: string, machinePartId: number): Promise<boolean>;
+
   // Master Batches
   getMasterBatches(): Promise<MasterBatch[]>;
   getMasterBatch(id: string): Promise<MasterBatch | undefined>;
   createMasterBatch(masterBatch: InsertMasterBatch): Promise<MasterBatch>;
-  updateMasterBatch(id: string, masterBatch: Partial<MasterBatch>): Promise<MasterBatch | undefined>;
+  updateMasterBatch(
+    id: string,
+    masterBatch: Partial<MasterBatch>,
+  ): Promise<MasterBatch | undefined>;
   deleteMasterBatch(id: string): Promise<boolean>;
-  
+
   // Customers
   getCustomers(): Promise<Customer[]>;
   getCustomer(id: string): Promise<Customer | undefined>;
   getCustomerByCode(code: string): Promise<Customer | undefined>;
   createCustomer(customer: InsertCustomer): Promise<Customer>;
-  updateCustomer(id: string, customer: Partial<Customer>): Promise<Customer | undefined>;
+  updateCustomer(
+    id: string,
+    customer: Partial<Customer>,
+  ): Promise<Customer | undefined>;
   deleteCustomer(id: string): Promise<boolean>;
-  
+
   // Customer Products
   getCustomerProducts(): Promise<CustomerProduct[]>;
   getCustomerProductsByCustomer(customerId: string): Promise<CustomerProduct[]>;
   getCustomerProduct(id: number): Promise<CustomerProduct | undefined>;
-  createCustomerProduct(customerProduct: InsertCustomerProduct): Promise<CustomerProduct>;
-  updateCustomerProduct(id: number, customerProduct: Partial<CustomerProduct>): Promise<CustomerProduct | undefined>;
+  createCustomerProduct(
+    customerProduct: InsertCustomerProduct,
+  ): Promise<CustomerProduct>;
+  updateCustomerProduct(
+    id: number,
+    customerProduct: Partial<CustomerProduct>,
+  ): Promise<CustomerProduct | undefined>;
   deleteCustomerProduct(id: number): Promise<boolean>;
-  
+
   // Orders
   getOrders(): Promise<Order[]>;
   getOrder(id: number): Promise<Order | undefined>;
   createOrder(order: InsertOrder): Promise<Order>;
   updateOrder(id: number, order: Partial<Order>): Promise<Order | undefined>;
   deleteOrder(id: number): Promise<boolean>;
-  
+
   // Job Orders
   getJobOrders(): Promise<JobOrder[]>;
   getJobOrdersByOrder(orderId: number): Promise<JobOrder[]>;
   getJobOrder(id: number): Promise<JobOrder | undefined>;
   createJobOrder(jobOrder: InsertJobOrder): Promise<JobOrder>;
-  updateJobOrder(id: number, jobOrder: Partial<JobOrder>): Promise<JobOrder | undefined>;
+  updateJobOrder(
+    id: number,
+    jobOrder: Partial<JobOrder>,
+  ): Promise<JobOrder | undefined>;
   deleteJobOrder(id: number): Promise<boolean>;
-  
+
   // Rolls
   getRolls(): Promise<Roll[]>;
   getRollsByJobOrder(jobOrderId: number): Promise<Roll[]>;
@@ -177,109 +310,157 @@ export interface IStorage {
   createRoll(roll: InsertRoll): Promise<Roll>;
   updateRoll(id: string, roll: Partial<Roll>): Promise<Roll | undefined>;
   deleteRoll(id: string): Promise<boolean>;
-  
+
   // Raw Materials
   getRawMaterials(): Promise<RawMaterial[]>;
   getRawMaterial(id: number): Promise<RawMaterial | undefined>;
   createRawMaterial(rawMaterial: InsertRawMaterial): Promise<RawMaterial>;
-  updateRawMaterial(id: number, rawMaterial: Partial<RawMaterial>): Promise<RawMaterial | undefined>;
+  updateRawMaterial(
+    id: number,
+    rawMaterial: Partial<RawMaterial>,
+  ): Promise<RawMaterial | undefined>;
   deleteRawMaterial(id: number): Promise<boolean>;
-  
+
   // Final Products
   getFinalProducts(): Promise<FinalProduct[]>;
   getFinalProductsByJobOrder(jobOrderId: number): Promise<FinalProduct[]>;
   getFinalProduct(id: number): Promise<FinalProduct | undefined>;
   createFinalProduct(finalProduct: InsertFinalProduct): Promise<FinalProduct>;
-  updateFinalProduct(id: number, finalProduct: Partial<FinalProduct>): Promise<FinalProduct | undefined>;
+  updateFinalProduct(
+    id: number,
+    finalProduct: Partial<FinalProduct>,
+  ): Promise<FinalProduct | undefined>;
   deleteFinalProduct(id: number): Promise<boolean>;
-  
+
   // Quality Check Types methods
   getQualityCheckTypes(): Promise<QualityCheckType[]>;
   getQualityCheckTypesByStage(stage: string): Promise<QualityCheckType[]>;
   getQualityCheckType(id: string): Promise<QualityCheckType | undefined>;
-  createQualityCheckType(qualityCheckType: InsertQualityCheckType): Promise<QualityCheckType>;
-  updateQualityCheckType(id: string, qualityCheckTypeUpdate: Partial<QualityCheckType>): Promise<QualityCheckType | undefined>;
+  createQualityCheckType(
+    qualityCheckType: InsertQualityCheckType,
+  ): Promise<QualityCheckType>;
+  updateQualityCheckType(
+    id: string,
+    qualityCheckTypeUpdate: Partial<QualityCheckType>,
+  ): Promise<QualityCheckType | undefined>;
   deleteQualityCheckType(id: string): Promise<boolean>;
-  
+
   // Quality Checks methods
   getQualityChecks(): Promise<QualityCheck[]>;
   getQualityChecksByRoll(rollId: string): Promise<QualityCheck[]>;
   getQualityChecksByJobOrder(jobOrderId: number): Promise<QualityCheck[]>;
   getQualityCheck(id: number): Promise<QualityCheck | undefined>;
   createQualityCheck(qualityCheck: InsertQualityCheck): Promise<QualityCheck>;
-  updateQualityCheck(id: number, qualityCheckUpdate: Partial<QualityCheck>): Promise<QualityCheck | undefined>;
+  updateQualityCheck(
+    id: number,
+    qualityCheckUpdate: Partial<QualityCheck>,
+  ): Promise<QualityCheck | undefined>;
   deleteQualityCheck(id: number): Promise<boolean>;
-  
+
   // Corrective Actions methods
   getCorrectiveActions(): Promise<CorrectiveAction[]>;
-  getCorrectiveActionsByQualityCheck(qualityCheckId: number): Promise<CorrectiveAction[]>;
+  getCorrectiveActionsByQualityCheck(
+    qualityCheckId: number,
+  ): Promise<CorrectiveAction[]>;
   getCorrectiveAction(id: number): Promise<CorrectiveAction | undefined>;
-  createCorrectiveAction(correctiveAction: InsertCorrectiveAction): Promise<CorrectiveAction>;
-  updateCorrectiveAction(id: number, correctiveActionUpdate: Partial<CorrectiveAction>): Promise<CorrectiveAction | undefined>;
+  createCorrectiveAction(
+    correctiveAction: InsertCorrectiveAction,
+  ): Promise<CorrectiveAction>;
+  updateCorrectiveAction(
+    id: number,
+    correctiveActionUpdate: Partial<CorrectiveAction>,
+  ): Promise<CorrectiveAction | undefined>;
   deleteCorrectiveAction(id: number): Promise<boolean>;
-  
 
-  
   // Material Inputs methods
   getMaterialInputs(): Promise<MaterialInput[]>;
   getMaterialInput(id: number): Promise<MaterialInput | undefined>;
-  createMaterialInput(materialInput: InsertMaterialInput): Promise<MaterialInput>;
-  updateMaterialInput(id: number, materialInput: Partial<MaterialInput>): Promise<MaterialInput | undefined>;
+  createMaterialInput(
+    materialInput: InsertMaterialInput,
+  ): Promise<MaterialInput>;
+  updateMaterialInput(
+    id: number,
+    materialInput: Partial<MaterialInput>,
+  ): Promise<MaterialInput | undefined>;
   deleteMaterialInput(id: number): Promise<boolean>;
-  
+
   // Material Input Items methods
   getMaterialInputItems(): Promise<MaterialInputItem[]>;
   getMaterialInputItemsByInput(inputId: number): Promise<MaterialInputItem[]>;
   getMaterialInputItem(id: number): Promise<MaterialInputItem | undefined>;
-  createMaterialInputItem(item: InsertMaterialInputItem): Promise<MaterialInputItem>;
+  createMaterialInputItem(
+    item: InsertMaterialInputItem,
+  ): Promise<MaterialInputItem>;
   deleteMaterialInputItem(id: number): Promise<boolean>;
-  
+
   // Cliché (Plate) Pricing Parameters methods
   getPlatePricingParameters(): Promise<PlatePricingParameter[]>;
-  getPlatePricingParameterByType(type: string): Promise<PlatePricingParameter | undefined>;
-  getPlatePricingParameter(id: number): Promise<PlatePricingParameter | undefined>;
-  createPlatePricingParameter(param: InsertPlatePricingParameter): Promise<PlatePricingParameter>;
-  updatePlatePricingParameter(id: number, update: Partial<PlatePricingParameter>): Promise<PlatePricingParameter | undefined>;
+  getPlatePricingParameterByType(
+    type: string,
+  ): Promise<PlatePricingParameter | undefined>;
+  getPlatePricingParameter(
+    id: number,
+  ): Promise<PlatePricingParameter | undefined>;
+  createPlatePricingParameter(
+    param: InsertPlatePricingParameter,
+  ): Promise<PlatePricingParameter>;
+  updatePlatePricingParameter(
+    id: number,
+    update: Partial<PlatePricingParameter>,
+  ): Promise<PlatePricingParameter | undefined>;
   deletePlatePricingParameter(id: number): Promise<boolean>;
-  
+
   // Plate Calculations methods
   getPlateCalculations(): Promise<PlateCalculation[]>;
-  getPlateCalculationsByCustomer(customerId: string): Promise<PlateCalculation[]>;
+  getPlateCalculationsByCustomer(
+    customerId: string,
+  ): Promise<PlateCalculation[]>;
   getPlateCalculation(id: number): Promise<PlateCalculation | undefined>;
-  createPlateCalculation(calculation: InsertPlateCalculation): Promise<PlateCalculation>;
-  updatePlateCalculation(id: number, update: Partial<PlateCalculation>): Promise<PlateCalculation | undefined>;
+  createPlateCalculation(
+    calculation: InsertPlateCalculation,
+  ): Promise<PlateCalculation>;
+  updatePlateCalculation(
+    id: number,
+    update: Partial<PlateCalculation>,
+  ): Promise<PlateCalculation | undefined>;
   deletePlateCalculation(id: number): Promise<boolean>;
-  
 
-  
   // HR Module methods
   getAllTimeAttendance(): Promise<TimeAttendance[]>;
   getTimeAttendanceByUser(userId: string): Promise<TimeAttendance[]>;
   getTimeAttendanceByDate(date: Date): Promise<TimeAttendance[]>;
-  getTimeAttendanceByUserAndDate(userId: string, date: Date): Promise<TimeAttendance | undefined>;
+  getTimeAttendanceByUserAndDate(
+    userId: string,
+    date: Date,
+  ): Promise<TimeAttendance | undefined>;
   getTimeAttendance(id: number): Promise<TimeAttendance | undefined>;
-  createTimeAttendance(attendance: InsertTimeAttendance): Promise<TimeAttendance>;
-  updateTimeAttendance(id: number, attendance: Partial<TimeAttendance>): Promise<TimeAttendance | undefined>;
+  createTimeAttendance(
+    attendance: InsertTimeAttendance,
+  ): Promise<TimeAttendance>;
+  updateTimeAttendance(
+    id: number,
+    attendance: Partial<TimeAttendance>,
+  ): Promise<TimeAttendance | undefined>;
   deleteTimeAttendance(id: number): Promise<boolean>;
-  
+
   getEmployeeOfMonth(): Promise<any[]>;
   getEmployeeOfMonthByUser(userId: string): Promise<any[]>;
   createEmployeeOfMonth(employee: any): Promise<any>;
   updateEmployeeOfMonth(id: number, employee: any): Promise<any | undefined>;
   deleteEmployeeOfMonth(id: number): Promise<boolean>;
-  
+
   getHrViolations(): Promise<any[]>;
   getHrViolationsByUser(userId: string): Promise<any[]>;
   createHrViolation(violation: any): Promise<any>;
   updateHrViolation(id: number, violation: any): Promise<any | undefined>;
   deleteHrViolation(id: number): Promise<boolean>;
-  
+
   getHrComplaints(): Promise<any[]>;
   getHrComplaintsByUser(userId: string): Promise<any[]>;
   createHrComplaint(complaint: any): Promise<any>;
   updateHrComplaint(id: number, complaint: any): Promise<any | undefined>;
   deleteHrComplaint(id: number): Promise<boolean>;
-  
+
   // Training methods
   getTrainings(): Promise<Training[]>;
   getTrainingsByTrainee(traineeId: string): Promise<Training[]>;
@@ -287,39 +468,145 @@ export interface IStorage {
   getTrainingsBySection(section: string): Promise<Training[]>;
   getTraining(id: number): Promise<Training | undefined>;
   createTraining(training: InsertTraining): Promise<Training>;
-  updateTraining(id: number, training: Partial<Training>): Promise<Training | undefined>;
+  updateTraining(
+    id: number,
+    training: Partial<Training>,
+  ): Promise<Training | undefined>;
   deleteTraining(id: number): Promise<boolean>;
-  
+
   // Training Points methods
   getTrainingPoints(): Promise<TrainingPoint[]>;
   getActiveTrainingPoints(): Promise<TrainingPoint[]>;
   getTrainingPointsByCategory(category: string): Promise<TrainingPoint[]>;
   getTrainingPoint(id: number): Promise<TrainingPoint | undefined>;
   createTrainingPoint(point: InsertTrainingPoint): Promise<TrainingPoint>;
-  updateTrainingPoint(id: number, point: Partial<TrainingPoint>): Promise<TrainingPoint | undefined>;
+  updateTrainingPoint(
+    id: number,
+    point: Partial<TrainingPoint>,
+  ): Promise<TrainingPoint | undefined>;
   deleteTrainingPoint(id: number): Promise<boolean>;
-  
+
   // Training Evaluations methods
   getTrainingEvaluations(): Promise<TrainingEvaluation[]>;
-  getTrainingEvaluationsByTraining(trainingId: number): Promise<TrainingEvaluation[]>;
+  getTrainingEvaluationsByTraining(
+    trainingId: number,
+  ): Promise<TrainingEvaluation[]>;
   getTrainingEvaluation(id: number): Promise<TrainingEvaluation | undefined>;
-  createTrainingEvaluation(evaluation: InsertTrainingEvaluation): Promise<TrainingEvaluation>;
-  updateTrainingEvaluation(id: number, evaluation: Partial<TrainingEvaluation>): Promise<TrainingEvaluation | undefined>;
+  createTrainingEvaluation(
+    evaluation: InsertTrainingEvaluation,
+  ): Promise<TrainingEvaluation>;
+  updateTrainingEvaluation(
+    id: number,
+    evaluation: Partial<TrainingEvaluation>,
+  ): Promise<TrainingEvaluation | undefined>;
   deleteTrainingEvaluation(id: number): Promise<boolean>;
-  
+
   // Training Field Evaluations methods
   getTrainingFieldEvaluations(): Promise<any[]>;
   getTrainingFieldEvaluationsByTraining(trainingId: number): Promise<any[]>;
   getTrainingFieldEvaluation(id: number): Promise<any | undefined>;
   createTrainingFieldEvaluation(evaluation: any): Promise<any>;
-  updateTrainingFieldEvaluation(id: number, evaluation: Partial<any>): Promise<any | undefined>;
+  updateTrainingFieldEvaluation(
+    id: number,
+    evaluation: Partial<any>,
+  ): Promise<any | undefined>;
   deleteTrainingFieldEvaluation(id: number): Promise<boolean>;
-  
+
   // Customer Information Registration (Public Form)
   getAllCustomerInformation(): Promise<CustomerInformation[]>;
   getCustomerInformation(id: number): Promise<CustomerInformation | undefined>;
-  createCustomerInformation(customerInfo: InsertCustomerInformation): Promise<CustomerInformation>;
+  createCustomerInformation(
+    customerInfo: InsertCustomerInformation,
+  ): Promise<CustomerInformation>;
   deleteCustomerInformation(id: number): Promise<boolean>;
+
+  // Time Attendance
+  getTimeAttendance(): Promise<TimeAttendance[]>;
+  getTimeAttendance(id: number): Promise<TimeAttendance | undefined>;
+  getTimeAttendanceByUser(userId: string): Promise<TimeAttendance[]>;
+  getTimeAttendanceByDate(date: Date): Promise<TimeAttendance[]>;
+  getTimeAttendanceByUserAndDate(userId: string, date: Date): Promise<TimeAttendance | undefined>;
+  createTimeAttendance(attendance: InsertTimeAttendance): Promise<TimeAttendance>;
+  updateTimeAttendance(id: number, attendance: Partial<TimeAttendance>): Promise<TimeAttendance | undefined>;
+  deleteTimeAttendance(id: number): Promise<boolean>;
+
+  // =============== WAREHOUSE MANAGEMENT METHODS ===============
+  
+  // Suppliers
+  getSuppliers(): Promise<Supplier[]>;
+  getSupplier(id: string): Promise<Supplier | undefined>;
+  getSupplierByCode(code: string): Promise<Supplier | undefined>;
+  createSupplier(supplier: InsertSupplier): Promise<Supplier>;
+  updateSupplier(id: string, supplier: Partial<Supplier>): Promise<Supplier | undefined>;
+  deleteSupplier(id: string): Promise<boolean>;
+
+  // Stock Movements
+  getStockMovements(): Promise<StockMovement[]>;
+  getStockMovementsByType(type: string): Promise<StockMovement[]>;
+  getStockMovementsByRawMaterial(rawMaterialId: number): Promise<StockMovement[]>;
+  getStockMovementsByFinalProduct(finalProductId: number): Promise<StockMovement[]>;
+  getStockMovement(id: number): Promise<StockMovement | undefined>;
+  createStockMovement(movement: InsertStockMovement): Promise<StockMovement>;
+  updateStockMovement(id: number, movement: Partial<StockMovement>): Promise<StockMovement | undefined>;
+  deleteStockMovement(id: number): Promise<boolean>;
+
+  // Purchase Orders
+  getPurchaseOrders(): Promise<PurchaseOrder[]>;
+  getPurchaseOrdersBySupplier(supplierId: string): Promise<PurchaseOrder[]>;
+  getPurchaseOrdersByStatus(status: string): Promise<PurchaseOrder[]>;
+  getPurchaseOrder(id: number): Promise<PurchaseOrder | undefined>;
+  createPurchaseOrder(order: InsertPurchaseOrder): Promise<PurchaseOrder>;
+  updatePurchaseOrder(id: number, order: Partial<PurchaseOrder>): Promise<PurchaseOrder | undefined>;
+  deletePurchaseOrder(id: number): Promise<boolean>;
+
+  // Purchase Order Items
+  getPurchaseOrderItems(): Promise<PurchaseOrderItem[]>;
+  getPurchaseOrderItemsByOrder(orderId: number): Promise<PurchaseOrderItem[]>;
+  getPurchaseOrderItem(id: number): Promise<PurchaseOrderItem | undefined>;
+  createPurchaseOrderItem(item: InsertPurchaseOrderItem): Promise<PurchaseOrderItem>;
+  updatePurchaseOrderItem(id: number, item: Partial<PurchaseOrderItem>): Promise<PurchaseOrderItem | undefined>;
+  deletePurchaseOrderItem(id: number): Promise<boolean>;
+
+  // Delivery Orders
+  getDeliveryOrders(): Promise<DeliveryOrder[]>;
+  getDeliveryOrdersByCustomer(customerId: string): Promise<DeliveryOrder[]>;
+  getDeliveryOrdersByStatus(status: string): Promise<DeliveryOrder[]>;
+  getDeliveryOrder(id: number): Promise<DeliveryOrder | undefined>;
+  createDeliveryOrder(order: InsertDeliveryOrder): Promise<DeliveryOrder>;
+  updateDeliveryOrder(id: number, order: Partial<DeliveryOrder>): Promise<DeliveryOrder | undefined>;
+  deleteDeliveryOrder(id: number): Promise<boolean>;
+
+  // Delivery Order Items
+  getDeliveryOrderItems(): Promise<DeliveryOrderItem[]>;
+  getDeliveryOrderItemsByOrder(orderId: number): Promise<DeliveryOrderItem[]>;
+  getDeliveryOrderItem(id: number): Promise<DeliveryOrderItem | undefined>;
+  createDeliveryOrderItem(item: InsertDeliveryOrderItem): Promise<DeliveryOrderItem>;
+  updateDeliveryOrderItem(id: number, item: Partial<DeliveryOrderItem>): Promise<DeliveryOrderItem | undefined>;
+  deleteDeliveryOrderItem(id: number): Promise<boolean>;
+
+  // Stock Adjustments
+  getStockAdjustments(): Promise<StockAdjustment[]>;
+  getStockAdjustmentsByStatus(status: string): Promise<StockAdjustment[]>;
+  getStockAdjustment(id: number): Promise<StockAdjustment | undefined>;
+  createStockAdjustment(adjustment: InsertStockAdjustment): Promise<StockAdjustment>;
+  updateStockAdjustment(id: number, adjustment: Partial<StockAdjustment>): Promise<StockAdjustment | undefined>;
+  deleteStockAdjustment(id: number): Promise<boolean>;
+
+  // Stock Adjustment Items
+  getStockAdjustmentItems(): Promise<StockAdjustmentItem[]>;
+  getStockAdjustmentItemsByAdjustment(adjustmentId: number): Promise<StockAdjustmentItem[]>;
+  getStockAdjustmentItem(id: number): Promise<StockAdjustmentItem | undefined>;
+  createStockAdjustmentItem(item: InsertStockAdjustmentItem): Promise<StockAdjustmentItem>;
+  updateStockAdjustmentItem(id: number, item: Partial<StockAdjustmentItem>): Promise<StockAdjustmentItem | undefined>;
+  deleteStockAdjustmentItem(id: number): Promise<boolean>;
+
+  // Warehouse Locations
+  getWarehouseLocations(): Promise<WarehouseLocation[]>;
+  getWarehouseLocationsByType(type: string): Promise<WarehouseLocation[]>;
+  getWarehouseLocation(id: string): Promise<WarehouseLocation | undefined>;
+  createWarehouseLocation(location: InsertWarehouseLocation): Promise<WarehouseLocation>;
+  updateWarehouseLocation(id: string, location: Partial<WarehouseLocation>): Promise<WarehouseLocation | undefined>;
+  deleteWarehouseLocation(id: string): Promise<boolean>;
 }
 
 export class MemStorage {
@@ -343,7 +630,7 @@ export class MemStorage {
   private qualityChecks: Map<number, QualityCheck>;
   private correctiveActions: Map<number, CorrectiveAction>;
   private permissions: Map<number, Permission>;
-  
+
   private currentCustomerProductId: number;
   private currentOrderId: number;
   private currentJobOrderId: number;
@@ -356,16 +643,16 @@ export class MemStorage {
   private currentQualityCheckId: number;
   private currentCorrectiveActionId: number;
   private currentPermissionId: number;
-  
+
   sessionStore: session.Store;
 
   constructor() {
     // Initialize session store
-    const MemoryStore = require('memorystore')(session);
-    this.sessionStore = new MemoryStore({
-      checkPeriod: 86400000 // Prune expired entries every 24h
+    const MemoryStoreSession = MemoryStore(session);
+    this.sessionStore = new MemoryStoreSession({
+      checkPeriod: 86400000, // Prune expired entries every 24h
     });
-    
+
     this.users = new Map();
     this.categories = new Map();
     this.items = new Map();
@@ -386,7 +673,7 @@ export class MemStorage {
     this.qualityChecks = new Map();
     this.correctiveActions = new Map();
     this.permissions = new Map();
-    
+
     this.currentCustomerProductId = 1;
     this.currentOrderId = 1;
     this.currentJobOrderId = 1;
@@ -399,7 +686,7 @@ export class MemStorage {
     this.currentQualityCheckId = 1;
     this.currentCorrectiveActionId = 1;
     this.currentPermissionId = 1;
-    
+
     // Initialize with sample data
     this.initializeData().catch(console.error);
   }
@@ -420,38 +707,38 @@ export class MemStorage {
       profileImageUrl: null,
       phone: null,
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     });
-    
+
     // Add sections
     const extrusionSection = this.createSection({
       id: "SEC001",
       name: "Extrusion",
     });
-    
+
     const printingSection = this.createSection({
       id: "SEC002",
       name: "Printing",
     });
-    
+
     const cuttingSection = this.createSection({
       id: "SEC003",
       name: "Cutting",
     });
-    
+
     // Add master batches
     this.createMasterBatch({
       id: "MB001",
       name: "White EP11105W",
     });
-    
+
     // Add categories
     const bagCategory = await this.createCategory({
       id: "CAT001",
       name: "Plastic Bags",
       code: "PB",
     });
-    
+
     // Add items
     await this.createItem({
       id: "ITM019",
@@ -459,14 +746,14 @@ export class MemStorage {
       name: "Small Plastic Bag",
       fullName: "Small HDPE Plastic Bag",
     });
-    
+
     await this.createItem({
       id: "ITM020",
       categoryId: bagCategory.id,
       name: "Medium Plastic Bag",
       fullName: "Medium HDPE Plastic Bag",
     });
-    
+
     await this.createItem({
       id: "ITM022",
       categoryId: bagCategory.id,
@@ -485,13 +772,37 @@ export class MemStorage {
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(user => user.username === username);
+    return Array.from(this.users.values()).find(
+      (user) => user.username === username,
+    );
   }
 
   async createUser(user: UpsertUser): Promise<User> {
     // For new users without an ID, generate one
     const id = user.id || `U${this.users.size + 1}`.padStart(4, "0");
-    const newUser: User = { ...user, id };
+    const newUser: User = { 
+      ...user, 
+      id,
+      password: user.password ?? null,
+      isAdmin: user.isAdmin ?? false,
+      isActive: user.isActive ?? true,
+      sectionId: user.sectionId ?? null,
+      email: user.email ?? null,
+      firstName: user.firstName ?? null,
+      lastName: user.lastName ?? null,
+      bio: user.bio ?? null,
+      profileImageUrl: user.profileImageUrl ?? null,
+      phone: user.phone ?? null,
+      position: user.position ?? null,
+      hireDate: user.hireDate ?? null,
+      contractType: user.contractType ?? "full_time",
+      workSchedule: user.workSchedule ?? null,
+      emergencyContact: user.emergencyContact ?? null,
+      bankDetails: user.bankDetails ?? null,
+      allowances: user.allowances ?? null,
+      createdAt: user.createdAt ?? new Date(),
+      updatedAt: user.updatedAt ?? new Date(),
+    };
     this.users.set(id, newUser);
     return newUser;
   }
@@ -508,17 +819,17 @@ export class MemStorage {
   async deleteUser(id: string): Promise<boolean> {
     return this.users.delete(id);
   }
-  
+
   async upsertUser(user: UpsertUser): Promise<User> {
     // Check if the user already exists
     const existingUser = user.id ? this.users.get(user.id) : undefined;
-    
+
     if (existingUser) {
       // Update the existing user
-      const updatedUser = { 
-        ...existingUser, 
+      const updatedUser = {
+        ...existingUser,
         ...user,
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
       this.users.set(user.id!, updatedUser);
       return updatedUser;
@@ -527,7 +838,7 @@ export class MemStorage {
       return this.createUser({
         ...user,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       });
     }
   }
@@ -542,16 +853,24 @@ export class MemStorage {
   }
 
   async getCategoryByCode(code: string): Promise<Category | undefined> {
-    return Array.from(this.categories.values()).find(category => category.code === code);
+    return Array.from(this.categories.values()).find(
+      (category) => category.code === code,
+    );
   }
 
   async createCategory(category: InsertCategory): Promise<Category> {
-    const newCategory: Category = { ...category };
+    const newCategory: Category = { 
+      ...category,
+      nameAr: category.nameAr ?? null
+    };
     this.categories.set(category.id, newCategory);
     return newCategory;
   }
 
-  async updateCategory(id: string, category: Partial<Category>): Promise<Category | undefined> {
+  async updateCategory(
+    id: string,
+    category: Partial<Category>,
+  ): Promise<Category | undefined> {
     const existingCategory = this.categories.get(id);
     if (!existingCategory) return undefined;
 
@@ -570,7 +889,9 @@ export class MemStorage {
   }
 
   async getItemsByCategory(categoryId: string): Promise<Item[]> {
-    return Array.from(this.items.values()).filter(item => item.categoryId === categoryId);
+    return Array.from(this.items.values()).filter(
+      (item) => item.categoryId === categoryId,
+    );
   }
 
   async getItem(id: string): Promise<Item | undefined> {
@@ -611,7 +932,10 @@ export class MemStorage {
     return newSection;
   }
 
-  async updateSection(id: string, section: Partial<Section>): Promise<Section | undefined> {
+  async updateSection(
+    id: string,
+    section: Partial<Section>,
+  ): Promise<Section | undefined> {
     const existingSection = this.sections.get(id);
     if (!existingSection) return undefined;
 
@@ -630,7 +954,9 @@ export class MemStorage {
   }
 
   async getMachinesBySection(sectionId: string): Promise<Machine[]> {
-    return Array.from(this.machines.values()).filter(machine => machine.sectionId === sectionId);
+    return Array.from(this.machines.values()).filter(
+      (machine) => machine.sectionId === sectionId,
+    );
   }
 
   async getMachine(id: string): Promise<Machine | undefined> {
@@ -638,12 +964,23 @@ export class MemStorage {
   }
 
   async createMachine(machine: InsertMachine): Promise<Machine> {
-    const newMachine: Machine = { ...machine };
+    const newMachine: Machine = { 
+      ...machine,
+      isActive: machine.isActive ?? true,
+      sectionId: machine.sectionId ?? null,
+      serialNumber: machine.serialNumber ?? null,
+      supplier: machine.supplier ?? null,
+      dateOfManufacturing: machine.dateOfManufacturing ?? null,
+      modelNumber: machine.modelNumber ?? null
+    };
     this.machines.set(machine.id, newMachine);
     return newMachine;
   }
 
-  async updateMachine(id: string, machine: Partial<Machine>): Promise<Machine | undefined> {
+  async updateMachine(
+    id: string,
+    machine: Partial<Machine>,
+  ): Promise<Machine | undefined> {
     const existingMachine = this.machines.get(id);
     if (!existingMachine) return undefined;
 
@@ -665,13 +1002,18 @@ export class MemStorage {
     return this.masterBatches.get(id);
   }
 
-  async createMasterBatch(masterBatch: InsertMasterBatch): Promise<MasterBatch> {
+  async createMasterBatch(
+    masterBatch: InsertMasterBatch,
+  ): Promise<MasterBatch> {
     const newMasterBatch: MasterBatch = { ...masterBatch };
     this.masterBatches.set(masterBatch.id, newMasterBatch);
     return newMasterBatch;
   }
 
-  async updateMasterBatch(id: string, masterBatch: Partial<MasterBatch>): Promise<MasterBatch | undefined> {
+  async updateMasterBatch(
+    id: string,
+    masterBatch: Partial<MasterBatch>,
+  ): Promise<MasterBatch | undefined> {
     const existingMasterBatch = this.masterBatches.get(id);
     if (!existingMasterBatch) return undefined;
 
@@ -694,16 +1036,26 @@ export class MemStorage {
   }
 
   async getCustomerByCode(code: string): Promise<Customer | undefined> {
-    return Array.from(this.customers.values()).find(customer => customer.code === code);
+    return Array.from(this.customers.values()).find(
+      (customer) => customer.code === code,
+    );
   }
 
   async createCustomer(customer: InsertCustomer): Promise<Customer> {
-    const newCustomer: Customer = { ...customer };
+    const newCustomer: Customer = { 
+      ...customer,
+      userId: customer.userId ?? null,
+      nameAr: customer.nameAr ?? null,
+      plateDrawerCode: customer.plateDrawerCode ?? null
+    };
     this.customers.set(customer.id, newCustomer);
     return newCustomer;
   }
 
-  async updateCustomer(id: string, customer: Partial<Customer>): Promise<Customer | undefined> {
+  async updateCustomer(
+    id: string,
+    customer: Partial<Customer>,
+  ): Promise<Customer | undefined> {
     const existingCustomer = this.customers.get(id);
     if (!existingCustomer) return undefined;
 
@@ -721,26 +1073,64 @@ export class MemStorage {
     return Array.from(this.customerProducts.values());
   }
 
-  async getCustomerProductsByCustomer(customerId: string): Promise<CustomerProduct[]> {
-    return Array.from(this.customerProducts.values()).filter(cp => cp.customerId === customerId);
+  async getCustomerProductsByCustomer(
+    customerId: string,
+  ): Promise<CustomerProduct[]> {
+    return Array.from(this.customerProducts.values()).filter(
+      (cp) => cp.customerId === customerId,
+    );
   }
 
   async getCustomerProduct(id: number): Promise<CustomerProduct | undefined> {
     return this.customerProducts.get(id);
   }
 
-  async createCustomerProduct(customerProduct: InsertCustomerProduct): Promise<CustomerProduct> {
+  async createCustomerProduct(
+    customerProduct: InsertCustomerProduct,
+  ): Promise<CustomerProduct> {
     const id = this.currentCustomerProductId++;
-    const newCustomerProduct: CustomerProduct = { ...customerProduct, id };
+    const newCustomerProduct: CustomerProduct = { 
+      ...customerProduct, 
+      id,
+      sizeCaption: customerProduct.sizeCaption ?? null,
+      rawMaterial: customerProduct.rawMaterial ?? null,
+      thickness: customerProduct.thickness ?? null,
+      clicheBackDesign: customerProduct.clicheBackDesign ?? null,
+      masterBatchId: customerProduct.masterBatchId ?? null,
+      width: customerProduct.width ?? null,
+      leftF: customerProduct.leftF ?? null,
+      rightF: customerProduct.rightF ?? null,
+      thicknessOne: customerProduct.thicknessOne ?? null,
+      printingCylinder: customerProduct.printingCylinder ?? null,
+      lengthCm: customerProduct.lengthCm ?? null,
+      cuttingLength: customerProduct.cuttingLength ?? null,
+      printed: customerProduct.printed ?? null,
+      cuttingUnit: customerProduct.cuttingUnit ?? null,
+      unitWeight: customerProduct.unitWeight ?? null,
+      unitQty: customerProduct.unitQty ?? null,
+      packageKg: customerProduct.packageKg ?? null,
+      packing: customerProduct.packing ?? null,
+      punching: customerProduct.punching ?? null,
+      clicheFrontDesign: customerProduct.clicheFrontDesign ?? null,
+      notes: customerProduct.notes ?? null,
+      cover: customerProduct.cover ?? null,
+      knife: customerProduct.knife ?? null
+    };
     this.customerProducts.set(id, newCustomerProduct);
     return newCustomerProduct;
   }
 
-  async updateCustomerProduct(id: number, customerProduct: Partial<CustomerProduct>): Promise<CustomerProduct | undefined> {
+  async updateCustomerProduct(
+    id: number,
+    customerProduct: Partial<CustomerProduct>,
+  ): Promise<CustomerProduct | undefined> {
     const existingCustomerProduct = this.customerProducts.get(id);
     if (!existingCustomerProduct) return undefined;
 
-    const updatedCustomerProduct = { ...existingCustomerProduct, ...customerProduct };
+    const updatedCustomerProduct = {
+      ...existingCustomerProduct,
+      ...customerProduct,
+    };
     this.customerProducts.set(id, updatedCustomerProduct);
     return updatedCustomerProduct;
   }
@@ -760,17 +1150,23 @@ export class MemStorage {
 
   async createOrder(order: InsertOrder): Promise<Order> {
     const id = this.currentOrderId++;
-    const newOrder: Order = { 
-      ...order, 
-      id, 
-      date: new Date(), 
-      status: "pending" 
+    const newOrder: Order = {
+      ...order,
+      id,
+      userId: null,
+      customerId: order.customerId,
+      note: order.note ?? null,
+      date: new Date(),
+      status: "pending",
     };
     this.orders.set(id, newOrder);
     return newOrder;
   }
 
-  async updateOrder(id: number, order: Partial<Order>): Promise<Order | undefined> {
+  async updateOrder(
+    id: number,
+    order: Partial<Order>,
+  ): Promise<Order | undefined> {
     const existingOrder = this.orders.get(id);
     if (!existingOrder) return undefined;
 
@@ -783,7 +1179,7 @@ export class MemStorage {
     try {
       // 1. Get all job orders related to this order
       const relatedJobOrders = await this.getJobOrdersByOrder(id);
-      
+
       // 2. For each job order, delete related rolls, quality checks, etc.
       for (const jobOrder of relatedJobOrders) {
         // 2.1 Get and delete rolls related to this job order
@@ -793,54 +1189,62 @@ export class MemStorage {
           const qualityChecks = await this.getQualityChecksByRoll(roll.id);
           for (const check of qualityChecks) {
             // 2.1.1.1 Delete corrective actions related to this quality check
-            const correctiveActions = await this.getCorrectiveActionsByQualityCheck(check.id);
+            const correctiveActions =
+              await this.getCorrectiveActionsByQualityCheck(check.id);
             for (const action of correctiveActions) {
               await this.deleteCorrectiveAction(action.id);
             }
-            
+
             // 2.1.1.2 Delete the quality check
             await this.deleteQualityCheck(check.id);
           }
-          
+
           // 2.1.2 Delete the roll
           await this.deleteRoll(roll.id);
         }
-        
+
         // 2.2 Delete quality checks related directly to the job order (not through rolls)
-        const jobOrderQualityChecks = await this.getQualityChecksByJobOrder(jobOrder.id);
+        const jobOrderQualityChecks = await this.getQualityChecksByJobOrder(
+          jobOrder.id,
+        );
         for (const check of jobOrderQualityChecks) {
           // 2.2.1 Delete corrective actions related to this quality check
-          const correctiveActions = await this.getCorrectiveActionsByQualityCheck(check.id);
+          const correctiveActions =
+            await this.getCorrectiveActionsByQualityCheck(check.id);
           for (const action of correctiveActions) {
             await this.deleteCorrectiveAction(action.id);
           }
-          
+
           // 2.2.2 Delete the quality check
           await this.deleteQualityCheck(check.id);
         }
-        
+
         // 2.3 Delete SMS messages related to the job order
-        const jobOrderSmsMessages = await this.getSmsMessagesByJobOrder(jobOrder.id);
+        const jobOrderSmsMessages = await this.getSmsMessagesByJobOrder(
+          jobOrder.id,
+        );
         for (const message of jobOrderSmsMessages) {
           await this.deleteSmsMessage(message.id);
         }
-        
+
         // 2.4 Delete final products related to the job order
-        const finalProducts = await this.getFinalProductsByJobOrder(jobOrder.id);
+        const finalProducts = await this.getFinalProductsByJobOrder(
+          jobOrder.id,
+        );
         for (const product of finalProducts) {
           await this.deleteFinalProduct(product.id);
         }
-        
+
         // 2.5 Delete the job order
         await this.deleteJobOrder(jobOrder.id);
       }
-      
+
       // 3. Delete SMS messages related directly to the order
       const orderSmsMessages = await this.getSmsMessagesByOrder(id);
       for (const message of orderSmsMessages) {
         await this.deleteSmsMessage(message.id);
       }
-      
+
       // 4. Finally delete the order itself
       return this.orders.delete(id);
     } catch (error) {
@@ -855,7 +1259,9 @@ export class MemStorage {
   }
 
   async getJobOrdersByOrder(orderId: number): Promise<JobOrder[]> {
-    return Array.from(this.jobOrders.values()).filter(jo => jo.orderId === orderId);
+    return Array.from(this.jobOrders.values()).filter(
+      (jo) => jo.orderId === orderId,
+    );
   }
 
   async getJobOrder(id: number): Promise<JobOrder | undefined> {
@@ -864,35 +1270,44 @@ export class MemStorage {
 
   async createJobOrder(jobOrder: InsertJobOrder): Promise<JobOrder> {
     const id = this.currentJobOrderId++;
-    
+
     // Extract the customerId from the related customer product if not provided
     let customerId = jobOrder.customerId;
     if (!customerId) {
-      const customerProduct = this.customerProducts.get(jobOrder.customerProductId);
+      const customerProduct = this.customerProducts.get(
+        jobOrder.customerProductId,
+      );
       if (customerProduct) {
         customerId = customerProduct.customerId;
       }
     }
-    
-    const newJobOrder: JobOrder = { 
-      ...jobOrder, 
+
+    const newJobOrder: JobOrder = {
+      ...jobOrder,
       id,
-      status: jobOrder.status || "pending", 
-      customerId 
+      status: jobOrder.status || "pending",
+      customerId: customerId ?? null,
+      finishedQty: jobOrder.finishedQty ?? 0,
+      receivedQty: jobOrder.receivedQty ?? 0,
+      receiveDate: jobOrder.receiveDate ?? null,
+      receivedBy: jobOrder.receivedBy ?? null,
     };
-    
+
     this.jobOrders.set(id, newJobOrder);
-    
+
     // Update order status to processing when a job order is created
     const order = this.orders.get(jobOrder.orderId);
     if (order && order.status === "pending") {
       this.updateOrder(order.id, { status: "processing" });
     }
-    
+
     return newJobOrder;
   }
 
-  async updateJobOrder(id: number, jobOrder: Partial<JobOrder>): Promise<JobOrder | undefined> {
+  async updateJobOrder(
+    id: number,
+    jobOrder: Partial<JobOrder>,
+  ): Promise<JobOrder | undefined> {
     const existingJobOrder = this.jobOrders.get(id);
     if (!existingJobOrder) return undefined;
 
@@ -911,11 +1326,15 @@ export class MemStorage {
   }
 
   async getRollsByJobOrder(jobOrderId: number): Promise<Roll[]> {
-    return Array.from(this.rolls.values()).filter(roll => roll.jobOrderId === jobOrderId);
+    return Array.from(this.rolls.values()).filter(
+      (roll) => roll.jobOrderId === jobOrderId,
+    );
   }
 
   async getRollsByStage(stage: string): Promise<Roll[]> {
-    return Array.from(this.rolls.values()).filter(roll => roll.currentStage === stage);
+    return Array.from(this.rolls.values()).filter(
+      (roll) => roll.currentStage === stage,
+    );
   }
 
   async getRoll(id: string): Promise<Roll | undefined> {
@@ -923,7 +1342,23 @@ export class MemStorage {
   }
 
   async createRoll(roll: InsertRoll): Promise<Roll> {
-    const newRoll: Roll = { ...roll };
+    const newRoll: Roll = { 
+      ...roll,
+      createdAt: roll.createdAt ?? new Date(),
+      status: roll.status ?? "pending",
+      currentStage: roll.currentStage ?? "extrusion",
+      serialNumber: roll.serialNumber ?? `R${Date.now()}`,
+      extrudingQty: roll.extrudingQty ?? 0,
+      printingQty: roll.printingQty ?? 0,
+      cuttingQty: roll.cuttingQty ?? 0,
+      wasteQty: roll.wasteQty ?? 0,
+      wastePercentage: roll.wastePercentage ?? 0,
+      createdById: roll.createdById ?? null,
+      printedById: roll.printedById ?? null,
+      cutById: roll.cutById ?? null,
+      printedAt: roll.printedAt ?? null,
+      cutAt: roll.cutAt ?? null
+    };
     this.rolls.set(roll.id, newRoll);
     return newRoll;
   }
@@ -950,25 +1385,31 @@ export class MemStorage {
     return this.rawMaterials.get(id);
   }
 
-  async createRawMaterial(rawMaterial: InsertRawMaterial): Promise<RawMaterial> {
+  async createRawMaterial(
+    rawMaterial: InsertRawMaterial,
+  ): Promise<RawMaterial> {
     const id = this.currentRawMaterialId++;
-    const newRawMaterial: RawMaterial = { 
-      ...rawMaterial, 
-      id, 
-      lastUpdated: new Date() 
+    const newRawMaterial: RawMaterial = {
+      ...rawMaterial,
+      id,
+      quantity: rawMaterial.quantity ?? null,
+      lastUpdated: new Date(),
     };
     this.rawMaterials.set(id, newRawMaterial);
     return newRawMaterial;
   }
 
-  async updateRawMaterial(id: number, rawMaterial: Partial<RawMaterial>): Promise<RawMaterial | undefined> {
+  async updateRawMaterial(
+    id: number,
+    rawMaterial: Partial<RawMaterial>,
+  ): Promise<RawMaterial | undefined> {
     const existingRawMaterial = this.rawMaterials.get(id);
     if (!existingRawMaterial) return undefined;
 
-    const updatedRawMaterial = { 
-      ...existingRawMaterial, 
-      ...rawMaterial, 
-      lastUpdated: new Date() 
+    const updatedRawMaterial = {
+      ...existingRawMaterial,
+      ...rawMaterial,
+      lastUpdated: new Date(),
     };
     this.rawMaterials.set(id, updatedRawMaterial);
     return updatedRawMaterial;
@@ -982,27 +1423,37 @@ export class MemStorage {
   async getFinalProducts(): Promise<FinalProduct[]> {
     return Array.from(this.finalProducts.values());
   }
-  
-  async getFinalProductsByJobOrder(jobOrderId: number): Promise<FinalProduct[]> {
-    return Array.from(this.finalProducts.values()).filter(product => product.jobOrderId === jobOrderId);
+
+  async getFinalProductsByJobOrder(
+    jobOrderId: number,
+  ): Promise<FinalProduct[]> {
+    return Array.from(this.finalProducts.values()).filter(
+      (product) => product.jobOrderId === jobOrderId,
+    );
   }
 
   async getFinalProduct(id: number): Promise<FinalProduct | undefined> {
     return this.finalProducts.get(id);
   }
 
-  async createFinalProduct(finalProduct: InsertFinalProduct): Promise<FinalProduct> {
+  async createFinalProduct(
+    finalProduct: InsertFinalProduct,
+  ): Promise<FinalProduct> {
     const id = this.currentFinalProductId++;
-    const newFinalProduct: FinalProduct = { 
-      ...finalProduct, 
-      id, 
-      completedDate: new Date() 
+    const newFinalProduct: FinalProduct = {
+      ...finalProduct,
+      id,
+      status: finalProduct.status ?? "completed",
+      completedDate: new Date(),
     };
     this.finalProducts.set(id, newFinalProduct);
     return newFinalProduct;
   }
 
-  async updateFinalProduct(id: number, finalProduct: Partial<FinalProduct>): Promise<FinalProduct | undefined> {
+  async updateFinalProduct(
+    id: number,
+    finalProduct: Partial<FinalProduct>,
+  ): Promise<FinalProduct | undefined> {
     const existingFinalProduct = this.finalProducts.get(id);
     if (!existingFinalProduct) return undefined;
 
@@ -1021,15 +1472,21 @@ export class MemStorage {
   }
 
   async getSmsMessagesByOrder(orderId: number): Promise<SmsMessage[]> {
-    return Array.from(this.smsMessages.values()).filter(msg => msg.orderId === orderId);
+    return Array.from(this.smsMessages.values()).filter(
+      (msg) => msg.orderId === orderId,
+    );
   }
 
   async getSmsMessagesByJobOrder(jobOrderId: number): Promise<SmsMessage[]> {
-    return Array.from(this.smsMessages.values()).filter(msg => msg.jobOrderId === jobOrderId);
+    return Array.from(this.smsMessages.values()).filter(
+      (msg) => msg.jobOrderId === jobOrderId,
+    );
   }
 
   async getSmsMessagesByCustomer(customerId: string): Promise<SmsMessage[]> {
-    return Array.from(this.smsMessages.values()).filter(msg => msg.customerId === customerId);
+    return Array.from(this.smsMessages.values()).filter(
+      (msg) => msg.customerId === customerId,
+    );
   }
 
   async getSmsMessage(id: number): Promise<SmsMessage | undefined> {
@@ -1041,16 +1498,33 @@ export class MemStorage {
     const newMessage: SmsMessage = {
       ...message,
       id,
+      category: message.category ?? "general",
+      templateId: message.templateId ?? null,
+      priority: message.priority ?? "medium",
+      recipientName: message.recipientName ?? null,
+      customerId: message.customerId ?? null,
+      orderId: message.orderId ?? null,
+      jobOrderId: message.jobOrderId ?? null,
+      retryCount: message.retryCount ?? 0,
+      lastRetryAt: null,
+      sentBy: message.sentBy ?? null,
+      errorMessage: message.errorMessage ?? null,
+      metadata: message.metadata ?? {},
       sentAt: new Date(),
       deliveredAt: null,
       twilioMessageId: null,
-      status: message.status || "pending"
+      status: message.status || "pending",
+      scheduledFor: message.scheduledFor ?? null,
+      isScheduled: message.isScheduled ?? false,
     };
     this.smsMessages.set(id, newMessage);
     return newMessage;
   }
 
-  async updateSmsMessage(id: number, message: Partial<SmsMessage>): Promise<SmsMessage | undefined> {
+  async updateSmsMessage(
+    id: number,
+    message: Partial<SmsMessage>,
+  ): Promise<SmsMessage | undefined> {
     const existingMessage = this.smsMessages.get(id);
     if (!existingMessage) return undefined;
 
@@ -1065,7 +1539,7 @@ export class MemStorage {
 
   // Mix Materials
   async getMixMaterials(): Promise<MixMaterial[]> {
-    return Array.from(this.mixMaterials.values());
+    return Array.from(this.mixMaterials.values()).sort((a, b) => b.id - a.id);
   }
 
   async getMixMaterial(id: number): Promise<MixMaterial | undefined> {
@@ -1078,15 +1552,20 @@ export class MemStorage {
     const newMix: MixMaterial = {
       ...mix,
       id,
+      orderId: mix.orderId ?? null,
+      mixScrew: mix.mixScrew ?? null,
       mixDate: new Date(),
       totalQuantity,
-      createdAt: new Date()
+      createdAt: new Date(),
     };
     this.mixMaterials.set(id, newMix);
     return newMix;
   }
 
-  async updateMixMaterial(id: number, mix: Partial<MixMaterial>): Promise<MixMaterial | undefined> {
+  async updateMixMaterial(
+    id: number,
+    mix: Partial<MixMaterial>,
+  ): Promise<MixMaterial | undefined> {
     const existingMix = this.mixMaterials.get(id);
     if (!existingMix) return undefined;
 
@@ -1101,43 +1580,44 @@ export class MemStorage {
     for (const item of mixItems) {
       await this.deleteMixItem(item.id);
     }
-    
+
     // Delete any machine associations
     await this.deleteMixMachinesByMixId(id);
-    
+
     return this.mixMaterials.delete(id);
   }
-  
+
   // Mix Machines
   async getMixMachines(): Promise<MixMachine[]> {
     return Array.from(this.mixMachines.values());
   }
-  
+
   async getMixMachinesByMixId(mixId: number): Promise<MixMachine[]> {
-    return Array.from(this.mixMachines.values())
-      .filter(mixMachine => mixMachine.mixId === mixId);
+    return Array.from(this.mixMachines.values()).filter(
+      (mixMachine) => mixMachine.mixId === mixId,
+    );
   }
-  
+
   async createMixMachine(mixMachine: InsertMixMachine): Promise<MixMachine> {
     const id = this.currentMixMachineId++;
     const newMixMachine: MixMachine = {
       ...mixMachine,
-      id
+      id,
     };
     this.mixMachines.set(id, newMixMachine);
     return newMixMachine;
   }
-  
+
   async deleteMixMachinesByMixId(mixId: number): Promise<boolean> {
     const toDelete = await this.getMixMachinesByMixId(mixId);
-    
+
     let success = true;
     for (const mixMachine of toDelete) {
       if (!this.mixMachines.delete(mixMachine.id)) {
         success = false;
       }
     }
-    
+
     return success;
   }
 
@@ -1147,7 +1627,9 @@ export class MemStorage {
   }
 
   async getMixItemsByMix(mixId: number): Promise<MixItem[]> {
-    return Array.from(this.mixItems.values()).filter(item => item.mixId === mixId);
+    return Array.from(this.mixItems.values()).filter(
+      (item) => item.mixId === mixId,
+    );
   }
 
   async getMixItem(id: number): Promise<MixItem | undefined> {
@@ -1156,66 +1638,76 @@ export class MemStorage {
 
   async createMixItem(mixItem: InsertMixItem): Promise<MixItem> {
     const id = this.currentMixItemId++;
-    
+
     // Get the mix to update total quantity
     const mix = await this.getMixMaterial(mixItem.mixId);
     if (!mix) {
       throw new Error(`Mix with ID ${mixItem.mixId} not found`);
     }
-    
+
     // Get the raw material to reduce quantity from inventory
     const rawMaterial = await this.getRawMaterial(mixItem.rawMaterialId);
     if (!rawMaterial) {
-      throw new Error(`Raw material with ID ${mixItem.rawMaterialId} not found`);
+      throw new Error(
+        `Raw material with ID ${mixItem.rawMaterialId} not found`,
+      );
     }
 
     // Update the raw material quantity
-    if (rawMaterial.quantity !== null && rawMaterial.quantity >= mixItem.quantity) {
-      await this.updateRawMaterial(
-        rawMaterial.id, 
-        { quantity: rawMaterial.quantity - mixItem.quantity }
-      );
+    if (
+      rawMaterial.quantity !== null &&
+      rawMaterial.quantity >= mixItem.quantity
+    ) {
+      await this.updateRawMaterial(rawMaterial.id, {
+        quantity: rawMaterial.quantity - mixItem.quantity,
+      });
     } else {
-      throw new Error(`Insufficient quantity of raw material ${rawMaterial.name}`);
+      throw new Error(
+        `Insufficient quantity of raw material ${rawMaterial.name}`,
+      );
     }
-    
+
     // Update the mix total quantity
-    const newTotalQuantity = mix.totalQuantity + mixItem.quantity;
+    const newTotalQuantity = (mix.totalQuantity || 0) + mixItem.quantity;
     await this.updateMixMaterial(mix.id, { totalQuantity: newTotalQuantity });
-    
+
     // Calculate the percentage of this item in the mix
     const percentage = (mixItem.quantity / newTotalQuantity) * 100;
-    
+
     // Create the mix item with percentage
     const newMixItem: MixItem = {
       ...mixItem,
       id,
-      percentage
+      percentage,
     };
-    
+
     // Update percentages for all items in this mix
     const mixItems = await this.getMixItemsByMix(mixItem.mixId);
     for (const item of mixItems) {
       // Skip the current item as it's not in the map yet
       if (item.id === id) continue;
-      
+
       // Recalculate percentage for existing items
       const updatedPercentage = (item.quantity / newTotalQuantity) * 100;
       await this.updateMixItem(item.id, { percentage: updatedPercentage });
     }
-    
+
     this.mixItems.set(id, newMixItem);
     return newMixItem;
   }
 
-  async updateMixItem(id: number, mixItemUpdate: Partial<MixItem>): Promise<MixItem | undefined> {
+  async updateMixItem(
+    id: number,
+    mixItemUpdate: Partial<MixItem>,
+  ): Promise<MixItem | undefined> {
     const existingMixItem = this.mixItems.get(id);
     if (!existingMixItem) return undefined;
 
     // Handle quantity changes that require recalculation of percentages
-    if (mixItemUpdate.quantity !== undefined && 
-        mixItemUpdate.quantity !== existingMixItem.quantity) {
-      
+    if (
+      mixItemUpdate.quantity !== undefined &&
+      mixItemUpdate.quantity !== existingMixItem.quantity
+    ) {
       const mix = await this.getMixMaterial(existingMixItem.mixId);
       if (!mix) {
         throw new Error(`Mix with ID ${existingMixItem.mixId} not found`);
@@ -1223,46 +1715,54 @@ export class MemStorage {
 
       // Calculate the new total quantity for the mix
       const quantityDiff = mixItemUpdate.quantity - existingMixItem.quantity;
-      const newTotalQuantity = mix.totalQuantity + quantityDiff;
-      
+      const newTotalQuantity = (mix.totalQuantity || 0) + quantityDiff;
+
       // Update the raw material quantity
       if (quantityDiff !== 0) {
-        const rawMaterial = await this.getRawMaterial(existingMixItem.rawMaterialId);
+        const rawMaterial = await this.getRawMaterial(
+          existingMixItem.rawMaterialId,
+        );
         if (!rawMaterial) {
-          throw new Error(`Raw material with ID ${existingMixItem.rawMaterialId} not found`);
+          throw new Error(
+            `Raw material with ID ${existingMixItem.rawMaterialId} not found`,
+          );
         }
-        
+
         if (quantityDiff > 0) {
           // Check if we have enough raw material
-          if (rawMaterial.quantity !== null && rawMaterial.quantity >= quantityDiff) {
-            await this.updateRawMaterial(
-              rawMaterial.id, 
-              { quantity: rawMaterial.quantity - quantityDiff }
-            );
+          if (
+            rawMaterial.quantity !== null &&
+            rawMaterial.quantity >= quantityDiff
+          ) {
+            await this.updateRawMaterial(rawMaterial.id, {
+              quantity: rawMaterial.quantity - quantityDiff,
+            });
           } else {
-            throw new Error(`Insufficient quantity of raw material ${rawMaterial.name}`);
+            throw new Error(
+              `Insufficient quantity of raw material ${rawMaterial.name}`,
+            );
           }
         } else {
           // Return raw material to inventory
-          await this.updateRawMaterial(
-            rawMaterial.id,
-            { quantity: (rawMaterial.quantity || 0) - quantityDiff }
-          );
+          await this.updateRawMaterial(rawMaterial.id, {
+            quantity: (rawMaterial.quantity || 0) - quantityDiff,
+          });
         }
       }
-      
+
       // Update the mix total quantity
       await this.updateMixMaterial(mix.id, { totalQuantity: newTotalQuantity });
-      
+
       // Calculate the new percentage for this item
-      mixItemUpdate.percentage = (mixItemUpdate.quantity / newTotalQuantity) * 100;
-      
+      mixItemUpdate.percentage =
+        (mixItemUpdate.quantity / newTotalQuantity) * 100;
+
       // Update percentages for all other items in this mix
       const mixItems = await this.getMixItemsByMix(existingMixItem.mixId);
       for (const item of mixItems) {
         // Skip the current item as it will be updated later
         if (item.id === id) continue;
-        
+
         // Recalculate percentage for other items
         const updatedPercentage = (item.quantity / newTotalQuantity) * 100;
         const otherUpdatedItem = { ...item, percentage: updatedPercentage };
@@ -1278,50 +1778,54 @@ export class MemStorage {
   async deleteMixItem(id: number): Promise<boolean> {
     const mixItem = this.mixItems.get(id);
     if (!mixItem) return false;
-    
+
     // Get the mix to update total quantity
     const mix = await this.getMixMaterial(mixItem.mixId);
     if (!mix) {
       return this.mixItems.delete(id);
     }
-    
+
     // Get the raw material to return quantity to inventory
     const rawMaterial = await this.getRawMaterial(mixItem.rawMaterialId);
     if (rawMaterial) {
       // Return raw material to inventory
-      await this.updateRawMaterial(
-        rawMaterial.id,
-        { quantity: (rawMaterial.quantity || 0) + mixItem.quantity }
-      );
+      await this.updateRawMaterial(rawMaterial.id, {
+        quantity: (rawMaterial.quantity || 0) + mixItem.quantity,
+      });
     }
-    
+
     // Update the mix total quantity
-    const newTotalQuantity = mix.totalQuantity - mixItem.quantity;
+    const newTotalQuantity = (mix.totalQuantity || 0) - mixItem.quantity;
     await this.updateMixMaterial(mix.id, { totalQuantity: newTotalQuantity });
-    
+
     // Update percentages for remaining items in this mix
     const mixItems = await this.getMixItemsByMix(mixItem.mixId);
     for (const item of mixItems) {
       // Skip the current item as it will be deleted
       if (item.id === id) continue;
-      
+
       // Recalculate percentage for remaining items
-      const updatedPercentage = newTotalQuantity > 0 
-        ? (item.quantity / newTotalQuantity) * 100 
-        : 0;
+      const updatedPercentage =
+        newTotalQuantity > 0 ? (item.quantity / newTotalQuantity) * 100 : 0;
       await this.updateMixItem(item.id, { percentage: updatedPercentage });
     }
-    
+
     return this.mixItems.delete(id);
   }
 
   // Quality Checks methods - Missing implementations
   async getQualityChecksByRoll(rollId: string): Promise<QualityCheck[]> {
-    return Array.from(this.qualityChecks.values()).filter(check => check.rollId === rollId);
+    return Array.from(this.qualityChecks.values()).filter(
+      (check) => check.rollId === rollId,
+    );
   }
 
-  async getCorrectiveActionsByQualityCheck(qualityCheckId: number): Promise<CorrectiveAction[]> {
-    return Array.from(this.correctiveActions.values()).filter(action => action.qualityCheckId === qualityCheckId);
+  async getCorrectiveActionsByQualityCheck(
+    qualityCheckId: number,
+  ): Promise<CorrectiveAction[]> {
+    return Array.from(this.correctiveActions.values()).filter(
+      (action) => action.qualityCheckId === qualityCheckId,
+    );
   }
 
   async deleteCorrectiveAction(id: number): Promise<boolean> {
@@ -1337,12 +1841,16 @@ export class MemStorage {
     return this.qualityChecks.delete(id);
   }
 
-  async getQualityChecksByJobOrder(jobOrderId: number): Promise<QualityCheck[]> {
-    return Array.from(this.qualityChecks.values()).filter(check => check.jobOrderId === jobOrderId);
+  async getQualityChecksByJobOrder(
+    jobOrderId: number,
+  ): Promise<QualityCheck[]> {
+    return Array.from(this.qualityChecks.values()).filter(
+      (check) => check.jobOrderId === jobOrderId,
+    );
   }
 }
 
-import { DatabaseStorage } from './database-storage';
+import { DatabaseStorage } from "./database-storage";
 
 // Use the database storage implementation for all storage operations
 export const storage = new DatabaseStorage();

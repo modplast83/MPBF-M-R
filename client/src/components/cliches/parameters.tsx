@@ -106,8 +106,8 @@ export default function Parameters() {
         credentials: "include",
         headers: {
           "Cache-Control": "no-cache, no-store, must-revalidate",
-          "Pragma": "no-cache"
-        }
+          Pragma: "no-cache",
+        },
       });
       if (!response.ok) {
         throw new Error("Failed to fetch parameters");
@@ -126,17 +126,19 @@ export default function Parameters() {
         headers: {
           "Content-Type": "application/json",
           "Cache-Control": "no-cache, no-store, must-revalidate",
-          "Pragma": "no-cache"
+          Pragma: "no-cache",
         },
         credentials: "include", // Add credentials for session cookies
         body: JSON.stringify(data),
-      }).then(res => {
+      }).then((res) => {
         if (!res.ok) throw new Error("Failed to save parameter");
         return res.json();
       });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [API_ENDPOINTS.PLATE_PRICING_PARAMETERS] });
+      queryClient.invalidateQueries({
+        queryKey: [API_ENDPOINTS.PLATE_PRICING_PARAMETERS],
+      });
       toast({
         title: t("common.success"),
         description: t("Parameter added successfully"),
@@ -155,7 +157,9 @@ export default function Parameters() {
 
   // Update parameter mutation
   const updateMutation = useMutation({
-    mutationFn: async (data: ParameterFormValues & { id: number, isActive: boolean }) => {
+    mutationFn: async (
+      data: ParameterFormValues & { id: number; isActive: boolean },
+    ) => {
       return fetch(`${API_ENDPOINTS.PLATE_PRICING_PARAMETERS}/${data.id}`, {
         method: "PUT",
         headers: {
@@ -170,13 +174,15 @@ export default function Parameters() {
           isActive: data.isActive,
           // Don't include lastUpdated as it will be handled on the server
         }),
-      }).then(res => {
+      }).then((res) => {
         if (!res.ok) throw new Error("Failed to update parameter");
         return res.json();
       });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [API_ENDPOINTS.PLATE_PRICING_PARAMETERS] });
+      queryClient.invalidateQueries({
+        queryKey: [API_ENDPOINTS.PLATE_PRICING_PARAMETERS],
+      });
       toast({
         title: t("common.success"),
         description: t("Parameter updated successfully"),
@@ -202,16 +208,18 @@ export default function Parameters() {
         method: "DELETE",
         headers: {
           "Cache-Control": "no-cache, no-store, must-revalidate",
-          "Pragma": "no-cache"
+          Pragma: "no-cache",
         },
         credentials: "include", // Add credentials for session cookies
-      }).then(res => {
+      }).then((res) => {
         if (!res.ok) throw new Error("Failed to delete parameter");
         return res;
       });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [API_ENDPOINTS.PLATE_PRICING_PARAMETERS] });
+      queryClient.invalidateQueries({
+        queryKey: [API_ENDPOINTS.PLATE_PRICING_PARAMETERS],
+      });
       toast({
         title: t("common.success"),
         description: t("Parameter deleted successfully"),
@@ -237,9 +245,9 @@ export default function Parameters() {
       value: values.value,
       type: values.type,
       description: values.description,
-      isActive: true // Add isActive field which is required by the schema
+      isActive: true, // Add isActive field which is required by the schema
     };
-    
+
     if (isEditing && selectedParameter) {
       updateMutation.mutate({
         ...formattedValues,
@@ -286,7 +294,7 @@ export default function Parameters() {
 
   // Get parameter type label
   const getParameterTypeLabel = (type: string) => {
-    const parameterType = PARAMETER_TYPES.find(pt => pt.value === type);
+    const parameterType = PARAMETER_TYPES.find((pt) => pt.value === type);
     return parameterType ? parameterType.label : type;
   };
 
@@ -300,7 +308,7 @@ export default function Parameters() {
         </div>
         <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
           <DialogTrigger asChild>
-            <Button 
+            <Button
               onClick={() => {
                 setIsEditing(false);
                 setSelectedParameter(null);
@@ -318,13 +326,16 @@ export default function Parameters() {
                 {isEditing ? t("Edit Parameter") : t("cliches.addParameter")}
               </DialogTitle>
               <DialogDescription>
-                {isEditing 
-                  ? t("Update the parameter details below") 
+                {isEditing
+                  ? t("Update the parameter details below")
                   : t("Add a new parameter to the system")}
               </DialogDescription>
             </DialogHeader>
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-4"
+              >
                 <FormField
                   control={form.control}
                   name="name"
@@ -332,21 +343,24 @@ export default function Parameters() {
                     <FormItem>
                       <FormLabel>{t("cliches.parameterName")}</FormLabel>
                       <FormControl>
-                        <Input {...field} placeholder="e.g. Base Price per cm²" />
+                        <Input
+                          {...field}
+                          placeholder="e.g. Base Price per cm²"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-                
+
                 <FormField
                   control={form.control}
                   name="type"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>{t("cliches.parameterType")}</FormLabel>
-                      <Select 
-                        onValueChange={field.onChange} 
+                      <Select
+                        onValueChange={field.onChange}
                         defaultValue={field.value}
                       >
                         <FormControl>
@@ -366,7 +380,7 @@ export default function Parameters() {
                     </FormItem>
                   )}
                 />
-                
+
                 <FormField
                   control={form.control}
                   name="value"
@@ -374,18 +388,18 @@ export default function Parameters() {
                     <FormItem>
                       <FormLabel>{t("cliches.value")}</FormLabel>
                       <FormControl>
-                        <Input 
-                          {...field} 
-                          type="number" 
-                          step="0.01" 
-                          placeholder="0.00" 
+                        <Input
+                          {...field}
+                          type="number"
+                          step="0.01"
+                          placeholder="0.00"
                         />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-                
+
                 <FormField
                   control={form.control}
                   name="description"
@@ -393,35 +407,37 @@ export default function Parameters() {
                     <FormItem>
                       <FormLabel>{t("cliches.description")}</FormLabel>
                       <FormControl>
-                        <Textarea 
-                          {...field} 
-                          placeholder="Optional description" 
+                        <Textarea
+                          {...field}
+                          placeholder="Optional description"
                         />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-                
+
                 <DialogFooter>
-                  <Button 
-                    type="button" 
-                    variant="outline" 
+                  <Button
+                    type="button"
+                    variant="outline"
                     onClick={handleCancelDialog}
                   >
                     {t("common.cancel")}
                   </Button>
-                  <Button 
-                    type="submit" 
+                  <Button
+                    type="submit"
                     disabled={addMutation.isPending || updateMutation.isPending}
                   >
-                    {(addMutation.isPending || updateMutation.isPending) ? (
+                    {addMutation.isPending || updateMutation.isPending ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                         {t("common.saving")}
                       </>
+                    ) : isEditing ? (
+                      t("common.update")
                     ) : (
-                      isEditing ? t("common.update") : t("common.save")
+                      t("common.save")
                     )}
                   </Button>
                 </DialogFooter>
@@ -430,7 +446,7 @@ export default function Parameters() {
           </DialogContent>
         </Dialog>
       </div>
-      
+
       <Card>
         <CardContent className="pt-6">
           {isLoading ? (
@@ -441,94 +457,102 @@ export default function Parameters() {
             <div className={isMobile ? "space-y-4" : ""}>
               {isMobile ? (
                 <div className="space-y-4">
-                  {parameters && parameters.length > 0 ? parameters.map((parameter: any) => (
-                    <Card key={parameter.id} className="overflow-hidden">
-                      <CardHeader className="bg-muted/50 p-4">
-                        <CardTitle className="text-base font-medium">
-                          {parameter.name}
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent className="p-4 pt-4">
-                        <div className="space-y-2">
-                          <div className="flex justify-between">
-                            <span className="text-sm text-muted-foreground">
-                              {t("cliches.parameterType")}
-                            </span>
-                            <span className="text-sm font-medium">
-                              {getParameterTypeLabel(parameter.type)}
-                            </span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-sm text-muted-foreground">
-                              {t("cliches.value")}
-                            </span>
-                            <span className="text-sm font-medium">
-                              {parameter.value}
-                            </span>
-                          </div>
-                          {parameter.description && (
-                            <div className="flex flex-col gap-1">
+                  {parameters && parameters.length > 0 ? (
+                    parameters.map((parameter: any) => (
+                      <Card key={parameter.id} className="overflow-hidden">
+                        <CardHeader className="bg-muted/50 p-4">
+                          <CardTitle className="text-base font-medium">
+                            {parameter.name}
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent className="p-4 pt-4">
+                          <div className="space-y-2">
+                            <div className="flex justify-between">
                               <span className="text-sm text-muted-foreground">
-                                {t("cliches.description")}
+                                {t("cliches.parameterType")}
                               </span>
-                              <span className="text-sm">
-                                {parameter.description}
+                              <span className="text-sm font-medium">
+                                {getParameterTypeLabel(parameter.type)}
                               </span>
                             </div>
-                          )}
-                        </div>
-                        <div className="flex justify-end gap-2 mt-4">
-                          <Button 
-                            size="sm" 
-                            variant="outline" 
-                            onClick={() => handleEdit(parameter)}
-                          >
-                            <Pencil className="h-4 w-4" />
-                          </Button>
-                          <AlertDialog
-                            open={isDeleteDialogOpen && selectedParameter?.id === parameter.id}
-                            onOpenChange={(open) => {
-                              if (!open) setIsDeleteDialogOpen(false);
-                            }}
-                          >
-                            <AlertDialogTrigger asChild>
-                              <Button 
-                                size="sm" 
-                                variant="destructive"
-                                onClick={() => handleDelete(parameter)}
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                              <AlertDialogHeader>
-                                <AlertDialogTitle>
-                                  {t("common.delete_confirmation")}
-                                </AlertDialogTitle>
-                                <AlertDialogDescription>
-                                  {t("common.delete_confirmation_message", { item: "parameter" })}
-                                </AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel>
-                                  {t("common.cancel")}
-                                </AlertDialogCancel>
-                                <AlertDialogAction 
-                                  onClick={confirmDelete}
-                                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                            <div className="flex justify-between">
+                              <span className="text-sm text-muted-foreground">
+                                {t("cliches.value")}
+                              </span>
+                              <span className="text-sm font-medium">
+                                {parameter.value}
+                              </span>
+                            </div>
+                            {parameter.description && (
+                              <div className="flex flex-col gap-1">
+                                <span className="text-sm text-muted-foreground">
+                                  {t("cliches.description")}
+                                </span>
+                                <span className="text-sm">
+                                  {parameter.description}
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                          <div className="flex justify-end gap-2 mt-4">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleEdit(parameter)}
+                            >
+                              <Pencil className="h-4 w-4" />
+                            </Button>
+                            <AlertDialog
+                              open={
+                                isDeleteDialogOpen &&
+                                selectedParameter?.id === parameter.id
+                              }
+                              onOpenChange={(open) => {
+                                if (!open) setIsDeleteDialogOpen(false);
+                              }}
+                            >
+                              <AlertDialogTrigger asChild>
+                                <Button
+                                  size="sm"
+                                  variant="destructive"
+                                  onClick={() => handleDelete(parameter)}
                                 >
-                                  {t("common.delete")}
-                                </AlertDialogAction>
-                              </AlertDialogFooter>
-                            </AlertDialogContent>
-                          </AlertDialog>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  )) : (
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </AlertDialogTrigger>
+                              <AlertDialogContent>
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle>
+                                    {t("common.delete_confirmation")}
+                                  </AlertDialogTitle>
+                                  <AlertDialogDescription>
+                                    {t("common.delete_confirmation_message", {
+                                      item: "parameter",
+                                    })}
+                                  </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel>
+                                    {t("common.cancel")}
+                                  </AlertDialogCancel>
+                                  <AlertDialogAction
+                                    onClick={confirmDelete}
+                                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                  >
+                                    {t("common.delete")}
+                                  </AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))
+                  ) : (
                     <div className="text-center py-8">
                       <p className="text-muted-foreground">
-                        No parameters found. Add your first parameter to get started.
+                        No parameters found. Add your first parameter to get
+                        started.
                       </p>
                     </div>
                   )}
@@ -540,71 +564,83 @@ export default function Parameters() {
                       <TableHead>{t("cliches.parameterName")}</TableHead>
                       <TableHead>{t("cliches.value")}</TableHead>
                       <TableHead>{t("cliches.description")}</TableHead>
-                      <TableHead className="text-right">{t("common.actions")}</TableHead>
+                      <TableHead className="text-right">
+                        {t("common.actions")}
+                      </TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {parameters && parameters.length > 0 ? parameters.map((parameter: any) => (
-                      <TableRow key={parameter.id}>
-                        <TableCell className="font-medium">{parameter.name}</TableCell>
-                        <TableCell>{parameter.value}</TableCell>
-                        <TableCell>{parameter.description || "-"}</TableCell>
-                        <TableCell className="text-right">
-                          <div className="flex justify-end gap-2">
-                            <Button 
-                              size="sm" 
-                              variant="outline" 
-                              onClick={() => handleEdit(parameter)}
-                            >
-                              <Pencil className="h-4 w-4 mr-1" />
-                              {t("common.edit")}
-                            </Button>
-                            <AlertDialog
-                              open={isDeleteDialogOpen && selectedParameter?.id === parameter.id}
-                              onOpenChange={(open) => {
-                                if (!open) setIsDeleteDialogOpen(false);
-                              }}
-                            >
-                              <AlertDialogTrigger asChild>
-                                <Button 
-                                  size="sm" 
-                                  variant="destructive"
-                                  onClick={() => handleDelete(parameter)}
-                                >
-                                  <Trash2 className="h-4 w-4 mr-1" />
-                                  {t("common.delete")}
-                                </Button>
-                              </AlertDialogTrigger>
-                              <AlertDialogContent>
-                                <AlertDialogHeader>
-                                  <AlertDialogTitle>
-                                    {t("common.delete_confirmation")}
-                                  </AlertDialogTitle>
-                                  <AlertDialogDescription>
-                                    {t("common.delete_confirmation_message", { item: "parameter" })}
-                                  </AlertDialogDescription>
-                                </AlertDialogHeader>
-                                <AlertDialogFooter>
-                                  <AlertDialogCancel>
-                                    {t("common.cancel")}
-                                  </AlertDialogCancel>
-                                  <AlertDialogAction 
-                                    onClick={confirmDelete}
-                                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                    {parameters && parameters.length > 0 ? (
+                      parameters.map((parameter: any) => (
+                        <TableRow key={parameter.id}>
+                          <TableCell className="font-medium">
+                            {parameter.name}
+                          </TableCell>
+                          <TableCell>{parameter.value}</TableCell>
+                          <TableCell>{parameter.description || "-"}</TableCell>
+                          <TableCell className="text-right">
+                            <div className="flex justify-end gap-2">
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => handleEdit(parameter)}
+                              >
+                                <Pencil className="h-4 w-4 mr-1" />
+                                {t("common.edit")}
+                              </Button>
+                              <AlertDialog
+                                open={
+                                  isDeleteDialogOpen &&
+                                  selectedParameter?.id === parameter.id
+                                }
+                                onOpenChange={(open) => {
+                                  if (!open) setIsDeleteDialogOpen(false);
+                                }}
+                              >
+                                <AlertDialogTrigger asChild>
+                                  <Button
+                                    size="sm"
+                                    variant="destructive"
+                                    onClick={() => handleDelete(parameter)}
                                   >
+                                    <Trash2 className="h-4 w-4 mr-1" />
                                     {t("common.delete")}
-                                  </AlertDialogAction>
-                                </AlertDialogFooter>
-                              </AlertDialogContent>
-                            </AlertDialog>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    )) : (
+                                  </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle>
+                                      {t("common.delete_confirmation")}
+                                    </AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                      {t("common.delete_confirmation_message", {
+                                        item: "parameter",
+                                      })}
+                                    </AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter>
+                                    <AlertDialogCancel>
+                                      {t("common.cancel")}
+                                    </AlertDialogCancel>
+                                    <AlertDialogAction
+                                      onClick={confirmDelete}
+                                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                    >
+                                      {t("common.delete")}
+                                    </AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    ) : (
                       <TableRow>
                         <TableCell colSpan={4} className="text-center py-6">
                           <p className="text-muted-foreground">
-                            No parameters found. Add your first parameter to get started.
+                            No parameters found. Add your first parameter to get
+                            started.
                           </p>
                         </TableCell>
                       </TableRow>

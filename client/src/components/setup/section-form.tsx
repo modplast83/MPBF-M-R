@@ -25,7 +25,7 @@ interface SectionFormProps {
 export function SectionForm({ section, onSuccess }: SectionFormProps) {
   const queryClient = useQueryClient();
   const isEditing = !!section;
-  
+
   // Set up the form
   const form = useForm<z.infer<typeof insertSectionSchema>>({
     resolver: zodResolver(insertSectionSchema),
@@ -34,12 +34,16 @@ export function SectionForm({ section, onSuccess }: SectionFormProps) {
       name: section?.name || "",
     },
   });
-  
+
   // Create mutation for adding/updating section
   const mutation = useMutation({
     mutationFn: async (values: z.infer<typeof insertSectionSchema>) => {
       if (isEditing) {
-        await apiRequest("PUT", `${API_ENDPOINTS.SECTIONS}/${section.id}`, values);
+        await apiRequest(
+          "PUT",
+          `${API_ENDPOINTS.SECTIONS}/${section.id}`,
+          values,
+        );
       } else {
         await apiRequest("POST", API_ENDPOINTS.SECTIONS, values);
       }
@@ -61,12 +65,12 @@ export function SectionForm({ section, onSuccess }: SectionFormProps) {
       });
     },
   });
-  
+
   // Form submission handler
   const onSubmit = (values: z.infer<typeof insertSectionSchema>) => {
     mutation.mutate(values);
   };
-  
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -77,9 +81,9 @@ export function SectionForm({ section, onSuccess }: SectionFormProps) {
             <FormItem>
               <FormLabel>Section ID</FormLabel>
               <FormControl>
-                <Input 
-                  placeholder="Enter section ID" 
-                  {...field} 
+                <Input
+                  placeholder="Enter section ID"
+                  {...field}
                   disabled={isEditing}
                 />
               </FormControl>
@@ -87,7 +91,7 @@ export function SectionForm({ section, onSuccess }: SectionFormProps) {
             </FormItem>
           )}
         />
-        
+
         <FormField
           control={form.control}
           name="name"
@@ -101,25 +105,21 @@ export function SectionForm({ section, onSuccess }: SectionFormProps) {
             </FormItem>
           )}
         />
-        
+
         <div className="flex justify-end space-x-2 pt-4">
           {onSuccess && (
-            <Button
-              type="button"
-              variant="outline"
-              onClick={onSuccess}
-            >
+            <Button type="button" variant="outline" onClick={onSuccess}>
               Cancel
             </Button>
           )}
-          <Button
-            type="submit"
-            disabled={mutation.isPending}
-          >
+          <Button type="submit" disabled={mutation.isPending}>
             {mutation.isPending
-              ? isEditing ? "Updating..." : "Creating..."
-              : isEditing ? "Update Section" : "Create Section"
-            }
+              ? isEditing
+                ? "Updating..."
+                : "Creating..."
+              : isEditing
+                ? "Update Section"
+                : "Create Section"}
           </Button>
         </div>
       </form>

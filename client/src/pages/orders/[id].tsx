@@ -15,7 +15,9 @@ export default function OrderPage() {
     return (
       <div className="space-y-6">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold text-secondary-900">{t("orders.new_order")}</h1>
+          <h1 className="text-2xl font-bold text-secondary-900">
+            {t("orders.new_order")}
+          </h1>
         </div>
         <OrderForm />
       </div>
@@ -29,7 +31,9 @@ export default function OrderPage() {
     return (
       <Card>
         <CardContent className="py-10 text-center">
-          <h3 className="text-xl font-medium text-secondary-800 mb-2">Invalid Order ID</h3>
+          <h3 className="text-xl font-medium text-secondary-800 mb-2">
+            Invalid Order ID
+          </h3>
           <p className="text-secondary-600">
             The order ID provided is not valid.
           </p>

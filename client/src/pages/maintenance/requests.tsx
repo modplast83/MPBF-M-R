@@ -1,87 +1,90 @@
 // @ts-nocheck
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { PageHeader } from "@/components/ui/page-header";
 import { useToast } from "@/hooks/use-toast";
-// import { useTranslation } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import { useIsMobile } from "@/hooks/use-mobile";
 // import { format } from "date-fns";
 
 // Simple date formatting function
-const formatDate = (date: Date | string, formatStr: string = 'dd/MM/yyyy') => {
+const formatDate = (date: Date | string, formatStr: string = "dd/MM/yyyy") => {
   const d = new Date(date);
-  if (formatStr === 'dd/MM/yyyy') {
-    return d.toLocaleDateString('en-GB');
-  } else if (formatStr === 'dd/MM/yyyy HH:mm') {
-    return d.toLocaleString('en-GB', { 
-      day: '2-digit', 
-      month: '2-digit', 
-      year: 'numeric', 
-      hour: '2-digit', 
-      minute: '2-digit',
-      hour12: false 
+  if (formatStr === "dd/MM/yyyy") {
+    return d.toLocaleDateString("en-GB");
+  } else if (formatStr === "dd/MM/yyyy HH:mm") {
+    return d.toLocaleString("en-GB", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
     });
   }
   return d.toLocaleDateString();
 };
 
-// Simple translation function  
-const t = (key: string): string => {
-  // Basic English fallbacks for common terms
-  const translations: Record<string, string> = {
-    'maintenance.requests': 'Maintenance Requests',
-    'maintenance.add_request': 'Add Request',
-    'maintenance.request_number': 'Request Number',
-    'maintenance.machine': 'Machine',
-    'maintenance.description': 'Description',
-    'maintenance.priority': 'Priority',
-    'maintenance.status': 'Status',
-    'maintenance.actions': 'Actions',
-    'maintenance.pending': 'Pending',
-    'maintenance.progress': 'In Progress',
-    'maintenance.completed': 'Completed',
-    'maintenance.high': 'High',
-    'maintenance.normal': 'Normal',
-    'maintenance.low': 'Low',
-    'maintenance.requests.machine': 'Machine',
-    'maintenance.requests.damageType': 'Damage Type',
-    'maintenance.requests.severity': 'Severity',
-    'maintenance.requests.description': 'Description',
-    // Damage type translations
-    'maintenance.damage_types.motor': 'Motor Issue',
-    'maintenance.damage_types.bearing': 'Bearing Problem',
-    'maintenance.damage_types.belt': 'Belt Issue',
-    'maintenance.damage_types.electrical': 'Electrical Problem',
-    'maintenance.damage_types.hydraulic': 'Hydraulic Issue',
-    'maintenance.damage_types.mechanical': 'Mechanical Problem',
-    'maintenance.damage_types.cooling': 'Cooling System Issue',
-    'maintenance.damage_types.heating': 'Heating System Issue',
-    'maintenance.damage_types.control': 'Control System Problem',
-    'maintenance.damage_types.safety': 'Safety System Issue',
-    'maintenance.damage_types.other': 'Other Issue',
-    'common.save': 'Save',
-    'common.cancel': 'Cancel',
-    'common.edit': 'Edit',
-    'common.delete': 'Delete',
-    'common.print': 'Print'
-  };
-  return translations[key] || key.split('.').pop() || key;
-};
+// Using React i18next translation system
 import { QuickActions } from "@/components/ui/quick-actions";
-import { Plus, RefreshCw, Filter, Search, AlertTriangle, Clock, CheckCircle, X, Eye, Trash2, Wrench, Settings, Printer, Edit } from "lucide-react";
+import {
+  Plus,
+  RefreshCw,
+  Filter,
+  Search,
+  AlertTriangle,
+  Clock,
+  CheckCircle,
+  X,
+  Eye,
+  Trash2,
+  Wrench,
+  Settings,
+  Printer,
+  Edit,
+} from "lucide-react";
 import { useLocation } from "wouter";
 import { API_ENDPOINTS } from "@/lib/constants";
 import { apiRequest } from "@/lib/queryClient";
-import { CelebrationScreen, useCelebration } from "@/components/maintenance/celebration-screen";
+import {
+  CelebrationScreen,
+  useCelebration,
+} from "@/components/maintenance/celebration-screen";
 import { ProgressTracker } from "@/components/maintenance/progress-tracker";
 
 const getDamageTypes = (t: any) => [
@@ -100,15 +103,22 @@ const getDamageTypes = (t: any) => [
   t("maintenance.damage_types.shaft"),
   t("maintenance.damage_types.take_up"),
   t("maintenance.damage_types.short"),
-  t("maintenance.damage_types.other")
+  t("maintenance.damage_types.other"),
 ];
 
 const getSeverityLevels = (t: any) => [
   { value: "High", label: t("maintenance.severity.high") },
   { value: "Normal", label: t("maintenance.severity.normal") },
-  { value: "Low", label: t("maintenance.severity.low") }
+  { value: "Low", label: t("maintenance.severity.low") },
 ];
-const STATUS_OPTIONS = ["pending", "progress", "completed", "cancelled", "repaired", "waiting_for_parts"];
+const STATUS_OPTIONS = [
+  "pending",
+  "progress",
+  "completed",
+  "cancelled",
+  "repaired",
+  "waiting_for_parts",
+];
 
 interface MaintenanceRequest {
   id: number;
@@ -142,11 +152,11 @@ interface User {
 }
 
 export default function MaintenanceRequestsPage() {
-  // const { t } = useTranslation();
+  const { t } = useTranslation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const isMobile = useIsMobile();
-  
+
   const damageTypes = getDamageTypes(t);
   const severityLevels = getSeverityLevels(t);
   const [location, setLocation] = useLocation();
@@ -154,7 +164,8 @@ export default function MaintenanceRequestsPage() {
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
   const [isStatusDialogOpen, setIsStatusDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [selectedRequest, setSelectedRequest] = useState<MaintenanceRequest | null>(null);
+  const [selectedRequest, setSelectedRequest] =
+    useState<MaintenanceRequest | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [severityFilter, setSeverityFilter] = useState("all");
@@ -177,32 +188,37 @@ export default function MaintenanceRequestsPage() {
   });
 
   // Fetch maintenance requests
-  const { data: requests = [], isLoading: requestsLoading, refetch: refetchRequests } = useQuery({
+  const {
+    data: requests = [],
+    isLoading: requestsLoading,
+    refetch: refetchRequests,
+  } = useQuery({
     queryKey: [API_ENDPOINTS.MAINTENANCE_REQUESTS],
-    queryFn: () => apiRequest('GET', API_ENDPOINTS.MAINTENANCE_REQUESTS)
+    queryFn: () => apiRequest("GET", API_ENDPOINTS.MAINTENANCE_REQUESTS),
   });
 
   // Fetch machines
   const { data: machines = [] } = useQuery({
-    queryKey: ['/api/machines'],
-    queryFn: () => apiRequest('GET', '/api/machines')
+    queryKey: ["/api/machines"],
+    queryFn: () => apiRequest("GET", "/api/machines"),
   });
 
   // Fetch users
   const { data: users = [] } = useQuery({
-    queryKey: ['/api/users'],
-    queryFn: () => apiRequest('GET', '/api/users')
+    queryKey: ["/api/users"],
+    queryFn: () => apiRequest("GET", "/api/users"),
   });
 
   // Fetch maintenance actions to show action counts
   const { data: actions = [] } = useQuery({
     queryKey: [API_ENDPOINTS.MAINTENANCE_ACTIONS],
-    queryFn: () => apiRequest('GET', API_ENDPOINTS.MAINTENANCE_ACTIONS)
+    queryFn: () => apiRequest("GET", API_ENDPOINTS.MAINTENANCE_ACTIONS),
   });
 
   // Create request mutation
   const createRequestMutation = useMutation({
-    mutationFn: (data: any) => apiRequest('POST', API_ENDPOINTS.MAINTENANCE_REQUESTS, data),
+    mutationFn: (data: any) =>
+      apiRequest("POST", API_ENDPOINTS.MAINTENANCE_REQUESTS, data),
     onSuccess: () => {
       toast({
         title: "Success",
@@ -211,7 +227,9 @@ export default function MaintenanceRequestsPage() {
       setIsDialogOpen(false);
       resetForm();
       refetchRequests();
-      queryClient.invalidateQueries({ queryKey: [API_ENDPOINTS.MAINTENANCE_REQUESTS] });
+      queryClient.invalidateQueries({
+        queryKey: [API_ENDPOINTS.MAINTENANCE_REQUESTS],
+      });
     },
     onError: (error: any) => {
       toast({
@@ -224,33 +242,44 @@ export default function MaintenanceRequestsPage() {
 
   // Update request mutation
   const updateRequestMutation = useMutation({
-    mutationFn: ({ id, data }: { id: number; data: any }) => 
-      apiRequest('PUT', `${API_ENDPOINTS.MAINTENANCE_REQUESTS}/${id}`, data),
+    mutationFn: ({ id, data }: { id: number; data: any }) =>
+      apiRequest("PUT", `${API_ENDPOINTS.MAINTENANCE_REQUESTS}/${id}`, data),
     onSuccess: (result, variables) => {
-      const wasCompleted = variables.data.status === 'completed';
-      
+      const wasCompleted = variables.data.status === "completed";
+
       if (wasCompleted) {
         // Trigger celebration when task is completed
-        const completedCount = requests?.filter((r: MaintenanceRequest) => r.status === 'completed').length || 0;
-        
-        showCelebration('task_completed', {
-          title: 'Task Completed!',
-          subtitle: 'Excellent Work',
-          description: 'Another maintenance task successfully resolved!',
+        const completedCount =
+          requests?.filter((r: MaintenanceRequest) => r.status === "completed")
+            .length || 0;
+
+        showCelebration("task_completed", {
+          title: "Task Completed!",
+          subtitle: "Excellent Work",
+          description: "Another maintenance task successfully resolved!",
           stats: [
-            { label: 'Tasks Completed', value: completedCount + 1 },
-            { label: 'Status', value: 'Resolved' }
+            { label: "Tasks Completed", value: completedCount + 1 },
+            { label: "Status", value: "Resolved" },
           ],
-          achievementLevel: completedCount >= 10 ? 'gold' : completedCount >= 5 ? 'silver' : 'bronze'
+          achievementLevel:
+            completedCount >= 10
+              ? "gold"
+              : completedCount >= 5
+                ? "silver"
+                : "bronze",
         });
       }
-      
+
       toast({
         title: "Success",
-        description: wasCompleted ? "Maintenance task completed!" : "Maintenance request updated successfully",
+        description: wasCompleted
+          ? "Maintenance task completed!"
+          : "Maintenance request updated successfully",
       });
       refetchRequests();
-      queryClient.invalidateQueries({ queryKey: [API_ENDPOINTS.MAINTENANCE_REQUESTS] });
+      queryClient.invalidateQueries({
+        queryKey: [API_ENDPOINTS.MAINTENANCE_REQUESTS],
+      });
     },
     onError: (error: any) => {
       toast({
@@ -263,14 +292,17 @@ export default function MaintenanceRequestsPage() {
 
   // Delete request mutation
   const deleteRequestMutation = useMutation({
-    mutationFn: (id: number) => apiRequest('DELETE', `${API_ENDPOINTS.MAINTENANCE_REQUESTS}/${id}`),
+    mutationFn: (id: number) =>
+      apiRequest("DELETE", `${API_ENDPOINTS.MAINTENANCE_REQUESTS}/${id}`),
     onSuccess: () => {
       toast({
         title: "Success",
         description: "Maintenance request deleted successfully",
       });
       refetchRequests();
-      queryClient.invalidateQueries({ queryKey: [API_ENDPOINTS.MAINTENANCE_REQUESTS] });
+      queryClient.invalidateQueries({
+        queryKey: [API_ENDPOINTS.MAINTENANCE_REQUESTS],
+      });
     },
     onError: (error: any) => {
       toast({
@@ -292,7 +324,7 @@ export default function MaintenanceRequestsPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!formData.machineId || !formData.damageType || !formData.description) {
       toast({
         title: "Validation Error",
@@ -304,16 +336,23 @@ export default function MaintenanceRequestsPage() {
 
     const requestData = {
       ...formData,
-      priority: formData.severity === "High" ? 1 : formData.severity === "Normal" ? 2 : 3,
+      priority:
+        formData.severity === "High"
+          ? 1
+          : formData.severity === "Normal"
+            ? 2
+            : 3,
     };
 
     createRequestMutation.mutate(requestData);
   };
 
   const handleStatusUpdate = (requestId: number, newStatus: string) => {
-    const updateData = { 
+    const updateData = {
       status: newStatus,
-      ...(newStatus === 'completed' && { completedAt: new Date().toISOString() })
+      ...(newStatus === "completed" && {
+        completedAt: new Date().toISOString(),
+      }),
     };
     updateRequestMutation.mutate({ id: requestId, data: updateData });
     setIsStatusDialogOpen(false);
@@ -325,7 +364,11 @@ export default function MaintenanceRequestsPage() {
   };
 
   const handleDeleteRequest = (requestId: number) => {
-    if (window.confirm('Are you sure you want to delete this maintenance request?')) {
+    if (
+      window.confirm(
+        "Are you sure you want to delete this maintenance request?",
+      )
+    ) {
       deleteRequestMutation.mutate(requestId);
     }
   };
@@ -354,7 +397,7 @@ export default function MaintenanceRequestsPage() {
   };
 
   const handlePrint = (request: MaintenanceRequest) => {
-    const printWindow = window.open('', '_blank');
+    const printWindow = window.open("", "_blank");
     if (!printWindow) return;
 
     const machineName = getMachineName(request.machineId);
@@ -421,7 +464,7 @@ export default function MaintenanceRequestsPage() {
             </div>
             <div class="info-row">
               <span class="info-label">Status:</span>
-              <span class="status-badge status-${request.status.replace('_', '-')}">${request.status.toUpperCase()}</span>
+              <span class="status-badge status-${request.status.replace("_", "-")}">${request.status.toUpperCase()}</span>
             </div>
             <div class="info-row">
               <span class="info-label">Reported By:</span>
@@ -429,20 +472,28 @@ export default function MaintenanceRequestsPage() {
             </div>
             <div class="info-row">
               <span class="info-label">Actions Count:</span>
-              <span>${actionCount} action${actionCount !== 1 ? 's' : ''}</span>
+              <span>${actionCount} action${actionCount !== 1 ? "s" : ""}</span>
             </div>
-            ${request.assignedTo ? `
+            ${
+              request.assignedTo
+                ? `
             <div class="info-row">
               <span class="info-label">Assigned To:</span>
               <span>${getUserName(request.assignedTo)}</span>
             </div>
-            ` : ''}
-            ${request.completedAt ? `
+            `
+                : ""
+            }
+            ${
+              request.completedAt
+                ? `
             <div class="info-row">
               <span class="info-label">Completed At:</span>
               <span>${formatDate(new Date(request.completedAt))}</span>
             </div>
-            ` : ''}
+            `
+                : ""
+            }
           </div>
 
           <div class="description-box">
@@ -450,16 +501,20 @@ export default function MaintenanceRequestsPage() {
             <div>${request.description}</div>
           </div>
 
-          ${request.notes ? `
+          ${
+            request.notes
+              ? `
           <div class="description-box">
             <div class="info-label" style="margin-bottom: 10px;">Notes:</div>
             <div>${request.notes}</div>
           </div>
-          ` : ''}
+          `
+              : ""
+          }
 
           <div class="footer">
             <div>Modern Plastic Bag Factory - Maintenance Department</div>
-            <div>Generated on ${formatDate(new Date(), 'dd/MM/yyyy HH:mm')}</div>
+            <div>Generated on ${formatDate(new Date(), "dd/MM/yyyy HH:mm")}</div>
           </div>
         </body>
       </html>
@@ -472,8 +527,12 @@ export default function MaintenanceRequestsPage() {
 
   const handleEditSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!editFormData.machineId || !editFormData.damageType || !editFormData.description) {
+
+    if (
+      !editFormData.machineId ||
+      !editFormData.damageType ||
+      !editFormData.description
+    ) {
       toast({
         title: "Validation Error",
         description: "Please fill in all required fields",
@@ -484,22 +543,33 @@ export default function MaintenanceRequestsPage() {
 
     const updateData = {
       ...editFormData,
-      priority: editFormData.severity === "High" ? 1 : editFormData.severity === "Normal" ? 2 : 3,
+      priority:
+        editFormData.severity === "High"
+          ? 1
+          : editFormData.severity === "Normal"
+            ? 2
+            : 3,
     };
 
-    updateRequestMutation.mutate({ id: selectedRequest?.id!, data: updateData });
+    updateRequestMutation.mutate({
+      id: selectedRequest?.id!,
+      data: updateData,
+    });
   };
 
   // Filter requests
   const filteredRequests = requests.filter((request: MaintenanceRequest) => {
-    const matchesSearch = searchQuery === "" || 
+    const matchesSearch =
+      searchQuery === "" ||
       request.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
       request.machineId.toLowerCase().includes(searchQuery.toLowerCase()) ||
       request.damageType.toLowerCase().includes(searchQuery.toLowerCase());
-    
-    const matchesStatus = statusFilter === "all" || request.status === statusFilter;
-    const matchesSeverity = severityFilter === "all" || request.severity === severityFilter;
-    
+
+    const matchesStatus =
+      statusFilter === "all" || request.status === statusFilter;
+    const matchesSeverity =
+      severityFilter === "all" || request.severity === severityFilter;
+
     return matchesSearch && matchesStatus && matchesSeverity;
   });
 
@@ -519,17 +589,47 @@ export default function MaintenanceRequestsPage() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "pending":
-        return <Badge variant="destructive"><AlertTriangle className="w-3 h-3 mr-1" />{status}</Badge>;
+        return (
+          <Badge variant="destructive">
+            <AlertTriangle className="w-3 h-3 mr-1" />
+            {status}
+          </Badge>
+        );
       case "progress":
-        return <Badge variant="secondary"><Clock className="w-3 h-3 mr-1" />{status}</Badge>;
+        return (
+          <Badge variant="secondary">
+            <Clock className="w-3 h-3 mr-1" />
+            {status}
+          </Badge>
+        );
       case "completed":
-        return <Badge variant="default"><CheckCircle className="w-3 h-3 mr-1" />{status}</Badge>;
+        return (
+          <Badge variant="default">
+            <CheckCircle className="w-3 h-3 mr-1" />
+            {status}
+          </Badge>
+        );
       case "cancelled":
-        return <Badge variant="outline"><X className="w-3 h-3 mr-1" />{status}</Badge>;
+        return (
+          <Badge variant="outline">
+            <X className="w-3 h-3 mr-1" />
+            {status}
+          </Badge>
+        );
       case "repaired":
-        return <Badge variant="default"><CheckCircle className="w-3 h-3 mr-1" />Repaired</Badge>;
+        return (
+          <Badge variant="default">
+            <CheckCircle className="w-3 h-3 mr-1" />
+            Repaired
+          </Badge>
+        );
       case "waiting_for_parts":
-        return <Badge variant="secondary"><Clock className="w-3 h-3 mr-1" />Waiting For Parts</Badge>;
+        return (
+          <Badge variant="secondary">
+            <Clock className="w-3 h-3 mr-1" />
+            Waiting For Parts
+          </Badge>
+        );
       default:
         return <Badge variant="outline">{status}</Badge>;
     }
@@ -542,22 +642,44 @@ export default function MaintenanceRequestsPage() {
 
   const getUserName = (userId: string) => {
     const user = users.find((u: User) => u.id === userId);
-    return user ? `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.username : userId;
+    return user
+      ? `${user.firstName || ""} ${user.lastName || ""}`.trim() || user.username
+      : userId;
   };
 
   const getActionCount = (requestId: number) => {
-    return actions.filter((action: any) => action.requestId === requestId).length;
+    return actions.filter((action: any) => action.requestId === requestId)
+      .length;
   };
 
   // Calculate progress statistics
   const progressStats = {
-    completedToday: requests?.filter((r: MaintenanceRequest) => r.status === 'completed' && 
-      new Date(r.completedAt || '').toDateString() === new Date().toDateString()).length || 0,
+    completedToday:
+      requests?.filter(
+        (r: MaintenanceRequest) =>
+          r.status === "completed" &&
+          new Date(r.completedAt || "").toDateString() ===
+            new Date().toDateString(),
+      ).length || 0,
     totalScheduled: requests?.length || 0,
     streak: 5, // This would be calculated from historical data
-    efficiency: requests?.length > 0 ? Math.round((requests.filter((r: MaintenanceRequest) => r.status === 'completed').length / requests.length) * 100) : 0,
-    upcomingDue: requests?.filter((r: MaintenanceRequest) => r.status === 'pending').length || 0,
-    overdue: requests?.filter((r: MaintenanceRequest) => r.status === 'pending' && r.priority >= 3).length || 0
+    efficiency:
+      requests?.length > 0
+        ? Math.round(
+            (requests.filter(
+              (r: MaintenanceRequest) => r.status === "completed",
+            ).length /
+              requests.length) *
+              100,
+          )
+        : 0,
+    upcomingDue:
+      requests?.filter((r: MaintenanceRequest) => r.status === "pending")
+        .length || 0,
+    overdue:
+      requests?.filter(
+        (r: MaintenanceRequest) => r.status === "pending" && r.priority >= 3,
+      ).length || 0,
   };
 
   const handleMilestoneReached = (milestone: string, data: any) => {
@@ -570,50 +692,50 @@ export default function MaintenanceRequestsPage() {
       label: "New Request",
       icon: Plus,
       onClick: () => setIsDialogOpen(true),
-      variant: "default"
+      variant: "default",
     },
     {
       id: "refresh",
       label: "Refresh",
       icon: RefreshCw,
       onClick: () => {
-        queryClient.invalidateQueries({ queryKey: [API_ENDPOINTS.MAINTENANCE_REQUESTS] });
+        queryClient.invalidateQueries({
+          queryKey: [API_ENDPOINTS.MAINTENANCE_REQUESTS],
+        });
       },
-      variant: "outline"
+      variant: "outline",
     },
     {
       id: "pending-filter",
       label: "Pending",
       icon: Filter,
       onClick: () => setStatusFilter("pending"),
-      variant: statusFilter === "pending" ? "default" : "outline"
+      variant: statusFilter === "pending" ? "default" : "outline",
     },
     {
       id: "search",
       label: "Search",
       icon: Search,
       onClick: () => {
-        const input = document.querySelector('input[placeholder*="Search"]') as HTMLInputElement;
+        const input = document.querySelector(
+          'input[placeholder*="Search"]',
+        ) as HTMLInputElement;
         if (input) input.focus();
       },
-      variant: "outline"
-    }
+      variant: "outline",
+    },
   ];
 
   return (
     <div className="container mx-auto space-y-6 p-3 pl-[0.5px] pr-[0.5px]">
-      <QuickActions
-        title="Quick Actions"
-        actions={quickActions}
-        columns={2}
-      />
+      <QuickActions title="Quick Actions" actions={quickActions} columns={2} />
       <PageHeader
         title={t("maintenance.requests.title")}
         description={t("maintenance.requests.description")}
       />
       {/* Progress Tracker */}
-      <ProgressTracker 
-        stats={progressStats} 
+      <ProgressTracker
+        stats={progressStats}
         onMilestoneReached={handleMilestoneReached}
       />
       {/* Celebration Screen */}
@@ -624,12 +746,14 @@ export default function MaintenanceRequestsPage() {
         data={celebration.data}
       />
       {/* Action Bar */}
-      <div className={`flex gap-4 items-start justify-between ${isMobile ? "flex-col" : "flex-col sm:flex-row sm:items-center"}`}>
+      <div
+        className={`flex gap-4 items-start justify-between ${isMobile ? "flex-col" : "flex-col sm:flex-row sm:items-center"}`}
+      >
         <div className="flex flex-col sm:flex-row gap-2 flex-1">
           <div className="relative flex-1 max-w-sm">
             <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
             <Input
-              placeholder={t("maintenance.requests.searchPlaceholder")}
+              placeholder={t("maintenance.requests.search_requests")}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-10"
@@ -637,23 +761,32 @@ export default function MaintenanceRequestsPage() {
           </div>
           <Select value={statusFilter} onValueChange={setStatusFilter}>
             <SelectTrigger className="w-40">
-              <SelectValue placeholder={t("maintenance.requests.filterByStatus")} />
+              <SelectValue
+                placeholder={t("maintenance.requests.filter_by_status")}
+              />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">{t("maintenance.requests.allStatus")}</SelectItem>
+              <SelectItem value="all">
+                {t("maintenance.requests.allStatus")}
+              </SelectItem>
               {STATUS_OPTIONS.map((status) => (
                 <SelectItem key={status} value={status}>
-                  {status.charAt(0).toUpperCase() + status.slice(1).replace('_', ' ')}
+                  {status.charAt(0).toUpperCase() +
+                    status.slice(1).replace("_", " ")}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
           <Select value={severityFilter} onValueChange={setSeverityFilter}>
             <SelectTrigger className="w-40">
-              <SelectValue placeholder={t("maintenance.requests.filterBySeverity")} />
+              <SelectValue
+                placeholder={t("maintenance.requests.filterBySeverity")}
+              />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">{t("maintenance.requests.allSeverity")}</SelectItem>
+              <SelectItem value="all">
+                {t("maintenance.requests.allSeverity")}
+              </SelectItem>
               {severityLevels.map((severity) => (
                 <SelectItem key={severity.value} value={severity.value}>
                   {severity.label}
@@ -679,13 +812,19 @@ export default function MaintenanceRequestsPage() {
             </DialogHeader>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <Label htmlFor="machineId">{t("maintenance.requests.machine")} *</Label>
-                <Select 
-                  value={formData.machineId} 
-                  onValueChange={(value) => setFormData({...formData, machineId: value})}
+                <Label htmlFor="machineId">
+                  {t("maintenance.requests.machine")} *
+                </Label>
+                <Select
+                  value={formData.machineId}
+                  onValueChange={(value) =>
+                    setFormData({ ...formData, machineId: value })
+                  }
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder={t("maintenance.requests.machine")} />
+                    <SelectValue
+                      placeholder={t("maintenance.requests.machine")}
+                    />
                   </SelectTrigger>
                   <SelectContent>
                     {machines.map((machine: Machine) => (
@@ -698,13 +837,19 @@ export default function MaintenanceRequestsPage() {
               </div>
 
               <div>
-                <Label htmlFor="damageType">{t("maintenance.requests.damageType")} *</Label>
-                <Select 
-                  value={formData.damageType} 
-                  onValueChange={(value) => setFormData({...formData, damageType: value})}
+                <Label htmlFor="damageType">
+                  {t("maintenance.requests.damageType")} *
+                </Label>
+                <Select
+                  value={formData.damageType}
+                  onValueChange={(value) =>
+                    setFormData({ ...formData, damageType: value })
+                  }
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder={t("maintenance.requests.damageType")} />
+                    <SelectValue
+                      placeholder={t("maintenance.requests.damageType")}
+                    />
                   </SelectTrigger>
                   <SelectContent>
                     {damageTypes.map((type) => (
@@ -717,13 +862,19 @@ export default function MaintenanceRequestsPage() {
               </div>
 
               <div>
-                <Label htmlFor="severity">{t("maintenance.requests.severity")} *</Label>
-                <Select 
-                  value={formData.severity} 
-                  onValueChange={(value) => setFormData({...formData, severity: value})}
+                <Label htmlFor="severity">
+                  {t("maintenance.requests.severity")} *
+                </Label>
+                <Select
+                  value={formData.severity}
+                  onValueChange={(value) =>
+                    setFormData({ ...formData, severity: value })
+                  }
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder={t("maintenance.requests.severity")} />
+                    <SelectValue
+                      placeholder={t("maintenance.requests.severity")}
+                    />
                   </SelectTrigger>
                   <SelectContent>
                     {severityLevels.map((level) => (
@@ -736,22 +887,35 @@ export default function MaintenanceRequestsPage() {
               </div>
 
               <div>
-                <Label htmlFor="description">{t("maintenance.requests.description")} *</Label>
+                <Label htmlFor="description">
+                  {t("maintenance.requests.description")} *
+                </Label>
                 <Textarea
                   id="description"
                   placeholder={t("maintenance.requests.description")}
                   value={formData.description}
-                  onChange={(e) => setFormData({...formData, description: e.target.value})}
+                  onChange={(e) =>
+                    setFormData({ ...formData, description: e.target.value })
+                  }
                   rows={3}
                 />
               </div>
 
               <div className="flex justify-end space-x-2">
-                <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setIsDialogOpen(false)}
+                >
                   {t("common.cancel")}
                 </Button>
-                <Button type="submit" disabled={createRequestMutation.isPending}>
-                  {createRequestMutation.isPending ? t("common.creating") : t("maintenance.requests.create")}
+                <Button
+                  type="submit"
+                  disabled={createRequestMutation.isPending}
+                >
+                  {createRequestMutation.isPending
+                    ? t("common.creating")
+                    : t("maintenance.requests.create")}
                 </Button>
               </div>
             </form>
@@ -761,17 +925,15 @@ export default function MaintenanceRequestsPage() {
       {/* Requests Table */}
       <Card>
         <CardHeader className="flex flex-col space-y-1.5 p-6 pl-[20px] pr-[20px]">
-          <CardTitle>Maintenance Requests</CardTitle>
-          <CardDescription>
-            Follow All Maintenance Requests
-          </CardDescription>
+          <CardTitle>{t("maintenance.requests.maintenance_requests")}</CardTitle>
+          <CardDescription>{t("maintenance.requests.follow_all_requests")}</CardDescription>
         </CardHeader>
         <CardContent>
           {requestsLoading ? (
             <div className="text-center py-4">{t("common.loading")}</div>
           ) : filteredRequests.length === 0 ? (
             <div className="text-center py-4 text-gray-500">
-              No maintenance Request found
+              {t("maintenance.requests.no_maintenance_request")}
             </div>
           ) : isMobile ? (
             <div className="space-y-3">
@@ -784,43 +946,50 @@ export default function MaintenanceRequestsPage() {
                     </div>
                     {getStatusBadge(request.status)}
                   </div>
-                  
+
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Machine:</span>
-                      <span className="font-medium">{getMachineName(request.machineId)}</span>
+                      <span className="text-gray-600">{t("maintenance.requests.machine")}:</span>
+                      <span className="font-medium">
+                        {getMachineName(request.machineId)}
+                      </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Type:</span>
-                      <span>{t(request.damageType)}</span>
+                      <span className="text-gray-600">{t("maintenance.requests.type")}:</span>
+                      <span>{t(`maintenance.requests.damage_types.${request.damageType}`) || request.damageType}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Date:</span>
+                      <span className="text-gray-600">{t("maintenance.requests.date")}:</span>
                       <span>{formatDate(new Date(request.createdAt))}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Reported by:</span>
+                      <span className="text-gray-600">{t("maintenance.requests.reported_by")}:</span>
                       <span>{getUserName(request.reportedBy)}</span>
                     </div>
                   </div>
-                  
+
                   <div className="mt-3 pt-3 border-t">
                     <div className="flex justify-between items-center mb-2">
-                      <p className="text-sm font-medium">Actions:</p>
+                      <p className="text-sm font-medium">{t("maintenance.requests.actions")}:</p>
                       <Badge variant="outline" className="text-xs">
-                        {getActionCount(request.id)} action{getActionCount(request.id) !== 1 ? 's' : ''}
+                        {getActionCount(request.id)} {getActionCount(request.id) === 1 ? t("maintenance.requests.action") : t("maintenance.requests.actions_plural")}
                       </Badge>
                     </div>
-                    <p className="text-sm text-gray-700 mb-3" title={request.description}>
-                      {request.description.length > 100 ? `${request.description.substring(0, 100)}...` : request.description}
+                    <p
+                      className="text-sm text-gray-700 mb-3"
+                      title={request.description}
+                    >
+                      {request.description.length > 100
+                        ? `${request.description.substring(0, 100)}...`
+                        : request.description}
                     </p>
-                    
+
                     <div className="flex space-x-1">
                       <Button
                         size="sm"
                         variant="outline"
                         onClick={() => handleViewRequest(request)}
-                        title="View Details"
+                        title={t("maintenance.requests.view_details")}
                       >
                         <Eye className="h-4 w-4" />
                       </Button>
@@ -828,7 +997,7 @@ export default function MaintenanceRequestsPage() {
                         size="sm"
                         variant="outline"
                         onClick={() => handlePrint(request)}
-                        title="Print Request"
+                        title={t("maintenance.requests.print_request")}
                       >
                         <Printer className="h-4 w-4" />
                       </Button>
@@ -836,7 +1005,7 @@ export default function MaintenanceRequestsPage() {
                         size={"sm" as const}
                         variant="outline"
                         onClick={() => handleEditRequest(request)}
-                        title="Edit Request"
+                        title={t("maintenance.requests.edit_request")}
                       >
                         <Edit className="h-4 w-4" />
                       </Button>
@@ -844,7 +1013,7 @@ export default function MaintenanceRequestsPage() {
                         size={"sm" as const}
                         variant="outline"
                         onClick={() => handleChangeStatus(request)}
-                        title="Change Status"
+                        title={t("maintenance.requests.change_status")}
                       >
                         <Settings className="h-4 w-4" />
                       </Button>
@@ -852,7 +1021,7 @@ export default function MaintenanceRequestsPage() {
                         size="sm"
                         variant="outline"
                         onClick={() => handleAddMaintenanceAction(request)}
-                        title="Add New Maintenance Action (Multiple actions allowed)"
+                        title={t("maintenance.requests.add_action")}
                       >
                         <Wrench className="h-4 w-4" />
                       </Button>
@@ -860,7 +1029,7 @@ export default function MaintenanceRequestsPage() {
                         size="sm"
                         variant="outline"
                         onClick={() => handleDeleteRequest(request.id)}
-                        title="Delete Request"
+                        title={t("maintenance.requests.delete_request")}
                         className="text-red-600 hover:text-red-700"
                       >
                         <Trash2 className="h-4 w-4" />
@@ -875,34 +1044,55 @@ export default function MaintenanceRequestsPage() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="text-center">Request ID</TableHead>
-                    <TableHead className="text-center">{t("maintenance.requests.date")}</TableHead>
-                    <TableHead className="text-center">{t("maintenance.requests.machine")}</TableHead>
-                    <TableHead className="text-center">Type</TableHead>
-                    <TableHead className="text-center">{t("maintenance.requests.severity")}</TableHead>
-                    <TableHead className="text-center">{t("maintenance.requests.status")}</TableHead>
-                    <TableHead className="text-center">Reported By</TableHead>
-                    <TableHead className="text-center">Actions</TableHead>
-                    <TableHead className="text-center">{t("maintenance.requests.description")}</TableHead>
-                    <TableHead className="text-center">{t("common.actions")}</TableHead>
+                    <TableHead className="text-center">{t("maintenance.requests.request_id")}</TableHead>
+                    <TableHead className="text-center">
+                      {t("maintenance.requests.date")}
+                    </TableHead>
+                    <TableHead className="text-center">
+                      {t("maintenance.requests.machine")}
+                    </TableHead>
+                    <TableHead className="text-center">{t("maintenance.requests.type")}</TableHead>
+                    <TableHead className="text-center">
+                      {t("maintenance.requests.severity")}
+                    </TableHead>
+                    <TableHead className="text-center">
+                      {t("maintenance.requests.status")}
+                    </TableHead>
+                    <TableHead className="text-center">{t("maintenance.requests.reported_by")}</TableHead>
+                    <TableHead className="text-center">{t("maintenance.requests.actions")}</TableHead>
+                    <TableHead className="text-center">
+                      {t("maintenance.requests.description")}
+                    </TableHead>
+                    <TableHead className="text-center">
+                      {t("common.actions")}
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {filteredRequests.map((request: MaintenanceRequest) => (
                     <TableRow key={request.id}>
-                      <TableCell className="font-medium">#{request.id}</TableCell>
-                      <TableCell>{formatDate(new Date(request.createdAt))}</TableCell>
+                      <TableCell className="font-medium">
+                        #{request.id}
+                      </TableCell>
+                      <TableCell>
+                        {formatDate(new Date(request.createdAt))}
+                      </TableCell>
                       <TableCell>{getMachineName(request.machineId)}</TableCell>
-                      <TableCell>{t(request.damageType)}</TableCell>
-                      <TableCell>{getSeverityBadge(request.severity)}</TableCell>
+                      <TableCell>{t(`maintenance.requests.damage_types.${request.damageType}`) || request.damageType}</TableCell>
+                      <TableCell>
+                        {getSeverityBadge(request.severity)}
+                      </TableCell>
                       <TableCell>{getStatusBadge(request.status)}</TableCell>
                       <TableCell>{getUserName(request.reportedBy)}</TableCell>
                       <TableCell className="text-center">
                         <Badge variant="outline" className="text-xs">
-                          {getActionCount(request.id)} action{getActionCount(request.id) !== 1 ? 's' : ''}
+                          {getActionCount(request.id)} {getActionCount(request.id) === 1 ? t("maintenance.requests.action") : t("maintenance.requests.actions_plural")}
                         </Badge>
                       </TableCell>
-                      <TableCell className="max-w-xs truncate" title={request.description}>
+                      <TableCell
+                        className="max-w-xs truncate"
+                        title={request.description}
+                      >
                         {request.description}
                       </TableCell>
                       <TableCell>
@@ -911,7 +1101,7 @@ export default function MaintenanceRequestsPage() {
                             size="sm"
                             variant="outline"
                             onClick={() => handleViewRequest(request)}
-                            title="View Details"
+                            title={t("maintenance.requests.view_details")}
                           >
                             <Eye className="h-4 w-4" />
                           </Button>
@@ -919,7 +1109,7 @@ export default function MaintenanceRequestsPage() {
                             size="sm"
                             variant="outline"
                             onClick={() => handlePrint(request)}
-                            title="Print Request"
+                            title={t("maintenance.requests.print_request")}
                           >
                             <Printer className="h-4 w-4" />
                           </Button>
@@ -927,7 +1117,7 @@ export default function MaintenanceRequestsPage() {
                             size="sm"
                             variant="outline"
                             onClick={() => handleEditRequest(request)}
-                            title="Edit Request"
+                            title={t("maintenance.requests.edit_request")}
                           >
                             <Edit className="h-4 w-4" />
                           </Button>
@@ -935,7 +1125,7 @@ export default function MaintenanceRequestsPage() {
                             size="sm"
                             variant="outline"
                             onClick={() => handleChangeStatus(request)}
-                            title="Change Status"
+                            title={t("maintenance.requests.change_status")}
                           >
                             <Settings className="h-4 w-4" />
                           </Button>
@@ -943,7 +1133,7 @@ export default function MaintenanceRequestsPage() {
                             size="sm"
                             variant="outline"
                             onClick={() => handleAddMaintenanceAction(request)}
-                            title="Add New Maintenance Action (Multiple actions allowed)"
+                            title={t("maintenance.requests.add_action")}
                           >
                             <Wrench className="h-4 w-4" />
                           </Button>
@@ -951,7 +1141,7 @@ export default function MaintenanceRequestsPage() {
                             size="sm"
                             variant="outline"
                             onClick={() => handleDeleteRequest(request.id)}
-                            title="Delete Request"
+                            title={t("maintenance.requests.delete_request")}
                             className="text-red-600 hover:text-red-700"
                           >
                             <Trash2 className="h-4 w-4" />
@@ -971,55 +1161,77 @@ export default function MaintenanceRequestsPage() {
       <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Maintenance Request Details</DialogTitle>
+            <DialogTitle>{t("maintenance.requests.maintenance_request_details")}</DialogTitle>
             <DialogDescription>
-              View complete information about this maintenance request
+              {t("maintenance.requests.view_complete_information")}
             </DialogDescription>
           </DialogHeader>
           {selectedRequest && (
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label className="font-semibold">Request ID:</Label>
+                  <Label className="font-semibold">{t("maintenance.requests.request_id")}:</Label>
                   <p>#{selectedRequest.id}</p>
                 </div>
                 <div>
-                  <Label className="font-semibold">Date Created:</Label>
-                  <p>{formatDate(new Date(selectedRequest.createdAt), 'dd/MM/yyyy HH:mm')}</p>
+                  <Label className="font-semibold">{t("maintenance.requests.date_created")}:</Label>
+                  <p>
+                    {formatDate(
+                      new Date(selectedRequest.createdAt),
+                      "dd/MM/yyyy HH:mm",
+                    )}
+                  </p>
                 </div>
                 <div>
-                  <Label className="font-semibold">Machine:</Label>
+                  <Label className="font-semibold">{t("maintenance.requests.machine")}:</Label>
                   <p>{getMachineName(selectedRequest.machineId)}</p>
                 </div>
                 <div>
-                  <Label className="font-semibold">Damage Type:</Label>
-                  <p>{t(selectedRequest.damageType)}</p>
+                  <Label className="font-semibold">{t("maintenance.requests.damage_type")}:</Label>
+                  <p>{t(`maintenance.requests.damage_types.${selectedRequest.damageType}`) || selectedRequest.damageType}</p>
                 </div>
                 <div>
-                  <Label className="font-semibold">Severity:</Label>
-                  <div className="mt-1">{getSeverityBadge(selectedRequest.severity)}</div>
+                  <Label className="font-semibold">{t("maintenance.requests.severity")}:</Label>
+                  <div className="mt-1">
+                    {getSeverityBadge(selectedRequest.severity)}
+                  </div>
                 </div>
                 <div>
-                  <Label className="font-semibold">Status:</Label>
-                  <div className="mt-1">{getStatusBadge(selectedRequest.status)}</div>
+                  <Label className="font-semibold">{t("maintenance.requests.status")}:</Label>
+                  <div className="mt-1">
+                    {getStatusBadge(selectedRequest.status)}
+                  </div>
                 </div>
                 <div>
-                  <Label className="font-semibold">Reported By:</Label>
+                  <Label className="font-semibold">{t("maintenance.requests.reported_by")}:</Label>
                   <p>{getUserName(selectedRequest.reportedBy)}</p>
                 </div>
                 <div>
-                  <Label className="font-semibold">Priority:</Label>
-                  <p>{selectedRequest.priority === 1 ? 'High' : selectedRequest.priority === 2 ? 'Normal' : 'Low'}</p>
+                  <Label className="font-semibold">{t("maintenance.requests.priority")}:</Label>
+                  <p>
+                    {selectedRequest.priority === 1
+                      ? t("maintenance.requests.high_priority")
+                      : selectedRequest.priority === 2
+                        ? t("maintenance.requests.normal_priority")
+                        : t("maintenance.requests.low_priority")}
+                  </p>
                 </div>
               </div>
               <div>
-                <Label className="font-semibold">Description:</Label>
-                <p className="mt-1 p-3 bg-gray-50 rounded border">{selectedRequest.description}</p>
+                <Label className="font-semibold">{t("maintenance.requests.description")}:</Label>
+                <p className="mt-1 p-3 bg-gray-50 rounded border">
+                  {selectedRequest.description}
+                </p>
               </div>
               {selectedRequest.completedAt && (
                 <div>
                   <Label className="font-semibold">Completed At:</Label>
-                  <p>{formatDate(new Date(selectedRequest.completedAt), 'dd/MM/yyyy HH:mm')}</p>
+                  <p>
+                    {formatDate(
+                      new Date(selectedRequest.completedAt),
+                      "dd/MM/yyyy HH:mm",
+                    )}
+                  </p>
                 </div>
               )}
             </div>
@@ -1040,14 +1252,18 @@ export default function MaintenanceRequestsPage() {
             <div className="space-y-4">
               <div>
                 <Label className="font-semibold">Current Status:</Label>
-                <div className="mt-1">{getStatusBadge(selectedRequest.status)}</div>
+                <div className="mt-1">
+                  {getStatusBadge(selectedRequest.status)}
+                </div>
               </div>
               <div>
                 <Label className="font-semibold">Select New Status:</Label>
                 <div className="grid grid-cols-2 gap-2 mt-2">
                   <Button
                     variant="outline"
-                    onClick={() => handleStatusUpdate(selectedRequest.id, 'pending')}
+                    onClick={() =>
+                      handleStatusUpdate(selectedRequest.id, "pending")
+                    }
                     className="justify-start"
                   >
                     <AlertTriangle className="w-4 h-4 mr-2" />
@@ -1055,7 +1271,9 @@ export default function MaintenanceRequestsPage() {
                   </Button>
                   <Button
                     variant="outline"
-                    onClick={() => handleStatusUpdate(selectedRequest.id, 'progress')}
+                    onClick={() =>
+                      handleStatusUpdate(selectedRequest.id, "progress")
+                    }
                     className="justify-start"
                   >
                     <Clock className="w-4 h-4 mr-2" />
@@ -1063,7 +1281,9 @@ export default function MaintenanceRequestsPage() {
                   </Button>
                   <Button
                     variant="outline"
-                    onClick={() => handleStatusUpdate(selectedRequest.id, 'repaired')}
+                    onClick={() =>
+                      handleStatusUpdate(selectedRequest.id, "repaired")
+                    }
                     className="justify-start"
                   >
                     <CheckCircle className="w-4 h-4 mr-2" />
@@ -1071,7 +1291,12 @@ export default function MaintenanceRequestsPage() {
                   </Button>
                   <Button
                     variant="outline"
-                    onClick={() => handleStatusUpdate(selectedRequest.id, 'waiting_for_parts')}
+                    onClick={() =>
+                      handleStatusUpdate(
+                        selectedRequest.id,
+                        "waiting_for_parts",
+                      )
+                    }
                     className="justify-start"
                   >
                     <Clock className="w-4 h-4 mr-2" />
@@ -1079,7 +1304,9 @@ export default function MaintenanceRequestsPage() {
                   </Button>
                   <Button
                     variant="outline"
-                    onClick={() => handleStatusUpdate(selectedRequest.id, 'completed')}
+                    onClick={() =>
+                      handleStatusUpdate(selectedRequest.id, "completed")
+                    }
                     className="justify-start"
                   >
                     <CheckCircle className="w-4 h-4 mr-2" />
@@ -1087,7 +1314,9 @@ export default function MaintenanceRequestsPage() {
                   </Button>
                   <Button
                     variant="outline"
-                    onClick={() => handleStatusUpdate(selectedRequest.id, 'cancelled')}
+                    onClick={() =>
+                      handleStatusUpdate(selectedRequest.id, "cancelled")
+                    }
                     className="justify-start"
                   >
                     <X className="w-4 h-4 mr-2" />
@@ -1111,13 +1340,19 @@ export default function MaintenanceRequestsPage() {
           </DialogHeader>
           <form onSubmit={handleEditSubmit} className="space-y-4">
             <div>
-              <Label htmlFor="edit-machineId">{t("maintenance.requests.machine")} *</Label>
-              <Select 
-                value={editFormData.machineId} 
-                onValueChange={(value) => setEditFormData({...editFormData, machineId: value})}
+              <Label htmlFor="edit-machineId">
+                {t("maintenance.requests.machine")} *
+              </Label>
+              <Select
+                value={editFormData.machineId}
+                onValueChange={(value) =>
+                  setEditFormData({ ...editFormData, machineId: value })
+                }
               >
                 <SelectTrigger>
-                  <SelectValue placeholder={t("maintenance.requests.machine")} />
+                  <SelectValue
+                    placeholder={t("maintenance.requests.machine")}
+                  />
                 </SelectTrigger>
                 <SelectContent>
                   {machines.map((machine: Machine) => (
@@ -1130,13 +1365,19 @@ export default function MaintenanceRequestsPage() {
             </div>
 
             <div>
-              <Label htmlFor="edit-damageType">{t("maintenance.requests.damageType")} *</Label>
-              <Select 
-                value={editFormData.damageType} 
-                onValueChange={(value) => setEditFormData({...editFormData, damageType: value})}
+              <Label htmlFor="edit-damageType">
+                {t("maintenance.requests.damageType")} *
+              </Label>
+              <Select
+                value={editFormData.damageType}
+                onValueChange={(value) =>
+                  setEditFormData({ ...editFormData, damageType: value })
+                }
               >
                 <SelectTrigger>
-                  <SelectValue placeholder={t("maintenance.requests.damageType")} />
+                  <SelectValue
+                    placeholder={t("maintenance.requests.damageType")}
+                  />
                 </SelectTrigger>
                 <SelectContent>
                   {damageTypes.map((type) => (
@@ -1149,13 +1390,19 @@ export default function MaintenanceRequestsPage() {
             </div>
 
             <div>
-              <Label htmlFor="edit-severity">{t("maintenance.requests.severity")} *</Label>
-              <Select 
-                value={editFormData.severity} 
-                onValueChange={(value) => setEditFormData({...editFormData, severity: value})}
+              <Label htmlFor="edit-severity">
+                {t("maintenance.requests.severity")} *
+              </Label>
+              <Select
+                value={editFormData.severity}
+                onValueChange={(value) =>
+                  setEditFormData({ ...editFormData, severity: value })
+                }
               >
                 <SelectTrigger>
-                  <SelectValue placeholder={t("maintenance.requests.severity")} />
+                  <SelectValue
+                    placeholder={t("maintenance.requests.severity")}
+                  />
                 </SelectTrigger>
                 <SelectContent>
                   {severityLevels.map((level) => (
@@ -1169,9 +1416,11 @@ export default function MaintenanceRequestsPage() {
 
             <div>
               <Label htmlFor="edit-status">Status</Label>
-              <Select 
-                value={editFormData.status} 
-                onValueChange={(value) => setEditFormData({...editFormData, status: value})}
+              <Select
+                value={editFormData.status}
+                onValueChange={(value) =>
+                  setEditFormData({ ...editFormData, status: value })
+                }
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select status" />
@@ -1179,7 +1428,8 @@ export default function MaintenanceRequestsPage() {
                 <SelectContent>
                   {STATUS_OPTIONS.map((status) => (
                     <SelectItem key={status} value={status}>
-                      {status.charAt(0).toUpperCase() + status.slice(1).replace('_', ' ')}
+                      {status.charAt(0).toUpperCase() +
+                        status.slice(1).replace("_", " ")}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -1187,12 +1437,19 @@ export default function MaintenanceRequestsPage() {
             </div>
 
             <div>
-              <Label htmlFor="edit-description">{t("maintenance.requests.description")} *</Label>
+              <Label htmlFor="edit-description">
+                {t("maintenance.requests.description")} *
+              </Label>
               <Textarea
                 id="edit-description"
                 placeholder={t("maintenance.requests.description")}
                 value={editFormData.description}
-                onChange={(e) => setEditFormData({...editFormData, description: e.target.value})}
+                onChange={(e) =>
+                  setEditFormData({
+                    ...editFormData,
+                    description: e.target.value,
+                  })
+                }
                 rows={3}
               />
             </div>
@@ -1203,17 +1460,25 @@ export default function MaintenanceRequestsPage() {
                 id="edit-notes"
                 placeholder="Additional notes or updates..."
                 value={editFormData.notes}
-                onChange={(e) => setEditFormData({...editFormData, notes: e.target.value})}
+                onChange={(e) =>
+                  setEditFormData({ ...editFormData, notes: e.target.value })
+                }
                 rows={2}
               />
             </div>
 
             <div className="flex justify-end space-x-2">
-              <Button type="button" variant="outline" onClick={() => setIsEditDialogOpen(false)}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setIsEditDialogOpen(false)}
+              >
                 {t("common.cancel")}
               </Button>
               <Button type="submit" disabled={updateRequestMutation.isPending}>
-                {updateRequestMutation.isPending ? "Updating..." : "Update Request"}
+                {updateRequestMutation.isPending
+                  ? "Updating..."
+                  : "Update Request"}
               </Button>
             </div>
           </form>

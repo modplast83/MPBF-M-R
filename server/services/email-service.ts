@@ -1,4 +1,4 @@
-import sgMail from '@sendgrid/mail';
+import sgMail from "@sendgrid/mail";
 
 export interface QuoteEmailData {
   customerInfo: {
@@ -34,21 +34,21 @@ export class EmailService {
 
   private initialize() {
     if (!process.env.SENDGRID_API_KEY) {
-      console.warn('SendGrid API key not configured');
+      console.warn("SendGrid API key not configured");
       return;
     }
 
-    if (!process.env.SENDGRID_API_KEY.startsWith('SG.')) {
-      console.error('Invalid SendGrid API key format - should start with SG.');
+    if (!process.env.SENDGRID_API_KEY.startsWith("SG.")) {
+      console.error("Invalid SendGrid API key format - should start with SG.");
       return;
     }
 
     try {
       sgMail.setApiKey(process.env.SENDGRID_API_KEY);
       this.isConfigured = true;
-      console.log('SendGrid email service initialized successfully');
+      console.log("SendGrid email service initialized successfully");
     } catch (error) {
-      console.error('Failed to initialize SendGrid:', error);
+      console.error("Failed to initialize SendGrid:", error);
     }
   }
 
@@ -56,60 +56,67 @@ export class EmailService {
     return this.isConfigured;
   }
 
-  public async sendQuoteRequest(quoteData: QuoteEmailData): Promise<{ success: boolean; message: string }> {
+  public async sendQuoteRequest(
+    quoteData: QuoteEmailData,
+  ): Promise<{ success: boolean; message: string }> {
     if (!this.isConfigured) {
       return {
         success: false,
-        message: 'Email service not configured. Please add SENDGRID_API_KEY to environment variables.'
+        message:
+          "Email service not configured. Please add SENDGRID_API_KEY to environment variables.",
       };
     }
 
     try {
       const emailContent = this.generateQuoteEmailContent(quoteData);
-      
+
       const msg = {
-        to: 'Modplast83@gmail.com',
-        from: 'Modplast83@gmail.com', // Using the same email as sender and recipient
+        to: "Modplast83@gmail.com",
+        from: "Modplast83@gmail.com", // Using the same email as sender and recipient
         subject: `New Quote Request from ${quoteData.customerInfo.name}`,
         html: emailContent,
-        replyTo: quoteData.customerInfo.email
+        replyTo: quoteData.customerInfo.email,
       };
 
-      console.log('Attempting to send email with SendGrid...');
+      console.log("Attempting to send email with SendGrid...");
       await sgMail.send(msg);
-      
+
       return {
         success: true,
-        message: 'Quote request sent successfully'
+        message: "Quote request sent successfully",
       };
-
     } catch (error: any) {
-      console.error('SendGrid error details:', {
+      console.error("SendGrid error details:", {
         code: error.code,
         message: error.message,
-        response: error.response?.body
+        response: error.response?.body,
       });
 
       if (error.code === 403) {
         return {
           success: false,
-          message: 'SendGrid authentication failed. Please verify your API key and sender email address in SendGrid dashboard.'
+          message:
+            "SendGrid authentication failed. Please verify your API key and sender email address in SendGrid dashboard.",
         };
       } else if (error.code === 401) {
         return {
           success: false,
-          message: 'Invalid SendGrid API key. Please check your API key configuration.'
+          message:
+            "Invalid SendGrid API key. Please check your API key configuration.",
         };
       } else if (error.response?.body?.errors) {
-        const errorDetails = error.response.body.errors.map((e: any) => e.message).join(', ');
+        const errorDetails = error.response.body.errors
+          .map((e: any) => e.message)
+          .join(", ");
         return {
           success: false,
-          message: `SendGrid error: ${errorDetails}`
+          message: `SendGrid error: ${errorDetails}`,
         };
       } else {
         return {
           success: false,
-          message: 'Failed to send email. Please check your SendGrid configuration.'
+          message:
+            "Failed to send email. Please check your SendGrid configuration.",
         };
       }
     }
@@ -158,7 +165,7 @@ export class EmailService {
           <div style="margin-bottom: 15px;">
             <p style="margin: 5px 0;"><strong>2. Bags Cost:</strong> ${quoteData.bagsCost.toLocaleString()} SR</p>
             <p style="margin-left: 20px; font-size: 12px; color: #666; font-style: italic;">
-              Formula: Minimum ${quoteData.minimumKg} kg × 10 SR/kg (for ${quoteData.numberOfColors} color${quoteData.numberOfColors > 1 ? 's' : ''})
+              Formula: Minimum ${quoteData.minimumKg} kg × 10 SR/kg (for ${quoteData.numberOfColors} color${quoteData.numberOfColors > 1 ? "s" : ""})
             </p>
           </div>
           
@@ -171,12 +178,16 @@ export class EmailService {
           </p>
         </div>
         
-        ${quoteData.notes ? `
+        ${
+          quoteData.notes
+            ? `
           <div style="background-color: #fef3c7; padding: 20px; border-radius: 8px; margin: 20px 0;">
             <h3 style="color: #374151; margin-top: 0;">Additional Notes:</h3>
             <p style="margin: 0;">${quoteData.notes}</p>
           </div>
-        ` : ''}
+        `
+            : ""
+        }
         
         <hr style="margin: 30px 0; border: 1px solid #e5e7eb;">
         <div style="text-align: center; color: #6b7280; font-size: 12px;">
@@ -187,39 +198,42 @@ export class EmailService {
     `;
   }
 
-  public async testConnection(): Promise<{ success: boolean; message: string }> {
+  public async testConnection(): Promise<{
+    success: boolean;
+    message: string;
+  }> {
     if (!this.isConfigured) {
       return {
         success: false,
-        message: 'Email service not configured'
+        message: "Email service not configured",
       };
     }
 
     try {
       // Test with sandbox mode enabled
       const testMsg = {
-        to: 'Modplast83@gmail.com',
-        from: 'Modplast83@gmail.com',
-        subject: 'SendGrid Configuration Test',
-        text: 'This is a test email to verify SendGrid configuration.',
+        to: "Modplast83@gmail.com",
+        from: "Modplast83@gmail.com",
+        subject: "SendGrid Configuration Test",
+        text: "This is a test email to verify SendGrid configuration.",
         mailSettings: {
           sandboxMode: {
-            enable: true
-          }
-        }
+            enable: true,
+          },
+        },
       };
 
-      console.log('Testing SendGrid connection with sandbox mode...');
+      console.log("Testing SendGrid connection with sandbox mode...");
       await sgMail.send(testMsg);
       return {
         success: true,
-        message: 'SendGrid connection successful'
+        message: "SendGrid connection successful",
       };
     } catch (error: any) {
-      console.error('SendGrid test failed:', error);
+      console.error("SendGrid test failed:", error);
       return {
         success: false,
-        message: `SendGrid connection failed: ${error.message || 'Unknown error'}`
+        message: `SendGrid connection failed: ${error.message || "Unknown error"}`,
       };
     }
   }

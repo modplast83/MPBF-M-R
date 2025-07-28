@@ -1,27 +1,33 @@
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Download, FileText, Loader2 } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
-import { 
-  PDFExporter, 
-  PDFExportOptions, 
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Download, FileText, Loader2 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import {
+  PDFExporter,
+  PDFExportOptions,
   TableColumn,
   exportOrdersReport,
   exportProductionReport,
-  exportQualityReport 
-} from '@/lib/pdf-export';
+  exportQualityReport,
+} from "@/lib/pdf-export";
 
 export interface PDFExportButtonProps {
   data: any[];
-  reportType: 'orders' | 'production' | 'quality' | 'custom';
+  reportType: "orders" | "production" | "quality" | "custom";
   title: string;
   subtitle?: string;
   filename?: string;
   columns?: TableColumn[];
   chartElements?: HTMLElement[];
   options?: PDFExportOptions;
-  variant?: 'default' | 'outline' | 'secondary' | 'ghost' | 'link' | 'destructive';
-  size?: 'default' | 'sm' | 'lg' | 'icon';
+  variant?:
+    | "default"
+    | "outline"
+    | "secondary"
+    | "ghost"
+    | "link"
+    | "destructive";
+  size?: "default" | "sm" | "lg" | "icon";
   className?: string;
 }
 
@@ -34,18 +40,19 @@ export const PDFExportButton = ({
   columns,
   chartElements,
   options,
-  variant = 'outline',
-  size = 'default',
-  className = ''
+  variant = "outline",
+  size = "default",
+  className = "",
 }: PDFExportButtonProps) => {
   const [isExporting, setIsExporting] = useState(false);
   const { toast } = useToast();
 
   const handleExport = async () => {
-    if (!data || data.length === 0) {
+    if (!data || !Array.isArray(data) || data.length === 0) {
       toast({
         title: "No Data Available",
-        description: "There is no data to export. Please ensure the report contains data.",
+        description:
+          "There is no data to export. Please ensure the report contains data.",
         variant: "destructive",
       });
       return;
@@ -57,51 +64,51 @@ export const PDFExportButton = ({
       let exporter: PDFExporter;
 
       switch (reportType) {
-        case 'orders':
+        case "orders":
           exporter = await exportOrdersReport(data, {
             title,
             subtitle,
-            ...options
+            ...options,
           });
           break;
 
-        case 'production':
+        case "production":
           exporter = await exportProductionReport(data, {
             title,
             subtitle,
-            orientation: 'landscape',
-            ...options
+            orientation: "landscape",
+            ...options,
           });
           break;
 
-        case 'quality':
+        case "quality":
           exporter = await exportQualityReport(data, {
             title,
             subtitle,
-            ...options
+            ...options,
           });
           break;
 
-        case 'custom':
+        case "custom":
         default:
           exporter = new PDFExporter({
             title,
             subtitle,
-            ...options
+            ...options,
           });
 
           // Add custom table if columns are provided
           if (columns && columns.length > 0) {
             await exporter.addTable(data, columns, {
-              title: 'Report Data',
-              showSummary: true
+              title: "Report Data",
+              showSummary: true,
             });
           }
 
           // Add charts if provided
           if (chartElements && chartElements.length > 0) {
             for (const chart of chartElements) {
-              await exporter.addChart(chart, 'Chart Analysis');
+              await exporter.addChart(chart, "Chart Analysis");
             }
           }
           break;
@@ -114,12 +121,12 @@ export const PDFExportButton = ({
         title: "Export Successful",
         description: `${title} has been exported to PDF successfully.`,
       });
-
     } catch (error) {
-      console.error('PDF Export Error:', error);
+      console.error("PDF Export Error:", error);
       toast({
         title: "Export Failed",
-        description: "An error occurred while exporting the PDF. Please try again.",
+        description:
+          "An error occurred while exporting the PDF. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -130,7 +137,7 @@ export const PDFExportButton = ({
   return (
     <Button
       onClick={handleExport}
-      disabled={isExporting || !data || data.length === 0}
+      disabled={isExporting || !data || !Array.isArray(data) || data.length === 0}
       variant={variant}
       size={size}
       className={className}
@@ -140,7 +147,7 @@ export const PDFExportButton = ({
       ) : (
         <Download className="h-4 w-4 mr-2" />
       )}
-      {isExporting ? 'Exporting...' : 'Export PDF'}
+      {isExporting ? "Exporting..." : "Export PDF"}
     </Button>
   );
 };
@@ -152,7 +159,7 @@ export const usePDFExport = () => {
 
   const exportToPDF = async (config: {
     data: any[];
-    reportType: 'orders' | 'production' | 'quality' | 'custom';
+    reportType: "orders" | "production" | "quality" | "custom";
     title: string;
     subtitle?: string;
     filename?: string;
@@ -160,18 +167,18 @@ export const usePDFExport = () => {
     chartElements?: HTMLElement[];
     options?: PDFExportOptions;
   }) => {
-    const { 
-      data, 
-      reportType, 
-      title, 
-      subtitle, 
-      filename, 
-      columns, 
-      chartElements, 
-      options 
+    const {
+      data,
+      reportType,
+      title,
+      subtitle,
+      filename,
+      columns,
+      chartElements,
+      options,
     } = config;
 
-    if (!data || data.length === 0) {
+    if (!data || !Array.isArray(data) || data.length === 0) {
       toast({
         title: "No Data Available",
         description: "There is no data to export.",
@@ -186,32 +193,40 @@ export const usePDFExport = () => {
       let exporter: PDFExporter;
 
       switch (reportType) {
-        case 'orders':
-          exporter = await exportOrdersReport(data, { title, subtitle, ...options });
-          break;
-        case 'production':
-          exporter = await exportProductionReport(data, { 
-            title, 
-            subtitle, 
-            orientation: 'landscape', 
-            ...options 
+        case "orders":
+          exporter = await exportOrdersReport(data, {
+            title,
+            subtitle,
+            ...options,
           });
           break;
-        case 'quality':
-          exporter = await exportQualityReport(data, { title, subtitle, ...options });
+        case "production":
+          exporter = await exportProductionReport(data, {
+            title,
+            subtitle,
+            orientation: "landscape",
+            ...options,
+          });
           break;
-        case 'custom':
+        case "quality":
+          exporter = await exportQualityReport(data, {
+            title,
+            subtitle,
+            ...options,
+          });
+          break;
+        case "custom":
         default:
           exporter = new PDFExporter({ title, subtitle, ...options });
           if (columns && columns.length > 0) {
             await exporter.addTable(data, columns, {
-              title: 'Report Data',
-              showSummary: true
+              title: "Report Data",
+              showSummary: true,
             });
           }
           if (chartElements && chartElements.length > 0) {
             for (const chart of chartElements) {
-              await exporter.addChart(chart, 'Chart Analysis');
+              await exporter.addChart(chart, "Chart Analysis");
             }
           }
           break;
@@ -226,7 +241,7 @@ export const usePDFExport = () => {
 
       return true;
     } catch (error) {
-      console.error('PDF Export Error:', error);
+      console.error("PDF Export Error:", error);
       toast({
         title: "Export Failed",
         description: "An error occurred while exporting the PDF.",
@@ -242,13 +257,13 @@ export const usePDFExport = () => {
 };
 
 // Quick export functions for common use cases
-export const QuickExportButton = ({ 
-  data, 
-  type, 
-  title 
-}: { 
-  data: any[]; 
-  type: 'orders' | 'production' | 'quality'; 
+export const QuickExportButton = ({
+  data,
+  type,
+  title,
+}: {
+  data: any[];
+  type: "orders" | "production" | "quality";
   title: string;
 }) => (
   <PDFExportButton

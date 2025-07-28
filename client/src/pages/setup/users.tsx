@@ -4,16 +4,51 @@ import { useTranslation } from "react-i18next";
 import { useLanguage } from "@/hooks/use-language";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from "@/components/ui/dialog";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+} from "@/components/ui/form";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { API_ENDPOINTS } from "@/lib/constants";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { toast } from "@/hooks/use-toast";
@@ -22,48 +57,58 @@ import { Badge } from "@/components/ui/badge";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { 
-  Users, 
-  UserPlus, 
-  Edit, 
-  Trash2, 
+import {
+  Users,
+  UserPlus,
+  Edit,
+  Trash2,
   Eye,
-  Award, 
-  Clock, 
+  Award,
+  Clock,
   Calendar,
   TrendingUp,
   DollarSign,
   MapPin,
   Phone,
   Mail,
-  Briefcase
+  Briefcase,
 } from "lucide-react";
 
 // Enhanced form schema for comprehensive user management
 const userFormSchema = insertUserSchema.extend({
   id: z.string().optional(),
-  workSchedule: z.object({
-    startTime: z.string().default("08:00"),
-    endTime: z.string().default("17:00"),
-    workingDays: z.array(z.string()).default(["monday", "tuesday", "wednesday", "thursday", "friday"]),
-    breakDuration: z.number().default(1)
-  }).optional(),
-  emergencyContact: z.object({
-    name: z.string().default(""),
-    phone: z.string().default(""),
-    relationship: z.string().default("")
-  }).optional(),
-  bankDetails: z.object({
-    accountNumber: z.string().default(""),
-    bankName: z.string().default(""),
-    branchName: z.string().default("")
-  }).optional(),
-  allowances: z.object({
-    transport: z.number().default(0),
-    housing: z.number().default(0),
-    food: z.number().default(0),
-    other: z.number().default(0)
-  }).optional()
+  workSchedule: z
+    .object({
+      startTime: z.string().default("08:00"),
+      endTime: z.string().default("17:00"),
+      workingDays: z
+        .array(z.string())
+        .default(["monday", "tuesday", "wednesday", "thursday", "friday"]),
+      breakDuration: z.number().default(1),
+    })
+    .optional(),
+  emergencyContact: z
+    .object({
+      name: z.string().default(""),
+      phone: z.string().default(""),
+      relationship: z.string().default(""),
+    })
+    .optional(),
+  bankDetails: z
+    .object({
+      accountNumber: z.string().default(""),
+      bankName: z.string().default(""),
+      branchName: z.string().default(""),
+    })
+    .optional(),
+  allowances: z
+    .object({
+      transport: z.number().default(0),
+      housing: z.number().default(0),
+      food: z.number().default(0),
+      other: z.number().default(0),
+    })
+    .optional(),
 });
 
 type UserFormData = z.infer<typeof userFormSchema>;
@@ -105,25 +150,25 @@ export default function UsersPage() {
         startTime: "08:00",
         endTime: "17:00",
         workingDays: ["monday", "tuesday", "wednesday", "thursday", "friday"],
-        breakDuration: 1
+        breakDuration: 1,
       },
       emergencyContact: {
         name: "",
         phone: "",
-        relationship: ""
+        relationship: "",
       },
       bankDetails: {
         accountNumber: "",
         bankName: "",
-        branchName: ""
+        branchName: "",
       },
       allowances: {
         transport: 0,
         housing: 0,
         food: 0,
-        other: 0
-      }
-    }
+        other: 0,
+      },
+    },
   });
 
   // Delete mutation
@@ -155,14 +200,18 @@ export default function UsersPage() {
       if (cleanData.id === "") {
         delete cleanData.id;
       }
-      
+
       // Handle "none" section value
       if (cleanData.sectionId === "none") {
         cleanData.sectionId = "";
       }
-      
+
       if (editUser) {
-        return apiRequest("PUT", `${API_ENDPOINTS.USERS}/${editUser.id}`, cleanData);
+        return apiRequest(
+          "PUT",
+          `${API_ENDPOINTS.USERS}/${editUser.id}`,
+          cleanData,
+        );
       } else {
         return apiRequest("POST", API_ENDPOINTS.USERS, cleanData);
       }
@@ -186,7 +235,7 @@ export default function UsersPage() {
 
   const handleEdit = (user: User) => {
     setEditUser(user);
-    
+
     // Reset form with user data
     form.reset({
       id: user.id,
@@ -197,7 +246,9 @@ export default function UsersPage() {
       phone: user.phone || "",
       sectionId: user.sectionId || "none",
       position: user.position || "",
-      hireDate: user.hireDate ? new Date(user.hireDate).toISOString().split('T')[0] : "",
+      hireDate: user.hireDate
+        ? new Date(user.hireDate).toISOString().split("T")[0]
+        : "",
       contractType: user.contractType || "full_time",
       isAdmin: user.isAdmin || false,
       isActive: user.isActive !== false,
@@ -205,26 +256,26 @@ export default function UsersPage() {
         startTime: "08:00",
         endTime: "17:00",
         workingDays: ["monday", "tuesday", "wednesday", "thursday", "friday"],
-        breakDuration: 1
+        breakDuration: 1,
       },
       emergencyContact: user.emergencyContact || {
         name: "",
         phone: "",
-        relationship: ""
+        relationship: "",
       },
       bankDetails: user.bankDetails || {
         accountNumber: "",
         bankName: "",
-        branchName: ""
+        branchName: "",
       },
       allowances: user.allowances || {
         transport: 0,
         housing: 0,
         food: 0,
-        other: 0
-      }
+        other: 0,
+      },
     });
-    
+
     setFormOpen(true);
   };
 
@@ -256,18 +307,23 @@ export default function UsersPage() {
 
   // Helper function to get section name
   const getSectionName = (sectionId: string | null) => {
-    if (!sectionId) return "None";
-    return sections?.find(s => s.id === sectionId)?.name || "Unknown";
+    if (!sectionId) return t("setup.users.none");
+    return (
+      sections?.find((s) => s.id === sectionId)?.name ||
+      t("setup.users.unknown")
+    );
   };
 
   // Function to format admin status for display
   const formatAdminStatus = (isAdmin: boolean) => {
-    return isAdmin ? "Administrator" : "User";
+    return isAdmin ? t("setup.users.administrator") : t("setup.users.user");
   };
 
   const formatWorkingDays = (days: string[]) => {
-    if (!days || days.length === 0) return "Not set";
-    return days.map(day => day.charAt(0).toUpperCase() + day.slice(1)).join(", ");
+    if (!days || days.length === 0) return t("setup.users.not_set");
+    return days
+      .map((day) => day.charAt(0).toUpperCase() + day.slice(1))
+      .join(", ");
   };
 
   return (
@@ -279,13 +335,20 @@ export default function UsersPage() {
             <div className="flex items-center space-x-2">
               <Users className="h-6 w-6 text-blue-600" />
               <div>
-                <CardTitle className="text-2xl font-bold">User Management</CardTitle>
-                <p className="text-gray-600 mt-1">Manage user accounts and employee profiles</p>
+                <CardTitle className="text-2xl font-bold">
+                  {t("setup.users.user_management")}
+                </CardTitle>
+                <p className="text-gray-600 mt-1">
+                  {t("setup.users.user_management_description")}
+                </p>
               </div>
             </div>
-            <Button onClick={handleNewUser} className="flex items-center space-x-2">
+            <Button
+              onClick={handleNewUser}
+              className="flex items-center space-x-2"
+            >
               <UserPlus className="h-4 w-4" />
-              <span>Add New User</span>
+              <span>{t("setup.users.add_new_user")}</span>
             </Button>
           </div>
         </CardHeader>
@@ -298,38 +361,47 @@ export default function UsersPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Username</TableHead>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Email</TableHead>
-                  <TableHead>Section</TableHead>
-                  <TableHead>Position</TableHead>
-                  <TableHead>Role</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Actions</TableHead>
+                  <TableHead>{t("setup.users.username")}</TableHead>
+                  <TableHead>{t("setup.users.name")}</TableHead>
+                  <TableHead>{t("setup.users.email")}</TableHead>
+                  <TableHead>{t("setup.users.section")}</TableHead>
+                  <TableHead>{t("setup.users.position")}</TableHead>
+                  <TableHead>{t("setup.users.role")}</TableHead>
+                  <TableHead>{t("setup.users.status")}</TableHead>
+                  <TableHead>{t("setup.users.actions")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {users.map((user) => (
                   <TableRow key={user.id}>
-                    <TableCell className="font-medium">{user.username}</TableCell>
-                    <TableCell>
-                      {`${user.firstName || ''} ${user.lastName || ''}`.trim() || '-'}
+                    <TableCell className="font-medium">
+                      {user.username}
                     </TableCell>
-                    <TableCell>{user.email || '-'}</TableCell>
+                    <TableCell>
+                      {`${user.firstName || ""} ${user.lastName || ""}`.trim() ||
+                        "-"}
+                    </TableCell>
+                    <TableCell>{user.email || "-"}</TableCell>
                     <TableCell>
                       <Badge variant="outline">
                         {getSectionName(user.sectionId)}
                       </Badge>
                     </TableCell>
-                    <TableCell>{user.position || '-'}</TableCell>
+                    <TableCell>{user.position || "-"}</TableCell>
                     <TableCell>
                       <Badge variant={user.isAdmin ? "default" : "secondary"}>
                         {formatAdminStatus(user.isAdmin)}
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      <Badge variant={user.isActive !== false ? "default" : "destructive"}>
-                        {user.isActive !== false ? "Active" : "Inactive"}
+                      <Badge
+                        variant={
+                          user.isActive !== false ? "default" : "destructive"
+                        }
+                      >
+                        {user.isActive !== false
+                          ? t("setup.users.active")
+                          : t("setup.users.inactive")}
                       </Badge>
                     </TableCell>
                     <TableCell>
@@ -370,15 +442,22 @@ export default function UsersPage() {
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
-              {editUser ? "Edit User Profile" : "Create New User Profile"}
+              {editUser
+                ? t("setup.users.edit_user_profile")
+                : t("setup.users.create_new_user_profile")}
             </DialogTitle>
             <DialogDescription>
-              {editUser ? "Update user information and employee details" : "Add a new user with comprehensive profile information"}
+              {editUser
+                ? t("setup.users.update_user_information")
+                : t("setup.users.add_new_user")}
             </DialogDescription>
           </DialogHeader>
 
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-6">
+            <form
+              onSubmit={form.handleSubmit(handleFormSubmit)}
+              className="space-y-6"
+            >
               <Tabs defaultValue="basic" className="w-full">
                 <TabsList className="grid w-full grid-cols-5">
                   <TabsTrigger value="basic">Basic Info</TabsTrigger>
@@ -396,9 +475,12 @@ export default function UsersPage() {
                       name="username"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Username *</FormLabel>
+                          <FormLabel>{t("setup.users.username")} *</FormLabel>
                           <FormControl>
-                            <Input {...field} placeholder="Enter username" />
+                            <Input
+                              {...field}
+                              placeholder={t("setup.users.enter_username")}
+                            />
                           </FormControl>
                         </FormItem>
                       )}
@@ -408,9 +490,13 @@ export default function UsersPage() {
                       name="email"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Email</FormLabel>
+                          <FormLabel>{t("setup.users.email")}</FormLabel>
                           <FormControl>
-                            <Input {...field} type="email" placeholder="Enter email" />
+                            <Input
+                              {...field}
+                              type="email"
+                              placeholder={t("setup.users.enter_email")}
+                            />
                           </FormControl>
                         </FormItem>
                       )}
@@ -420,9 +506,12 @@ export default function UsersPage() {
                       name="firstName"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>First Name</FormLabel>
+                          <FormLabel>{t("setup.users.first_name")}</FormLabel>
                           <FormControl>
-                            <Input {...field} placeholder="Enter first name" />
+                            <Input
+                              {...field}
+                              placeholder={t("setup.users.enter_first_name")}
+                            />
                           </FormControl>
                         </FormItem>
                       )}
@@ -432,9 +521,12 @@ export default function UsersPage() {
                       name="lastName"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Last Name</FormLabel>
+                          <FormLabel>{t("setup.users.last_name")}</FormLabel>
                           <FormControl>
-                            <Input {...field} placeholder="Enter last name" />
+                            <Input
+                              {...field}
+                              placeholder={t("setup.users.enter_last_name")}
+                            />
                           </FormControl>
                         </FormItem>
                       )}
@@ -444,9 +536,12 @@ export default function UsersPage() {
                       name="phone"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Phone</FormLabel>
+                          <FormLabel>{t("setup.users.phone")}</FormLabel>
                           <FormControl>
-                            <Input {...field} placeholder="Enter phone number" />
+                            <Input
+                              {...field}
+                              placeholder={t("setup.users.enter_phone")}
+                            />
                           </FormControl>
                         </FormItem>
                       )}
@@ -495,7 +590,10 @@ export default function UsersPage() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Section</FormLabel>
-                          <Select onValueChange={field.onChange} value={field.value || ""}>
+                          <Select
+                            onValueChange={field.onChange}
+                            value={field.value || ""}
+                          >
                             <FormControl>
                               <SelectTrigger>
                                 <SelectValue placeholder="Select section" />
@@ -520,7 +618,10 @@ export default function UsersPage() {
                         <FormItem>
                           <FormLabel>Position</FormLabel>
                           <FormControl>
-                            <Input {...field} placeholder="Enter position/job title" />
+                            <Input
+                              {...field}
+                              placeholder="Enter position/job title"
+                            />
                           </FormControl>
                         </FormItem>
                       )}
@@ -543,15 +644,22 @@ export default function UsersPage() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Contract Type</FormLabel>
-                          <Select onValueChange={field.onChange} value={field.value}>
+                          <Select
+                            onValueChange={field.onChange}
+                            value={field.value}
+                          >
                             <FormControl>
                               <SelectTrigger>
                                 <SelectValue />
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              <SelectItem value="full_time">Full Time</SelectItem>
-                              <SelectItem value="part_time">Part Time</SelectItem>
+                              <SelectItem value="full_time">
+                                Full Time
+                              </SelectItem>
+                              <SelectItem value="part_time">
+                                Part Time
+                              </SelectItem>
                               <SelectItem value="contract">Contract</SelectItem>
                               <SelectItem value="intern">Intern</SelectItem>
                             </SelectContent>
@@ -601,7 +709,9 @@ export default function UsersPage() {
                               type="number"
                               min="0"
                               step="0.5"
-                              onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                              onChange={(e) =>
+                                field.onChange(parseFloat(e.target.value) || 0)
+                              }
                             />
                           </FormControl>
                         </FormItem>
@@ -611,7 +721,15 @@ export default function UsersPage() {
                   <div>
                     <Label>Working Days</Label>
                     <div className="grid grid-cols-4 gap-2 mt-2">
-                      {["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"].map((day) => (
+                      {[
+                        "monday",
+                        "tuesday",
+                        "wednesday",
+                        "thursday",
+                        "friday",
+                        "saturday",
+                        "sunday",
+                      ].map((day) => (
                         <FormField
                           key={day}
                           control={form.control}
@@ -627,12 +745,16 @@ export default function UsersPage() {
                                     if (e.target.checked) {
                                       field.onChange([...currentDays, day]);
                                     } else {
-                                      field.onChange(currentDays.filter(d => d !== day));
+                                      field.onChange(
+                                        currentDays.filter((d) => d !== day),
+                                      );
                                     }
                                   }}
                                 />
                               </FormControl>
-                              <Label className="text-sm capitalize">{day}</Label>
+                              <Label className="text-sm capitalize">
+                                {day}
+                              </Label>
                             </FormItem>
                           )}
                         />
@@ -651,7 +773,10 @@ export default function UsersPage() {
                         <FormItem>
                           <FormLabel>Emergency Contact Name</FormLabel>
                           <FormControl>
-                            <Input {...field} placeholder="Enter contact name" />
+                            <Input
+                              {...field}
+                              placeholder="Enter contact name"
+                            />
                           </FormControl>
                         </FormItem>
                       )}
@@ -663,7 +788,10 @@ export default function UsersPage() {
                         <FormItem>
                           <FormLabel>Emergency Contact Phone</FormLabel>
                           <FormControl>
-                            <Input {...field} placeholder="Enter contact phone" />
+                            <Input
+                              {...field}
+                              placeholder="Enter contact phone"
+                            />
                           </FormControl>
                         </FormItem>
                       )}
@@ -675,7 +803,10 @@ export default function UsersPage() {
                         <FormItem>
                           <FormLabel>Relationship</FormLabel>
                           <FormControl>
-                            <Input {...field} placeholder="e.g., Spouse, Parent, Sibling" />
+                            <Input
+                              {...field}
+                              placeholder="e.g., Spouse, Parent, Sibling"
+                            />
                           </FormControl>
                         </FormItem>
                       )}
@@ -687,7 +818,9 @@ export default function UsersPage() {
                 <TabsContent value="financial" className="space-y-4">
                   <div className="space-y-6">
                     <div>
-                      <h3 className="text-lg font-semibold mb-3">Bank Details</h3>
+                      <h3 className="text-lg font-semibold mb-3">
+                        Bank Details
+                      </h3>
                       <div className="grid grid-cols-2 gap-4">
                         <FormField
                           control={form.control}
@@ -696,7 +829,10 @@ export default function UsersPage() {
                             <FormItem>
                               <FormLabel>Account Number</FormLabel>
                               <FormControl>
-                                <Input {...field} placeholder="Enter account number" />
+                                <Input
+                                  {...field}
+                                  placeholder="Enter account number"
+                                />
                               </FormControl>
                             </FormItem>
                           )}
@@ -708,7 +844,10 @@ export default function UsersPage() {
                             <FormItem>
                               <FormLabel>Bank Name</FormLabel>
                               <FormControl>
-                                <Input {...field} placeholder="Enter bank name" />
+                                <Input
+                                  {...field}
+                                  placeholder="Enter bank name"
+                                />
                               </FormControl>
                             </FormItem>
                           )}
@@ -720,14 +859,17 @@ export default function UsersPage() {
                             <FormItem>
                               <FormLabel>Branch Name</FormLabel>
                               <FormControl>
-                                <Input {...field} placeholder="Enter branch name" />
+                                <Input
+                                  {...field}
+                                  placeholder="Enter branch name"
+                                />
                               </FormControl>
                             </FormItem>
                           )}
                         />
                       </div>
                     </div>
-                    
+
                     <div>
                       <h3 className="text-lg font-semibold mb-3">Allowances</h3>
                       <div className="grid grid-cols-2 gap-4">
@@ -743,7 +885,11 @@ export default function UsersPage() {
                                   type="number"
                                   min="0"
                                   step="0.01"
-                                  onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                                  onChange={(e) =>
+                                    field.onChange(
+                                      parseFloat(e.target.value) || 0,
+                                    )
+                                  }
                                 />
                               </FormControl>
                             </FormItem>
@@ -761,7 +907,11 @@ export default function UsersPage() {
                                   type="number"
                                   min="0"
                                   step="0.01"
-                                  onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                                  onChange={(e) =>
+                                    field.onChange(
+                                      parseFloat(e.target.value) || 0,
+                                    )
+                                  }
                                 />
                               </FormControl>
                             </FormItem>
@@ -779,7 +929,11 @@ export default function UsersPage() {
                                   type="number"
                                   min="0"
                                   step="0.01"
-                                  onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                                  onChange={(e) =>
+                                    field.onChange(
+                                      parseFloat(e.target.value) || 0,
+                                    )
+                                  }
                                 />
                               </FormControl>
                             </FormItem>
@@ -797,7 +951,11 @@ export default function UsersPage() {
                                   type="number"
                                   min="0"
                                   step="0.01"
-                                  onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                                  onChange={(e) =>
+                                    field.onChange(
+                                      parseFloat(e.target.value) || 0,
+                                    )
+                                  }
                                 />
                               </FormControl>
                             </FormItem>
@@ -810,11 +968,19 @@ export default function UsersPage() {
               </Tabs>
 
               <div className="flex justify-end space-x-2 pt-4 border-t">
-                <Button type="button" variant="outline" onClick={handleFormClose}>
-                  Cancel
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleFormClose}
+                >
+                  {t("common.cancel")}
                 </Button>
                 <Button type="submit" disabled={saveMutation.isPending}>
-                  {saveMutation.isPending ? "Saving..." : (editUser ? "Update User" : "Create User")}
+                  {saveMutation.isPending
+                    ? t("common.saving")
+                    : editUser
+                      ? t("setup.users.update_user")
+                      : t("setup.users.create_user")}
                 </Button>
               </div>
             </form>
@@ -828,7 +994,8 @@ export default function UsersPage() {
           <DialogHeader>
             <DialogTitle>User Profile Details</DialogTitle>
             <DialogDescription>
-              Complete profile information for {viewUser?.firstName} {viewUser?.lastName}
+              Complete profile information for {viewUser?.firstName}{" "}
+              {viewUser?.lastName}
             </DialogDescription>
           </DialogHeader>
 
@@ -851,27 +1018,40 @@ export default function UsersPage() {
                     </div>
                     <div>
                       <Label>Email</Label>
-                      <p className="font-medium">{viewUser.email || "Not provided"}</p>
+                      <p className="font-medium">
+                        {viewUser.email || "Not provided"}
+                      </p>
                     </div>
                     <div>
                       <Label>Full Name</Label>
                       <p className="font-medium">
-                        {`${viewUser.firstName || ''} ${viewUser.lastName || ''}`.trim() || "Not provided"}
+                        {`${viewUser.firstName || ""} ${viewUser.lastName || ""}`.trim() ||
+                          "Not provided"}
                       </p>
                     </div>
                     <div>
                       <Label>Phone</Label>
-                      <p className="font-medium">{viewUser.phone || "Not provided"}</p>
+                      <p className="font-medium">
+                        {viewUser.phone || "Not provided"}
+                      </p>
                     </div>
                     <div>
                       <Label>Role</Label>
-                      <Badge variant={viewUser.isAdmin ? "default" : "secondary"}>
+                      <Badge
+                        variant={viewUser.isAdmin ? "default" : "secondary"}
+                      >
                         {formatAdminStatus(viewUser.isAdmin)}
                       </Badge>
                     </div>
                     <div>
                       <Label>Status</Label>
-                      <Badge variant={viewUser.isActive !== false ? "default" : "destructive"}>
+                      <Badge
+                        variant={
+                          viewUser.isActive !== false
+                            ? "default"
+                            : "destructive"
+                        }
+                      >
                         {viewUser.isActive !== false ? "Active" : "Inactive"}
                       </Badge>
                     </div>
@@ -882,21 +1062,30 @@ export default function UsersPage() {
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <Label>Section</Label>
-                      <p className="font-medium">{getSectionName(viewUser.sectionId)}</p>
+                      <p className="font-medium">
+                        {getSectionName(viewUser.sectionId)}
+                      </p>
                     </div>
                     <div>
                       <Label>Position</Label>
-                      <p className="font-medium">{viewUser.position || "Not specified"}</p>
+                      <p className="font-medium">
+                        {viewUser.position || "Not specified"}
+                      </p>
                     </div>
                     <div>
                       <Label>Hire Date</Label>
                       <p className="font-medium">
-                        {viewUser.hireDate ? new Date(viewUser.hireDate).toLocaleDateString() : "Not specified"}
+                        {viewUser.hireDate
+                          ? new Date(viewUser.hireDate).toLocaleDateString()
+                          : "Not specified"}
                       </p>
                     </div>
                     <div>
                       <Label>Contract Type</Label>
-                      <p className="font-medium capitalize">{viewUser.contractType?.replace('_', ' ') || "Not specified"}</p>
+                      <p className="font-medium capitalize">
+                        {viewUser.contractType?.replace("_", " ") ||
+                          "Not specified"}
+                      </p>
                     </div>
                   </div>
                 </TabsContent>
@@ -907,20 +1096,27 @@ export default function UsersPage() {
                       <div>
                         <Label>Work Hours</Label>
                         <p className="font-medium">
-                          {viewUser.workSchedule.startTime} - {viewUser.workSchedule.endTime}
+                          {viewUser.workSchedule.startTime} -{" "}
+                          {viewUser.workSchedule.endTime}
                         </p>
                       </div>
                       <div>
                         <Label>Break Duration</Label>
-                        <p className="font-medium">{viewUser.workSchedule.breakDuration} hours</p>
+                        <p className="font-medium">
+                          {viewUser.workSchedule.breakDuration} hours
+                        </p>
                       </div>
                       <div className="col-span-2">
                         <Label>Working Days</Label>
-                        <p className="font-medium">{formatWorkingDays(viewUser.workSchedule.workingDays)}</p>
+                        <p className="font-medium">
+                          {formatWorkingDays(viewUser.workSchedule.workingDays)}
+                        </p>
                       </div>
                     </div>
                   ) : (
-                    <p className="text-gray-500">Work schedule not configured</p>
+                    <p className="text-gray-500">
+                      Work schedule not configured
+                    </p>
                   )}
                 </TabsContent>
 
@@ -929,69 +1125,100 @@ export default function UsersPage() {
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <Label>Contact Name</Label>
-                        <p className="font-medium">{viewUser.emergencyContact.name || "Not provided"}</p>
+                        <p className="font-medium">
+                          {viewUser.emergencyContact.name || "Not provided"}
+                        </p>
                       </div>
                       <div>
                         <Label>Contact Phone</Label>
-                        <p className="font-medium">{viewUser.emergencyContact.phone || "Not provided"}</p>
+                        <p className="font-medium">
+                          {viewUser.emergencyContact.phone || "Not provided"}
+                        </p>
                       </div>
                       <div>
                         <Label>Relationship</Label>
-                        <p className="font-medium">{viewUser.emergencyContact.relationship || "Not specified"}</p>
+                        <p className="font-medium">
+                          {viewUser.emergencyContact.relationship ||
+                            "Not specified"}
+                        </p>
                       </div>
                     </div>
                   ) : (
-                    <p className="text-gray-500">Emergency contact information not provided</p>
+                    <p className="text-gray-500">
+                      Emergency contact information not provided
+                    </p>
                   )}
                 </TabsContent>
 
                 <TabsContent value="financial" className="space-y-4">
                   <div className="space-y-6">
                     <div>
-                      <h3 className="text-lg font-semibold mb-3">Bank Details</h3>
+                      <h3 className="text-lg font-semibold mb-3">
+                        Bank Details
+                      </h3>
                       {viewUser.bankDetails ? (
                         <div className="grid grid-cols-2 gap-4">
                           <div>
                             <Label>Account Number</Label>
-                            <p className="font-medium">{viewUser.bankDetails.accountNumber || "Not provided"}</p>
+                            <p className="font-medium">
+                              {viewUser.bankDetails.accountNumber ||
+                                "Not provided"}
+                            </p>
                           </div>
                           <div>
                             <Label>Bank Name</Label>
-                            <p className="font-medium">{viewUser.bankDetails.bankName || "Not provided"}</p>
+                            <p className="font-medium">
+                              {viewUser.bankDetails.bankName || "Not provided"}
+                            </p>
                           </div>
                           <div>
                             <Label>Branch Name</Label>
-                            <p className="font-medium">{viewUser.bankDetails.branchName || "Not provided"}</p>
+                            <p className="font-medium">
+                              {viewUser.bankDetails.branchName ||
+                                "Not provided"}
+                            </p>
                           </div>
                         </div>
                       ) : (
-                        <p className="text-gray-500">Bank details not provided</p>
+                        <p className="text-gray-500">
+                          Bank details not provided
+                        </p>
                       )}
                     </div>
-                    
+
                     <div>
                       <h3 className="text-lg font-semibold mb-3">Allowances</h3>
                       {viewUser.allowances ? (
                         <div className="grid grid-cols-2 gap-4">
                           <div>
                             <Label>Transport</Label>
-                            <p className="font-medium">${viewUser.allowances.transport || 0}</p>
+                            <p className="font-medium">
+                              ${viewUser.allowances.transport || 0}
+                            </p>
                           </div>
                           <div>
                             <Label>Housing</Label>
-                            <p className="font-medium">${viewUser.allowances.housing || 0}</p>
+                            <p className="font-medium">
+                              ${viewUser.allowances.housing || 0}
+                            </p>
                           </div>
                           <div>
                             <Label>Food</Label>
-                            <p className="font-medium">${viewUser.allowances.food || 0}</p>
+                            <p className="font-medium">
+                              ${viewUser.allowances.food || 0}
+                            </p>
                           </div>
                           <div>
                             <Label>Other</Label>
-                            <p className="font-medium">${viewUser.allowances.other || 0}</p>
+                            <p className="font-medium">
+                              ${viewUser.allowances.other || 0}
+                            </p>
                           </div>
                         </div>
                       ) : (
-                        <p className="text-gray-500">Allowances not configured</p>
+                        <p className="text-gray-500">
+                          Allowances not configured
+                        </p>
                       )}
                     </div>
                   </div>
@@ -1003,18 +1230,24 @@ export default function UsersPage() {
       </Dialog>
 
       {/* Delete Confirmation Dialog */}
-      <AlertDialog open={!!deletingUser} onOpenChange={() => setDeletingUser(null)}>
+      <AlertDialog
+        open={!!deletingUser}
+        onOpenChange={() => setDeletingUser(null)}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This will permanently delete the user "{deletingUser?.username}" and all associated data.
-              This action cannot be undone.
+              This will permanently delete the user "{deletingUser?.username}"
+              and all associated data. This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmDelete} className="bg-red-600 hover:bg-red-700">
+            <AlertDialogAction
+              onClick={confirmDelete}
+              className="bg-red-600 hover:bg-red-700"
+            >
               Delete User
             </AlertDialogAction>
           </AlertDialogFooter>

@@ -3,21 +3,38 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { CustomerForm } from "@/components/setup/customer-form";
 import { API_ENDPOINTS } from "@/lib/constants";
 import { apiRequest } from "@/lib/queryClient";
 import { toast } from "@/hooks/use-toast";
 import { Customer, User } from "@shared/schema";
 import { useTranslation } from "react-i18next";
+import { Languages, Plus, Edit, Trash2, Loader2 } from "lucide-react";
 
 export default function Customers() {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [formOpen, setFormOpen] = useState(false);
   const [editCustomer, setEditCustomer] = useState<Customer | null>(null);
-  const [deletingCustomer, setDeletingCustomer] = useState<Customer | null>(null);
+  const [deletingCustomer, setDeletingCustomer] = useState<Customer | null>(
+    null,
+  );
 
   // Fetch customers and related data
   const { data: customers, isLoading } = useQuery<Customer[]>({
@@ -50,6 +67,27 @@ export default function Customers() {
     },
   });
 
+  // Auto-translate mutation
+  const autoTranslateMutation = useMutation({
+    mutationFn: async () => {
+      return await apiRequest("POST", "/api/customers/auto-translate", {});
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: [API_ENDPOINTS.CUSTOMERS] });
+      toast({
+        title: "Translation Complete",
+        description: `Successfully translated ${data.translatedCount} customer names to Arabic`,
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Translation Failed",
+        description: error.message || "Failed to auto-translate customer names",
+        variant: "destructive",
+      });
+    },
+  });
+
   const handleEdit = (customer: Customer) => {
     setEditCustomer(customer);
     setFormOpen(true);
@@ -72,51 +110,62 @@ export default function Customers() {
 
   // Helper function to get user name from userId - using firstName instead of username
   const getUserName = (userId: string | null) => {
-    if (!userId) return "None";
-    const user = users?.find(u => u.id === userId);
+    if (!userId) return t("common.none");
+    const user = users?.find((u) => u.id === userId);
     if (user) {
       return user.firstName || user.username || userId;
     }
-    return userId || "Unknown";
+    return userId || t("common.unknown");
   };
 
   const columns = [
     {
-      header: "ID",
+      header: t("setup.customers.id"),
       accessorKey: "id",
     },
     {
-      header: "Code",
+      header: t("setup.customers.code"),
       accessorKey: "code",
     },
     {
-      header: "Name",
+      header: t("setup.customers.name"),
       accessorKey: "name",
     },
     {
-      header: "Arabic Name",
+      header: t("setup.customers.name_ar"),
       accessorKey: "nameAr",
       cell: (row: { nameAr: string | null }) => row.nameAr || "-",
     },
     {
-      header: "Sales Person",
+      header: t("setup.customers.sales_person"),
       accessorKey: "userId",
       cell: (row: { userId: string | null }) => getUserName(row.userId),
     },
     {
-      header: "Plate Drawer Code",
+      header: t("setup.customers.plate_drawer_code"),
       accessorKey: "plateDrawerCode",
-      cell: (row: { plateDrawerCode: string | null }) => row.plateDrawerCode || "-",
+      cell: (row: { plateDrawerCode: string | null }) =>
+        row.plateDrawerCode || "-",
     },
     {
-      header: "Actions",
+      header: t("setup.customers.actions"),
       cell: (row: Customer) => (
         <div className="flex space-x-2">
-          <Button variant="ghost" size="icon" onClick={() => handleEdit(row)} className="text-primary-500 hover:text-primary-700">
-            <span className="material-icons text-sm">edit</span>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => handleEdit(row)}
+            className="text-blue-500 hover:text-blue-700"
+          >
+            <Edit className="h-4 w-4" />
           </Button>
-          <Button variant="ghost" size="icon" onClick={() => handleDelete(row)} className="text-red-500 hover:text-red-700">
-            <span className="material-icons text-sm">delete</span>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => handleDelete(row)}
+            className="text-red-500 hover:text-red-700"
+          >
+            <Trash2 className="h-4 w-4" />
           </Button>
         </div>
       ),
@@ -124,16 +173,41 @@ export default function Customers() {
   ];
 
   const tableActions = (
-    <Button onClick={() => setFormOpen(true)}>
-      <span className="material-icons text-sm mr-1">add</span>
-      Add Customer
-    </Button>
+    <div className="flex space-x-2">
+      <Button 
+        onClick={() => setFormOpen(true)}
+        className="bg-blue-600 hover:bg-blue-700 text-white"
+      >
+        <Plus className="h-4 w-4 mr-2" />
+        {t("setup.customers.add_customer")}
+      </Button>
+      <Button 
+        onClick={() => autoTranslateMutation.mutate()}
+        disabled={autoTranslateMutation.isPending}
+        variant="outline"
+        className="border-green-600 text-green-600 hover:bg-green-50"
+      >
+        {autoTranslateMutation.isPending ? (
+          <>
+            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+            Translating...
+          </>
+        ) : (
+          <>
+            <Languages className="h-4 w-4 mr-2" />
+            Auto-translate Arabic Names
+          </>
+        )}
+      </Button>
+    </div>
   );
 
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-secondary-900">{t("setup.customers.title")}</h1>
+        <h1 className="text-2xl font-bold text-secondary-900">
+          {t("setup.customers.title")}
+        </h1>
       </div>
       <Card>
         <CardHeader>
@@ -142,7 +216,7 @@ export default function Customers() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <DataTable 
+          <DataTable
             data={customers || []}
             columns={columns}
             isLoading={isLoading}
@@ -155,27 +229,34 @@ export default function Customers() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {editCustomer ? t("setup.customers.edit_customer") : t("setup.customers.add_new")}
+              {editCustomer
+                ? t("setup.customers.edit_customer")
+                : t("setup.customers.add_new")}
             </DialogTitle>
           </DialogHeader>
-          <CustomerForm 
+          <CustomerForm
             customer={editCustomer || undefined}
             onSuccess={handleFormClose}
           />
         </DialogContent>
       </Dialog>
       {/* Delete Confirmation Dialog */}
-      <AlertDialog open={!!deletingCustomer} onOpenChange={(open) => !open && setDeletingCustomer(null)}>
+      <AlertDialog
+        open={!!deletingCustomer}
+        onOpenChange={(open) => !open && setDeletingCustomer(null)}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>{t("setup.customers.are_you_sure")}</AlertDialogTitle>
+            <AlertDialogTitle>
+              {t("setup.customers.are_you_sure")}
+            </AlertDialogTitle>
             <AlertDialogDescription>
               {t("setup.customers.delete_confirmation")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>{t("setup.customers.cancel")}</AlertDialogCancel>
-            <AlertDialogAction 
+            <AlertDialogAction
               onClick={confirmDelete}
               className="bg-red-500 hover:bg-red-600"
             >

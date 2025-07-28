@@ -4,14 +4,17 @@ import { PageHeader } from "@/components/ui/page-header";
 
 export default function QualityPenalties() {
   const { t } = useTranslation();
-  
+
   return (
     <div className="container mx-auto py-6">
-      <PageHeader 
-        title={t("quality.penalties")} 
-        description={t("quality.penalties_desc", "Apply penalties for quality violations")} 
+      <PageHeader
+        title={t("quality.penalties")}
+        description={t(
+          "quality.penalties_desc",
+          "Apply penalties for quality violations",
+        )}
       />
-      
+
       <Card className="mt-6">
         <CardHeader>
           <CardTitle>{t("quality.penalties")}</CardTitle>

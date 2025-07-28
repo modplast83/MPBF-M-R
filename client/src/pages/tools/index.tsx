@@ -1,13 +1,19 @@
 import { Link } from "wouter";
 import { PageHeader } from "@/components/ui/page-header";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Calculator, Droplet, Wrench, Package, Palette } from "lucide-react";
 
 export default function ToolsIndex() {
   return (
     <div className="container mx-auto py-6 space-y-6">
-      <PageHeader 
-        title="Factory Tools" 
+      <PageHeader
+        title="Factory Tools"
         description="Specialized tools to help with factory calculations and operations"
       />
 
@@ -20,13 +26,14 @@ export default function ToolsIndex() {
                 Order Design
               </CardTitle>
               <CardDescription className="text-blue-700">
-                Professional product customization wizard for packaging solutions
+                Professional product customization wizard for packaging
+                solutions
               </CardDescription>
             </CardHeader>
             <CardContent>
               <p className="text-sm text-blue-800">
-                Design custom bags, pouches, and packaging with real-time preview,
-                material selection, and instant cost estimation.
+                Design custom bags, pouches, and packaging with real-time
+                preview, material selection, and instant cost estimation.
               </p>
             </CardContent>
           </Card>
@@ -40,13 +47,14 @@ export default function ToolsIndex() {
                 Bag Weight Calculator
               </CardTitle>
               <CardDescription>
-                Calculate the theoretical weight of plastic bags based on dimensions and material
+                Calculate the theoretical weight of plastic bags based on
+                dimensions and material
               </CardDescription>
             </CardHeader>
             <CardContent>
               <p className="text-sm">
-                Precisely calculate the weight of plastic bags by specifying dimensions, 
-                thickness, material density, and other parameters.
+                Precisely calculate the weight of plastic bags by specifying
+                dimensions, thickness, material density, and other parameters.
               </p>
             </CardContent>
           </Card>
@@ -65,8 +73,9 @@ export default function ToolsIndex() {
             </CardHeader>
             <CardContent>
               <p className="text-sm">
-                Calculate the amount of ink needed for print jobs based on coverage area,
-                print density, anilox specification, and other printing parameters.
+                Calculate the amount of ink needed for print jobs based on
+                coverage area, print density, anilox specification, and other
+                printing parameters.
               </p>
             </CardContent>
           </Card>
@@ -85,8 +94,8 @@ export default function ToolsIndex() {
             </CardHeader>
             <CardContent>
               <p className="text-sm">
-                Access various utility tools including unit converters, 
-                process time estimators, and other helpful calculators.
+                Access various utility tools including unit converters, process
+                time estimators, and other helpful calculators.
               </p>
             </CardContent>
           </Card>

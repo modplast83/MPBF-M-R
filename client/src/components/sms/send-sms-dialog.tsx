@@ -8,10 +8,36 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from "@/components/ui/dialog";
-import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from "@/components/ui/form";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Send, Loader2, User, FileText, Clock } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -23,9 +49,28 @@ const sendSmsSchema = z.object({
   message: z.string().min(1, "Message is required"),
   customerId: z.string().optional(),
   orderId: z.number().optional(),
-  messageType: z.enum(["custom", "order_notification", "status_update", "bottleneck_alert", "quality_alert", "maintenance_alert", "hr_notification"]).default("custom"),
+  messageType: z
+    .enum([
+      "custom",
+      "order_notification",
+      "status_update",
+      "bottleneck_alert",
+      "quality_alert",
+      "maintenance_alert",
+      "hr_notification",
+    ])
+    .default("custom"),
   priority: z.enum(["low", "normal", "high", "urgent"]).default("normal"),
-  category: z.enum(["general", "production", "quality", "maintenance", "hr", "management"]).default("general"),
+  category: z
+    .enum([
+      "general",
+      "production",
+      "quality",
+      "maintenance",
+      "hr",
+      "management",
+    ])
+    .default("general"),
   templateId: z.string().optional(),
   scheduledFor: z.date().optional(),
   isScheduled: z.boolean().default(false),
@@ -43,18 +88,20 @@ interface SendSmsDialogProps {
   defaultOrder?: Order;
 }
 
-export function SendSmsDialog({ 
-  children, 
-  customers, 
-  orders, 
-  templates, 
+export function SendSmsDialog({
+  children,
+  customers,
+  orders,
+  templates,
   onSuccess,
   defaultCustomer,
-  defaultOrder 
+  defaultOrder,
 }: SendSmsDialogProps) {
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
-  const [selectedTemplate, setSelectedTemplate] = useState<SmsTemplate | null>(null);
+  const [selectedTemplate, setSelectedTemplate] = useState<SmsTemplate | null>(
+    null,
+  );
 
   const form = useForm<SendSmsFormValues>({
     resolver: zodResolver(sendSmsSchema),
@@ -82,7 +129,7 @@ export function SendSmsDialog({
       queryClient.invalidateQueries({ queryKey: ["/api/sms-messages"] });
       toast({
         title: "SMS Sent",
-        description: "Your message has been sent successfully."
+        description: "Your message has been sent successfully.",
       });
       form.reset();
       setOpen(false);
@@ -91,10 +138,11 @@ export function SendSmsDialog({
     onError: (error: any) => {
       toast({
         title: "Failed to Send SMS",
-        description: error.message || "There was an error sending your message.",
-        variant: "destructive"
+        description:
+          error.message || "There was an error sending your message.",
+        variant: "destructive",
       });
-    }
+    },
   });
 
   const onSubmit = (data: SendSmsFormValues) => {
@@ -110,7 +158,7 @@ export function SendSmsDialog({
   };
 
   const handleCustomerSelect = (customerId: string) => {
-    const customer = customers.find(c => c.id === customerId);
+    const customer = customers.find((c) => c.id === customerId);
     if (customer) {
       form.setValue("customerId", customerId);
       form.setValue("recipientName", customer.name);
@@ -118,10 +166,10 @@ export function SendSmsDialog({
   };
 
   const handleOrderSelect = (orderId: string) => {
-    const order = orders.find(o => o.id === parseInt(orderId));
+    const order = orders.find((o) => o.id === parseInt(orderId));
     if (order) {
       form.setValue("orderId", order.id);
-      const customer = customers.find(c => c.id === order.customerId);
+      const customer = customers.find((c) => c.id === order.customerId);
       if (customer) {
         handleCustomerSelect(customer.id);
       }
@@ -130,14 +178,13 @@ export function SendSmsDialog({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        {children}
-      </DialogTrigger>
+      <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Send SMS Message</DialogTitle>
           <DialogDescription>
-            Compose and send SMS messages to customers, employees, or stakeholders with customizable templates and scheduling options.
+            Compose and send SMS messages to customers, employees, or
+            stakeholders with customizable templates and scheduling options.
           </DialogDescription>
         </DialogHeader>
 
@@ -148,30 +195,37 @@ export function SendSmsDialog({
               <div className="space-y-3">
                 <Label className="text-sm font-medium">Quick Templates</Label>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                  {templates.filter(t => t.isActive).slice(0, 4).map((template) => (
-                    <Card 
-                      key={template.id} 
-                      className={`cursor-pointer transition-colors ${
-                        selectedTemplate?.id === template.id ? 'border-primary' : 'hover:border-gray-300'
-                      }`}
-                      onClick={() => handleTemplateSelect(template)}
-                    >
-                      <CardHeader className="pb-2">
-                        <CardTitle className="text-sm">{template.name}</CardTitle>
-                        <CardDescription className="text-xs">
-                          <Badge variant="outline" className="text-xs mr-1">
-                            {template.category}
-                          </Badge>
-                          {template.messageType}
-                        </CardDescription>
-                      </CardHeader>
-                      <CardContent className="pt-0">
-                        <p className="text-xs text-gray-600 line-clamp-2">
-                          {template.template.substring(0, 100)}...
-                        </p>
-                      </CardContent>
-                    </Card>
-                  ))}
+                  {templates
+                    .filter((t) => t.isActive)
+                    .slice(0, 4)
+                    .map((template) => (
+                      <Card
+                        key={template.id}
+                        className={`cursor-pointer transition-colors ${
+                          selectedTemplate?.id === template.id
+                            ? "border-primary"
+                            : "hover:border-gray-300"
+                        }`}
+                        onClick={() => handleTemplateSelect(template)}
+                      >
+                        <CardHeader className="pb-2">
+                          <CardTitle className="text-sm">
+                            {template.name}
+                          </CardTitle>
+                          <CardDescription className="text-xs">
+                            <Badge variant="outline" className="text-xs mr-1">
+                              {template.category}
+                            </Badge>
+                            {template.messageType}
+                          </CardDescription>
+                        </CardHeader>
+                        <CardContent className="pt-0">
+                          <p className="text-xs text-gray-600 line-clamp-2">
+                            {template.template.substring(0, 100)}...
+                          </p>
+                        </CardContent>
+                      </Card>
+                    ))}
                 </div>
               </div>
             )}
@@ -184,8 +238,8 @@ export function SendSmsDialog({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Customer (Optional)</FormLabel>
-                    <Select 
-                      value={field.value} 
+                    <Select
+                      value={field.value}
                       onValueChange={(value) => {
                         field.onChange(value);
                         handleCustomerSelect(value);
@@ -216,8 +270,8 @@ export function SendSmsDialog({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Order (Optional)</FormLabel>
-                    <Select 
-                      value={field.value?.toString() || ""} 
+                    <Select
+                      value={field.value?.toString() || ""}
                       onValueChange={(value) => {
                         field.onChange(value ? parseInt(value) : undefined);
                         if (value) handleOrderSelect(value);
@@ -231,9 +285,14 @@ export function SendSmsDialog({
                       <SelectContent>
                         <SelectItem value="">No order</SelectItem>
                         {orders.slice(0, 50).map((order) => {
-                          const customer = customers.find(c => c.id === order.customerId);
+                          const customer = customers.find(
+                            (c) => c.id === order.customerId,
+                          );
                           return (
-                            <SelectItem key={order.id} value={order.id.toString()}>
+                            <SelectItem
+                              key={order.id}
+                              value={order.id.toString()}
+                            >
                               Order #{order.id} - {customer?.name}
                             </SelectItem>
                           );
@@ -285,7 +344,7 @@ export function SendSmsDialog({
                 <FormItem>
                   <FormLabel>Message *</FormLabel>
                   <FormControl>
-                    <Textarea 
+                    <Textarea
                       placeholder="Enter your message here..."
                       className="min-h-[100px]"
                       {...field}
@@ -365,11 +424,17 @@ export function SendSmsDialog({
                       </FormControl>
                       <SelectContent>
                         <SelectItem value="custom">Custom</SelectItem>
-                        <SelectItem value="order_notification">Order</SelectItem>
+                        <SelectItem value="order_notification">
+                          Order
+                        </SelectItem>
                         <SelectItem value="status_update">Status</SelectItem>
-                        <SelectItem value="bottleneck_alert">Bottleneck</SelectItem>
+                        <SelectItem value="bottleneck_alert">
+                          Bottleneck
+                        </SelectItem>
                         <SelectItem value="quality_alert">Quality</SelectItem>
-                        <SelectItem value="maintenance_alert">Maintenance</SelectItem>
+                        <SelectItem value="maintenance_alert">
+                          Maintenance
+                        </SelectItem>
                         <SelectItem value="hr_notification">HR</SelectItem>
                       </SelectContent>
                     </Select>
@@ -411,8 +476,18 @@ export function SendSmsDialog({
                     <FormControl>
                       <Input
                         type="datetime-local"
-                        value={field.value ? field.value.toISOString().slice(0, 16) : ""}
-                        onChange={(e) => field.onChange(e.target.value ? new Date(e.target.value) : undefined)}
+                        value={
+                          field.value
+                            ? field.value.toISOString().slice(0, 16)
+                            : ""
+                        }
+                        onChange={(e) =>
+                          field.onChange(
+                            e.target.value
+                              ? new Date(e.target.value)
+                              : undefined,
+                          )
+                        }
                       />
                     </FormControl>
                     <FormMessage />
@@ -422,7 +497,11 @@ export function SendSmsDialog({
             )}
 
             <div className="flex justify-end gap-2">
-              <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setOpen(false)}
+              >
                 Cancel
               </Button>
               <Button type="submit" disabled={sendSmsMutation.isPending}>

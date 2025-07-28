@@ -1,7 +1,8 @@
 import { FC, HTMLAttributes, ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
-interface TypographyProps extends HTMLAttributes<HTMLHeadingElement | HTMLParagraphElement> {
+interface TypographyProps
+  extends HTMLAttributes<HTMLHeadingElement | HTMLParagraphElement> {
   children: ReactNode;
   className?: string;
 }
@@ -12,7 +13,7 @@ export const H1: FC<TypographyProps> = ({ children, className, ...props }) => {
     <h1
       className={cn(
         "scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl",
-        className
+        className,
       )}
       {...props}
     >
@@ -27,7 +28,7 @@ export const H2: FC<TypographyProps> = ({ children, className, ...props }) => {
     <h2
       className={cn(
         "scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0",
-        className
+        className,
       )}
       {...props}
     >
@@ -42,7 +43,7 @@ export const H3: FC<TypographyProps> = ({ children, className, ...props }) => {
     <h3
       className={cn(
         "scroll-m-20 text-2xl font-semibold tracking-tight",
-        className
+        className,
       )}
       {...props}
     >
@@ -57,7 +58,7 @@ export const H4: FC<TypographyProps> = ({ children, className, ...props }) => {
     <h4
       className={cn(
         "scroll-m-20 text-xl font-semibold tracking-tight",
-        className
+        className,
       )}
       {...props}
     >
@@ -79,19 +80,24 @@ export const P: FC<TypographyProps> = ({ children, className, ...props }) => {
 };
 
 // Large text
-export const Large: FC<TypographyProps> = ({ children, className, ...props }) => {
+export const Large: FC<TypographyProps> = ({
+  children,
+  className,
+  ...props
+}) => {
   return (
-    <div
-      className={cn("text-lg font-semibold", className)}
-      {...props}
-    >
+    <div className={cn("text-lg font-semibold", className)} {...props}>
       {children}
     </div>
   );
 };
 
 // Small text
-export const Small: FC<TypographyProps> = ({ children, className, ...props }) => {
+export const Small: FC<TypographyProps> = ({
+  children,
+  className,
+  ...props
+}) => {
   return (
     <small
       className={cn("text-sm font-medium leading-none", className)}
@@ -103,12 +109,13 @@ export const Small: FC<TypographyProps> = ({ children, className, ...props }) =>
 };
 
 // Muted text
-export const Muted: FC<TypographyProps> = ({ children, className, ...props }) => {
+export const Muted: FC<TypographyProps> = ({
+  children,
+  className,
+  ...props
+}) => {
   return (
-    <p
-      className={cn("text-sm text-muted-foreground", className)}
-      {...props}
-    >
+    <p className={cn("text-sm text-muted-foreground", className)} {...props}>
       {children}
     </p>
   );
@@ -123,7 +130,7 @@ const Typography = {
   P,
   Large,
   Small,
-  Muted
+  Muted,
 };
 
 export default Typography;

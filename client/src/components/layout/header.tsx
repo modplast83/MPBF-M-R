@@ -1,4 +1,4 @@
-import { useLocation } from "wouter";
+import { useLocation, Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -13,7 +13,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth-v2";
 import { useLanguage } from "@/hooks/use-language";
 import { useTranslation } from "react-i18next";
-import { Loader2, Menu, HelpCircle } from "lucide-react";
+import { Loader2, Menu, HelpCircle, Building2 } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { AuthenticationButton } from "@/components/authentication-button";
 import { NotificationBell } from "@/components/notifications/notification-bell";
@@ -24,102 +24,130 @@ interface HeaderProps {
   setMobileMenuOpen?: (open: boolean) => void;
 }
 
-export default function Header({ mobileMenuOpen, setMobileMenuOpen }: HeaderProps) {
+export default function Header({
+  mobileMenuOpen,
+  setMobileMenuOpen,
+}: HeaderProps) {
   const [location, setLocation] = useLocation();
   const { user } = useAuth();
   const { toast } = useToast();
   const { language, setLanguage, isRTL } = useLanguage();
   const { t } = useTranslation();
   const isMobile = useIsMobile();
-  
+
   // Logout is now handled by the AuthenticationButton component
-  
+
   // Function to toggle mobile sidebar
   const toggleMobileSidebar = () => {
     if (setMobileMenuOpen) {
       setMobileMenuOpen(!mobileMenuOpen);
     }
   };
-  
+
   // Function to get current page title based on location
   const getCurrentPageTitle = () => {
     // First check for exact matches
     for (const section of SIDEBAR_ITEMS) {
       for (const item of section.items) {
         if (item.path === location) {
-          return t(`sidebar.${item.title.toLowerCase().replace(/ /g, '_')}`);
+          return t(`sidebar.${item.title.toLowerCase().replace(/ /g, "_")}`);
         }
-        
+
         // Check subItems if they exist
         if (item.subItems) {
           for (const subItem of item.subItems) {
             if (subItem.path === location) {
-              return t(`sidebar.${subItem.title.toLowerCase().replace(/ /g, '_')}`);
+              return t(
+                `sidebar.${subItem.title.toLowerCase().replace(/ /g, "_")}`,
+              );
             }
           }
         }
       }
     }
-    
+
     // Check for path startsWith for nested routes
     for (const section of SIDEBAR_ITEMS) {
       for (const item of section.items) {
         if (location.startsWith(item.path) && item.path !== "/") {
-          return t(`sidebar.${item.title.toLowerCase().replace(/ /g, '_')}`);
+          return t(`sidebar.${item.title.toLowerCase().replace(/ /g, "_")}`);
         }
-        
+
         // Check subItems if they exist
         if (item.subItems) {
           for (const subItem of item.subItems) {
             if (location.startsWith(subItem.path)) {
-              return t(`sidebar.${subItem.title.toLowerCase().replace(/ /g, '_')}`);
+              return t(
+                `sidebar.${subItem.title.toLowerCase().replace(/ /g, "_")}`,
+              );
             }
           }
         }
       }
     }
-    
+
     // Default to Dashboard
     return t("sidebar.dashboard");
   };
 
   return (
-    <header className="bg-white/95 backdrop-blur-lg border-b border-gray-200/50 sticky top-0 z-40 shadow-sm">
-      <div className="flex justify-between items-center px-4 sm:px-6 py-3 pl-[0px] pr-[0px]">
-        <div className={`flex items-center space-x-4 ${isRTL ? 'flex-row-reverse space-x-reverse' : ''}`}>
-          {isMobile && (
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors"
-              onClick={toggleMobileSidebar}
-            >
-              <Menu className="h-5 w-5" />
-            </Button>
-          )}
-          <div className="flex flex-col">
-            <h1 className="sm:text-2xl font-bold text-slate-800 text-[20px]">
-              {getCurrentPageTitle()}
-            </h1>
-            <p className="text-sm text-slate-500 hidden sm:block">
-              {t('app.manufacturing_system')}
-            </p>
-          </div>
+    <header className="sticky top-0 z-50 w-full border-b glass backdrop-blur-xl supports-[backdrop-filter]:bg-background/60 animate-slide-in">
+      <div className="container flex h-16 items-center">
+        {/* Mobile menu button */}
+        {isMobile && (
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={toggleMobileSidebar}
+            className="mr-2 md:hidden"
+          >
+            <Menu className="h-5 w-5" />
+          </Button>
+        )}
+        
+        <div className="mr-4 hidden md:flex">
+          <Link to="/" className="mr-6 flex items-center space-x-2 group">
+            <div className="p-2 rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors duration-300">
+              <Building2 className="h-6 w-6 text-primary group-hover:scale-110 transition-transform duration-300" />
+            </div>
+            <span className="hidden font-bold sm:inline-block text-lg bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+              {t("app.title")}
+            </span>
+          </Link>
         </div>
-        <div className={`flex items-center ${isRTL ? 'space-x-reverse' : ''} space-x-2 sm:space-x-4`}>
+        
+        {/* Mobile logo */}
+        {isMobile && (
+          <Link to="/" className="mr-auto flex items-center space-x-2 group">
+            <div className="p-2 rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors duration-300">
+              <Building2 className="h-5 w-5 text-primary group-hover:scale-110 transition-transform duration-300" />
+            </div>
+            <span className="font-bold text-sm bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+              {t("app.title")}
+            </span>
+          </Link>
+        )}
+        
+        <div
+          className={`flex items-center ${isRTL ? "space-x-reverse" : ""} space-x-2 sm:space-x-4`}
+        >
           {/* Animated Language Toggle */}
           <AnimatedLanguageToggle variant="dropdown" showNames={!isMobile} />
-          
+
           {/* Notification Bell - available on all screen sizes for authenticated users */}
           {user && <NotificationBell />}
-          
+
           {/* Only show help button on larger screens */}
           {!isMobile && (
-            <Button variant="outline" size="icon" className="text-slate-600 border-slate-200 shadow-sm hover:bg-slate-50">
+            <Button
+              variant="outline"
+              size="icon"
+              className="text-slate-600 border-slate-200 shadow-sm hover:bg-slate-50"
+            >
               <HelpCircle className="h-5 w-5" />
             </Button>
           )}
-          
+
           {/* Use new AuthenticationButton component for Replit Auth */}
           <AuthenticationButton />
         </div>

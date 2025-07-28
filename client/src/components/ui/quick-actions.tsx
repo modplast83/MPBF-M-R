@@ -19,13 +19,22 @@ interface QuickActionsProps {
   columns?: number;
 }
 
-export function QuickActions({ title, actions, columns = 2 }: QuickActionsProps) {
+export function QuickActions({
+  title,
+  actions,
+  columns = 2,
+}: QuickActionsProps) {
   const { t } = useTranslation();
   const isMobile = useIsMobile();
 
   if (!isMobile) return null;
 
-  const gridCols = columns === 3 ? "grid-cols-3" : columns === 4 ? "grid-cols-4" : "grid-cols-2";
+  const gridCols =
+    columns === 3
+      ? "grid-cols-3"
+      : columns === 4
+        ? "grid-cols-4"
+        : "grid-cols-2";
 
   return (
     <Card className="p-4 mb-4">
@@ -38,7 +47,15 @@ export function QuickActions({ title, actions, columns = 2 }: QuickActionsProps)
           return (
             <Button
               key={action.id}
-              variant={action.variant === "default" ? "default" : action.variant === "destructive" ? "destructive" : action.variant === "secondary" ? "secondary" : "outline"}
+              variant={
+                action.variant === "default"
+                  ? "default"
+                  : action.variant === "destructive"
+                    ? "destructive"
+                    : action.variant === "secondary"
+                      ? "secondary"
+                      : "outline"
+              }
               size="sm"
               onClick={action.onClick}
               className={`h-16 flex-col space-y-1 text-xs ${action.className || ""}`}

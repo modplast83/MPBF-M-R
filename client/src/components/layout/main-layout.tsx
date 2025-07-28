@@ -1,16 +1,23 @@
 import { useState, useEffect } from "react";
 import Sidebar from "@/components/layout/sidebar";
 import Header from "@/components/layout/header";
+import { FloatingAIAssistant } from "@/components/ai/floating-ai-assistant";
 import { useSidebar } from "@/hooks/use-sidebar";
 import { useAuth } from "@/hooks/use-auth-v2";
 import { useLanguage } from "@/hooks/use-language";
 import { useLocation } from "wouter";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { 
+  SidebarProvider, 
+  SidebarInset,
+  SidebarTrigger,
+  useSidebar as useSidebarContext
+} from "@/components/ui/sidebar";
+import {
   Sheet,
   SheetContent,
   SheetTrigger,
-  SheetClose 
+  SheetClose,
 } from "@/components/ui/sheet";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
@@ -26,12 +33,12 @@ export default function MainLayout({ children }: MainLayoutProps) {
   const { isRTL } = useLanguage();
   const [location] = useLocation();
   const isMobile = useIsMobile();
-  
+
   const isAuthPage = location === "/auth";
 
   // We're removing the automatic sidebar closing on navigation
   // This will allow the sidebar to stay open when navigating between pages
-  
+
   // Separate return for auth page to avoid conditional rendering of components with hooks
   if (isAuthPage) {
     return <div className="h-screen overflow-hidden">{children}</div>;
@@ -43,14 +50,14 @@ export default function MainLayout({ children }: MainLayoutProps) {
   };
 
   return (
-    <div className={`flex h-screen overflow-hidden ${isRTL ? 'rtl' : 'ltr'}`}>
+    <div className={`flex h-screen overflow-hidden ${isRTL ? "rtl" : "ltr"} bg-slate-50`}>
       {/* Desktop sidebar - fixed position */}
       {isAuthenticated && !isMobile && <Sidebar isMobile={false} />}
       {/* Mobile sidebar as a sheet for better mobile experience */}
       {isAuthenticated && isMobile && (
         <Sheet open={isOpen} onOpenChange={handleMobileMenuToggle}>
-          <SheetContent 
-            side={isRTL ? "right" : "left"} 
+          <SheetContent
+            side={isRTL ? "right" : "left"}
             className="p-0 m-0 border-0 shadow-2xl w-[85%] max-w-[320px] h-full min-h-[100dvh] bg-transparent overflow-hidden"
           >
             <VisuallyHidden>
@@ -60,22 +67,40 @@ export default function MainLayout({ children }: MainLayoutProps) {
           </SheetContent>
         </Sheet>
       )}
-      <div 
+      <div
         className={`flex flex-col flex-1 transition-all duration-300 ease-in-out ${
-          !isMobile && isAuthenticated && expanded 
-            ? isRTL ? "mr-[280px]" : "ml-[280px]" 
-            : !isMobile && isAuthenticated 
-              ? isRTL ? "mr-[80px]" : "ml-[80px]" 
+          !isMobile && isAuthenticated && expanded
+            ? isRTL
+              ? "mr-[280px]"
+              : "ml-[280px]"
+            : !isMobile && isAuthenticated
+              ? isRTL
+                ? "mr-[80px]"
+                : "ml-[80px]"
               : "mx-0"
         }`}
       >
-        {isAuthenticated && <Header mobileMenuOpen={isOpen} setMobileMenuOpen={handleMobileMenuToggle} />}
-        <main className="flex-1 overflow-auto bg-gradient-to-br from-slate-50 via-gray-50 to-blue-50 p-2 sm:p-4 lg:p-6 pl-[3px] pr-[3px]">
+        {isAuthenticated && (
+          <Header
+            mobileMenuOpen={isOpen}
+            setMobileMenuOpen={handleMobileMenuToggle}
+          />
+        )}
+        <main className={`flex-1 overflow-auto bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/40 ${
+          isMobile ? "p-3 sm:p-4" : "p-4 sm:p-6 lg:p-8"
+        } transition-all duration-300 ease-in-out`}>
           <div className="max-w-full mx-auto h-full">
-            {children}
+            <div className="space-y-6">
+              {children}
+            </div>
           </div>
         </main>
       </div>
+      
+      {/* Floating AI Assistant - only show when authenticated and not on auth or AI assistant pages */}
+      {isAuthenticated && !isAuthPage && !location.startsWith("/ai-assistant") && (
+        <FloatingAIAssistant />
+      )}
     </div>
   );
 }

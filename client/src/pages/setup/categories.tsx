@@ -4,8 +4,23 @@ import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CategoryForm } from "@/components/setup/category-form";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { API_ENDPOINTS } from "@/lib/constants";
 import { apiRequest } from "@/lib/queryClient";
 import { toast } from "@/hooks/use-toast";
@@ -19,7 +34,9 @@ export default function Categories() {
   const isMobile = useIsMobile();
   const [formOpen, setFormOpen] = useState(false);
   const [editCategory, setEditCategory] = useState<Category | null>(null);
-  const [deletingCategory, setDeletingCategory] = useState<Category | null>(null);
+  const [deletingCategory, setDeletingCategory] = useState<Category | null>(
+    null,
+  );
 
   // Fetch categories
   const { data: categories, isLoading } = useQuery<Category[]>({
@@ -70,25 +87,35 @@ export default function Categories() {
 
   const columns = [
     {
-      header: "ID",
+      header: t("common.id"),
       accessorKey: "id",
     },
     {
-      header: "Name",
+      header: t("common.name"),
       accessorKey: "name",
     },
     {
-      header: "Code",
+      header: t("common.code"),
       accessorKey: "code",
     },
     {
-      header: "Actions",
+      header: t("common.actions"),
       cell: (row: { id: string } & Category) => (
         <div className="flex space-x-2">
-          <Button variant="ghost" size="icon" onClick={() => handleEdit(row)} className="text-primary-500 hover:text-primary-700">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => handleEdit(row)}
+            className="text-primary-500 hover:text-primary-700"
+          >
             <span className="material-icons text-sm">edit</span>
           </Button>
-          <Button variant="ghost" size="icon" onClick={() => handleDelete(row)} className="text-red-500 hover:text-red-700">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => handleDelete(row)}
+            className="text-red-500 hover:text-red-700"
+          >
             <span className="material-icons text-sm">delete</span>
           </Button>
         </div>
@@ -99,46 +126,54 @@ export default function Categories() {
   const tableActions = (
     <Button onClick={() => setFormOpen(true)}>
       <span className="material-icons text-sm mr-1">add</span>
-      {isMobile ? "" : t('setup.categories.add')}
+      {isMobile ? "" : t("setup.categories.add")}
     </Button>
   );
-  
+
   // Mobile card view for categories
   const renderMobileCards = () => {
     if (!categories || categories.length === 0) {
       return (
         <div className="text-center py-8 px-4 bg-gray-50 rounded-md">
-          <span className="material-icons text-gray-300 text-3xl mb-2">category</span>
-          <p className="text-gray-500">{t('setup.categories.no_categories')}</p>
+          <span className="material-icons text-gray-300 text-3xl mb-2">
+            category
+          </span>
+          <p className="text-gray-500">{t("setup.categories.no_categories")}</p>
         </div>
       );
     }
-    
+
     return (
       <div className="space-y-4">
         {categories.map((category) => (
-          <Card 
-            key={category.id} 
+          <Card
+            key={category.id}
             className="overflow-hidden hover:shadow-md transition-all"
           >
             <CardHeader className="p-3 pb-2 flex flex-row justify-between items-start bg-gray-50">
               <div>
                 <CardTitle className="text-sm font-semibold flex items-center gap-1.5">
-                  <span className="material-icons text-xs text-primary-500">category</span>
+                  <span className="material-icons text-xs text-primary-500">
+                    category
+                  </span>
                   {category.name}
                 </CardTitle>
-                <p className="text-xs text-gray-500 mt-1">{t('setup.categories.id')}: {category.id}</p>
+                <p className="text-xs text-gray-500 mt-1">
+                  {t("setup.categories.id")}: {category.id}
+                </p>
               </div>
             </CardHeader>
             <CardContent className="p-3 pt-2">
               <div className="mb-2">
-                <p className="text-xs text-gray-500">{t('setup.categories.code')}</p>
+                <p className="text-xs text-gray-500">
+                  {t("setup.categories.code")}
+                </p>
                 <p className="text-sm font-medium">{category.code}</p>
               </div>
-              
+
               <div className="mt-3 pt-2 flex justify-end items-center space-x-2 border-t border-gray-100">
-                <Button 
-                  variant="ghost" 
+                <Button
+                  variant="ghost"
                   size="sm"
                   onClick={(e) => {
                     e.stopPropagation();
@@ -148,7 +183,7 @@ export default function Categories() {
                 >
                   <span className="material-icons text-sm">edit</span>
                 </Button>
-                <Button 
+                <Button
                   variant="ghost"
                   size="sm"
                   onClick={(e) => {
@@ -166,7 +201,7 @@ export default function Categories() {
       </div>
     );
   };
-  
+
   // Mobile loading state
   const renderMobileLoadingState = () => {
     return (
@@ -181,7 +216,9 @@ export default function Categories() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-secondary-900">{t('setup.categories.title')}</h1>
+        <h1 className="text-2xl font-bold text-secondary-900">
+          {t("setup.categories.title")}
+        </h1>
         {isMobile && (
           <Button onClick={() => setFormOpen(true)}>
             <span className="material-icons text-sm">add</span>
@@ -192,27 +229,35 @@ export default function Categories() {
       <Card>
         <CardHeader>
           <CardTitle className="flex justify-between items-center">
-            <span>{t('setup.categories.title')}</span>
+            <span>{t("setup.categories.title")}</span>
             {!isMobile && (
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => queryClient.invalidateQueries({ queryKey: [API_ENDPOINTS.CATEGORIES] })}
+                onClick={() =>
+                  queryClient.invalidateQueries({
+                    queryKey: [API_ENDPOINTS.CATEGORIES],
+                  })
+                }
                 className="ml-auto"
               >
                 <span className="material-icons text-sm mr-1">refresh</span>
-                {t('common.refresh')}
+                {t("common.refresh")}
               </Button>
             )}
           </CardTitle>
         </CardHeader>
         <CardContent>
           {isLoading ? (
-            isMobile ? renderMobileLoadingState() : <div className="h-32 bg-gray-100 rounded animate-pulse"></div>
+            isMobile ? (
+              renderMobileLoadingState()
+            ) : (
+              <div className="h-32 bg-gray-100 rounded animate-pulse"></div>
+            )
           ) : isMobile ? (
             renderMobileCards()
           ) : (
-            <DataTable 
+            <DataTable
               data={categories || []}
               columns={columns as any}
               actions={tableActions}
@@ -223,18 +268,22 @@ export default function Categories() {
 
       {/* Add/Edit Category Dialog */}
       <Dialog open={formOpen} onOpenChange={setFormOpen}>
-        <DialogContent className={isMobile ? "max-w-[95vw] p-4 sm:p-6" : "sm:max-w-[550px]"}>
+        <DialogContent
+          className={isMobile ? "max-w-[95vw] p-4 sm:p-6" : "sm:max-w-[550px]"}
+        >
           <DialogHeader>
             <DialogTitle>
-              {editCategory ? t('setup.categories.edit') : t('setup.categories.add')}
+              {editCategory
+                ? t("setup.categories.edit")
+                : t("setup.categories.add")}
             </DialogTitle>
             <DialogDescription>
-              {editCategory 
-                ? t('setup.categories.edit_description') 
-                : t('setup.categories.add_description')}
+              {editCategory
+                ? t("setup.categories.edit_description")
+                : t("setup.categories.add_description")}
             </DialogDescription>
           </DialogHeader>
-          <CategoryForm 
+          <CategoryForm
             category={editCategory || undefined}
             onSuccess={handleFormClose}
           />
@@ -242,23 +291,32 @@ export default function Categories() {
       </Dialog>
 
       {/* Delete Confirmation Dialog */}
-      <AlertDialog open={!!deletingCategory} onOpenChange={(open) => !open && setDeletingCategory(null)}>
-        <AlertDialogContent className={isMobile ? "max-w-[95vw] p-4 sm:p-6" : ""}>
+      <AlertDialog
+        open={!!deletingCategory}
+        onOpenChange={(open) => !open && setDeletingCategory(null)}
+      >
+        <AlertDialogContent
+          className={isMobile ? "max-w-[95vw] p-4 sm:p-6" : ""}
+        >
           <AlertDialogHeader>
-            <AlertDialogTitle>{t('common.delete_confirmation')}</AlertDialogTitle>
+            <AlertDialogTitle>
+              {t("common.delete_confirmation")}
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              {t('common.delete_confirmation_message', { item: deletingCategory?.name || '' })}
+              {t("common.delete_confirmation_message", {
+                item: deletingCategory?.name || "",
+              })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className={isMobile ? "flex-col space-y-2" : ""}>
             <AlertDialogCancel className={isMobile ? "w-full mt-0" : ""}>
-              {t('common.cancel')}
+              {t("common.cancel")}
             </AlertDialogCancel>
-            <AlertDialogAction 
+            <AlertDialogAction
               onClick={confirmDelete}
               className={`bg-red-500 hover:bg-red-600 ${isMobile ? "w-full" : ""}`}
             >
-              {t('common.delete')}
+              {t("common.delete")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

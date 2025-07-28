@@ -2,13 +2,46 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardFooter,
+} from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Separator } from "@/components/ui/separator";
 import { API_ENDPOINTS } from "@/lib/constants";
 import { apiRequest } from "@/lib/queryClient";
@@ -24,20 +57,26 @@ export default function RawMaterials() {
   const [formOpen, setFormOpen] = useState(false);
   const [inputFormOpen, setInputFormOpen] = useState(false);
   const [editMaterial, setEditMaterial] = useState<RawMaterial | null>(null);
-  const [deletingMaterial, setDeletingMaterial] = useState<RawMaterial | null>(null);
+  const [deletingMaterial, setDeletingMaterial] = useState<RawMaterial | null>(
+    null,
+  );
   const isMobile = useIsMobile();
   const { t } = useTranslation();
   const { isRTL } = useLanguage();
-  
+
   // Form state
   const [name, setName] = useState("");
   const [type, setType] = useState("");
   const [quantity, setQuantity] = useState<number>(0);
   const [unit, setUnit] = useState("Kg");
-  
+
   // Input material form state
-  const [inputItems, setInputItems] = useState<{id: number, rawMaterialId: number, quantity: number}[]>([]);
-  const [selectedRawMaterialId, setSelectedRawMaterialId] = useState<number | null>(null);
+  const [inputItems, setInputItems] = useState<
+    { id: number; rawMaterialId: number; quantity: number }[]
+  >([]);
+  const [selectedRawMaterialId, setSelectedRawMaterialId] = useState<
+    number | null
+  >(null);
   const [inputQuantity, setInputQuantity] = useState<number>(0);
 
   // Fetch raw materials
@@ -47,25 +86,42 @@ export default function RawMaterials() {
 
   // Create/Update mutation
   const saveMutation = useMutation({
-    mutationFn: async (data: { name: string; type: string; quantity: number; unit: string }) => {
+    mutationFn: async (data: {
+      name: string;
+      type: string;
+      quantity: number;
+      unit: string;
+    }) => {
       if (editMaterial) {
-        await apiRequest("PUT", `${API_ENDPOINTS.RAW_MATERIALS}/${editMaterial.id}`, data);
+        await apiRequest(
+          "PUT",
+          `${API_ENDPOINTS.RAW_MATERIALS}/${editMaterial.id}`,
+          data,
+        );
       } else {
         await apiRequest("POST", API_ENDPOINTS.RAW_MATERIALS, data);
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [API_ENDPOINTS.RAW_MATERIALS] });
+      queryClient.invalidateQueries({
+        queryKey: [API_ENDPOINTS.RAW_MATERIALS],
+      });
       toast({
-        title: editMaterial ? t("warehouse.material_updated") : t("warehouse.material_created"),
-        description: editMaterial ? t("warehouse.material_updated_success") : t("warehouse.material_created_success"),
+        title: editMaterial
+          ? t("warehouse.material_updated")
+          : t("warehouse.material_created"),
+        description: editMaterial
+          ? t("warehouse.material_updated_success")
+          : t("warehouse.material_created_success"),
       });
       handleCloseForm();
     },
     onError: (error) => {
       toast({
         title: t("common.error"),
-        description: editMaterial ? t("warehouse.update_material_failed", { error }) : t("warehouse.create_material_failed", { error }),
+        description: editMaterial
+          ? t("warehouse.update_material_failed", { error })
+          : t("warehouse.create_material_failed", { error }),
         variant: "destructive",
       });
     },
@@ -77,7 +133,9 @@ export default function RawMaterials() {
       await apiRequest("DELETE", `${API_ENDPOINTS.RAW_MATERIALS}/${id}`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [API_ENDPOINTS.RAW_MATERIALS] });
+      queryClient.invalidateQueries({
+        queryKey: [API_ENDPOINTS.RAW_MATERIALS],
+      });
       toast({
         title: t("warehouse.material_deleted"),
         description: t("warehouse.material_deleted_success"),
@@ -92,17 +150,21 @@ export default function RawMaterials() {
       });
     },
   });
-  
+
   // Input Material mutation
   const inputMaterialMutation = useMutation({
-    mutationFn: async (data: { items: { rawMaterialId: number, quantity: number }[] }) => {
+    mutationFn: async (data: {
+      items: { rawMaterialId: number; quantity: number }[];
+    }) => {
       return await apiRequest("POST", API_ENDPOINTS.MATERIAL_INPUTS, {
         date: new Date(),
-        items: data.items
+        items: data.items,
       });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [API_ENDPOINTS.RAW_MATERIALS] });
+      queryClient.invalidateQueries({
+        queryKey: [API_ENDPOINTS.RAW_MATERIALS],
+      });
       toast({
         title: t("warehouse.materials_updated"),
         description: t("warehouse.materials_updated_success"),
@@ -117,7 +179,7 @@ export default function RawMaterials() {
       });
     },
   });
-  
+
   // Handle adding an item to the input list
   const handleAddInputItem = () => {
     if (!selectedRawMaterialId || inputQuantity <= 0) {
@@ -128,28 +190,31 @@ export default function RawMaterials() {
       });
       return;
     }
-    
+
     // Add item to the list
-    const newId = inputItems.length > 0 ? Math.max(...inputItems.map(item => item.id)) + 1 : 1;
+    const newId =
+      inputItems.length > 0
+        ? Math.max(...inputItems.map((item) => item.id)) + 1
+        : 1;
     setInputItems([
       ...inputItems,
-      { 
-        id: newId, 
-        rawMaterialId: selectedRawMaterialId, 
-        quantity: inputQuantity 
-      }
+      {
+        id: newId,
+        rawMaterialId: selectedRawMaterialId,
+        quantity: inputQuantity,
+      },
     ]);
-    
+
     // Reset the form
     setSelectedRawMaterialId(null);
     setInputQuantity(0);
   };
-  
+
   // Handle removing an item from the input list
   const handleRemoveInputItem = (id: number) => {
-    setInputItems(inputItems.filter(item => item.id !== id));
+    setInputItems(inputItems.filter((item) => item.id !== id));
   };
-  
+
   // Handle saving the input form
   const handleSaveInput = () => {
     if (inputItems.length === 0) {
@@ -160,15 +225,15 @@ export default function RawMaterials() {
       });
       return;
     }
-    
-    inputMaterialMutation.mutate({ 
-      items: inputItems.map(item => ({ 
-        rawMaterialId: item.rawMaterialId, 
-        quantity: item.quantity 
-      })) 
+
+    inputMaterialMutation.mutate({
+      items: inputItems.map((item) => ({
+        rawMaterialId: item.rawMaterialId,
+        quantity: item.quantity,
+      })),
     });
   };
-  
+
   // Handle closing the input form
   const handleCloseInputForm = () => {
     setInputFormOpen(false);
@@ -244,10 +309,20 @@ export default function RawMaterials() {
       header: t("warehouse.actions"),
       cell: (row: RawMaterial) => (
         <div className="flex space-x-2">
-          <Button variant="ghost" size="icon" onClick={() => handleEdit(row)} className="text-primary-500 hover:text-primary-700">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => handleEdit(row)}
+            className="text-primary-500 hover:text-primary-700"
+          >
             <span className="material-icons text-sm">edit</span>
           </Button>
-          <Button variant="ghost" size="icon" onClick={() => handleDelete(row)} className="text-red-500 hover:text-red-700">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => handleDelete(row)}
+            className="text-red-500 hover:text-red-700"
+          >
             <span className="material-icons text-sm">delete</span>
           </Button>
         </div>
@@ -270,34 +345,47 @@ export default function RawMaterials() {
             {t("warehouse.add_material")}
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => setInputFormOpen(true)}>
-            <span className="material-icons text-sm mr-2">add_shopping_cart</span>
+            <span className="material-icons text-sm mr-2">
+              add_shopping_cart
+            </span>
             {t("warehouse.input_material")}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </div>
   );
-  
+
   // Mobile card view for raw materials
   const renderMobileCards = () => {
     if (!materials || materials.length === 0) {
       return (
         <div className="text-center py-8 px-4 bg-gray-50 rounded-md">
-          <span className="material-icons text-gray-300 text-3xl mb-2">inventory</span>
-          <p className="text-gray-500">{t("warehouse.no_raw_materials_found")}</p>
+          <span className="material-icons text-gray-300 text-3xl mb-2">
+            inventory
+          </span>
+          <p className="text-gray-500">
+            {t("warehouse.no_raw_materials_found")}
+          </p>
         </div>
       );
     }
-    
+
     return (
       <div className="space-y-4">
         {materials.map((material) => (
-          <Card key={material.id} className="overflow-hidden hover:shadow-md transition-all">
+          <Card
+            key={material.id}
+            className="overflow-hidden hover:shadow-md transition-all"
+          >
             <CardHeader className="p-3 pb-2 flex flex-row justify-between items-start bg-gray-50">
               <div>
                 <div className="flex items-center gap-1.5">
-                  <span className="material-icons text-xs text-primary-500">inventory</span>
-                  <CardTitle className="text-sm font-semibold">{material.name}</CardTitle>
+                  <span className="material-icons text-xs text-primary-500">
+                    inventory
+                  </span>
+                  <CardTitle className="text-sm font-semibold">
+                    {material.name}
+                  </CardTitle>
                 </div>
                 <p className="text-xs text-gray-500 mt-1">ID: {material.id}</p>
               </div>
@@ -309,33 +397,41 @@ export default function RawMaterials() {
                   <p className="text-sm font-medium">{material.type}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-gray-500">{t("warehouse.quantity")}</p>
-                  <p className="text-sm font-medium">{material.quantity} {material.unit}</p>
+                  <p className="text-xs text-gray-500">
+                    {t("warehouse.quantity")}
+                  </p>
+                  <p className="text-sm font-medium">
+                    {material.quantity} {material.unit}
+                  </p>
                 </div>
               </div>
-              
+
               {material.lastUpdated && (
                 <div className="mt-2 pt-2 border-t border-gray-100">
                   <div className="flex items-center justify-between">
-                    <p className="text-xs text-gray-500">{t("warehouse.last_updated")}</p>
-                    <p className="text-xs text-gray-500">{formatDateString(material.lastUpdated)}</p>
+                    <p className="text-xs text-gray-500">
+                      {t("warehouse.last_updated")}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      {formatDateString(material.lastUpdated)}
+                    </p>
                   </div>
                 </div>
               )}
             </CardContent>
             <CardFooter className="p-2 pt-0 flex justify-end items-center space-x-2">
-              <Button 
-                variant="ghost" 
+              <Button
+                variant="ghost"
                 size="sm"
-                onClick={() => handleEdit(material)} 
+                onClick={() => handleEdit(material)}
                 className="h-8 w-8 rounded-full text-primary-500 hover:text-primary-700 hover:bg-primary-50"
               >
                 <span className="material-icons text-sm">edit</span>
               </Button>
-              <Button 
+              <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => handleDelete(material)} 
+                onClick={() => handleDelete(material)}
                 className="h-8 w-8 rounded-full text-red-500 hover:text-red-700 hover:bg-red-50"
               >
                 <span className="material-icons text-sm">delete</span>
@@ -346,7 +442,7 @@ export default function RawMaterials() {
       </div>
     );
   };
-  
+
   // Mobile loading state
   const renderMobileLoadingState = () => {
     return (
@@ -361,25 +457,33 @@ export default function RawMaterials() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-secondary-900">{t('warehouse.raw_materials')}</h1>
+        <h1 className="text-2xl font-bold text-secondary-900">
+          {t("warehouse.raw_materials")}
+        </h1>
         {isMobile && (
           <div className="flex space-x-2">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button 
-                  className="rounded-full h-10 w-10 p-0"
-                >
+                <Button className="rounded-full h-10 w-10 p-0">
                   <span className="material-icons text-base">add</span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem onClick={() => setFormOpen(true)}>
-                  <span className={`material-icons text-sm ${isRTL ? 'ml-2' : 'mr-2'}`}>add</span>
-                  {t('warehouse.add_material')}
+                  <span
+                    className={`material-icons text-sm ${isRTL ? "ml-2" : "mr-2"}`}
+                  >
+                    add
+                  </span>
+                  {t("warehouse.add_material")}
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setInputFormOpen(true)}>
-                  <span className={`material-icons text-sm ${isRTL ? 'ml-2' : 'mr-2'}`}>add_shopping_cart</span>
-                  {t('warehouse.input_material')}
+                  <span
+                    className={`material-icons text-sm ${isRTL ? "ml-2" : "mr-2"}`}
+                  >
+                    add_shopping_cart
+                  </span>
+                  {t("warehouse.input_material")}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -390,30 +494,35 @@ export default function RawMaterials() {
       <Card>
         <CardHeader>
           <CardTitle className="flex justify-between items-center">
-            <span>{t('warehouse.manage_raw_materials')}</span>
+            <span>{t("warehouse.manage_raw_materials")}</span>
             {!isMobile && tableActions}
           </CardTitle>
         </CardHeader>
         <CardContent>
           {isLoading ? (
-            isMobile ? renderMobileLoadingState() : <div className="h-32 bg-gray-100 rounded animate-pulse"></div>
+            isMobile ? (
+              renderMobileLoadingState()
+            ) : (
+              <div className="h-32 bg-gray-100 rounded animate-pulse"></div>
+            )
           ) : isMobile ? (
             renderMobileCards()
           ) : (
-            <DataTable 
-              data={materials || []}
-              columns={columns as any}
-            />
+            <DataTable data={materials || []} columns={columns as any} />
           )}
         </CardContent>
       </Card>
 
       {/* Add/Edit Material Dialog */}
       <Dialog open={formOpen} onOpenChange={setFormOpen}>
-        <DialogContent className={`${isMobile ? "max-w-[95vw] p-4 sm:p-6" : ""} ${isRTL ? "rtl" : ""}`}>
+        <DialogContent
+          className={`${isMobile ? "max-w-[95vw] p-4 sm:p-6" : ""} ${isRTL ? "rtl" : ""}`}
+        >
           <DialogHeader>
             <DialogTitle>
-              {editMaterial ? t('warehouse.edit_material') : t('warehouse.add_new_material')}
+              {editMaterial
+                ? t("warehouse.edit_material")
+                : t("warehouse.add_new_material")}
             </DialogTitle>
           </DialogHeader>
           <div className="grid gap-4 py-4">
@@ -421,7 +530,7 @@ export default function RawMaterials() {
               // Mobile form layout (stacked)
               <>
                 <div className="space-y-2">
-                  <Label htmlFor="name">{t('warehouse.name')}</Label>
+                  <Label htmlFor="name">{t("warehouse.name")}</Label>
                   <Input
                     id="name"
                     value={name}
@@ -429,7 +538,7 @@ export default function RawMaterials() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="type">{t('warehouse.type')}</Label>
+                  <Label htmlFor="type">{t("warehouse.type")}</Label>
                   <Input
                     id="type"
                     value={type}
@@ -437,7 +546,7 @@ export default function RawMaterials() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="quantity">{t('warehouse.quantity')}</Label>
+                  <Label htmlFor="quantity">{t("warehouse.quantity")}</Label>
                   <Input
                     id="quantity"
                     type="number"
@@ -446,18 +555,30 @@ export default function RawMaterials() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="unit">{t('warehouse.unit')}</Label>
+                  <Label htmlFor="unit">{t("warehouse.unit")}</Label>
                   <Select value={unit} onValueChange={setUnit}>
                     <SelectTrigger>
-                      <SelectValue placeholder={t('warehouse.select_unit')} />
+                      <SelectValue placeholder={t("warehouse.select_unit")} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="Kg">{t('warehouse.units.kilogram')}</SelectItem>
-                      <SelectItem value="g">{t('warehouse.units.gram')}</SelectItem>
-                      <SelectItem value="T">{t('warehouse.units.ton')}</SelectItem>
-                      <SelectItem value="L">{t('warehouse.units.liter')}</SelectItem>
-                      <SelectItem value="ml">{t('warehouse.units.milliliter')}</SelectItem>
-                      <SelectItem value="pcs">{t('warehouse.units.pieces')}</SelectItem>
+                      <SelectItem value="Kg">
+                        {t("warehouse.units.kilogram")}
+                      </SelectItem>
+                      <SelectItem value="g">
+                        {t("warehouse.units.gram")}
+                      </SelectItem>
+                      <SelectItem value="T">
+                        {t("warehouse.units.ton")}
+                      </SelectItem>
+                      <SelectItem value="L">
+                        {t("warehouse.units.liter")}
+                      </SelectItem>
+                      <SelectItem value="ml">
+                        {t("warehouse.units.milliliter")}
+                      </SelectItem>
+                      <SelectItem value="pcs">
+                        {t("warehouse.units.pieces")}
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -466,8 +587,11 @@ export default function RawMaterials() {
               // Desktop form layout (side by side labels and inputs)
               <>
                 <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="desktop-name" className={`${isRTL ? "text-left" : "text-right"}`}>
-                    {t('warehouse.name')}
+                  <Label
+                    htmlFor="desktop-name"
+                    className={`${isRTL ? "text-left" : "text-right"}`}
+                  >
+                    {t("warehouse.name")}
                   </Label>
                   <Input
                     id="desktop-name"
@@ -477,8 +601,11 @@ export default function RawMaterials() {
                   />
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="desktop-type" className={`${isRTL ? "text-left" : "text-right"}`}>
-                    {t('warehouse.type')}
+                  <Label
+                    htmlFor="desktop-type"
+                    className={`${isRTL ? "text-left" : "text-right"}`}
+                  >
+                    {t("warehouse.type")}
                   </Label>
                   <Input
                     id="desktop-type"
@@ -488,8 +615,11 @@ export default function RawMaterials() {
                   />
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="desktop-quantity" className={`${isRTL ? "text-left" : "text-right"}`}>
-                    {t('warehouse.quantity')}
+                  <Label
+                    htmlFor="desktop-quantity"
+                    className={`${isRTL ? "text-left" : "text-right"}`}
+                  >
+                    {t("warehouse.quantity")}
                   </Label>
                   <Input
                     id="desktop-quantity"
@@ -500,105 +630,147 @@ export default function RawMaterials() {
                   />
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="desktop-unit" className={`${isRTL ? "text-left" : "text-right"}`}>
-                    {t('warehouse.unit')}
+                  <Label
+                    htmlFor="desktop-unit"
+                    className={`${isRTL ? "text-left" : "text-right"}`}
+                  >
+                    {t("warehouse.unit")}
                   </Label>
                   <Select value={unit} onValueChange={setUnit}>
                     <SelectTrigger className="col-span-3">
-                      <SelectValue placeholder={t('warehouse.select_unit')} />
+                      <SelectValue placeholder={t("warehouse.select_unit")} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="Kg">{t('warehouse.units.kilogram')}</SelectItem>
-                      <SelectItem value="g">{t('warehouse.units.gram')}</SelectItem>
-                      <SelectItem value="T">{t('warehouse.units.ton')}</SelectItem>
-                      <SelectItem value="L">{t('warehouse.units.liter')}</SelectItem>
-                      <SelectItem value="ml">{t('warehouse.units.milliliter')}</SelectItem>
-                      <SelectItem value="pcs">{t('warehouse.units.pieces')}</SelectItem>
+                      <SelectItem value="Kg">
+                        {t("warehouse.units.kilogram")}
+                      </SelectItem>
+                      <SelectItem value="g">
+                        {t("warehouse.units.gram")}
+                      </SelectItem>
+                      <SelectItem value="T">
+                        {t("warehouse.units.ton")}
+                      </SelectItem>
+                      <SelectItem value="L">
+                        {t("warehouse.units.liter")}
+                      </SelectItem>
+                      <SelectItem value="ml">
+                        {t("warehouse.units.milliliter")}
+                      </SelectItem>
+                      <SelectItem value="pcs">
+                        {t("warehouse.units.pieces")}
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
               </>
             )}
           </div>
-          <DialogFooter className={`${isMobile ? "flex flex-col space-y-2" : ""} ${isRTL ? "flex-row-reverse" : ""}`}>
-            <Button 
-              variant="outline" 
+          <DialogFooter
+            className={`${isMobile ? "flex flex-col space-y-2" : ""} ${isRTL ? "flex-row-reverse" : ""}`}
+          >
+            <Button
+              variant="outline"
               onClick={handleCloseForm}
               className={isMobile ? "w-full" : ""}
             >
-              {t('common.cancel')}
+              {t("common.cancel")}
             </Button>
-            <Button 
-              onClick={handleSave} 
+            <Button
+              onClick={handleSave}
               disabled={saveMutation.isPending}
               className={isMobile ? "w-full" : ""}
             >
               {saveMutation.isPending
-                ? editMaterial ? t('common.updating') : t('common.creating')
-                : editMaterial ? t('common.update') : t('common.create')
-              }
+                ? editMaterial
+                  ? t("common.updating")
+                  : t("common.creating")
+                : editMaterial
+                  ? t("common.update")
+                  : t("common.create")}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
       {/* Delete Confirmation Dialog */}
-      <AlertDialog open={!!deletingMaterial} onOpenChange={(open) => !open && setDeletingMaterial(null)}>
-        <AlertDialogContent className={`${isMobile ? "max-w-[95vw] p-4 sm:p-6" : ""} ${isRTL ? "rtl" : ""}`}>
+      <AlertDialog
+        open={!!deletingMaterial}
+        onOpenChange={(open) => !open && setDeletingMaterial(null)}
+      >
+        <AlertDialogContent
+          className={`${isMobile ? "max-w-[95vw] p-4 sm:p-6" : ""} ${isRTL ? "rtl" : ""}`}
+        >
           <AlertDialogHeader>
-            <AlertDialogTitle>{t('common.are_you_sure')}</AlertDialogTitle>
+            <AlertDialogTitle>{t("common.are_you_sure")}</AlertDialogTitle>
             <AlertDialogDescription>
-              {t('common.delete_confirmation', { item: deletingMaterial?.name })}
+              {t("common.delete_confirmation", {
+                item: deletingMaterial?.name,
+              })}
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter className={`${isMobile ? "flex flex-col space-y-2" : ""} ${isRTL ? "flex-row-reverse" : ""}`}>
+          <AlertDialogFooter
+            className={`${isMobile ? "flex flex-col space-y-2" : ""} ${isRTL ? "flex-row-reverse" : ""}`}
+          >
             <AlertDialogCancel className={isMobile ? "w-full mt-0" : ""}>
-              {t('common.cancel')}
+              {t("common.cancel")}
             </AlertDialogCancel>
-            <AlertDialogAction 
+            <AlertDialogAction
               onClick={confirmDelete}
               className={`bg-red-500 hover:bg-red-600 ${isMobile ? "w-full" : ""}`}
             >
-              {t('common.delete')}
+              {t("common.delete")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-      
+
       {/* Input Material Dialog */}
       <Dialog open={inputFormOpen} onOpenChange={setInputFormOpen}>
-        <DialogContent className={`${isMobile ? "max-w-[95vw] p-4 sm:p-6" : ""} ${isRTL ? "rtl" : ""}`}>
+        <DialogContent
+          className={`${isMobile ? "max-w-[95vw] p-4 sm:p-6" : ""} ${isRTL ? "rtl" : ""}`}
+        >
           <DialogHeader>
-            <DialogTitle>{t('warehouse.input_material')}</DialogTitle>
+            <DialogTitle>{t("warehouse.input_material")}</DialogTitle>
             <DialogDescription>
-              {t('warehouse.add_quantities_desc')}
+              {t("warehouse.add_quantities_desc")}
             </DialogDescription>
           </DialogHeader>
-          
+
           <div className="space-y-4 py-4">
             {/* Add material form */}
-            <div className={isMobile ? "space-y-4" : "grid grid-cols-10 gap-4 items-end"}>
+            <div
+              className={
+                isMobile ? "space-y-4" : "grid grid-cols-10 gap-4 items-end"
+              }
+            >
               <div className={isMobile ? "space-y-2" : "col-span-6"}>
-                <Label htmlFor="material-select">{t('warehouse.name')}</Label>
-                <Select 
-                  value={selectedRawMaterialId?.toString() || ""} 
-                  onValueChange={(value) => setSelectedRawMaterialId(parseInt(value))}
+                <Label htmlFor="material-select">{t("warehouse.name")}</Label>
+                <Select
+                  value={selectedRawMaterialId?.toString() || ""}
+                  onValueChange={(value) =>
+                    setSelectedRawMaterialId(parseInt(value))
+                  }
                 >
                   <SelectTrigger id="material-select">
-                    <SelectValue placeholder={t('warehouse.select_material')} />
+                    <SelectValue placeholder={t("warehouse.select_material")} />
                   </SelectTrigger>
                   <SelectContent>
                     {materials?.map((material) => (
-                      <SelectItem key={material.id} value={material.id.toString()}>
+                      <SelectItem
+                        key={material.id}
+                        value={material.id.toString()}
+                      >
                         {material.name} ({material.type})
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
-              
+
               <div className={isMobile ? "space-y-2" : "col-span-3"}>
-                <Label htmlFor="input-quantity">{t('warehouse.quantity')}</Label>
+                <Label htmlFor="input-quantity">
+                  {t("warehouse.quantity")}
+                </Label>
                 <Input
                   id="input-quantity"
                   type="number"
@@ -606,24 +778,32 @@ export default function RawMaterials() {
                   onChange={(e) => setInputQuantity(parseFloat(e.target.value))}
                 />
               </div>
-              
-              <Button 
-                onClick={handleAddInputItem} 
-                className={isMobile ? "w-full" : "col-span-1"} 
+
+              <Button
+                onClick={handleAddInputItem}
+                className={isMobile ? "w-full" : "col-span-1"}
                 size={isMobile ? "default" : "icon"}
                 type="button"
               >
-                {isMobile ? t('warehouse.add_to_list') : <span className="material-icons">add</span>}
+                {isMobile ? (
+                  t("warehouse.add_to_list")
+                ) : (
+                  <span className="material-icons">add</span>
+                )}
               </Button>
             </div>
-            
+
             {/* Input items list */}
             {inputItems.length > 0 && (
               <div className="space-y-3 pt-4 border-t">
-                <h3 className="font-medium text-sm">{t('warehouse.added_materials')}:</h3>
+                <h3 className="font-medium text-sm">
+                  {t("warehouse.added_materials")}:
+                </h3>
                 <div className="space-y-2">
                   {inputItems.map((item) => {
-                    const material = materials?.find(m => m.id === item.rawMaterialId);
+                    const material = materials?.find(
+                      (m) => m.id === item.rawMaterialId,
+                    );
                     return (
                       <div
                         key={item.id}
@@ -650,21 +830,27 @@ export default function RawMaterials() {
               </div>
             )}
           </div>
-          
-          <DialogFooter className={`${isMobile ? "flex flex-col space-y-2" : ""} ${isRTL ? "flex-row-reverse" : ""}`}>
-            <Button 
-              variant="outline" 
+
+          <DialogFooter
+            className={`${isMobile ? "flex flex-col space-y-2" : ""} ${isRTL ? "flex-row-reverse" : ""}`}
+          >
+            <Button
+              variant="outline"
               onClick={handleCloseInputForm}
               className={isMobile ? "w-full" : ""}
             >
-              {t('common.cancel')}
+              {t("common.cancel")}
             </Button>
-            <Button 
-              onClick={handleSaveInput} 
-              disabled={inputMaterialMutation.isPending || inputItems.length === 0}
+            <Button
+              onClick={handleSaveInput}
+              disabled={
+                inputMaterialMutation.isPending || inputItems.length === 0
+              }
               className={isMobile ? "w-full" : ""}
             >
-              {inputMaterialMutation.isPending ? t('common.saving') : t('common.save')}
+              {inputMaterialMutation.isPending
+                ? t("common.saving")
+                : t("common.save")}
             </Button>
           </DialogFooter>
         </DialogContent>

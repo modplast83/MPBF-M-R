@@ -9,7 +9,8 @@ export async function seedSmsData() {
         name: "Order Created Notification",
         category: "production" as const,
         messageType: "order_notification",
-        template: "Hello {{customer_name}}, your order #{{order_id}} has been created and is now in production. We'll keep you updated on the progress.",
+        template:
+          "Hello {{customer_name}}, your order #{{order_id}} has been created and is now in production. We'll keep you updated on the progress.",
         variables: ["{{customer_name}}", "{{order_id}}"],
         isActive: true,
       },
@@ -18,7 +19,8 @@ export async function seedSmsData() {
         name: "Order Completion Notice",
         category: "production" as const,
         messageType: "order_notification",
-        template: "Great news! Your order #{{order_id}} has been completed. Please contact us to arrange delivery or pickup.",
+        template:
+          "Great news! Your order #{{order_id}} has been completed. Please contact us to arrange delivery or pickup.",
         variables: ["{{order_id}}"],
         isActive: true,
       },
@@ -27,7 +29,8 @@ export async function seedSmsData() {
         name: "Production Bottleneck Alert",
         category: "production" as const,
         messageType: "bottleneck_alert",
-        template: "ALERT: Production bottleneck detected in {{section_name}} at {{machine_name}}. Estimated delay: {{delay_hours}} hours. Immediate attention required.",
+        template:
+          "ALERT: Production bottleneck detected in {{section_name}} at {{machine_name}}. Estimated delay: {{delay_hours}} hours. Immediate attention required.",
         variables: ["{{section_name}}", "{{machine_name}}", "{{delay_hours}}"],
         isActive: true,
       },
@@ -36,7 +39,8 @@ export async function seedSmsData() {
         name: "Quality Issue Alert",
         category: "quality" as const,
         messageType: "quality_alert",
-        template: "Quality Issue: Job Order #{{job_order_id}} has failed quality inspection. Priority: {{priority}}. Action required immediately.",
+        template:
+          "Quality Issue: Job Order #{{job_order_id}} has failed quality inspection. Priority: {{priority}}. Action required immediately.",
         variables: ["{{job_order_id}}", "{{priority}}"],
         isActive: true,
       },
@@ -45,7 +49,8 @@ export async function seedSmsData() {
         name: "Maintenance Required",
         category: "maintenance" as const,
         messageType: "maintenance_alert",
-        template: "Maintenance Alert: {{machine_name}} requires immediate maintenance. Current status: {{status}}. Please schedule maintenance ASAP.",
+        template:
+          "Maintenance Alert: {{machine_name}} requires immediate maintenance. Current status: {{status}}. Please schedule maintenance ASAP.",
         variables: ["{{machine_name}}", "{{status}}"],
         isActive: true,
       },
@@ -54,7 +59,8 @@ export async function seedSmsData() {
         name: "Shift Handover",
         category: "management" as const,
         messageType: "hr_notification",
-        template: "Shift Handover: {{operator_name}}, your shift starts in 30 minutes. Please review the handover notes for {{section_name}}.",
+        template:
+          "Shift Handover: {{operator_name}}, your shift starts in 30 minutes. Please review the handover notes for {{section_name}}.",
         variables: ["{{operator_name}}", "{{section_name}}"],
         isActive: true,
       },
@@ -63,10 +69,16 @@ export async function seedSmsData() {
         name: "Production Target Missed",
         category: "production" as const,
         messageType: "status_update",
-        template: "Production Alert: {{section_name}} has missed target by {{percentage}}%. Current rate: {{actual_rate}}/hr, Target: {{target_rate}}/hr.",
-        variables: ["{{section_name}}", "{{percentage}}", "{{actual_rate}}", "{{target_rate}}"],
+        template:
+          "Production Alert: {{section_name}} has missed target by {{percentage}}%. Current rate: {{actual_rate}}/hr, Target: {{target_rate}}/hr.",
+        variables: [
+          "{{section_name}}",
+          "{{percentage}}",
+          "{{actual_rate}}",
+          "{{target_rate}}",
+        ],
         isActive: true,
-      }
+      },
     ];
 
     // Create notification rules
@@ -120,7 +132,7 @@ export async function seedSmsData() {
         priority: "normal" as const,
         cooldownMinutes: 60,
         workingHoursOnly: true,
-      }
+      },
     ];
 
     // Seed templates
@@ -149,8 +161,8 @@ export async function seedSmsData() {
       try {
         // Check if rule with this name already exists
         const existingRules = await smsStorage.getSmsNotificationRules();
-        const ruleExists = existingRules.some(r => r.name === rule.name);
-        
+        const ruleExists = existingRules.some((r) => r.name === rule.name);
+
         if (!ruleExists) {
           await smsStorage.createSmsNotificationRule(rule);
           console.log(`Created rule: ${rule.name}`);

@@ -3,18 +3,39 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { ProductForm } from "@/components/setup/product-form";
+import DesignPreview from "@/components/setup/design-preview";
 import { API_ENDPOINTS } from "@/lib/constants";
 import { apiRequest } from "@/lib/queryClient";
 import { toast } from "@/hooks/use-toast";
-import { CustomerProduct, Customer, Item, Category } from "@shared/schema";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { CustomerProduct, Customer, Item, Category, MasterBatch } from "@shared/schema";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { Search, Printer } from "lucide-react";
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
+import { Search, Printer, Eye } from "lucide-react";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 import { useTranslation } from "react-i18next";
 
 export default function Products() {
@@ -23,7 +44,9 @@ export default function Products() {
   const [formOpen, setFormOpen] = useState(false);
   const [editProduct, setEditProduct] = useState<CustomerProduct | null>(null);
   const [isDuplicating, setIsDuplicating] = useState(false);
-  const [deletingProduct, setDeletingProduct] = useState<CustomerProduct | null>(null);
+  const [deletingProduct, setDeletingProduct] =
+    useState<CustomerProduct | null>(null);
+  const [viewingDesign, setViewingDesign] = useState<CustomerProduct | null>(null);
   const [selectedCustomerId, setSelectedCustomerId] = useState<string>("");
   const [searchQuery, setSearchQuery] = useState<string>("");
 
@@ -32,9 +55,11 @@ export default function Products() {
     queryKey: [API_ENDPOINTS.CUSTOMER_PRODUCTS],
   });
 
-  const { data: customers, isLoading: customersLoading } = useQuery<Customer[]>({
-    queryKey: [API_ENDPOINTS.CUSTOMERS],
-  });
+  const { data: customers, isLoading: customersLoading } = useQuery<Customer[]>(
+    {
+      queryKey: [API_ENDPOINTS.CUSTOMERS],
+    },
+  );
 
   const { data: items } = useQuery<Item[]>({
     queryKey: [API_ENDPOINTS.ITEMS],
@@ -43,26 +68,39 @@ export default function Products() {
   const { data: categories } = useQuery<Category[]>({
     queryKey: [API_ENDPOINTS.CATEGORIES],
   });
-  
-  // Filter customers by search query
-  const filteredCustomers = customers?.filter(customer => 
-    customer.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    customer.code.toLowerCase().includes(searchQuery.toLowerCase())
+
+  const { data: masterBatches } = useQuery<MasterBatch[]>({
+    queryKey: ["/api/master-batches"],
+  });
+
+  // Filter customers by search query (bilingual: Arabic and English)
+  const filteredCustomers = customers?.filter(
+    (customer) =>
+      customer.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      customer.code.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (customer.nameAr && customer.nameAr.toLowerCase().includes(searchQuery.toLowerCase())),
   );
-  
+
   // Filter products by selected customer and sort by ID
-  const products = selectedCustomerId 
-    ? allProducts?.filter(product => product.customerId === selectedCustomerId)
+  const products = selectedCustomerId
+    ? allProducts
+        ?.filter((product) => product.customerId === selectedCustomerId)
         .sort((a, b) => a.id - b.id)
     : [];
 
   // Delete mutation
   const deleteMutation = useMutation({
     mutationFn: async (id: number) => {
-      await apiRequest("DELETE", `${API_ENDPOINTS.CUSTOMER_PRODUCTS}/${id}`, null);
+      await apiRequest(
+        "DELETE",
+        `${API_ENDPOINTS.CUSTOMER_PRODUCTS}/${id}`,
+        null,
+      );
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [API_ENDPOINTS.CUSTOMER_PRODUCTS] });
+      queryClient.invalidateQueries({
+        queryKey: [API_ENDPOINTS.CUSTOMER_PRODUCTS],
+      });
       toast({
         title: t("setup.products.product_deleted"),
         description: t("setup.products.product_deleted_success"),
@@ -82,7 +120,7 @@ export default function Products() {
     setEditProduct(product);
     setFormOpen(true);
   };
-  
+
   const handleDuplicate = (product: CustomerProduct) => {
     // Set the product data to be duplicated
     setEditProduct(product);
@@ -107,7 +145,7 @@ export default function Products() {
     setEditProduct(null);
     setIsDuplicating(false); // Reset the duplicate flag
   };
-  
+
   // Pre-select customer for new product
   const handleAddProduct = () => {
     setEditProduct(null);
@@ -116,15 +154,20 @@ export default function Products() {
 
   // Helper functions to get related data
   const getCustomerName = (customerId: string) => {
-    return customers?.find(c => c.id === customerId)?.name || "Unknown";
+    return customers?.find((c) => c.id === customerId)?.name || "Unknown";
   };
 
   const getItemName = (itemId: string) => {
-    return items?.find(i => i.id === itemId)?.name || "Unknown";
+    return items?.find((i) => i.id === itemId)?.name || "Unknown";
   };
 
   const getCategoryName = (categoryId: string) => {
-    return categories?.find(c => c.id === categoryId)?.name || "Unknown";
+    return categories?.find((c) => c.id === categoryId)?.name || "Unknown";
+  };
+
+  const getMasterBatchName = (masterBatchId: string | null) => {
+    if (!masterBatchId) return "-";
+    return masterBatches?.find((mb) => mb.id === masterBatchId)?.name || "Unknown";
   };
 
   // Print function to generate A4 PDF
@@ -141,39 +184,56 @@ export default function Products() {
     const doc = new jsPDF();
     const customerName = getCustomerName(selectedCustomerId);
     const currentDate = new Date().toLocaleDateString();
-    
+
     // Add header
     doc.setFontSize(20);
-    doc.text('Customer Products Report', 20, 20);
-    
+    doc.text("Customer Products Report", 20, 20);
+
     doc.setFontSize(12);
     doc.text(`Customer: ${customerName}`, 20, 35);
     doc.text(`Date: ${currentDate}`, 20, 45);
     doc.text(`Total Products: ${products.length}`, 20, 55);
-    
+
     // Prepare table data
     const tableData = products.map((product, index) => {
       const autoLength = product.lengthCm || 0;
       const cuttingLength = product.cuttingLength || 0;
       const maxLength = Math.max(autoLength, cuttingLength);
-      const lengthDisplay = maxLength > 0 ? Math.floor(maxLength).toString() : '-';
-      
+      const lengthDisplay =
+        maxLength > 0 ? Math.floor(maxLength).toString() : "-";
+
       return [
         index + 1,
         product.id.toString(),
         getCategoryName(product.categoryId),
         getItemName(product.itemId),
-        product.sizeCaption || '-',
-        product.thickness ? product.thickness.toString() : '-',
+        getMasterBatchName(product.masterBatchId),
+        product.rawMaterial || "-",
+        product.sizeCaption || "-",
+        product.thickness ? product.thickness.toString() : "-",
         lengthDisplay,
-        product.width ? product.width.toString() : '-',
-        product.unitWeight ? product.unitWeight.toString() + ' kg' : '-'
+        product.width ? product.width.toString() : "-",
+        product.unitWeight ? product.unitWeight.toString() + " kg" : "-",
       ];
     });
 
     // Add table
     autoTable(doc, {
-      head: [['S/N', 'ID', 'Category', 'Item', 'Size Caption', 'Thickness', 'Length (cm)', 'Width', 'Unit Weight']],
+      head: [
+        [
+          "S/N",
+          "ID",
+          "Category",
+          "Item",
+          "Master Batch",
+          "Material Type",
+          "Size Caption",
+          "Thickness",
+          "Length (cm)",
+          "Width",
+          "Unit Weight",
+        ],
+      ],
       body: tableData,
       startY: 70,
       styles: {
@@ -183,23 +243,25 @@ export default function Products() {
       headStyles: {
         fillColor: [41, 128, 185],
         textColor: 255,
-        fontStyle: 'bold'
+        fontStyle: "bold",
       },
       alternateRowStyles: {
-        fillColor: [245, 245, 245]
+        fillColor: [245, 245, 245],
       },
       margin: { left: 10, right: 10 },
       columnStyles: {
-        0: { cellWidth: 15 }, // S/N
-        1: { cellWidth: 20 }, // ID
-        2: { cellWidth: 25 }, // Category
-        3: { cellWidth: 25 }, // Item
-        4: { cellWidth: 25 }, // Size Caption
-        5: { cellWidth: 20 }, // Thickness
-        6: { cellWidth: 25 }, // Length
-        7: { cellWidth: 25 }, // Width
-        8: { cellWidth: 20 }  // Unit Weight
-      }
+        0: { cellWidth: 12 }, // S/N
+        1: { cellWidth: 15 }, // ID
+        2: { cellWidth: 20 }, // Category
+        3: { cellWidth: 20 }, // Item
+        4: { cellWidth: 20 }, // Master Batch
+        5: { cellWidth: 18 }, // Material Type
+        6: { cellWidth: 18 }, // Size Caption
+        7: { cellWidth: 15 }, // Thickness
+        8: { cellWidth: 18 }, // Length
+        9: { cellWidth: 15 }, // Width
+        10: { cellWidth: 18 }, // Unit Weight
+      },
     });
 
     // Add footer
@@ -207,13 +269,21 @@ export default function Products() {
     for (let i = 1; i <= pageCount; i++) {
       doc.setPage(i);
       doc.setFontSize(8);
-      doc.text(`Page ${i} of ${pageCount}`, doc.internal.pageSize.width - 30, doc.internal.pageSize.height - 10);
-      doc.text('Generated by Production Management System', 20, doc.internal.pageSize.height - 10);
+      doc.text(
+        `Page ${i} of ${pageCount}`,
+        doc.internal.pageSize.width - 30,
+        doc.internal.pageSize.height - 10,
+      );
+      doc.text(
+        "Generated by Production Management System",
+        20,
+        doc.internal.pageSize.height - 10,
+      );
     }
 
     // Save the PDF
-    doc.save(`${customerName}_Products_${currentDate.replace(/\//g, '-')}.pdf`);
-    
+    doc.save(`${customerName}_Products_${currentDate.replace(/\//g, "-")}.pdf`);
+
     toast({
       title: "PDF Generated",
       description: `Products list for ${customerName} has been downloaded.`,
@@ -225,7 +295,8 @@ export default function Products() {
     {
       header: "S/N",
       id: "index",
-      cell: (_row: CustomerProduct, index?: number) => (index !== undefined ? index + 1 : 0)
+      cell: (_row: CustomerProduct, index?: number) =>
+        index !== undefined ? index + 1 : 0,
     },
     {
       header: "ID",
@@ -234,22 +305,33 @@ export default function Products() {
     {
       header: t("setup.products.category"),
       id: "categoryName",
-      cell: (row: CustomerProduct) => getCategoryName(row.categoryId)
+      cell: (row: CustomerProduct) => getCategoryName(row.categoryId),
     },
     {
       header: t("common.item"),
       id: "itemName",
-      cell: (row: CustomerProduct) => getItemName(row.itemId)
+      cell: (row: CustomerProduct) => getItemName(row.itemId),
+    },
+    {
+      header: "Master Batch",
+      id: "masterBatchName",
+      cell: (row: CustomerProduct) => getMasterBatchName(row.masterBatchId),
+    },
+    {
+      header: "Material Type",
+      id: "rawMaterial",
+      cell: (row: CustomerProduct) => row.rawMaterial || "-",
     },
     {
       header: t("setup.products.size"),
       id: "sizeCaption",
-      cell: (row: CustomerProduct) => row.sizeCaption || "-"
+      cell: (row: CustomerProduct) => row.sizeCaption || "-",
     },
     {
       header: t("setup.products.thickness"),
       id: "thickness",
-      cell: (row: CustomerProduct) => row.thickness ? `${row.thickness}` : "-"
+      cell: (row: CustomerProduct) =>
+        row.thickness ? `${row.thickness}` : "-",
     },
     {
       header: t("common.length") + " (cm)",
@@ -259,30 +341,80 @@ export default function Products() {
         const cuttingLength = row.cuttingLength || 0;
         const maxLength = Math.max(autoLength, cuttingLength);
         return maxLength > 0 ? Math.floor(maxLength).toString() : "-";
-      }
+      },
     },
     {
-      header: "Cutting Unit",
+      header: t("setup.products.form.cutting_unit"),
       id: "cuttingUnit",
-      cell: (row: CustomerProduct) => row.cuttingUnit || "-"
+      cell: (row: CustomerProduct) => row.cuttingUnit || "-",
     },
     {
-      header: "Package Kg",
+      header: t("setup.products.form.package_kg"),
       id: "packageKg",
-      cell: (row: CustomerProduct) => row.packageKg ? `${Number(row.packageKg).toFixed(2)}` : "-"
+      cell: (row: CustomerProduct) =>
+        row.packageKg ? `${Number(row.packageKg).toFixed(2)}` : "-",
+    },
+    {
+      header: "Cliché Front",
+      id: "clicheFrontDesign",
+      cell: (row: CustomerProduct) => 
+        row.clicheFrontDesign ? (
+          <span className="text-green-600 text-sm">✓ Attached</span>
+        ) : (
+          <span className="text-gray-400 text-sm">- No file</span>
+        ),
+    },
+    {
+      header: "Cliché Back", 
+      id: "clicheBackDesign",
+      cell: (row: CustomerProduct) => 
+        row.clicheBackDesign ? (
+          <span className="text-green-600 text-sm">✓ Attached</span>
+        ) : (
+          <span className="text-gray-400 text-sm">- No file</span>
+        ),
     },
     {
       header: t("setup.products.actions"),
       id: "actions",
       cell: (row: CustomerProduct) => (
         <div className="flex space-x-2">
-          <Button variant="ghost" size="icon" onClick={() => handleEdit(row)} className="text-primary-500 hover:text-primary-700" title={t("common.edit")}>
+          {(row.clicheFrontDesign || row.clicheBackDesign) && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setViewingDesign(row)}
+              className="text-blue-500 hover:text-blue-700"
+              title="View Design"
+            >
+              <Eye className="h-4 w-4" />
+            </Button>
+          )}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => handleEdit(row)}
+            className="text-primary-500 hover:text-primary-700"
+            title={t("common.edit")}
+          >
             <span className="material-icons text-sm">edit</span>
           </Button>
-          <Button variant="ghost" size="icon" onClick={() => handleDuplicate(row)} className="text-secondary-500 hover:text-secondary-700" title={t("setup.products.duplicate_product")}>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => handleDuplicate(row)}
+            className="text-secondary-500 hover:text-secondary-700"
+            title={t("setup.products.duplicate_product")}
+          >
             <span className="material-icons text-sm">content_copy</span>
           </Button>
-          <Button variant="ghost" size="icon" onClick={() => handleDelete(row)} className="text-red-500 hover:text-red-700" title={t("setup.products.delete_product")}>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => handleDelete(row)}
+            className="text-red-500 hover:text-red-700"
+            title={t("setup.products.delete_product")}
+          >
             <span className="material-icons text-sm">delete</span>
           </Button>
         </div>
@@ -300,11 +432,13 @@ export default function Products() {
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
-  
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-secondary-900">{t("setup.products.title")}</h1>
+        <h1 className="text-2xl font-bold text-secondary-900">
+          {t("setup.products.title")}
+        </h1>
       </div>
       <Card className="mb-6">
         <CardHeader>
@@ -321,18 +455,26 @@ export default function Products() {
               />
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
             </div>
-            <Select 
-              value={selectedCustomerId} 
+            <Select
+              value={selectedCustomerId}
               onValueChange={setSelectedCustomerId}
               disabled={customersLoading}
             >
               <SelectTrigger>
-                <SelectValue placeholder={t("setup.products.select_a_customer")} />
+                <SelectValue
+                  placeholder={t("setup.products.select_a_customer")}
+                />
               </SelectTrigger>
               <SelectContent>
                 {filteredCustomers?.map((customer) => (
                   <SelectItem key={customer.id} value={customer.id}>
-                    {customer.name} ({customer.code})
+                    <div className="flex flex-col">
+                      <span className="font-medium">{customer.name}</span>
+                      {customer.nameAr && (
+                        <span className="text-sm text-gray-500 font-arabic">{customer.nameAr}</span>
+                      )}
+                      <span className="text-xs text-gray-400">({customer.code})</span>
+                    </div>
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -344,12 +486,14 @@ export default function Products() {
         <CardHeader>
           <CardTitle className="flex justify-between items-center">
             <span>
-              {selectedCustomerId 
-                ? t("setup.products.products_for", { customer: getCustomerName(selectedCustomerId) })
+              {selectedCustomerId
+                ? t("setup.products.products_for", {
+                    customer: getCustomerName(selectedCustomerId),
+                  })
                 : t("setup.products.select_customer_to_view")}
             </span>
             {selectedCustomerId && products && products.length > 0 && (
-              <Button 
+              <Button
                 onClick={handlePrintProducts}
                 variant="outline"
                 size="sm"
@@ -363,7 +507,7 @@ export default function Products() {
         </CardHeader>
         <CardContent>
           {selectedCustomerId ? (
-            <DataTable 
+            <DataTable
               data={products || []}
               columns={columns}
               isLoading={isLoading}
@@ -377,7 +521,7 @@ export default function Products() {
           ) : (
             <div className="text-center py-8 text-gray-500">
               <span className="material-icons text-4xl mb-2">people</span>
-              <p>{t('setup.products.please_select_customer')}</p>
+              <p>{t("setup.products.please_select_customer")}</p>
             </div>
           )}
         </CardContent>
@@ -387,15 +531,14 @@ export default function Products() {
         <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
-              {isDuplicating 
+              {isDuplicating
                 ? t("setup.products.duplicate_product")
-                : editProduct 
+                : editProduct
                   ? t("setup.products.edit_product")
-                  : t("setup.products.add_new")
-              }
+                  : t("setup.products.add_new")}
             </DialogTitle>
           </DialogHeader>
-          <ProductForm 
+          <ProductForm
             product={editProduct || undefined}
             onSuccess={handleFormClose}
             preSelectedCustomerId={selectedCustomerId}
@@ -404,17 +547,22 @@ export default function Products() {
         </DialogContent>
       </Dialog>
       {/* Delete Confirmation Dialog */}
-      <AlertDialog open={!!deletingProduct} onOpenChange={(open) => !open && setDeletingProduct(null)}>
+      <AlertDialog
+        open={!!deletingProduct}
+        onOpenChange={(open) => !open && setDeletingProduct(null)}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>{t("setup.products.are_you_sure")}</AlertDialogTitle>
+            <AlertDialogTitle>
+              {t("setup.products.are_you_sure")}
+            </AlertDialogTitle>
             <AlertDialogDescription>
               {t("setup.products.delete_confirmation")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>{t("setup.products.cancel")}</AlertDialogCancel>
-            <AlertDialogAction 
+            <AlertDialogAction
               onClick={confirmDelete}
               className="bg-red-500 hover:bg-red-600"
             >
@@ -423,6 +571,24 @@ export default function Products() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Design Preview Dialog */}
+      {viewingDesign && (
+        <Dialog open={!!viewingDesign} onOpenChange={() => setViewingDesign(null)}>
+          <DialogContent className="max-w-6xl max-h-[90vh]">
+            <DialogHeader>
+              <DialogTitle>
+                Design Preview - {viewingDesign.sizeCaption || `Product ${viewingDesign.id}`}
+              </DialogTitle>
+            </DialogHeader>
+            <DesignPreview
+              frontDesignPath={viewingDesign.clicheFrontDesign}
+              backDesignPath={viewingDesign.clicheBackDesign}
+              productName={viewingDesign.sizeCaption || `Product ${viewingDesign.id}`}
+            />
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 }

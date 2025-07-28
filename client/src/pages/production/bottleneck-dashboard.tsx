@@ -1,21 +1,27 @@
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  AlertTriangle, 
-  CheckCircle2, 
-  Clock, 
-  TrendingDown, 
+import {
+  AlertTriangle,
+  CheckCircle2,
+  Clock,
+  TrendingDown,
   TrendingUp,
   Factory,
   Bell,
   Settings,
-  BarChart3
+  BarChart3,
 } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useTranslation } from "react-i18next";
@@ -50,16 +56,16 @@ interface DashboardData {
 
 const severityColors = {
   critical: "bg-red-500",
-  high: "bg-orange-500", 
+  high: "bg-orange-500",
   medium: "bg-yellow-500",
-  low: "bg-blue-500"
+  low: "bg-blue-500",
 };
 
 const severityTextColors = {
   critical: "text-red-700",
   high: "text-orange-700",
-  medium: "text-yellow-700", 
-  low: "text-blue-700"
+  medium: "text-yellow-700",
+  low: "text-blue-700",
 };
 
 export default function BottleneckDashboard() {
@@ -67,26 +73,31 @@ export default function BottleneckDashboard() {
   const { t } = useTranslation();
 
   // Fetch dashboard overview data
-  const { data: dashboardData, isLoading: dashboardLoading } = useQuery<DashboardData>({
-    queryKey: ["/api/bottleneck/dashboard"],
-    refetchInterval: 30000 // Refresh every 30 seconds
-  });
+  const { data: dashboardData, isLoading: dashboardLoading } =
+    useQuery<DashboardData>({
+      queryKey: ["/api/bottleneck/dashboard"],
+      refetchInterval: 30000, // Refresh every 30 seconds
+    });
 
   // Fetch active alerts
-  const { data: activeAlerts, isLoading: alertsLoading } = useQuery<BottleneckAlert[]>({
+  const { data: activeAlerts, isLoading: alertsLoading } = useQuery<
+    BottleneckAlert[]
+  >({
     queryKey: ["/api/bottleneck/alerts", "active"],
     queryFn: () => apiRequest("GET", "/api/bottleneck/alerts?status=active"),
-    refetchInterval: 15000 // Refresh every 15 seconds
+    refetchInterval: 15000, // Refresh every 15 seconds
   });
 
   // Acknowledge alert mutation
   const acknowledgeAlertMutation = useMutation({
-    mutationFn: (alertId: number) => 
+    mutationFn: (alertId: number) =>
       apiRequest("PUT", `/api/bottleneck/alerts/${alertId}/acknowledge`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/bottleneck/alerts"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/bottleneck/dashboard"] });
-    }
+      queryClient.invalidateQueries({
+        queryKey: ["/api/bottleneck/dashboard"],
+      });
+    },
   });
 
   // Resolve alert mutation
@@ -95,8 +106,10 @@ export default function BottleneckDashboard() {
       apiRequest("PUT", `/api/bottleneck/alerts/${alertId}/resolve`, { notes }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/bottleneck/alerts"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/bottleneck/dashboard"] });
-    }
+      queryClient.invalidateQueries({
+        queryKey: ["/api/bottleneck/dashboard"],
+      });
+    },
   });
 
   const formatTimeAgo = (dateString: string) => {
@@ -105,7 +118,7 @@ export default function BottleneckDashboard() {
     const diffMs = now.getTime() - date.getTime();
     const diffMins = Math.floor(diffMs / 60000);
     const diffHours = Math.floor(diffMins / 60);
-    
+
     if (diffMins < 60) {
       return `${diffMins} minutes ago`;
     } else if (diffHours < 24) {
@@ -118,11 +131,11 @@ export default function BottleneckDashboard() {
 
   const getSeverityIcon = (severity: string) => {
     switch (severity) {
-      case 'critical':
+      case "critical":
         return <AlertTriangle className="h-4 w-4 text-red-500" />;
-      case 'high':
+      case "high":
         return <AlertTriangle className="h-4 w-4 text-orange-500" />;
-      case 'medium':
+      case "medium":
         return <Clock className="h-4 w-4 text-yellow-500" />;
       default:
         return <Bell className="h-4 w-4 text-blue-500" />;
@@ -150,7 +163,9 @@ export default function BottleneckDashboard() {
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">{t("production.bottleneck_monitor")}</h1>
+          <h1 className="text-3xl font-bold">
+            {t("production.bottleneck_monitor")}
+          </h1>
           <p className="text-muted-foreground">
             {t("production.bottleneck_monitor_description")}
           </p>
@@ -173,8 +188,12 @@ export default function BottleneckDashboard() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">{t("production.active_alerts")}</p>
-                <p className="text-2xl font-bold">{dashboardData?.activeAlerts || 0}</p>
+                <p className="text-sm font-medium text-muted-foreground">
+                  {t("production.active_alerts")}
+                </p>
+                <p className="text-2xl font-bold">
+                  {dashboardData?.activeAlerts || 0}
+                </p>
               </div>
               <AlertTriangle className="h-8 w-8 text-orange-500" />
             </div>
@@ -185,8 +204,12 @@ export default function BottleneckDashboard() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">{t("production.critical_issues")}</p>
-                <p className="text-2xl font-bold text-red-600">{dashboardData?.criticalAlerts || 0}</p>
+                <p className="text-sm font-medium text-muted-foreground">
+                  {t("production.critical_issues")}
+                </p>
+                <p className="text-2xl font-bold text-red-600">
+                  {dashboardData?.criticalAlerts || 0}
+                </p>
               </div>
               <AlertTriangle className="h-8 w-8 text-red-500" />
             </div>
@@ -197,8 +220,12 @@ export default function BottleneckDashboard() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">{t("production.overall_efficiency")}</p>
-                <p className="text-2xl font-bold">{dashboardData?.overallEfficiency?.toFixed(1) || 0}%</p>
+                <p className="text-sm font-medium text-muted-foreground">
+                  {t("production.overall_efficiency")}
+                </p>
+                <p className="text-2xl font-bold">
+                  {dashboardData?.overallEfficiency?.toFixed(1) || 0}%
+                </p>
               </div>
               {(dashboardData?.overallEfficiency || 0) >= 80 ? (
                 <TrendingUp className="h-8 w-8 text-green-500" />
@@ -207,7 +234,10 @@ export default function BottleneckDashboard() {
               )}
             </div>
             <div className="mt-2">
-              <Progress value={dashboardData?.overallEfficiency || 0} className="h-2" />
+              <Progress
+                value={dashboardData?.overallEfficiency || 0}
+                className="h-2"
+              />
             </div>
           </CardContent>
         </Card>
@@ -216,8 +246,12 @@ export default function BottleneckDashboard() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">{t("production.metrics_today")}</p>
-                <p className="text-2xl font-bold">{dashboardData?.metricsCount || 0}</p>
+                <p className="text-sm font-medium text-muted-foreground">
+                  {t("production.metrics_today")}
+                </p>
+                <p className="text-2xl font-bold">
+                  {dashboardData?.metricsCount || 0}
+                </p>
               </div>
               <Factory className="h-8 w-8 text-blue-500" />
             </div>
@@ -226,35 +260,50 @@ export default function BottleneckDashboard() {
       </div>
 
       {/* Alerts by Severity */}
-      {dashboardData?.alertsBySeverity && Object.keys(dashboardData.alertsBySeverity).length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle>{t("production.alerts_by_severity")}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex gap-4">
-              {Object.entries(dashboardData.alertsBySeverity).map(([severity, count]) => {
-                const colorClass = severityColors[severity as keyof typeof severityColors] || 'bg-gray-500';
-                const safeCount = Number(count) || 0;
-                
-                return (
-                  <div key={severity} className="flex items-center gap-2">
-                    <div className={`w-3 h-3 rounded-full ${colorClass}`}></div>
-                    <span className="text-sm font-medium capitalize">{severity}</span>
-                    <Badge variant="secondary">{safeCount}</Badge>
-                  </div>
-                );
-              })}
-            </div>
-          </CardContent>
-        </Card>
-      )}
+      {dashboardData?.alertsBySeverity &&
+        Object.keys(dashboardData.alertsBySeverity).length > 0 && (
+          <Card>
+            <CardHeader>
+              <CardTitle>{t("production.alerts_by_severity")}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex gap-4">
+                {Object.entries(dashboardData.alertsBySeverity).map(
+                  ([severity, count]) => {
+                    const colorClass =
+                      severityColors[severity as keyof typeof severityColors] ||
+                      "bg-gray-500";
+                    const safeCount = Number(count) || 0;
+
+                    return (
+                      <div key={severity} className="flex items-center gap-2">
+                        <div
+                          className={`w-3 h-3 rounded-full ${colorClass}`}
+                        ></div>
+                        <span className="text-sm font-medium capitalize">
+                          {severity}
+                        </span>
+                        <Badge variant="secondary">{safeCount}</Badge>
+                      </div>
+                    );
+                  },
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
       <Tabs defaultValue="active-alerts" className="w-full">
         <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="active-alerts">{t("production.active_alerts")}</TabsTrigger>
-          <TabsTrigger value="top-bottlenecks">{t("production.top_bottlenecks")}</TabsTrigger>
-          <TabsTrigger value="recent-activity">{t("production.recent_activity")}</TabsTrigger>
+          <TabsTrigger value="active-alerts">
+            {t("production.active_alerts")}
+          </TabsTrigger>
+          <TabsTrigger value="top-bottlenecks">
+            {t("production.top_bottlenecks")}
+          </TabsTrigger>
+          <TabsTrigger value="recent-activity">
+            {t("production.recent_activity")}
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="active-alerts" className="space-y-4">
@@ -277,8 +326,12 @@ export default function BottleneckDashboard() {
               ) : !activeAlerts || activeAlerts.length === 0 ? (
                 <div className="text-center py-8">
                   <CheckCircle2 className="h-12 w-12 text-green-500 mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold mb-2">{t("production.no_active_alerts")}</h3>
-                  <p className="text-muted-foreground">{t("production.all_lines_operating_normally")}</p>
+                  <h3 className="text-lg font-semibold mb-2">
+                    {t("production.no_active_alerts")}
+                  </h3>
+                  <p className="text-muted-foreground">
+                    {t("production.all_lines_operating_normally")}
+                  </p>
                 </div>
               ) : (
                 <div className="space-y-4">
@@ -291,11 +344,18 @@ export default function BottleneckDashboard() {
                             <AlertTitle className="text-sm font-semibold">
                               {alert.title}
                             </AlertTitle>
-                            <Badge variant={alert.severity === 'critical' ? 'destructive' : 'secondary'}>
+                            <Badge
+                              variant={
+                                alert.severity === "critical"
+                                  ? "destructive"
+                                  : "secondary"
+                              }
+                            >
                               {alert.severity}
                             </Badge>
                             <Badge variant="outline">
-                              {alert.sectionId}{alert.machineId ? ` - ${alert.machineId}` : ''}
+                              {alert.sectionId}
+                              {alert.machineId ? ` - ${alert.machineId}` : ""}
                             </Badge>
                           </div>
                           <AlertDescription className="text-sm text-muted-foreground mb-3">
@@ -303,37 +363,52 @@ export default function BottleneckDashboard() {
                           </AlertDescription>
                           {alert.estimatedDelay && (
                             <p className="text-sm text-orange-600 mb-2">
-                              {t("production.estimated_delay")}: {alert.estimatedDelay} {t("production.hours")}
+                              {t("production.estimated_delay")}:{" "}
+                              {alert.estimatedDelay} {t("production.hours")}
                             </p>
                           )}
-                          {alert.suggestedActions && alert.suggestedActions.length > 0 && (
-                            <div className="mb-3">
-                              <p className="text-sm font-medium mb-1">{t("production.suggested_actions")}:</p>
-                              <ul className="text-sm text-muted-foreground list-disc list-inside">
-                                {alert.suggestedActions.slice(0, 3).map((action, index) => (
-                                  <li key={index}>{action}</li>
-                                ))}
-                              </ul>
-                            </div>
-                          )}
+                          {alert.suggestedActions &&
+                            alert.suggestedActions.length > 0 && (
+                              <div className="mb-3">
+                                <p className="text-sm font-medium mb-1">
+                                  {t("production.suggested_actions")}:
+                                </p>
+                                <ul className="text-sm text-muted-foreground list-disc list-inside">
+                                  {alert.suggestedActions
+                                    .slice(0, 3)
+                                    .map((action, index) => (
+                                      <li key={index}>{action}</li>
+                                    ))}
+                                </ul>
+                              </div>
+                            )}
                           <div className="flex items-center justify-between">
                             <p className="text-xs text-muted-foreground">
-                              {t("production.detected")} {formatTimeAgo(alert.detectedAt)}
+                              {t("production.detected")}{" "}
+                              {formatTimeAgo(alert.detectedAt)}
                             </p>
                             <div className="flex gap-2">
-                              {alert.status === 'active' && (
+                              {alert.status === "active" && (
                                 <>
                                   <Button
                                     size="sm"
                                     variant="outline"
-                                    onClick={() => acknowledgeAlertMutation.mutate(alert.id)}
-                                    disabled={acknowledgeAlertMutation.isPending}
+                                    onClick={() =>
+                                      acknowledgeAlertMutation.mutate(alert.id)
+                                    }
+                                    disabled={
+                                      acknowledgeAlertMutation.isPending
+                                    }
                                   >
                                     {t("production.acknowledge")}
                                   </Button>
                                   <Button
                                     size="sm"
-                                    onClick={() => resolveAlertMutation.mutate({ alertId: alert.id })}
+                                    onClick={() =>
+                                      resolveAlertMutation.mutate({
+                                        alertId: alert.id,
+                                      })
+                                    }
                                     disabled={resolveAlertMutation.isPending}
                                   >
                                     {t("production.resolve")}
@@ -361,23 +436,38 @@ export default function BottleneckDashboard() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              {dashboardData?.topBottlenecks && dashboardData.topBottlenecks.length > 0 ? (
+              {dashboardData?.topBottlenecks &&
+              dashboardData.topBottlenecks.length > 0 ? (
                 <div className="space-y-4">
                   {dashboardData.topBottlenecks.map((bottleneck, index) => (
-                    <div key={bottleneck.id} className="flex items-center gap-4 p-4 border rounded-lg">
+                    <div
+                      key={bottleneck.id}
+                      className="flex items-center gap-4 p-4 border rounded-lg"
+                    >
                       <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gray-100 text-sm font-semibold">
                         {index + 1}
                       </div>
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
                           <h4 className="font-medium">{bottleneck.title}</h4>
-                          <Badge variant={bottleneck.severity === 'critical' ? 'destructive' : 'secondary'}>
+                          <Badge
+                            variant={
+                              bottleneck.severity === "critical"
+                                ? "destructive"
+                                : "secondary"
+                            }
+                          >
                             {bottleneck.severity}
                           </Badge>
                         </div>
-                        <p className="text-sm text-muted-foreground">{bottleneck.description}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {bottleneck.description}
+                        </p>
                         <p className="text-xs text-muted-foreground mt-1">
-                          {bottleneck.sectionId}{bottleneck.machineId ? ` - ${bottleneck.machineId}` : ''}
+                          {bottleneck.sectionId}
+                          {bottleneck.machineId
+                            ? ` - ${bottleneck.machineId}`
+                            : ""}
                         </p>
                       </div>
                       {bottleneck.estimatedDelay && (
@@ -393,8 +483,12 @@ export default function BottleneckDashboard() {
               ) : (
                 <div className="text-center py-8">
                   <Factory className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold mb-2">No Critical Bottlenecks</h3>
-                  <p className="text-muted-foreground">Production flow is optimized</p>
+                  <h3 className="text-lg font-semibold mb-2">
+                    No Critical Bottlenecks
+                  </h3>
+                  <p className="text-muted-foreground">
+                    Production flow is optimized
+                  </p>
                 </div>
               )}
             </CardContent>
@@ -413,7 +507,9 @@ export default function BottleneckDashboard() {
               <div className="text-center py-8">
                 <Clock className="h-12 w-12 text-gray-300 mx-auto mb-4" />
                 <h3 className="text-lg font-semibold mb-2">Activity Log</h3>
-                <p className="text-muted-foreground">Recent system activities will appear here</p>
+                <p className="text-muted-foreground">
+                  Recent system activities will appear here
+                </p>
               </div>
             </CardContent>
           </Card>

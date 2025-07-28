@@ -16,7 +16,13 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { ArrowLeft } from "lucide-react";
 import { Link } from "wouter";
 import { Separator } from "@/components/ui/separator";
@@ -85,7 +91,7 @@ export default function BagWeightCalculator() {
       area = width * length * 2; // Already in cm²
     } else if (data.bagType === "gusset") {
       // Gusset bag (width + (2 * gusset)) * length * 2
-      area = (width + (2 * gusset)) * length * 2;
+      area = (width + 2 * gusset) * length * 2;
     } else {
       // Default to flat bag calculation
       area = width * length * 2;
@@ -97,10 +103,10 @@ export default function BagWeightCalculator() {
 
     // Calculate weight (volume * density) in grams
     const singleBagWeight = volume * density;
-    
+
     // Calculate total weight for the given quantity
-    const totalWeight = singleBagWeight * quantity / 1000; // in kg
-    
+    const totalWeight = (singleBagWeight * quantity) / 1000; // in kg
+
     // Calculate bags per kg
     const bagsPerKg = 1000 / singleBagWeight; // 1000g = 1kg
 
@@ -114,8 +120,13 @@ export default function BagWeightCalculator() {
   };
 
   return (
-    <div className={`container mx-auto py-6 space-y-6 ${isRTL ? 'rtl' : ''}`} dir={isRTL ? 'rtl' : 'ltr'}>
-      <div className={`flex items-center ${isRTL ? 'space-x-reverse space-x-4' : 'space-x-4'}`}>
+    <div
+      className={`container mx-auto py-6 space-y-6 ${isRTL ? "rtl" : ""}`}
+      dir={isRTL ? "rtl" : "ltr"}
+    >
+      <div
+        className={`flex items-center ${isRTL ? "space-x-reverse space-x-4" : "space-x-4"}`}
+      >
         <div className="flex h-10 w-10 items-center justify-center rounded-md bg-primary/10 text-primary">
           <span className="material-icons text-xl">calculate</span>
         </div>
@@ -128,40 +139,54 @@ export default function BagWeightCalculator() {
           </p>
         </div>
       </div>
-      <Link href="/tools" className={`inline-flex items-center text-sm text-muted-foreground hover:text-primary ${isRTL ? 'flex-row-reverse' : ''}`}>
-        <ArrowLeft className={`h-4 w-4 ${isRTL ? 'ml-2' : 'mr-2'}`} />
+      <Link
+        href="/tools"
+        className={`inline-flex items-center text-sm text-muted-foreground hover:text-primary ${isRTL ? "flex-row-reverse" : ""}`}
+      >
+        <ArrowLeft className={`h-4 w-4 ${isRTL ? "ml-2" : "mr-2"}`} />
         {t("common.back_to_tools")}
       </Link>
       <div className="grid gap-6 md:grid-cols-2">
         <Card>
           <CardHeader className="pb-4">
-            <CardTitle className={isRTL ? 'text-right' : 'text-left'}>
+            <CardTitle className={isRTL ? "text-right" : "text-left"}>
               {t("tools.bag_specifications")}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(calculateBagWeight)} className="space-y-4">
+              <form
+                onSubmit={form.handleSubmit(calculateBagWeight)}
+                className="space-y-4"
+              >
                 <FormField
                   control={form.control}
                   name="bagType"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className={isRTL ? 'text-right' : 'text-left'}>
+                      <FormLabel className={isRTL ? "text-right" : "text-left"}>
                         {t("tools.bag_type")}
                       </FormLabel>
-                      <Select 
-                        onValueChange={field.onChange} 
+                      <Select
+                        onValueChange={field.onChange}
                         defaultValue={field.value}
                       >
                         <FormControl>
-                          <SelectTrigger className={isRTL ? 'text-right' : 'text-left'}>
-                            <SelectValue placeholder={t("tools.select_bag_type")} />
+                          <SelectTrigger
+                            className={isRTL ? "text-right" : "text-left"}
+                          >
+                            <SelectValue
+                              placeholder={t("tools.select_bag_type")}
+                            />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="flat">{t("tools.flat_bag")}</SelectItem>
-                          <SelectItem value="gusset">{t("tools.gusset_bag")}</SelectItem>
+                          <SelectItem value="flat">
+                            {t("tools.flat_bag")}
+                          </SelectItem>
+                          <SelectItem value="gusset">
+                            {t("tools.gusset_bag")}
+                          </SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage />
@@ -174,21 +199,29 @@ export default function BagWeightCalculator() {
                   name="units"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className={isRTL ? 'text-right' : 'text-left'}>
+                      <FormLabel className={isRTL ? "text-right" : "text-left"}>
                         {t("tools.measurement_units")}
                       </FormLabel>
-                      <Select 
-                        onValueChange={field.onChange} 
+                      <Select
+                        onValueChange={field.onChange}
                         defaultValue={field.value}
                       >
                         <FormControl>
-                          <SelectTrigger className={isRTL ? 'text-right' : 'text-left'}>
-                            <SelectValue placeholder={t("tools.select_units")} />
+                          <SelectTrigger
+                            className={isRTL ? "text-right" : "text-left"}
+                          >
+                            <SelectValue
+                              placeholder={t("tools.select_units")}
+                            />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="cm">{t("tools.centimeters")}</SelectItem>
-                          <SelectItem value="inch">{t("tools.inches")}</SelectItem>
+                          <SelectItem value="cm">
+                            {t("tools.centimeters")}
+                          </SelectItem>
+                          <SelectItem value="inch">
+                            {t("tools.inches")}
+                          </SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage />
@@ -202,14 +235,26 @@ export default function BagWeightCalculator() {
                     name="width"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className={isRTL ? 'text-right' : 'text-left'}>
+                        <FormLabel
+                          className={isRTL ? "text-right" : "text-left"}
+                        >
                           Width
                         </FormLabel>
                         <FormControl>
-                          <Input {...field} type="number" min="0" step="0.1" className={isRTL ? 'text-right' : 'text-left'} />
+                          <Input
+                            {...field}
+                            type="number"
+                            min="0"
+                            step="0.1"
+                            className={isRTL ? "text-right" : "text-left"}
+                          />
                         </FormControl>
-                        <FormDescription className={isRTL ? 'text-right' : 'text-left'}>
-                          {form.watch("units") === "cm" ? t("tools.cm") : t("tools.inches")}
+                        <FormDescription
+                          className={isRTL ? "text-right" : "text-left"}
+                        >
+                          {form.watch("units") === "cm"
+                            ? t("tools.cm")
+                            : t("tools.inches")}
                         </FormDescription>
                         <FormMessage />
                       </FormItem>
@@ -221,14 +266,26 @@ export default function BagWeightCalculator() {
                     name="length"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className={isRTL ? 'text-right' : 'text-left'}>
+                        <FormLabel
+                          className={isRTL ? "text-right" : "text-left"}
+                        >
                           Length
                         </FormLabel>
                         <FormControl>
-                          <Input {...field} type="number" min="0" step="0.1" className={isRTL ? 'text-right' : 'text-left'} />
+                          <Input
+                            {...field}
+                            type="number"
+                            min="0"
+                            step="0.1"
+                            className={isRTL ? "text-right" : "text-left"}
+                          />
                         </FormControl>
-                        <FormDescription className={isRTL ? 'text-right' : 'text-left'}>
-                          {form.watch("units") === "cm" ? t("tools.cm") : t("tools.inches")}
+                        <FormDescription
+                          className={isRTL ? "text-right" : "text-left"}
+                        >
+                          {form.watch("units") === "cm"
+                            ? t("tools.cm")
+                            : t("tools.inches")}
                         </FormDescription>
                         <FormMessage />
                       </FormItem>
@@ -242,14 +299,26 @@ export default function BagWeightCalculator() {
                     name="gusset"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className={isRTL ? 'text-right' : 'text-left'}>
+                        <FormLabel
+                          className={isRTL ? "text-right" : "text-left"}
+                        >
                           {t("tools.gusset_depth")}
                         </FormLabel>
                         <FormControl>
-                          <Input {...field} type="number" min="0" step="0.1" className={isRTL ? 'text-right' : 'text-left'} />
+                          <Input
+                            {...field}
+                            type="number"
+                            min="0"
+                            step="0.1"
+                            className={isRTL ? "text-right" : "text-left"}
+                          />
                         </FormControl>
-                        <FormDescription className={isRTL ? 'text-right' : 'text-left'}>
-                          {form.watch("units") === "cm" ? t("tools.cm") : t("tools.inches")}
+                        <FormDescription
+                          className={isRTL ? "text-right" : "text-left"}
+                        >
+                          {form.watch("units") === "cm"
+                            ? t("tools.cm")
+                            : t("tools.inches")}
                         </FormDescription>
                         <FormMessage />
                       </FormItem>
@@ -262,13 +331,21 @@ export default function BagWeightCalculator() {
                   name="thickness"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className={isRTL ? 'text-right' : 'text-left'}>
+                      <FormLabel className={isRTL ? "text-right" : "text-left"}>
                         Thickness
                       </FormLabel>
                       <FormControl>
-                        <Input {...field} type="number" min="0" step="0.1" className={isRTL ? 'text-right' : 'text-left'} />
+                        <Input
+                          {...field}
+                          type="number"
+                          min="0"
+                          step="0.1"
+                          className={isRTL ? "text-right" : "text-left"}
+                        />
                       </FormControl>
-                      <FormDescription className={isRTL ? 'text-right' : 'text-left'}>
+                      <FormDescription
+                        className={isRTL ? "text-right" : "text-left"}
+                      >
                         {t("tools.microns")}
                       </FormDescription>
                       <FormMessage />
@@ -281,13 +358,21 @@ export default function BagWeightCalculator() {
                   name="density"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className={isRTL ? 'text-right' : 'text-left'}>
+                      <FormLabel className={isRTL ? "text-right" : "text-left"}>
                         {t("tools.material_density")}
                       </FormLabel>
                       <FormControl>
-                        <Input {...field} type="number" min="0.1" step="0.01" className={isRTL ? 'text-right' : 'text-left'} />
+                        <Input
+                          {...field}
+                          type="number"
+                          min="0.1"
+                          step="0.01"
+                          className={isRTL ? "text-right" : "text-left"}
+                        />
                       </FormControl>
-                      <FormDescription className={isRTL ? 'text-right' : 'text-left'}>
+                      <FormDescription
+                        className={isRTL ? "text-right" : "text-left"}
+                      >
                         {t("tools.density_units")}
                       </FormDescription>
                       <FormMessage />
@@ -300,13 +385,20 @@ export default function BagWeightCalculator() {
                   name="quantity"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className={isRTL ? 'text-right' : 'text-left'}>
+                      <FormLabel className={isRTL ? "text-right" : "text-left"}>
                         {t("common.quantity")}
                       </FormLabel>
                       <FormControl>
-                        <Input {...field} type="number" min="1" className={isRTL ? 'text-right' : 'text-left'} />
+                        <Input
+                          {...field}
+                          type="number"
+                          min="1"
+                          className={isRTL ? "text-right" : "text-left"}
+                        />
                       </FormControl>
-                      <FormDescription className={isRTL ? 'text-right' : 'text-left'}>
+                      <FormDescription
+                        className={isRTL ? "text-right" : "text-left"}
+                      >
                         {t("tools.number_of_bags")}
                       </FormDescription>
                       <FormMessage />
@@ -324,7 +416,7 @@ export default function BagWeightCalculator() {
 
         <Card>
           <CardHeader className="pb-4">
-            <CardTitle className={isRTL ? 'text-right' : 'text-left'}>
+            <CardTitle className={isRTL ? "text-right" : "text-left"}>
               {t("tools.calculation_results")}
             </CardTitle>
           </CardHeader>
@@ -332,7 +424,7 @@ export default function BagWeightCalculator() {
             {results ? (
               <div className="space-y-4">
                 <div className="grid grid-cols-3 gap-4">
-                  <div className={isRTL ? 'text-right' : 'text-left'}>
+                  <div className={isRTL ? "text-right" : "text-left"}>
                     <h3 className="text-sm font-semibold text-muted-foreground">
                       {t("tools.single_bag_weight")}
                     </h3>
@@ -340,7 +432,7 @@ export default function BagWeightCalculator() {
                       {results.singleBagWeight.toFixed(3)} {t("tools.grams")}
                     </p>
                   </div>
-                  <div className={isRTL ? 'text-right' : 'text-left'}>
+                  <div className={isRTL ? "text-right" : "text-left"}>
                     <h3 className="text-sm font-semibold text-muted-foreground">
                       {t("tools.total_weight")}
                     </h3>
@@ -348,7 +440,7 @@ export default function BagWeightCalculator() {
                       {results.totalWeight.toFixed(2)} {t("tools.kg")}
                     </p>
                   </div>
-                  <div className={isRTL ? 'text-right' : 'text-left'}>
+                  <div className={isRTL ? "text-right" : "text-left"}>
                     <h3 className="text-sm font-semibold text-muted-foreground">
                       {t("tools.bags_per_kg")}
                     </h3>
@@ -361,45 +453,82 @@ export default function BagWeightCalculator() {
                 <Separator />
 
                 <div className="space-y-2">
-                  <h3 className={`text-sm font-semibold ${isRTL ? 'text-right' : 'text-left'}`}>
+                  <h3
+                    className={`text-sm font-semibold ${isRTL ? "text-right" : "text-left"}`}
+                  >
                     {t("tools.calculation_details")}
                   </h3>
                   <div className="grid grid-cols-2 gap-2 text-sm">
-                    <div className={`flex ${isRTL ? 'justify-between flex-row-reverse' : 'justify-between'}`}>
-                      <span className="text-muted-foreground">{t("tools.material")}:</span>
+                    <div
+                      className={`flex ${isRTL ? "justify-between flex-row-reverse" : "justify-between"}`}
+                    >
+                      <span className="text-muted-foreground">
+                        {t("tools.material")}:
+                      </span>
                       <span>
-                        {
-                          form.getValues("density") === 0.92 ? "LDPE" :
-                          form.getValues("density") === 0.95 ? "HDPE" :
-                          form.getValues("density") === 0.90 ? "PP" :
-                          t("tools.custom_material")
-                        }
+                        {form.getValues("density") === 0.92
+                          ? "LDPE"
+                          : form.getValues("density") === 0.95
+                            ? "HDPE"
+                            : form.getValues("density") === 0.9
+                              ? "PP"
+                              : t("tools.custom_material")}
                       </span>
                     </div>
-                    <div className={`flex ${isRTL ? 'justify-between flex-row-reverse' : 'justify-between'}`}>
-                      <span className="text-muted-foreground">{t("tools.density")}:</span>
+                    <div
+                      className={`flex ${isRTL ? "justify-between flex-row-reverse" : "justify-between"}`}
+                    >
+                      <span className="text-muted-foreground">
+                        {t("tools.density")}:
+                      </span>
                       <span>{form.getValues("density")} g/cm³</span>
                     </div>
-                    <div className={`flex ${isRTL ? 'justify-between flex-row-reverse' : 'justify-between'}`}>
-                      <span className="text-muted-foreground">{t("tools.surface_area")}:</span>
+                    <div
+                      className={`flex ${isRTL ? "justify-between flex-row-reverse" : "justify-between"}`}
+                    >
+                      <span className="text-muted-foreground">
+                        {t("tools.surface_area")}:
+                      </span>
                       <span>{results.area.toFixed(2)} cm²</span>
                     </div>
-                    <div className={`flex ${isRTL ? 'justify-between flex-row-reverse' : 'justify-between'}`}>
-                      <span className="text-muted-foreground">{t("tools.film_volume")}:</span>
+                    <div
+                      className={`flex ${isRTL ? "justify-between flex-row-reverse" : "justify-between"}`}
+                    >
+                      <span className="text-muted-foreground">
+                        {t("tools.film_volume")}:
+                      </span>
                       <span>{results.volume.toFixed(4)} cm³</span>
                     </div>
-                    <div className={`flex ${isRTL ? 'justify-between flex-row-reverse' : 'justify-between'}`}>
-                      <span className="text-muted-foreground">{t("common.quantity")}:</span>
-                      <span>{form.getValues("quantity")} {t("tools.bags")}</span>
-                    </div>
-                    <div className={`flex ${isRTL ? 'justify-between flex-row-reverse' : 'justify-between'}`}>
-                      <span className="text-muted-foreground">{t("tools.bags_per_kg")}:</span>
-                      <span>{results.bagsPerKg.toFixed(0)} {t("tools.bags")}</span>
-                    </div>
-                    <div className={`flex ${isRTL ? 'justify-between flex-row-reverse' : 'justify-between'}`}>
-                      <span className="text-muted-foreground">{t("tools.bag_type")}:</span>
+                    <div
+                      className={`flex ${isRTL ? "justify-between flex-row-reverse" : "justify-between"}`}
+                    >
+                      <span className="text-muted-foreground">
+                        {t("common.quantity")}:
+                      </span>
                       <span>
-                        {form.getValues("bagType") === "flat" ? t("tools.flat_bag") : t("tools.gusset_bag")}
+                        {form.getValues("quantity")} {t("tools.bags")}
+                      </span>
+                    </div>
+                    <div
+                      className={`flex ${isRTL ? "justify-between flex-row-reverse" : "justify-between"}`}
+                    >
+                      <span className="text-muted-foreground">
+                        {t("tools.bags_per_kg")}:
+                      </span>
+                      <span>
+                        {results.bagsPerKg.toFixed(0)} {t("tools.bags")}
+                      </span>
+                    </div>
+                    <div
+                      className={`flex ${isRTL ? "justify-between flex-row-reverse" : "justify-between"}`}
+                    >
+                      <span className="text-muted-foreground">
+                        {t("tools.bag_type")}:
+                      </span>
+                      <span>
+                        {form.getValues("bagType") === "flat"
+                          ? t("tools.flat_bag")
+                          : t("tools.gusset_bag")}
                       </span>
                     </div>
                   </div>
@@ -408,47 +537,79 @@ export default function BagWeightCalculator() {
                 <Separator />
 
                 <div className="space-y-2">
-                  <h3 className={`text-sm font-semibold ${isRTL ? 'text-right' : 'text-left'}`}>
+                  <h3
+                    className={`text-sm font-semibold ${isRTL ? "text-right" : "text-left"}`}
+                  >
                     {t("tools.dimensions")}
                   </h3>
                   <div className="grid grid-cols-2 gap-2 text-sm">
-                    <div className={`flex ${isRTL ? 'justify-between flex-row-reverse' : 'justify-between'}`}>
-                      <span className="text-muted-foreground">{t("common.width")}:</span>
+                    <div
+                      className={`flex ${isRTL ? "justify-between flex-row-reverse" : "justify-between"}`}
+                    >
+                      <span className="text-muted-foreground">
+                        {t("common.width")}:
+                      </span>
                       <span>
-                        {form.getValues("width")} {form.getValues("units") === "cm" ? t("tools.cm") : t("tools.inches")}
+                        {form.getValues("width")}{" "}
+                        {form.getValues("units") === "cm"
+                          ? t("tools.cm")
+                          : t("tools.inches")}
                       </span>
                     </div>
-                    <div className={`flex ${isRTL ? 'justify-between flex-row-reverse' : 'justify-between'}`}>
-                      <span className="text-muted-foreground">{t("common.length")}:</span>
+                    <div
+                      className={`flex ${isRTL ? "justify-between flex-row-reverse" : "justify-between"}`}
+                    >
+                      <span className="text-muted-foreground">
+                        {t("common.length")}:
+                      </span>
                       <span>
-                        {form.getValues("length")} {form.getValues("units") === "cm" ? t("tools.cm") : t("tools.inches")}
+                        {form.getValues("length")}{" "}
+                        {form.getValues("units") === "cm"
+                          ? t("tools.cm")
+                          : t("tools.inches")}
                       </span>
                     </div>
                     {form.getValues("bagType") === "gusset" && (
-                      <div className={`flex ${isRTL ? 'justify-between flex-row-reverse' : 'justify-between'}`}>
-                        <span className="text-muted-foreground">{t("tools.gusset")}:</span>
+                      <div
+                        className={`flex ${isRTL ? "justify-between flex-row-reverse" : "justify-between"}`}
+                      >
+                        <span className="text-muted-foreground">
+                          {t("tools.gusset")}:
+                        </span>
                         <span>
-                          {form.getValues("gusset")} {form.getValues("units") === "cm" ? t("tools.cm") : t("tools.inches")}
+                          {form.getValues("gusset")}{" "}
+                          {form.getValues("units") === "cm"
+                            ? t("tools.cm")
+                            : t("tools.inches")}
                         </span>
                       </div>
                     )}
-                    <div className={`flex ${isRTL ? 'justify-between flex-row-reverse' : 'justify-between'}`}>
-                      <span className="text-muted-foreground">{t("common.thickness")}:</span>
+                    <div
+                      className={`flex ${isRTL ? "justify-between flex-row-reverse" : "justify-between"}`}
+                    >
+                      <span className="text-muted-foreground">
+                        {t("common.thickness")}:
+                      </span>
                       <span>{form.getValues("thickness")} μm</span>
                     </div>
                   </div>
                 </div>
 
-                <div className={`mt-4 text-sm text-muted-foreground ${isRTL ? 'text-right' : 'text-left'}`}>
+                <div
+                  className={`mt-4 text-sm text-muted-foreground ${isRTL ? "text-right" : "text-left"}`}
+                >
                   <p>
-                    <strong>{t("tools.note")}:</strong> {t("tools.calculation_disclaimer")}
+                    <strong>{t("tools.note")}:</strong>{" "}
+                    {t("tools.calculation_disclaimer")}
                   </p>
                 </div>
               </div>
             ) : (
               <div className="flex items-center justify-center h-64 text-center">
-                <div className={isRTL ? 'text-right' : 'text-left'}>
-                  <span className="material-icons text-5xl text-muted-foreground mb-2 block">calculate</span>
+                <div className={isRTL ? "text-right" : "text-left"}>
+                  <span className="material-icons text-5xl text-muted-foreground mb-2 block">
+                    calculate
+                  </span>
                   <p className="text-muted-foreground">
                     {t("tools.enter_specifications_message")}
                   </p>

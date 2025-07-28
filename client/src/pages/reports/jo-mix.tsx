@@ -2,7 +2,13 @@ import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { DatePicker } from "@/components/ui/date-picker";
 import { DataTable } from "@/components/ui/data-table";
 import { formatDateString, formatNumber } from "@/lib/utils";
@@ -46,7 +52,7 @@ interface JoMix {
 export default function JoMixReports() {
   const isMobile = useIsMobile();
   const { t } = useTranslation();
-  
+
   // Filter state
   const [reportPeriod, setReportPeriod] = useState("daily");
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
@@ -88,21 +94,29 @@ export default function JoMixReports() {
 
   // Filter completed mixes based on selected criteria
   const filteredMixes = useMemo(() => {
-    let filtered = joMixes.filter(mix => mix.status === "completed" && mix.completedAt);
+    let filtered = joMixes.filter(
+      (mix) => mix.status === "completed" && mix.completedAt,
+    );
 
     // Date filtering based on period
-    const filterDate = reportPeriod === "daily" ? selectedDate : 
-                      reportPeriod === "monthly" ? selectedMonth : selectedYear;
+    const filterDate =
+      reportPeriod === "daily"
+        ? selectedDate
+        : reportPeriod === "monthly"
+          ? selectedMonth
+          : selectedYear;
 
     if (filterDate) {
-      filtered = filtered.filter(mix => {
+      filtered = filtered.filter((mix) => {
         const completedDate = new Date(mix.completedAt!);
-        
+
         if (reportPeriod === "daily") {
           return completedDate.toDateString() === filterDate.toDateString();
         } else if (reportPeriod === "monthly") {
-          return completedDate.getMonth() === filterDate.getMonth() && 
-                 completedDate.getFullYear() === filterDate.getFullYear();
+          return (
+            completedDate.getMonth() === filterDate.getMonth() &&
+            completedDate.getFullYear() === filterDate.getFullYear()
+          );
         } else if (reportPeriod === "yearly") {
           return completedDate.getFullYear() === filterDate.getFullYear();
         }
@@ -112,50 +126,67 @@ export default function JoMixReports() {
 
     // Material type filtering
     if (materialTypeFilter !== "all") {
-      filtered = filtered.filter(mix => 
-        mix.materials.some(material => material.materialType === materialTypeFilter)
+      filtered = filtered.filter((mix) =>
+        mix.materials.some(
+          (material) => material.materialType === materialTypeFilter,
+        ),
       );
     }
 
     // Job order filtering
     if (jobOrderFilter !== "all") {
-      filtered = filtered.filter(mix => 
-        mix.items.some(item => item.jobOrderId === parseInt(jobOrderFilter))
+      filtered = filtered.filter((mix) =>
+        mix.items.some((item) => item.jobOrderId === parseInt(jobOrderFilter)),
       );
     }
 
     // User filtering
     if (userFilter !== "all") {
-      filtered = filtered.filter(mix => mix.createdBy === userFilter);
+      filtered = filtered.filter((mix) => mix.createdBy === userFilter);
     }
 
     // Item filtering
     if (itemFilter !== "all") {
-      filtered = filtered.filter(mix => {
-        return mix.items.some(item => {
-          const jobOrder = jobOrders.find(jo => jo.id === item.jobOrderId);
+      filtered = filtered.filter((mix) => {
+        return mix.items.some((item) => {
+          const jobOrder = jobOrders.find((jo) => jo.id === item.jobOrderId);
           if (!jobOrder) return false;
-          const customerProduct = customerProducts.find(cp => cp.id === jobOrder.customerProductId);
+          const customerProduct = customerProducts.find(
+            (cp) => cp.id === jobOrder.customerProductId,
+          );
           return customerProduct?.itemId === itemFilter;
         });
       });
     }
 
     return filtered;
-  }, [joMixes, reportPeriod, selectedDate, selectedMonth, selectedYear, 
-      materialTypeFilter, jobOrderFilter, userFilter, itemFilter, 
-      jobOrders, customerProducts]);
+  }, [
+    joMixes,
+    reportPeriod,
+    selectedDate,
+    selectedMonth,
+    selectedYear,
+    materialTypeFilter,
+    jobOrderFilter,
+    userFilter,
+    itemFilter,
+    jobOrders,
+    customerProducts,
+  ]);
 
   // Calculate summary statistics
   const summaryStats = useMemo(() => {
-    const totalQuantity = filteredMixes.reduce((sum, mix) => sum + mix.totalQuantity, 0);
+    const totalQuantity = filteredMixes.reduce(
+      (sum, mix) => sum + mix.totalQuantity,
+      0,
+    );
     const totalMixes = filteredMixes.length;
     const avgQuantityPerMix = totalMixes > 0 ? totalQuantity / totalMixes : 0;
-    
+
     // Group by material type
     const materialBreakdown: Record<string, number> = {};
-    filteredMixes.forEach(mix => {
-      mix.materials.forEach(material => {
+    filteredMixes.forEach((mix) => {
+      mix.materials.forEach((material) => {
         if (!materialBreakdown[material.materialType]) {
           materialBreakdown[material.materialType] = 0;
         }
@@ -167,20 +198,26 @@ export default function JoMixReports() {
       totalQuantity,
       totalMixes,
       avgQuantityPerMix,
-      materialBreakdown
+      materialBreakdown,
     };
   }, [filteredMixes]);
 
   // Prepare table data with enhanced information
   const tableData = useMemo(() => {
-    return filteredMixes.map(mix => {
+    return filteredMixes.map((mix) => {
       // Get job order details for this mix
-      const jobOrderDetails = mix.items.map(item => {
-        const jobOrder = jobOrders.find(jo => jo.id === item.jobOrderId);
-        const customerProduct = customerProducts.find(cp => cp.id === jobOrder?.customerProductId);
-        const itemName = items.find(i => i.id === customerProduct?.itemId)?.name || "Unknown";
-        const customer = customers.find(c => c.id === customerProduct?.customerId);
-        
+      const jobOrderDetails = mix.items.map((item) => {
+        const jobOrder = jobOrders.find((jo) => jo.id === item.jobOrderId);
+        const customerProduct = customerProducts.find(
+          (cp) => cp.id === jobOrder?.customerProductId,
+        );
+        const itemName =
+          items.find((i) => i.id === customerProduct?.itemId)?.name ||
+          "Unknown";
+        const customer = customers.find(
+          (c) => c.id === customerProduct?.customerId,
+        );
+
         return {
           jobOrderId: item.jobOrderId,
           quantity: item.quantity,
@@ -190,7 +227,9 @@ export default function JoMixReports() {
       });
 
       // Get primary material types
-      const materialTypes = [...new Set(mix.materials.map(m => m.materialType))];
+      const materialTypes = [
+        ...new Set(mix.materials.map((m) => m.materialType)),
+      ];
 
       return {
         id: mix.id,
@@ -201,11 +240,17 @@ export default function JoMixReports() {
         formulaName: mix.formulaName,
         createdByName: mix.createdByName,
         materialTypes: materialTypes.join(", "),
-        jobOrders: jobOrderDetails.map(jo => `JO-${jo.jobOrderId}`).join(", "),
-        items: [...new Set(jobOrderDetails.map(jo => jo.itemName))].join(", "),
-        customers: [...new Set(jobOrderDetails.map(jo => jo.customerName))].join(", "),
+        jobOrders: jobOrderDetails
+          .map((jo) => `JO-${jo.jobOrderId}`)
+          .join(", "),
+        items: [...new Set(jobOrderDetails.map((jo) => jo.itemName))].join(
+          ", ",
+        ),
+        customers: [
+          ...new Set(jobOrderDetails.map((jo) => jo.customerName)),
+        ].join(", "),
         materials: mix.materials,
-        jobOrderDetails
+        jobOrderDetails,
       };
     });
   }, [filteredMixes, jobOrders, customerProducts, items, customers]);
@@ -213,31 +258,33 @@ export default function JoMixReports() {
   // Get unique values for filter dropdowns
   const uniqueMaterialTypes = useMemo(() => {
     const types = new Set<string>();
-    joMixes.forEach(mix => 
-      mix.materials.forEach(material => types.add(material.materialType))
+    joMixes.forEach((mix) =>
+      mix.materials.forEach((material) => types.add(material.materialType)),
     );
     return Array.from(types);
   }, [joMixes]);
 
   const uniqueJobOrders = useMemo(() => {
     const orders = new Set<number>();
-    joMixes.forEach(mix => 
-      mix.items.forEach(item => orders.add(item.jobOrderId))
+    joMixes.forEach((mix) =>
+      mix.items.forEach((item) => orders.add(item.jobOrderId)),
     );
     return Array.from(orders);
   }, [joMixes]);
 
   const uniqueUsers = useMemo(() => {
-    return Array.from(new Set(joMixes.map(mix => mix.createdBy)));
+    return Array.from(new Set(joMixes.map((mix) => mix.createdBy)));
   }, [joMixes]);
 
   const uniqueItems = useMemo(() => {
     const itemIds = new Set<string>();
-    joMixes.forEach(mix => {
-      mix.items.forEach(item => {
-        const jobOrder = jobOrders.find(jo => jo.id === item.jobOrderId);
+    joMixes.forEach((mix) => {
+      mix.items.forEach((item) => {
+        const jobOrder = jobOrders.find((jo) => jo.id === item.jobOrderId);
         if (jobOrder) {
-          const customerProduct = customerProducts.find(cp => cp.id === jobOrder.customerProductId);
+          const customerProduct = customerProducts.find(
+            (cp) => cp.id === jobOrder.customerProductId,
+          );
           if (customerProduct?.itemId) {
             itemIds.add(customerProduct.itemId);
           }
@@ -251,8 +298,8 @@ export default function JoMixReports() {
   const columns = [
     { header: "Mix Number", accessorKey: "mixNumber" },
     { header: "Date Completed", accessorKey: "completedDate" },
-    { 
-      header: "Quantity (kg)", 
+    {
+      header: "Quantity (kg)",
       accessorKey: "totalQuantity",
       cell: (row: any) => formatNumber(row.totalQuantity, 1),
     },
@@ -267,45 +314,52 @@ export default function JoMixReports() {
   // Print function
   const handlePrint = () => {
     const doc = new jsPDF();
-    
+
     // Add company header
     doc.setFillColor(6, 95, 70); // Green color
-    doc.rect(0, 0, 210, 25, 'F');
-    
+    doc.rect(0, 0, 210, 25, "F");
+
     // Add company logo (if available)
     doc.setTextColor(255, 255, 255);
     doc.setFontSize(16);
-    doc.setFont('helvetica', 'bold');
-    doc.text('Modern Plastic Bag Factory', 105, 10, { align: 'center' });
+    doc.setFont("helvetica", "bold");
+    doc.text("Modern Plastic Bag Factory", 105, 10, { align: "center" });
     doc.setFontSize(12);
-    doc.text('مصنع أكياس البلاستيك الحديث', 105, 18, { align: 'center' });
-    
+    doc.text("مصنع أكياس البلاستيك الحديث", 105, 18, { align: "center" });
+
     // Reset text color
     doc.setTextColor(0, 0, 0);
-    doc.setFont('helvetica', 'normal');
-    
+    doc.setFont("helvetica", "normal");
+
     // Report title
     doc.setFontSize(18);
-    doc.setFont('helvetica', 'bold');
-    doc.text('JO Mix Production Report', 105, 40, { align: 'center' });
-    
+    doc.setFont("helvetica", "bold");
+    doc.text("JO Mix Production Report", 105, 40, { align: "center" });
+
     // Report details
     doc.setFontSize(12);
-    doc.setFont('helvetica', 'normal');
-    const periodText = reportPeriod === "daily" ? `Daily - ${formatDateString(selectedDate)}` :
-                      reportPeriod === "monthly" ? `Monthly - ${selectedMonth.toLocaleDateString('en-US', { year: 'numeric', month: 'long' })}` :
-                      `Yearly - ${selectedYear.getFullYear()}`;
-    
+    doc.setFont("helvetica", "normal");
+    const periodText =
+      reportPeriod === "daily"
+        ? `Daily - ${formatDateString(selectedDate)}`
+        : reportPeriod === "monthly"
+          ? `Monthly - ${selectedMonth.toLocaleDateString("en-US", { year: "numeric", month: "long" })}`
+          : `Yearly - ${selectedYear.getFullYear()}`;
+
     doc.text(`Report Period: ${periodText}`, 20, 55);
     doc.text(`Generated: ${new Date().toLocaleString()}`, 20, 65);
     doc.text(`Total Mixes: ${summaryStats.totalMixes}`, 20, 75);
-    doc.text(`Total Quantity: ${formatNumber(summaryStats.totalQuantity, 1)} kg`, 20, 85);
-    
+    doc.text(
+      `Total Quantity: ${formatNumber(summaryStats.totalQuantity, 1)} kg`,
+      20,
+      85,
+    );
+
     // Table data
-    const tableRows = tableData.map(row => [
+    const tableRows = tableData.map((row) => [
       row.mixNumber,
       row.completedDate,
-      formatNumber(row.totalQuantity, 1) + ' kg',
+      formatNumber(row.totalQuantity, 1) + " kg",
       row.screwType,
       row.formulaName,
       row.createdByName,
@@ -315,9 +369,19 @@ export default function JoMixReports() {
     // Add table
     autoTable(doc, {
       startY: 95,
-      head: [['Mix Number', 'Date', 'Quantity', 'Screw', 'Formula', 'Created By', 'Materials']],
+      head: [
+        [
+          "Mix Number",
+          "Date",
+          "Quantity",
+          "Screw",
+          "Formula",
+          "Created By",
+          "Materials",
+        ],
+      ],
       body: tableRows,
-      theme: 'grid',
+      theme: "grid",
       styles: {
         fontSize: 9,
         cellPadding: 3,
@@ -325,7 +389,7 @@ export default function JoMixReports() {
       headStyles: {
         fillColor: [6, 95, 70],
         textColor: [255, 255, 255],
-        fontStyle: 'bold',
+        fontStyle: "bold",
       },
       alternateRowStyles: {
         fillColor: [245, 247, 250],
@@ -338,11 +402,18 @@ export default function JoMixReports() {
       doc.setPage(i);
       doc.setFontSize(10);
       doc.setTextColor(100);
-      doc.text('Modern Plastic Bag Factory - Production Management System', 105, 290, { align: 'center' });
+      doc.text(
+        "Modern Plastic Bag Factory - Production Management System",
+        105,
+        290,
+        { align: "center" },
+      );
       doc.text(`Page ${i} of ${pageCount}`, 190, 290);
     }
 
-    doc.save(`jo-mix-report-${reportPeriod}-${new Date().toISOString().split('T')[0]}.pdf`);
+    doc.save(
+      `jo-mix-report-${reportPeriod}-${new Date().toISOString().split("T")[0]}.pdf`,
+    );
   };
 
   // Mobile card view
@@ -351,7 +422,9 @@ export default function JoMixReports() {
       return (
         <div className="text-center p-8 bg-gray-50 rounded-lg">
           <FileText className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-          <p className="text-gray-500">No completed JO Mix data found for the selected criteria</p>
+          <p className="text-gray-500">
+            No completed JO Mix data found for the selected criteria
+          </p>
         </div>
       );
     }
@@ -362,7 +435,9 @@ export default function JoMixReports() {
           <Card key={mix.id} className="overflow-hidden">
             <CardHeader className="p-4 bg-gradient-to-r from-red-50 to-orange-50">
               <div className="flex justify-between items-center">
-                <CardTitle className="text-base font-medium">{mix.mixNumber}</CardTitle>
+                <CardTitle className="text-base font-medium">
+                  {mix.mixNumber}
+                </CardTitle>
                 <span className="px-2 py-1 text-xs rounded-full bg-green-100 text-green-700">
                   {formatNumber(mix.totalQuantity, 1)} kg
                 </span>
@@ -380,7 +455,9 @@ export default function JoMixReports() {
                 </div>
                 <div>
                   <p className="text-xs text-gray-500">Formula</p>
-                  <p className="text-sm font-medium truncate">{mix.formulaName}</p>
+                  <p className="text-sm font-medium truncate">
+                    {mix.formulaName}
+                  </p>
                 </div>
                 <div>
                   <p className="text-xs text-gray-500">Created By</p>
@@ -422,7 +499,9 @@ export default function JoMixReports() {
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Total Mixes</p>
-                <p className="text-2xl font-bold text-gray-900">{summaryStats.totalMixes}</p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {summaryStats.totalMixes}
+                </p>
               </div>
             </div>
           </CardContent>
@@ -435,8 +514,12 @@ export default function JoMixReports() {
                 <CalendarDays className="h-6 w-6 text-blue-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Total Quantity</p>
-                <p className="text-2xl font-bold text-gray-900">{formatNumber(summaryStats.totalQuantity, 1)} kg</p>
+                <p className="text-sm font-medium text-gray-600">
+                  Total Quantity
+                </p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {formatNumber(summaryStats.totalQuantity, 1)} kg
+                </p>
               </div>
             </div>
           </CardContent>
@@ -450,7 +533,9 @@ export default function JoMixReports() {
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Avg per Mix</p>
-                <p className="text-2xl font-bold text-gray-900">{formatNumber(summaryStats.avgQuantityPerMix, 1)} kg</p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {formatNumber(summaryStats.avgQuantityPerMix, 1)} kg
+                </p>
               </div>
             </div>
           </CardContent>
@@ -463,8 +548,12 @@ export default function JoMixReports() {
                 <span className="material-icons text-purple-600">blender</span>
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Material Types</p>
-                <p className="text-2xl font-bold text-gray-900">{Object.keys(summaryStats.materialBreakdown).length}</p>
+                <p className="text-sm font-medium text-gray-600">
+                  Material Types
+                </p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {Object.keys(summaryStats.materialBreakdown).length}
+                </p>
               </div>
             </div>
           </CardContent>
@@ -483,7 +572,9 @@ export default function JoMixReports() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
             {/* Period Selection */}
             <div>
-              <label className="block text-sm font-medium mb-2">Report Period</label>
+              <label className="block text-sm font-medium mb-2">
+                Report Period
+              </label>
               <Select value={reportPeriod} onValueChange={setReportPeriod}>
                 <SelectTrigger>
                   <SelectValue />
@@ -499,15 +590,25 @@ export default function JoMixReports() {
             {/* Date Selection */}
             <div>
               <label className="block text-sm font-medium mb-2">
-                {reportPeriod === "daily" ? "Select Date" : 
-                 reportPeriod === "monthly" ? "Select Month" : "Select Year"}
+                {reportPeriod === "daily"
+                  ? "Select Date"
+                  : reportPeriod === "monthly"
+                    ? "Select Month"
+                    : "Select Year"}
               </label>
               <DatePicker
-                selected={reportPeriod === "daily" ? selectedDate : 
-                         reportPeriod === "monthly" ? selectedMonth : selectedYear}
+                selected={
+                  reportPeriod === "daily"
+                    ? selectedDate
+                    : reportPeriod === "monthly"
+                      ? selectedMonth
+                      : selectedYear
+                }
                 onSelect={(date) => {
-                  if (reportPeriod === "daily") setSelectedDate(date || new Date());
-                  else if (reportPeriod === "monthly") setSelectedMonth(date || new Date());
+                  if (reportPeriod === "daily")
+                    setSelectedDate(date || new Date());
+                  else if (reportPeriod === "monthly")
+                    setSelectedMonth(date || new Date());
                   else setSelectedYear(date || new Date());
                 }}
               />
@@ -515,15 +616,22 @@ export default function JoMixReports() {
 
             {/* Material Type Filter */}
             <div>
-              <label className="block text-sm font-medium mb-2">Material Type</label>
-              <Select value={materialTypeFilter} onValueChange={setMaterialTypeFilter}>
+              <label className="block text-sm font-medium mb-2">
+                Material Type
+              </label>
+              <Select
+                value={materialTypeFilter}
+                onValueChange={setMaterialTypeFilter}
+              >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Materials</SelectItem>
-                  {uniqueMaterialTypes.map(type => (
-                    <SelectItem key={type} value={type}>{type}</SelectItem>
+                  {uniqueMaterialTypes.map((type) => (
+                    <SelectItem key={type} value={type}>
+                      {type}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -531,15 +639,19 @@ export default function JoMixReports() {
 
             {/* Job Order Filter */}
             <div>
-              <label className="block text-sm font-medium mb-2">Job Order</label>
+              <label className="block text-sm font-medium mb-2">
+                Job Order
+              </label>
               <Select value={jobOrderFilter} onValueChange={setJobOrderFilter}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Job Orders</SelectItem>
-                  {uniqueJobOrders.map(joId => (
-                    <SelectItem key={joId} value={joId.toString()}>JO-{joId}</SelectItem>
+                  {uniqueJobOrders.map((joId) => (
+                    <SelectItem key={joId} value={joId.toString()}>
+                      JO-{joId}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -549,15 +661,17 @@ export default function JoMixReports() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* User Filter */}
             <div>
-              <label className="block text-sm font-medium mb-2">Created By User</label>
+              <label className="block text-sm font-medium mb-2">
+                Created By User
+              </label>
               <Select value={userFilter} onValueChange={setUserFilter}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Users</SelectItem>
-                  {uniqueUsers.map(userId => {
-                    const user = users.find(u => u.id === userId);
+                  {uniqueUsers.map((userId) => {
+                    const user = users.find((u) => u.id === userId);
                     return (
                       <SelectItem key={userId} value={userId}>
                         {user?.username || userId}
@@ -577,8 +691,8 @@ export default function JoMixReports() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Items</SelectItem>
-                  {uniqueItems.map(itemId => {
-                    const item = items.find(i => i.id === itemId);
+                  {uniqueItems.map((itemId) => {
+                    const item = items.find((i) => i.id === itemId);
                     return (
                       <SelectItem key={itemId} value={itemId}>
                         {item?.name || itemId}
@@ -600,12 +714,19 @@ export default function JoMixReports() {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {Object.entries(summaryStats.materialBreakdown).map(([type, quantity]) => (
-                <div key={type} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                  <span className="font-medium">{type}</span>
-                  <span className="text-blue-600 font-bold">{formatNumber(quantity, 1)} kg</span>
-                </div>
-              ))}
+              {Object.entries(summaryStats.materialBreakdown).map(
+                ([type, quantity]) => (
+                  <div
+                    key={type}
+                    className="flex justify-between items-center p-3 bg-gray-50 rounded-lg"
+                  >
+                    <span className="font-medium">{type}</span>
+                    <span className="text-blue-600 font-bold">
+                      {formatNumber(quantity, 1)} kg
+                    </span>
+                  </div>
+                ),
+              )}
             </div>
           </CardContent>
         </Card>

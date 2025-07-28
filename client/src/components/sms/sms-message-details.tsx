@@ -1,18 +1,30 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { 
-  MessageSquare, 
-  Phone, 
-  Calendar, 
-  Clock, 
-  User, 
-  AlertTriangle, 
+import {
+  MessageSquare,
+  Phone,
+  Calendar,
+  Clock,
+  User,
+  AlertTriangle,
   CheckCircle,
   XCircle,
   FileText,
-  ExternalLink
+  ExternalLink,
 } from "lucide-react";
 import { format } from "date-fns";
 import type { SmsMessage, Customer, Order } from "shared/schema";
@@ -25,14 +37,13 @@ interface SmsMessageDetailsProps {
   order?: Order;
 }
 
-export function SmsMessageDetails({ 
-  message, 
-  open, 
-  onOpenChange, 
-  customer, 
-  order 
+export function SmsMessageDetails({
+  message,
+  open,
+  onOpenChange,
+  customer,
+  order,
 }: SmsMessageDetailsProps) {
-  
   const getStatusIcon = (status: string) => {
     switch (status) {
       case "delivered":
@@ -87,19 +98,25 @@ export function SmsMessageDetails({
             SMS Message Details
           </DialogTitle>
           <DialogDescription>
-            View comprehensive details about this SMS message including delivery status, recipient information, and content.
+            View comprehensive details about this SMS message including delivery
+            status, recipient information, and content.
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6">
           {/* Status and Priority */}
           <div className="flex items-center justify-between">
-            <div className={`flex items-center gap-2 px-3 py-2 rounded-lg border ${getStatusColor(message.status)}`}>
+            <div
+              className={`flex items-center gap-2 px-3 py-2 rounded-lg border ${getStatusColor(message.status)}`}
+            >
               {getStatusIcon(message.status)}
               <span className="font-medium capitalize">{message.status}</span>
             </div>
             <div className="flex items-center gap-2">
-              <Badge variant={getPriorityColor(message.priority)} className="capitalize">
+              <Badge
+                variant={getPriorityColor(message.priority)}
+                className="capitalize"
+              >
                 {message.priority}
               </Badge>
               <Badge variant="outline" className="capitalize">
@@ -125,7 +142,9 @@ export function SmsMessageDetails({
                   </div>
                 </div>
                 <div>
-                  <div className="text-sm font-medium text-gray-500">Phone Number</div>
+                  <div className="text-sm font-medium text-gray-500">
+                    Phone Number
+                  </div>
                   <div className="flex items-center gap-2">
                     <Phone className="h-4 w-4 text-gray-400" />
                     {message.recipientPhone}
@@ -135,7 +154,9 @@ export function SmsMessageDetails({
 
               {customer && (
                 <div className="pt-2 border-t">
-                  <div className="text-sm font-medium text-gray-500">Customer</div>
+                  <div className="text-sm font-medium text-gray-500">
+                    Customer
+                  </div>
                   <div className="flex items-center gap-2">
                     <span>{customer.name}</span>
                     <Badge variant="outline" className="text-xs">
@@ -155,7 +176,7 @@ export function SmsMessageDetails({
                 Message Content
               </CardTitle>
               <CardDescription>
-                Type: {message.messageType.replace(/_/g, ' ')}
+                Type: {message.messageType.replace(/_/g, " ")}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -186,20 +207,30 @@ export function SmsMessageDetails({
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {message.sentAt && (
                   <div>
-                    <div className="text-sm font-medium text-gray-500">Sent At</div>
+                    <div className="text-sm font-medium text-gray-500">
+                      Sent At
+                    </div>
                     <div className="flex items-center gap-2">
                       <Calendar className="h-4 w-4 text-gray-400" />
-                      {format(new Date(message.sentAt), "MMM dd, yyyy 'at' HH:mm")}
+                      {format(
+                        new Date(message.sentAt),
+                        "MMM dd, yyyy 'at' HH:mm",
+                      )}
                     </div>
                   </div>
                 )}
 
                 {message.deliveredAt && (
                   <div>
-                    <div className="text-sm font-medium text-gray-500">Delivered At</div>
+                    <div className="text-sm font-medium text-gray-500">
+                      Delivered At
+                    </div>
                     <div className="flex items-center gap-2">
                       <CheckCircle className="h-4 w-4 text-green-500" />
-                      {format(new Date(message.deliveredAt), "MMM dd, yyyy 'at' HH:mm")}
+                      {format(
+                        new Date(message.deliveredAt),
+                        "MMM dd, yyyy 'at' HH:mm",
+                      )}
                     </div>
                   </div>
                 )}
@@ -207,11 +238,16 @@ export function SmsMessageDetails({
                 {message.scheduledFor && (
                   <div>
                     <div className="text-sm font-medium text-gray-500">
-                      {message.isScheduled ? "Scheduled For" : "Was Scheduled For"}
+                      {message.isScheduled
+                        ? "Scheduled For"
+                        : "Was Scheduled For"}
                     </div>
                     <div className="flex items-center gap-2">
                       <Clock className="h-4 w-4 text-blue-500" />
-                      {format(new Date(message.scheduledFor), "MMM dd, yyyy 'at' HH:mm")}
+                      {format(
+                        new Date(message.scheduledFor),
+                        "MMM dd, yyyy 'at' HH:mm",
+                      )}
                     </div>
                   </div>
                 )}
@@ -219,12 +255,15 @@ export function SmsMessageDetails({
 
               {message.retryCount > 0 && (
                 <div className="pt-2 border-t">
-                  <div className="text-sm font-medium text-gray-500">Retry Information</div>
+                  <div className="text-sm font-medium text-gray-500">
+                    Retry Information
+                  </div>
                   <div className="flex items-center gap-2">
                     <span>Retried {message.retryCount} time(s)</span>
                     {message.lastRetryAt && (
                       <span className="text-gray-500">
-                        • Last retry: {format(new Date(message.lastRetryAt), "MMM dd, HH:mm")}
+                        • Last retry:{" "}
+                        {format(new Date(message.lastRetryAt), "MMM dd, HH:mm")}
                       </span>
                     )}
                   </div>
@@ -247,7 +286,10 @@ export function SmsMessageDetails({
                   <div>
                     <div className="font-medium">Order #{order.id}</div>
                     <div className="text-sm text-gray-500">
-                      Status: <Badge variant="outline" className="text-xs">{order.status}</Badge>
+                      Status:{" "}
+                      <Badge variant="outline" className="text-xs">
+                        {order.status}
+                      </Badge>
                     </div>
                     {order.date && (
                       <div className="text-xs text-gray-500">
@@ -278,11 +320,15 @@ export function SmsMessageDetails({
                   <div className="font-medium text-gray-500">Message ID</div>
                   <div className="font-mono text-xs">{message.id}</div>
                 </div>
-                
+
                 {message.twilioMessageId && (
                   <div>
-                    <div className="font-medium text-gray-500">Twilio Message ID</div>
-                    <div className="font-mono text-xs">{message.twilioMessageId}</div>
+                    <div className="font-medium text-gray-500">
+                      Twilio Message ID
+                    </div>
+                    <div className="font-mono text-xs">
+                      {message.twilioMessageId}
+                    </div>
                   </div>
                 )}
 

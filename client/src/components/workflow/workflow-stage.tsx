@@ -11,18 +11,18 @@ interface WorkflowStageProps {
   iconBgColor: string;
 }
 
-export function WorkflowStage({ 
-  title, 
-  icon, 
-  stage, 
-  iconColor, 
-  iconBgColor 
+export function WorkflowStage({
+  title,
+  icon,
+  stage,
+  iconColor,
+  iconBgColor,
 }: WorkflowStageProps) {
   // Fetch rolls by stage
   const { data: rolls, isLoading } = useQuery<Roll[]>({
     queryKey: [`${API_ENDPOINTS.ROLLS}/stage/${stage}`],
   });
-  
+
   return (
     <div className="bg-secondary-50 rounded-lg p-4">
       <div className="flex items-center mb-4">
@@ -32,13 +32,13 @@ export function WorkflowStage({
         <div>
           <h4 className="font-medium">{title}</h4>
           <p className="text-sm text-secondary-500">
-            {isLoading 
-              ? "Loading..." 
+            {isLoading
+              ? "Loading..."
               : `${rolls?.length || 0} rolls in progress`}
           </p>
         </div>
       </div>
-      
+
       <div className="space-y-3">
         {isLoading ? (
           <>
@@ -46,12 +46,12 @@ export function WorkflowStage({
             <div className="animate-pulse bg-white p-3 rounded border border-secondary-200 h-32"></div>
           </>
         ) : rolls && rolls.length > 0 ? (
-          rolls.map((roll) => (
-            <RollCard key={roll.id} roll={roll} />
-          ))
+          rolls.map((roll) => <RollCard key={roll.id} roll={roll} />)
         ) : (
           <div className="py-8 text-center text-secondary-400">
-            <span className="material-icons text-3xl mb-2">hourglass_empty</span>
+            <span className="material-icons text-3xl mb-2">
+              hourglass_empty
+            </span>
             <p>No rolls in this stage</p>
           </div>
         )}

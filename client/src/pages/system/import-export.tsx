@@ -1,13 +1,29 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { templateDefinitions, generateCSV, downloadFile } from "@/lib/export-utils";
+import {
+  templateDefinitions,
+  generateCSV,
+  downloadFile,
+} from "@/lib/export-utils";
 import { useToast } from "@/hooks/use-toast";
 import { API_ENDPOINTS } from "@/lib/constants";
 import { useTranslation } from "react-i18next";
@@ -23,27 +39,70 @@ export default function ImportExportPage() {
 
   // Available tables for export
   const exportTables = [
-    { value: "categories", label: "Categories", endpoint: API_ENDPOINTS.CATEGORIES },
-    { value: "customers", label: "Customers", endpoint: API_ENDPOINTS.CUSTOMERS },
+    {
+      value: "categories",
+      label: "Categories",
+      endpoint: API_ENDPOINTS.CATEGORIES,
+    },
+    {
+      value: "customers",
+      label: "Customers",
+      endpoint: API_ENDPOINTS.CUSTOMERS,
+    },
     { value: "items", label: "Items", endpoint: API_ENDPOINTS.ITEMS },
     { value: "sections", label: "Sections", endpoint: API_ENDPOINTS.SECTIONS },
     { value: "machines", label: "Machines", endpoint: API_ENDPOINTS.MACHINES },
     { value: "users", label: "Users", endpoint: API_ENDPOINTS.USERS },
     { value: "orders", label: "Orders", endpoint: API_ENDPOINTS.ORDERS },
-    { value: "jobOrders", label: "Job Orders", endpoint: API_ENDPOINTS.JOB_ORDERS },
+    {
+      value: "jobOrders",
+      label: "Job Orders",
+      endpoint: API_ENDPOINTS.JOB_ORDERS,
+    },
     { value: "rolls", label: "Rolls", endpoint: API_ENDPOINTS.ROLLS },
-    { value: "masterBatches", label: "Master Batches", endpoint: API_ENDPOINTS.MASTER_BATCHES },
-    { value: "rawMaterials", label: "Raw Materials", endpoint: API_ENDPOINTS.RAW_MATERIALS },
-    { value: "finalProducts", label: "Final Products", endpoint: API_ENDPOINTS.FINAL_PRODUCTS },
-    { value: "qualityChecks", label: "Quality Checks", endpoint: "/api/quality-checks" },
-    { value: "qualityViolations", label: "Quality Violations", endpoint: "/api/quality-violations" },
-    { value: "correctiveActions", label: "Corrective Actions", endpoint: "/api/corrective-actions" },
-    { value: "mixMaterials", label: "Mix Materials", endpoint: API_ENDPOINTS.MIX_MATERIALS },
+    {
+      value: "masterBatches",
+      label: "Master Batches",
+      endpoint: API_ENDPOINTS.MASTER_BATCHES,
+    },
+    {
+      value: "rawMaterials",
+      label: "Raw Materials",
+      endpoint: API_ENDPOINTS.RAW_MATERIALS,
+    },
+    {
+      value: "finalProducts",
+      label: "Final Products",
+      endpoint: API_ENDPOINTS.FINAL_PRODUCTS,
+    },
+    {
+      value: "qualityChecks",
+      label: "Quality Checks",
+      endpoint: "/api/quality-checks",
+    },
+    {
+      value: "qualityViolations",
+      label: "Quality Violations",
+      endpoint: "/api/quality-violations",
+    },
+    {
+      value: "correctiveActions",
+      label: "Corrective Actions",
+      endpoint: "/api/corrective-actions",
+    },
+    {
+      value: "mixMaterials",
+      label: "Mix Materials",
+      endpoint: API_ENDPOINTS.MIX_MATERIALS,
+    },
   ];
 
   // Handle download template
   const handleDownloadTemplate = () => {
-    if (!selectedTemplate || !templateDefinitions[selectedTemplate as keyof typeof templateDefinitions]) {
+    if (
+      !selectedTemplate ||
+      !templateDefinitions[selectedTemplate as keyof typeof templateDefinitions]
+    ) {
       toast({
         title: "Error",
         description: "Please select a template to download",
@@ -52,7 +111,8 @@ export default function ImportExportPage() {
       return;
     }
 
-    const template = templateDefinitions[selectedTemplate as keyof typeof templateDefinitions];
+    const template =
+      templateDefinitions[selectedTemplate as keyof typeof templateDefinitions];
     const csv = generateCSV(template.headers, template.sampleData);
     downloadFile(csv, template.fileName);
 
@@ -85,7 +145,9 @@ export default function ImportExportPage() {
     setExporting(true);
 
     try {
-      const selectedTable = exportTables.find(table => table.value === selectedExportTable);
+      const selectedTable = exportTables.find(
+        (table) => table.value === selectedExportTable,
+      );
       if (!selectedTable) {
         throw new Error("Invalid table selection");
       }
@@ -97,7 +159,7 @@ export default function ImportExportPage() {
       }
 
       const data = await response.json();
-      
+
       if (!Array.isArray(data) || data.length === 0) {
         toast({
           title: "No Data",
@@ -109,29 +171,34 @@ export default function ImportExportPage() {
 
       // Generate CSV from the data
       const headers = Object.keys(data[0]);
-      const csvData = data.map(row => headers.map(header => {
-        const value = row[header];
-        // Handle different data types
-        if (value === null || value === undefined) return '';
-        if (typeof value === 'object') return JSON.stringify(value);
-        if (typeof value === 'string' && value.includes(',')) return `"${value}"`;
-        return String(value);
-      }));
+      const csvData = data.map((row) =>
+        headers.map((header) => {
+          const value = row[header];
+          // Handle different data types
+          if (value === null || value === undefined) return "";
+          if (typeof value === "object") return JSON.stringify(value);
+          if (typeof value === "string" && value.includes(","))
+            return `"${value}"`;
+          return String(value);
+        }),
+      );
 
       const csv = generateCSV(headers, csvData);
-      const fileName = `${selectedExportTable}_export_${new Date().toISOString().split('T')[0]}.csv`;
-      
+      const fileName = `${selectedExportTable}_export_${new Date().toISOString().split("T")[0]}.csv`;
+
       downloadFile(csv, fileName);
 
       toast({
         title: "Export Successful",
         description: `${selectedTable.label} data exported successfully (${data.length} records)`,
       });
-
     } catch (error) {
       toast({
         title: "Export Failed",
-        description: error instanceof Error ? error.message : "An error occurred during export",
+        description:
+          error instanceof Error
+            ? error.message
+            : "An error occurred during export",
         variant: "destructive",
       });
       console.error("Export error:", error);
@@ -156,12 +223,12 @@ export default function ImportExportPage() {
     try {
       // Create a FormData object to send the file
       const formData = new FormData();
-      formData.append('file', selectedFile);
-      formData.append('entityType', selectedTemplate);
+      formData.append("file", selectedFile);
+      formData.append("entityType", selectedTemplate);
 
       // Send the file to the server
-      const response = await fetch('/api/import-csv', {
-        method: 'POST',
+      const response = await fetch("/api/import-csv", {
+        method: "POST",
         body: formData,
       });
 
@@ -170,7 +237,7 @@ export default function ImportExportPage() {
       if (response.ok) {
         toast({
           title: "Import Successful",
-          description: `${result.message}: Created ${result.created}, Updated ${result.updated}${result.failed > 0 ? `, Failed ${result.failed}` : ''}`,
+          description: `${result.message}: Created ${result.created}, Updated ${result.updated}${result.failed > 0 ? `, Failed ${result.failed}` : ""}`,
         });
       } else {
         toast({
@@ -194,7 +261,9 @@ export default function ImportExportPage() {
       setImporting(false);
       setSelectedFile(null);
       // Reset the file input
-      const fileInput = document.getElementById("fileUpload") as HTMLInputElement;
+      const fileInput = document.getElementById(
+        "fileUpload",
+      ) as HTMLInputElement;
       if (fileInput) fileInput.value = "";
     }
   };
@@ -215,7 +284,8 @@ export default function ImportExportPage() {
             <CardHeader>
               <CardTitle>Download Data Templates</CardTitle>
               <CardDescription>
-                Get CSV templates for importing your existing data into the system.
+                Get CSV templates for importing your existing data into the
+                system.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -234,18 +304,29 @@ export default function ImportExportPage() {
                         <SelectItem value="categories">Categories</SelectItem>
                         <SelectItem value="customers">Customers</SelectItem>
                         <SelectItem value="items">Items</SelectItem>
-                        <SelectItem value="customerProducts">Customer Products</SelectItem>
+                        <SelectItem value="customerProducts">
+                          Customer Products
+                        </SelectItem>
                         <SelectItem value="sections">Sections</SelectItem>
                         <SelectItem value="machines">Machines</SelectItem>
-                        <SelectItem value="masterBatches">Master Batches</SelectItem>
-                        <SelectItem value="rawMaterials">Raw Materials</SelectItem>
+                        <SelectItem value="masterBatches">
+                          Master Batches
+                        </SelectItem>
+                        <SelectItem value="rawMaterials">
+                          Raw Materials
+                        </SelectItem>
                         <SelectItem value="users">Users</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                   <div className="flex items-end">
-                    <Button onClick={handleDownloadTemplate} className="w-full md:w-auto">
-                      <span className="material-icons text-sm mr-2">file_download</span>
+                    <Button
+                      onClick={handleDownloadTemplate}
+                      className="w-full md:w-auto"
+                    >
+                      <span className="material-icons text-sm mr-2">
+                        file_download
+                      </span>
                       Download Template
                     </Button>
                   </div>
@@ -256,8 +337,14 @@ export default function ImportExportPage() {
                   <AlertTitle>How to use templates</AlertTitle>
                   <AlertDescription>
                     <ol className="list-decimal pl-5 space-y-1">
-                      <li>Download the CSV template for the data type you want to import</li>
-                      <li>Open the file in a spreadsheet application (Excel, Google Sheets, etc.)</li>
+                      <li>
+                        Download the CSV template for the data type you want to
+                        import
+                      </li>
+                      <li>
+                        Open the file in a spreadsheet application (Excel,
+                        Google Sheets, etc.)
+                      </li>
                       <li>Fill in your data following the sample row format</li>
                       <li>Save as CSV and import using the Import Data tab</li>
                     </ol>
@@ -292,11 +379,17 @@ export default function ImportExportPage() {
                         <SelectItem value="categories">Categories</SelectItem>
                         <SelectItem value="customers">Customers</SelectItem>
                         <SelectItem value="items">Items</SelectItem>
-                        <SelectItem value="customerProducts">Customer Products</SelectItem>
+                        <SelectItem value="customerProducts">
+                          Customer Products
+                        </SelectItem>
                         <SelectItem value="sections">Sections</SelectItem>
                         <SelectItem value="machines">Machines</SelectItem>
-                        <SelectItem value="masterBatches">Master Batches</SelectItem>
-                        <SelectItem value="rawMaterials">Raw Materials</SelectItem>
+                        <SelectItem value="masterBatches">
+                          Master Batches
+                        </SelectItem>
+                        <SelectItem value="rawMaterials">
+                          Raw Materials
+                        </SelectItem>
                         <SelectItem value="users">Users</SelectItem>
                       </SelectContent>
                     </Select>
@@ -319,12 +412,16 @@ export default function ImportExportPage() {
                   >
                     {importing ? (
                       <>
-                        <span className="material-icons animate-spin text-sm mr-2">refresh</span>
+                        <span className="material-icons animate-spin text-sm mr-2">
+                          refresh
+                        </span>
                         Importing...
                       </>
                     ) : (
                       <>
-                        <span className="material-icons text-sm mr-2">upload_file</span>
+                        <span className="material-icons text-sm mr-2">
+                          upload_file
+                        </span>
                         Import Data
                       </>
                     )}
@@ -332,14 +429,24 @@ export default function ImportExportPage() {
                 </div>
 
                 <Alert>
-                  <span className="material-icons text-warning-500">warning</span>
+                  <span className="material-icons text-warning-500">
+                    warning
+                  </span>
                   <AlertTitle>Important Notes</AlertTitle>
                   <AlertDescription>
                     <ul className="list-disc pl-5 space-y-1">
-                      <li>Make sure your CSV file matches the template format exactly</li>
-                      <li>The system will validate your data before importing</li>
+                      <li>
+                        Make sure your CSV file matches the template format
+                        exactly
+                      </li>
+                      <li>
+                        The system will validate your data before importing
+                      </li>
                       <li>Duplicate IDs will update existing records</li>
-                      <li>Make sure all referenced IDs (e.g., categoryId in items) already exist</li>
+                      <li>
+                        Make sure all referenced IDs (e.g., categoryId in items)
+                        already exist
+                      </li>
                     </ul>
                   </AlertDescription>
                 </Alert>
@@ -360,7 +467,9 @@ export default function ImportExportPage() {
               <div className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="exportTableSelect">Select Table to Export</Label>
+                    <Label htmlFor="exportTableSelect">
+                      Select Table to Export
+                    </Label>
                     <Select
                       value={selectedExportTable}
                       onValueChange={setSelectedExportTable}
@@ -385,12 +494,16 @@ export default function ImportExportPage() {
                     >
                       {exporting ? (
                         <>
-                          <span className="material-icons animate-spin text-sm mr-2">refresh</span>
+                          <span className="material-icons animate-spin text-sm mr-2">
+                            refresh
+                          </span>
                           Exporting...
                         </>
                       ) : (
                         <>
-                          <span className="material-icons text-sm mr-2">download</span>
+                          <span className="material-icons text-sm mr-2">
+                            download
+                          </span>
                           Export Data
                         </>
                       )}
@@ -403,10 +516,18 @@ export default function ImportExportPage() {
                   <AlertTitle>Export Information</AlertTitle>
                   <AlertDescription>
                     <ul className="list-disc pl-5 space-y-1">
-                      <li>Export generates CSV files with all current data from the selected table</li>
-                      <li>The exported file will include all columns and records</li>
+                      <li>
+                        Export generates CSV files with all current data from
+                        the selected table
+                      </li>
+                      <li>
+                        The exported file will include all columns and records
+                      </li>
                       <li>File name format: {`{table}_export_{date}.csv`}</li>
-                      <li>Use this feature to backup your data or analyze it in external tools</li>
+                      <li>
+                        Use this feature to backup your data or analyze it in
+                        external tools
+                      </li>
                     </ul>
                   </AlertDescription>
                 </Alert>
@@ -415,8 +536,13 @@ export default function ImportExportPage() {
                   <h4 className="font-medium mb-2">Available Tables:</h4>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-2 text-sm">
                     {exportTables.map((table) => (
-                      <div key={table.value} className="flex items-center space-x-2">
-                        <span className="material-icons text-xs text-gray-500">table_chart</span>
+                      <div
+                        key={table.value}
+                        className="flex items-center space-x-2"
+                      >
+                        <span className="material-icons text-xs text-gray-500">
+                          table_chart
+                        </span>
                         <span>{table.label}</span>
                       </div>
                     ))}

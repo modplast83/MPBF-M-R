@@ -4,21 +4,21 @@ import { useForm } from "react-hook-form";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { useLanguage } from "@/hooks/use-language";
-import { 
-  Form, 
-  FormControl, 
-  FormDescription, 
-  FormItem, 
-  FormLabel, 
-  FormMessage 
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormItem,
+  FormLabel,
+  FormMessage,
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -49,18 +49,23 @@ interface MixMaterialFormProps {
   onSuccess?: () => void;
 }
 
-export function MixMaterialForm({ rawMaterials, onSuccess }: MixMaterialFormProps) {
+export function MixMaterialForm({
+  rawMaterials,
+  onSuccess,
+}: MixMaterialFormProps) {
   const { t } = useTranslation();
   const { isRTL } = useLanguage();
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const [selectedRawMaterial, setSelectedRawMaterial] = useState<number | null>(null);
+  const [selectedRawMaterial, setSelectedRawMaterial] = useState<number | null>(
+    null,
+  );
   const [rawMaterialQuantity, setRawMaterialQuantity] = useState("");
   const [materials, setMaterials] = useState<MaterialItem[]>([]);
   const [mixScrew, setMixScrew] = useState<string>("A");
-  
+
   // Get current user
-  const { data: currentUser } = useQuery<{id: string, name: string}>({
+  const { data: currentUser } = useQuery<{ id: string; name: string }>({
     queryKey: [API_ENDPOINTS.USER],
     staleTime: 300000, // 5 minutes
   });
@@ -79,19 +84,22 @@ export function MixMaterialForm({ rawMaterials, onSuccess }: MixMaterialFormProp
       if (!userId) {
         throw new Error("User not authenticated");
       }
-      
+
       // Create mix with current user as operator
       const date = new Date();
       console.log("Submitting mix data - user will be set on server");
-      const mixData = await apiRequest("POST", API_ENDPOINTS.MIX_MATERIALS, { 
+      const mixData = await apiRequest("POST", API_ENDPOINTS.MIX_MATERIALS, {
         // Don't send mixPerson - it will be set on the server from the auth token
         mixDate: date.toISOString(), // Make sure date is properly formatted
-        totalQuantity: materials.reduce((sum, material) => sum + material.quantity, 0),
-        mixScrew: mixScrew // Add the selected screw type (A or B)
+        totalQuantity: materials.reduce(
+          (sum, material) => sum + material.quantity,
+          0,
+        ),
+        mixScrew: mixScrew, // Add the selected screw type (A or B)
       });
-      
+
       const mixId = mixData.id;
-      
+
       // Then add all materials to the mix
       for (const material of materials) {
         await apiRequest("POST", API_ENDPOINTS.MIX_ITEMS, {
@@ -100,15 +108,19 @@ export function MixMaterialForm({ rawMaterials, onSuccess }: MixMaterialFormProp
           quantity: material.quantity,
         });
       }
-      
+
       return mixData;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [API_ENDPOINTS.MIX_MATERIALS] });
-      queryClient.invalidateQueries({ queryKey: [API_ENDPOINTS.RAW_MATERIALS] });
+      queryClient.invalidateQueries({
+        queryKey: [API_ENDPOINTS.MIX_MATERIALS],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [API_ENDPOINTS.RAW_MATERIALS],
+      });
       toast({
-        title: t('common.success'),
-        description: t('production.mix_materials.mix_created_success'),
+        title: t("common.success"),
+        description: t("production.mix_materials.mix_created_success"),
       });
       setMaterials([]);
       setMixScrew("A");
@@ -116,8 +128,9 @@ export function MixMaterialForm({ rawMaterials, onSuccess }: MixMaterialFormProp
     },
     onError: (error: any) => {
       toast({
-        title: t('common.error'),
-        description: error.message || t('production.mix_materials.mix_creation_failed'),
+        title: t("common.error"),
+        description:
+          error.message || t("production.mix_materials.mix_creation_failed"),
         variant: "destructive",
       });
     },
@@ -126,8 +139,8 @@ export function MixMaterialForm({ rawMaterials, onSuccess }: MixMaterialFormProp
   const addMaterial = () => {
     if (!selectedRawMaterial) {
       toast({
-        title: t('common.error'),
-        description: t('production.mix_materials.select_material'),
+        title: t("common.error"),
+        description: t("production.mix_materials.select_material"),
         variant: "destructive",
       });
       return;
@@ -136,26 +149,29 @@ export function MixMaterialForm({ rawMaterials, onSuccess }: MixMaterialFormProp
     const quantity = parseFloat(rawMaterialQuantity);
     if (isNaN(quantity) || quantity <= 0) {
       toast({
-        title: t('common.error'),
-        description: t('production.mix_materials.enter_quantity'),
+        title: t("common.error"),
+        description: t("production.mix_materials.enter_quantity"),
         variant: "destructive",
       });
       return;
     }
 
     // Check if we already have this material
-    if (materials.some(m => m.rawMaterialId === selectedRawMaterial)) {
+    if (materials.some((m) => m.rawMaterialId === selectedRawMaterial)) {
       toast({
-        title: t('common.error'),
-        description: t('production.mix_materials.add_material_failed'),
+        title: t("common.error"),
+        description: t("production.mix_materials.add_material_failed"),
         variant: "destructive",
       });
       return;
     }
 
     // Add the material to our list
-    setMaterials([...materials, { rawMaterialId: selectedRawMaterial, quantity }]);
-    
+    setMaterials([
+      ...materials,
+      { rawMaterialId: selectedRawMaterial, quantity },
+    ]);
+
     // Reset the inputs
     setSelectedRawMaterial(null);
     setRawMaterialQuantity("");
@@ -170,46 +186,53 @@ export function MixMaterialForm({ rawMaterials, onSuccess }: MixMaterialFormProp
   const onSubmit = () => {
     if (materials.length === 0) {
       toast({
-        title: t('common.error'),
-        description: t('production.mix_materials.no_materials'),
+        title: t("common.error"),
+        description: t("production.mix_materials.no_materials"),
         variant: "destructive",
       });
       return;
     }
-    
+
     createMixMutation.mutate();
   };
 
   // Get the material name by ID
   const getMaterialName = (id: number) => {
-    const material = rawMaterials.find(m => m.id === id);
-    return material ? material.name : `${t('common.unknown')} ${t('production.mix_materials.material')} (${id})`;
+    const material = rawMaterials.find((m) => m.id === id);
+    return material
+      ? material.name
+      : `${t("common.unknown")} ${t("production.mix_materials.material")} (${id})`;
   };
 
   // Calculate total weight of the mix
   const totalWeight = materials.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
-    <div className={`space-y-4 ${isRTL ? 'rtl' : ''}`}>
+    <div className={`space-y-4 ${isRTL ? "rtl" : ""}`}>
       <Form {...form}>
-        <form onSubmit={(e) => { e.preventDefault(); onSubmit(); }} className="space-y-4 pt-2">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            onSubmit();
+          }}
+          className="space-y-4 pt-2"
+        >
           {/* Current Operator Display */}
           <Alert className="bg-muted">
-            <AlertTitle>{t('production.mix_materials.operator')}</AlertTitle>
+            <AlertTitle>{t("production.mix_materials.operator")}</AlertTitle>
             <AlertDescription>
-              {currentUser?.name || t('common.loading')}
+              {currentUser?.name || t("common.loading")}
             </AlertDescription>
           </Alert>
-          
+
           {/* Screw Selection */}
           <div className="space-y-2">
-            <FormLabel>{t('production.mix_materials.screw')}</FormLabel>
-            <Select
-              value={mixScrew}
-              onValueChange={setMixScrew}
-            >
+            <FormLabel>{t("production.mix_materials.screw")}</FormLabel>
+            <Select value={mixScrew} onValueChange={setMixScrew}>
               <SelectTrigger className="w-full">
-                <SelectValue placeholder={t('production.mix_materials.select_screw')} />
+                <SelectValue
+                  placeholder={t("production.mix_materials.select_screw")}
+                />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="A">A</SelectItem>
@@ -217,53 +240,71 @@ export function MixMaterialForm({ rawMaterials, onSuccess }: MixMaterialFormProp
               </SelectContent>
             </Select>
             <FormDescription>
-              {t('production.mix_materials.screw_description')}
+              {t("production.mix_materials.screw_description")}
             </FormDescription>
           </div>
 
           {/* Material Selection */}
           <div className="space-y-4 border rounded-md p-4">
-            <h3 className="text-lg font-medium">{t('production.mix_materials.add_material')}</h3>
+            <h3 className="text-lg font-medium">
+              {t("production.mix_materials.add_material")}
+            </h3>
             
+            {/* Info Alert about negative balance */}
+            <Alert className="bg-blue-50 border-blue-200">
+              <AlertTitle className="text-blue-800">
+                {t("production.mix_materials.negative_balance_allowed")}
+              </AlertTitle>
+              <AlertDescription className="text-blue-700">
+                {t("production.mix_materials.negative_balance_description")}
+              </AlertDescription>
+            </Alert>
+
             <div className="grid grid-cols-1 md:grid-cols-5 gap-2">
               <div className="md:col-span-2">
-                <FormLabel>{t('warehouse.raw_materials')}</FormLabel>
+                <FormLabel>{t("warehouse.raw_materials")}</FormLabel>
                 <Select
                   value={selectedRawMaterial?.toString() || ""}
-                  onValueChange={(value) => setSelectedRawMaterial(parseInt(value))}
+                  onValueChange={(value) =>
+                    setSelectedRawMaterial(parseInt(value))
+                  }
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder={t('production.mix_materials.select_material')} />
+                    <SelectValue
+                      placeholder={t(
+                        "production.mix_materials.select_material",
+                      )}
+                    />
                   </SelectTrigger>
                   <SelectContent>
                     {rawMaterials.map((material) => (
-                      <SelectItem key={material.id} value={material.id.toString()}>
-                        {material.name} ({material.quantity} {material.unit})
+                      <SelectItem
+                        key={material.id}
+                        value={material.id.toString()}
+                      >
+                        {material.name} ({material.quantity || 0} {material.unit})
+                        {(material.quantity || 0) <= 0 && " - ⚠️ No stock"}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
-              
+
               <div className="md:col-span-2">
-                <FormLabel>{t('production.mix_materials.quantity')}</FormLabel>
+                <FormLabel>{t("production.mix_materials.quantity")}</FormLabel>
                 <Input
                   type="number"
                   min="0.1"
                   step="0.1"
                   value={rawMaterialQuantity}
                   onChange={(e) => setRawMaterialQuantity(e.target.value)}
-                  placeholder={t('production.mix_materials.enter_quantity')}
+                  placeholder={t("production.mix_materials.enter_quantity")}
                 />
               </div>
-              
+
               <div className="flex items-end">
-                <Button 
-                  type="button" 
-                  onClick={addMaterial}
-                  className="w-full"
-                >
-                  {t('common.add')}
+                <Button type="button" onClick={addMaterial} className="w-full">
+                  {t("common.add")}
                 </Button>
               </div>
             </div>
@@ -271,37 +312,53 @@ export function MixMaterialForm({ rawMaterials, onSuccess }: MixMaterialFormProp
 
           {/* Material List */}
           <div className="border rounded-md p-4">
-            <h3 className="text-lg font-medium mb-2">{t('production.mix_materials.composition')}</h3>
-            
+            <h3 className="text-lg font-medium mb-2">
+              {t("production.mix_materials.composition")}
+            </h3>
+
             {materials.length === 0 ? (
-              <p className="text-sm text-gray-500 italic">{t('production.mix_materials.no_materials')}</p>
+              <p className="text-sm text-gray-500 italic">
+                {t("production.mix_materials.no_materials")}
+              </p>
             ) : (
               <div className="space-y-2">
                 <div className="grid grid-cols-12 gap-2 font-medium text-sm px-2">
-                  <div className="col-span-5">{t('production.mix_materials.material')}</div>
-                  <div className="col-span-2">{t('production.mix_materials.quantity')}</div>
-                  <div className="col-span-2">{t('common.unit')}</div>
-                  <div className="col-span-2">{t('production.mix_materials.percentage')}</div>
+                  <div className="col-span-5">
+                    {t("production.mix_materials.material")}
+                  </div>
+                  <div className="col-span-2">
+                    {t("production.mix_materials.quantity")}
+                  </div>
+                  <div className="col-span-2">{t("common.unit")}</div>
+                  <div className="col-span-2">
+                    {t("production.mix_materials.percentage")}
+                  </div>
                   <div className="col-span-1"></div>
                 </div>
-                
+
                 {materials.map((material, index) => {
-                  const percentage = totalWeight > 0 
-                    ? ((material.quantity / totalWeight) * 100).toFixed(1) 
-                    : "0.0";
-                    
+                  const percentage =
+                    totalWeight > 0
+                      ? ((material.quantity / totalWeight) * 100).toFixed(1)
+                      : "0.0";
+
                   return (
-                    <div key={index} className="grid grid-cols-12 gap-2 items-center bg-muted rounded-md p-2">
-                      <div className="col-span-5">{getMaterialName(material.rawMaterialId)}</div>
+                    <div
+                      key={index}
+                      className="grid grid-cols-12 gap-2 items-center bg-muted rounded-md p-2"
+                    >
+                      <div className="col-span-5">
+                        {getMaterialName(material.rawMaterialId)}
+                      </div>
                       <div className="col-span-2">{material.quantity}</div>
                       <div className="col-span-2">kg</div>
                       <div className="col-span-2">
                         <Badge variant="outline">{percentage}%</Badge>
                       </div>
                       <div className="col-span-1">
-                        <Button 
-                          type="button" 
-                          variant="ghost" 
+                        <Button
+                          type="button"
+                          variant="ghost"
                           size="sm"
                           onClick={() => removeMaterial(index)}
                         >
@@ -311,9 +368,9 @@ export function MixMaterialForm({ rawMaterials, onSuccess }: MixMaterialFormProp
                     </div>
                   );
                 })}
-                
+
                 <div className="grid grid-cols-12 gap-2 font-medium text-sm mt-2 pt-2 border-t">
-                  <div className="col-span-5">{t('common.total')}</div>
+                  <div className="col-span-5">{t("common.total")}</div>
                   <div className="col-span-2">{totalWeight.toFixed(1)}</div>
                   <div className="col-span-2">kg</div>
                   <div className="col-span-2">100.0%</div>
@@ -323,25 +380,29 @@ export function MixMaterialForm({ rawMaterials, onSuccess }: MixMaterialFormProp
             )}
           </div>
 
-          <div className={`flex justify-end ${isRTL ? 'space-x-reverse' : 'space-x-2'} pt-4`}>
-            <Button 
-              type="button" 
-              variant="outline" 
+          <div
+            className={`flex justify-end ${isRTL ? "space-x-reverse" : "space-x-2"} pt-4`}
+          >
+            <Button
+              type="button"
+              variant="outline"
               onClick={() => setMaterials([])}
             >
-              {t('common.reset')}
+              {t("common.reset")}
             </Button>
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               disabled={createMixMutation.isPending || materials.length === 0}
             >
               {createMixMutation.isPending ? (
                 <>
-                  <span className={`animate-spin ${isRTL ? 'ml-2' : 'mr-2'}`}>◌</span>
-                  {t('common.creating')}
+                  <span className={`animate-spin ${isRTL ? "ml-2" : "mr-2"}`}>
+                    ◌
+                  </span>
+                  {t("common.creating")}
                 </>
               ) : (
-                t('production.mix_materials.create_mix')
+                t("production.mix_materials.create_mix")
               )}
             </Button>
           </div>

@@ -1,17 +1,23 @@
 import { Link } from "wouter";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/ui/page-header";
 import { useTranslation } from "react-i18next";
-import { 
-  Wrench, 
-  ClipboardList, 
-  Calendar, 
+import {
+  Wrench,
+  ClipboardList,
+  Calendar,
   BarChart3,
   AlertTriangle,
   CheckCircle,
   Clock,
-  Settings
+  Settings,
 } from "lucide-react";
 
 export default function MaintenancePage() {
@@ -58,7 +64,10 @@ export default function MaintenancePage() {
       {/* Module Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {maintenanceModules.map((module, index) => (
-          <Card key={index} className="hover:shadow-lg transition-shadow duration-200">
+          <Card
+            key={index}
+            className="hover:shadow-lg transition-shadow duration-200"
+          >
             <CardHeader className="pb-4">
               <div className="flex items-center space-x-3">
                 <div className={`p-3 rounded-lg ${module.color} text-white`}>
@@ -74,9 +83,7 @@ export default function MaintenancePage() {
             </CardHeader>
             <CardContent className="pt-0">
               <Link href={module.path}>
-                <Button className="w-full">
-                  Access {module.title}
-                </Button>
+                <Button className="w-full">Access {module.title}</Button>
               </Link>
             </CardContent>
           </Card>
@@ -86,9 +93,14 @@ export default function MaintenancePage() {
       {/* Key Features */}
       <Card>
         <CardHeader>
-          <CardTitle>{t("maintenance.features.title", "Maintenance Module Features")}</CardTitle>
+          <CardTitle>
+            {t("maintenance.features.title", "Maintenance Module Features")}
+          </CardTitle>
           <CardDescription>
-            {t("maintenance.features.description", "Comprehensive maintenance management capabilities")}
+            {t(
+              "maintenance.features.description",
+              "Comprehensive maintenance management capabilities",
+            )}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -96,7 +108,9 @@ export default function MaintenancePage() {
             <div className="flex items-start space-x-3">
               <ClipboardList className="h-5 w-5 text-blue-500 mt-1" />
               <div>
-                <h4 className="font-medium">{t("maintenance.features.requestManagement")}</h4>
+                <h4 className="font-medium">
+                  {t("maintenance.features.requestManagement")}
+                </h4>
                 <p className="text-sm text-gray-600">
                   {t("maintenance.features.requestManagementDesc")}
                 </p>
@@ -105,7 +119,9 @@ export default function MaintenancePage() {
             <div className="flex items-start space-x-3">
               <Wrench className="h-5 w-5 text-green-500 mt-1" />
               <div>
-                <h4 className="font-medium">{t("maintenance.features.actionTracking")}</h4>
+                <h4 className="font-medium">
+                  {t("maintenance.features.actionTracking")}
+                </h4>
                 <p className="text-sm text-gray-600">
                   {t("maintenance.features.actionTrackingDesc")}
                 </p>
@@ -114,7 +130,9 @@ export default function MaintenancePage() {
             <div className="flex items-start space-x-3">
               <Calendar className="h-5 w-5 text-purple-500 mt-1" />
               <div>
-                <h4 className="font-medium">{t("maintenance.features.preventiveScheduling")}</h4>
+                <h4 className="font-medium">
+                  {t("maintenance.features.preventiveScheduling")}
+                </h4>
                 <p className="text-sm text-gray-600">
                   {t("maintenance.features.preventiveSchedulingDesc")}
                 </p>
@@ -123,7 +141,9 @@ export default function MaintenancePage() {
             <div className="flex items-start space-x-3">
               <BarChart3 className="h-5 w-5 text-orange-500 mt-1" />
               <div>
-                <h4 className="font-medium">{t("maintenance.features.analytics")}</h4>
+                <h4 className="font-medium">
+                  {t("maintenance.features.analytics")}
+                </h4>
                 <p className="text-sm text-gray-600">
                   {t("maintenance.features.analyticsDesc")}
                 </p>
@@ -132,7 +152,9 @@ export default function MaintenancePage() {
             <div className="flex items-start space-x-3">
               <AlertTriangle className="h-5 w-5 text-red-500 mt-1" />
               <div>
-                <h4 className="font-medium">{t("maintenance.features.priorityManagement")}</h4>
+                <h4 className="font-medium">
+                  {t("maintenance.features.priorityManagement")}
+                </h4>
                 <p className="text-sm text-gray-600">
                   {t("maintenance.features.priorityManagementDesc")}
                 </p>
@@ -141,7 +163,9 @@ export default function MaintenancePage() {
             <div className="flex items-start space-x-3">
               <Settings className="h-5 w-5 text-gray-500 mt-1" />
               <div>
-                <h4 className="font-medium">{t("maintenance.features.integration")}</h4>
+                <h4 className="font-medium">
+                  {t("maintenance.features.integration")}
+                </h4>
                 <p className="text-sm text-gray-600">
                   {t("maintenance.features.integrationDesc")}
                 </p>

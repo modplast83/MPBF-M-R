@@ -1,28 +1,495 @@
-import { useState } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
-import { DataTable } from "@/components/ui/data-table";
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { StatusBadge } from "@/components/ui/status-badge";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuTrigger 
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue 
+} from "@/components/ui/select";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { API_ENDPOINTS } from "@/lib/constants";
-import { apiRequest } from "@/lib/queryClient";
 import { formatDateString } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
 import { useTranslation } from "react-i18next";
 import { useLanguage } from "@/hooks/use-language";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Order, Customer } from "@shared/schema";
-import { QuickActions } from "@/components/ui/quick-actions";
-import { Filter, Search, Plus, Download, RefreshCw, Eye } from "lucide-react";
+import Fuse from "fuse.js";
+import { ApiErrorHandler } from "@/utils/api-error-handler";
+import { isValidNumber } from "@/utils/type-safety";
+import { 
+  ShoppingCart, 
+  Plus, 
+  Search, 
+  Filter, 
+  Eye, 
+  MoreHorizontal,
+  Package,
+  Calendar,
+  TrendingUp,
+  AlertCircle,
+  CheckCircle,
+  Clock,
+  XCircle,
+  Pause,
+  FileText,
+  User,
+  Download,
+  RefreshCw,
+  Trash2,
+  BarChart3,
+  ChevronRight,
+  Hash,
+  Zap,
+  Factory,
+  ArrowUp,
+  ArrowDown,
+  History,
+  X,
+  Sparkles,
+  Target
+} from "lucide-react";
+
+// Enhanced Status Badge Component with icons
+const StatusBadge = ({ status }: { status: string }) => {
+  const { t } = useTranslation();
+  
+  const statusConfig = {
+    pending: { 
+      label: t('orders.status.pending'), 
+      color: "bg-yellow-100 text-yellow-800 border-yellow-300", 
+      icon: <Clock className="h-3 w-3" />,
+    },
+    processing: { 
+      label: t('orders.status.processing'), 
+      color: "bg-blue-100 text-blue-800 border-blue-300", 
+      icon: <Package className="h-3 w-3" />,
+    },
+    completed: { 
+      label: t('orders.status.completed'), 
+      color: "bg-green-100 text-green-800 border-green-300", 
+      icon: <CheckCircle className="h-3 w-3" />,
+    },
+    cancelled: { 
+      label: t('orders.status.cancelled'), 
+      color: "bg-red-100 text-red-800 border-red-300", 
+      icon: <XCircle className="h-3 w-3" />,
+    },
+    hold: { 
+      label: t('orders.status.hold'), 
+      color: "bg-orange-100 text-orange-800 border-orange-300", 
+      icon: <Pause className="h-3 w-3" />,
+    },
+  };
+
+  const config = statusConfig[status as keyof typeof statusConfig] || {
+    label: status,
+    color: "bg-gray-50 text-gray-700 border-gray-200",
+    icon: <AlertCircle className="h-3 w-3" />,
+  };
+
+  return (
+    <Badge 
+      variant="secondary" 
+      className={`transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 hover:bg-secondary/80 ${config.color} text-xs border inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-center font-bold pl-[4px] pr-[4px] ml-[-18px] mr-[-18px]`}
+    >
+      {config.icon}
+      {config.label}
+    </Badge>
+  );
+};
+
+// Professional Stats Card Component
+const StatsCard = ({ 
+  title, 
+  value, 
+  icon, 
+  trend, 
+  color = "blue" 
+}: { 
+  title: string; 
+  value: string | number; 
+  icon: React.ReactNode; 
+  trend?: { value: string; positive: boolean }; 
+  color?: "blue" | "green" | "amber" | "red" | "purple" 
+}) => {
+  const colorConfig = {
+    blue: "from-blue-500 to-blue-600",
+    green: "from-emerald-500 to-emerald-600",
+    amber: "from-amber-500 to-amber-600",
+    red: "from-red-500 to-red-600",
+    purple: "from-purple-500 to-purple-600"
+  };
+
+  return (
+    <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 border-0 shadow-sm">
+      <CardContent className="p-3 sm:p-6">
+        <div className="flex items-center justify-between">
+          <div className="flex-1 min-w-0">
+            <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1 truncate">{title}</p>
+            <p className="text-lg sm:text-2xl font-bold text-gray-900">{value}</p>
+            {trend && (
+              <p className={`text-xs font-medium mt-1 flex items-center gap-1 ${trend.positive ? 'text-emerald-600' : 'text-red-600'}`}>
+                {trend.positive ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />}
+                {trend.value}
+              </p>
+            )}
+          </div>
+          <div className={`p-2 sm:p-3 rounded-full bg-gradient-to-r ${colorConfig[color]} flex-shrink-0`}>
+            <div className="text-white">
+              {icon}
+            </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
+// Enhanced Order Card Component
+const OrderCard = ({ 
+  order, 
+  customer, 
+  onStatusChange, 
+  onDelete, 
+  onSelect, 
+  isSelected 
+}: { 
+  order: Order; 
+  customer: Customer | undefined; 
+  onStatusChange: (order: Order, status: string) => void; 
+  onDelete: (order: Order) => void; 
+  onSelect: (orderId: number) => void; 
+  isSelected: boolean; 
+}) => {
+  const { t } = useTranslation();
+  
+  return (
+    <Card className="group overflow-hidden hover:shadow-lg transition-all duration-300 border-0 shadow-sm bg-white hover:bg-gray-50/50">
+      <CardContent className="p-0">
+        <div className="p-3 sm:p-4 bg-gradient-to-r from-gray-50 to-white border-b border-gray-100">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+              <input
+                type="checkbox"
+                checked={isSelected}
+                onChange={() => onSelect(order.id)}
+                className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500 flex-shrink-0"
+              />
+              <div className="flex items-center gap-2 flex-1 min-w-0">
+                <div className="min-w-0">
+                  <h3 className="font-semibold text-gray-900 text-sm sm:text-base pt-[0px] pb-[0px] mt-[16px] mb-[16px]">#{order.id}</h3>
+                  <p className="text-xs text-gray-500 flex items-center gap-1 font-bold ml-[-38px] mr-[-38px] mt-[-10px] mb-[-10px] text-center">
+                    <Calendar className="h-3 w-3 flex-shrink-0" />
+                    <span className="truncate">{formatDateString(order.date)}</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="flex-shrink-0">
+              <StatusBadge status={order.status} />
+            </div>
+          </div>
+        </div>
+        
+        <div className="p-3 sm:p-4 space-y-3">
+          <div className="flex items-center gap-2">
+            <User className="h-4 w-4 text-gray-400 flex-shrink-0" />
+            <div className="flex-1 min-w-0">
+              <p className="text-gray-900 font-bold text-sm sm:text-base truncate">{customer?.name || 'Unknown Customer'}</p>
+              {customer?.nameAr && (
+                <p className="font-extrabold text-base sm:text-lg text-[#000000] truncate" dir="rtl">{customer.nameAr}</p>
+              )}
+            </div>
+          </div>
+          
+          {order.note && (
+            <div className="flex items-start gap-2">
+              <FileText className="h-4 w-4 text-gray-400 mt-0.5 flex-shrink-0" />
+              <p className="text-sm text-gray-600 flex-1 line-clamp-2">{order.note}</p>
+            </div>
+          )}
+          
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 sm:gap-0 pt-3 border-t border-gray-100">
+            <Link href={`/orders/${order.id}`} className="w-full sm:w-auto">
+              <Button variant="outline" size="sm" className="gap-2 hover:bg-blue-50 hover:text-blue-600 w-full sm:w-auto">
+                <Eye className="h-4 w-4" />
+                <span className="truncate pl-[11px] pr-[11px] ml-[2px] mr-[2px]">{t('common.view_details')}</span>
+              </Button>
+            </Link>
+            
+            <div className="flex items-center justify-between gap-2 pl-[0px] pr-[0px] ml-[-14px] mr-[-14px]">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="sm" className="hover:bg-gray-100">
+                    <MoreHorizontal className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={() => onStatusChange(order, "pending")}>
+                    <Clock className="h-4 w-4 mr-2" />
+                    {t('orders.set_to_pending')}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => onStatusChange(order, "processing")}>
+                    <Package className="h-4 w-4 mr-2" />
+                    {t('orders.set_to_processing')}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => onStatusChange(order, "completed")}>
+                    <CheckCircle className="h-4 w-4 mr-2" />
+                    {t('orders.set_to_completed')}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => onStatusChange(order, "hold")}>
+                    <Pause className="h-4 w-4 mr-2" />
+                    {t('orders.put_on_hold')}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    onClick={() => onDelete(order)}
+                    className="text-red-600 hover:text-red-700"
+                  >
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    {t('orders.delete')}
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
+// Quick Filter Button Component - Mobile Optimized
+const QuickFilterButton = ({ 
+  label, 
+  count, 
+  isActive, 
+  onClick 
+}: { 
+  label: string; 
+  count: number; 
+  isActive: boolean; 
+  onClick: () => void; 
+}) => (
+  <Button
+    variant={isActive ? "default" : "outline"}
+    size="sm"
+    onClick={onClick}
+    className={`gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3 py-1 sm:py-2 ${isActive ? 'bg-blue-600 hover:bg-blue-700' : 'hover:bg-gray-50'}`}
+  >
+    <span className="truncate">{label}</span>
+    <Badge variant="secondary" className="ml-1 bg-white/20 text-current text-xs px-1">
+      {count}
+    </Badge>
+  </Button>
+);
+
+// Smart Search Component with fuzzy matching and recent searches
+const SmartSearchBox = ({ 
+  onSearch, 
+  placeholder = "Search orders...", 
+  recentSearches = [], 
+  onRecentSearchSelect,
+  searchSuggestions = []
+}: {
+  onSearch: (query: string) => void;
+  placeholder?: string;
+  recentSearches?: string[];
+  onRecentSearchSelect?: (query: string) => void;
+  searchSuggestions?: Array<{ text: string; type: 'order' | 'customer' | 'status' }>;
+}) => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+
+  // Debounced search functionality
+  const debouncedSearch = useCallback(
+    debounce((query: string) => {
+      onSearch(query);
+    }, 300),
+    [onSearch]
+  );
+
+  useEffect(() => {
+    debouncedSearch(searchQuery);
+  }, [searchQuery, debouncedSearch]);
+
+  const handleInputChange = (value: string) => {
+    setSearchQuery(value);
+    setShowSuggestions(value.length > 0);
+  };
+
+  const handleSuggestionSelect = (suggestion: string) => {
+    setSearchQuery(suggestion);
+    onSearch(suggestion);
+    setShowSuggestions(false);
+    setIsOpen(false);
+  };
+
+  const handleRecentSelect = (query: string) => {
+    setSearchQuery(query);
+    onSearch(query);
+    if (onRecentSearchSelect) {
+      onRecentSearchSelect(query);
+    }
+    setIsOpen(false);
+  };
+
+  const clearSearch = () => {
+    setSearchQuery("");
+    onSearch("");
+    setShowSuggestions(false);
+  };
+
+  // Filter suggestions based on current query
+  const filteredSuggestions = useMemo(() => {
+    if (!searchQuery) return [];
+    
+    const fuse = new Fuse(searchSuggestions, {
+      keys: ['text'],
+      threshold: 0.4,
+      includeScore: true,
+      includeMatches: true,
+    });
+    
+    return fuse.search(searchQuery).slice(0, 5);
+  }, [searchQuery, searchSuggestions]);
+
+  return (
+    <div className="relative flex-1">
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+        <Input
+          placeholder={placeholder}
+          value={searchQuery}
+          onChange={(e) => handleInputChange(e.target.value)}
+          onFocus={() => setIsOpen(true)}
+          className="pl-10 pr-20"
+        />
+        <div className="absolute right-3 top-1/2 transform -translate-y-1/2 flex items-center gap-2">
+          {searchQuery && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={clearSearch}
+              className="h-6 w-6 p-0 hover:bg-gray-100"
+            >
+              <X className="h-3 w-3" />
+            </Button>
+          )}
+          <Popover open={isOpen} onOpenChange={setIsOpen}>
+            <PopoverTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-6 w-6 p-0 hover:bg-gray-100"
+              >
+                <Sparkles className="h-3 w-3" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-80 p-0" align="start">
+              <Command>
+                <CommandList>
+                  {/* Recent Searches */}
+                  {recentSearches.length > 0 && (
+                    <CommandGroup heading="Recent Searches">
+                      {recentSearches.slice(0, 3).map((search, index) => (
+                        <CommandItem
+                          key={index}
+                          onSelect={() => handleRecentSelect(search)}
+                          className="cursor-pointer"
+                        >
+                          <History className="h-4 w-4 mr-2 text-gray-400" />
+                          {search}
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  )}
+                  
+                  {/* Search Suggestions */}
+                  {filteredSuggestions.length > 0 && (
+                    <CommandGroup heading="Suggestions">
+                      {filteredSuggestions.map((result, index) => (
+                        <CommandItem
+                          key={index}
+                          onSelect={() => handleSuggestionSelect(result.item.text)}
+                          className="cursor-pointer"
+                        >
+                          <div className="flex items-center gap-2">
+                            {result.item.type === 'order' && <Package className="h-4 w-4 text-blue-500" />}
+                            {result.item.type === 'customer' && <User className="h-4 w-4 text-green-500" />}
+                            {result.item.type === 'status' && <Target className="h-4 w-4 text-purple-500" />}
+                            <span>{result.item.text}</span>
+                          </div>
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  )}
+                  
+                  {/* Empty State */}
+                  {recentSearches.length === 0 && filteredSuggestions.length === 0 && (
+                    <CommandEmpty>
+                      <div className="text-center py-4">
+                        <Search className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+                        <p className="text-sm text-gray-500">Start typing to see suggestions</p>
+                      </div>
+                    </CommandEmpty>
+                  )}
+                </CommandList>
+              </Command>
+            </PopoverContent>
+          </Popover>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Debounce utility function
+function debounce<T extends (...args: any[]) => void>(
+  func: T,
+  delay: number
+): T {
+  let timeoutId: NodeJS.Timeout;
+  return ((...args: Parameters<T>) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => func(...args), delay);
+  }) as T;
+}
 
 export default function OrdersIndex() {
   const queryClient = useQueryClient();
@@ -30,72 +497,209 @@ export default function OrdersIndex() {
   const [selectedOrders, setSelectedOrders] = useState<number[]>([]);
   const [showBulkDeleteDialog, setShowBulkDeleteDialog] = useState(false);
   const [activeTab, setActiveTab] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [sortBy, setSortBy] = useState("date");
+  const [sortOrder, setSortOrder] = useState("desc");
+  const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const { t } = useTranslation();
   const { isRTL } = useLanguage();
   const isMobile = useIsMobile();
 
+  // Load recent searches from localStorage
+  useEffect(() => {
+    const savedSearches = localStorage.getItem('orders-recent-searches');
+    if (savedSearches) {
+      try {
+        setRecentSearches(JSON.parse(savedSearches));
+      } catch (error) {
+        console.error('Error loading recent searches:', error);
+      }
+    }
+  }, []);
+
+  // Save recent searches to localStorage
+  const saveRecentSearch = useCallback((query: string) => {
+    if (!query.trim()) return;
+    
+    setRecentSearches(prev => {
+      const updated = [query, ...prev.filter(s => s !== query)].slice(0, 5);
+      localStorage.setItem('orders-recent-searches', JSON.stringify(updated));
+      return updated;
+    });
+  }, []);
+
   // Fetch orders and customers
-  const { data: orders, isLoading } = useQuery<Order[]>({
+  const { data: orders, isLoading, refetch } = useQuery<Order[]>({
     queryKey: [API_ENDPOINTS.ORDERS],
   });
-  
-  // Filter orders based on active tab and sort by order ID descending
-  const filteredOrders = orders
-    ?.filter(order => {
-      if (activeTab === "all") return true;
-      
-      // Special case for "processing" tab - show both "processing" and "For Production" status orders
-      if (activeTab === "processing") {
-        return order.status === "processing" || order.status === "For Production";
-      }
-      
-      // Match the status with the tab value for other tabs
-      return order.status === activeTab;
-    })
-    // Sort by order ID in descending order
-    .sort((a, b) => b.id - a.id);
 
   const { data: customers } = useQuery<Customer[]>({
     queryKey: [API_ENDPOINTS.CUSTOMERS],
   });
-  
+
+  // Helper function to get customer by ID
+  const getCustomerById = (customerId: string) => {
+    return customers?.find(c => c.id === customerId);
+  };
+
+  // Create search suggestions from orders and customers
+  const searchSuggestions = useMemo(() => {
+    const suggestions: Array<{ text: string; type: 'order' | 'customer' | 'status' }> = [];
+    
+    // Add unique customer names
+    const customerNames = new Set<string>();
+    customers?.forEach(customer => {
+      if (customer.name && !customerNames.has(customer.name)) {
+        customerNames.add(customer.name);
+        suggestions.push({ text: customer.name, type: 'customer' });
+      }
+      if (customer.nameAr && !customerNames.has(customer.nameAr)) {
+        customerNames.add(customer.nameAr);
+        suggestions.push({ text: customer.nameAr, type: 'customer' });
+      }
+    });
+    
+    // Add order IDs
+    orders?.forEach(order => {
+      suggestions.push({ text: `#${order.id}`, type: 'order' });
+    });
+    
+    // Add status options
+    ['pending', 'processing', 'completed', 'cancelled', 'hold'].forEach(status => {
+      suggestions.push({ text: status, type: 'status' });
+    });
+    
+    return suggestions;
+  }, [orders, customers]);
+
+  // Fuzzy search implementation
+  const fuse = useMemo(() => {
+    if (!orders || !customers) return null;
+    
+    const searchableData = orders.map(order => {
+      const customer = getCustomerById(order.customerId);
+      return {
+        ...order,
+        customerName: customer?.name || '',
+        customerNameAr: customer?.nameAr || '',
+        searchText: `${order.id} ${customer?.name || ''} ${customer?.nameAr || ''} ${order.note || ''} ${order.status}`
+      };
+    });
+    
+    return new Fuse(searchableData, {
+      keys: [
+        { name: 'id', weight: 0.3 },
+        { name: 'customerName', weight: 0.25 },
+        { name: 'customerNameAr', weight: 0.25 },
+        { name: 'note', weight: 0.1 },
+        { name: 'status', weight: 0.1 }
+      ],
+      threshold: 0.4,
+      includeScore: true,
+      includeMatches: true
+    });
+  }, [orders, customers]);
+
+  // Filter and sort orders with fuzzy search
+  const filteredOrders = useMemo(() => {
+    if (!orders) return [];
+    
+    let filtered = orders;
+    
+    // Apply fuzzy search if there's a search query
+    if (searchQuery && fuse) {
+      const results = fuse.search(searchQuery);
+      filtered = results.map(result => {
+        const { searchText, ...originalOrder } = result.item;
+        return originalOrder as Order;
+      });
+    }
+    
+    // Apply status filter
+    if (statusFilter !== "all") {
+      filtered = filtered.filter(order => order.status === statusFilter);
+    }
+    
+    // Apply sorting
+    return filtered.sort((a, b) => {
+      let aVal, bVal;
+      
+      switch (sortBy) {
+        case "date":
+          aVal = new Date(a.date).getTime();
+          bVal = new Date(b.date).getTime();
+          break;
+        case "id":
+          aVal = a.id;
+          bVal = b.id;
+          break;
+        case "customer":
+          aVal = getCustomerById(a.customerId)?.name || "";
+          bVal = getCustomerById(b.customerId)?.name || "";
+          break;
+        case "status":
+          aVal = a.status;
+          bVal = b.status;
+          break;
+        default:
+          aVal = a.id;
+          bVal = b.id;
+      }
+
+      if (sortOrder === "asc") {
+        return aVal > bVal ? 1 : -1;
+      } else {
+        return aVal < bVal ? 1 : -1;
+      }
+    });
+  }, [orders, searchQuery, statusFilter, sortBy, sortOrder, fuse]);
+
+  // Calculate statistics
+  const stats = {
+    total: orders?.length || 0,
+    pending: orders?.filter(o => o.status === "pending").length || 0,
+    processing: orders?.filter(o => o.status === "processing").length || 0,
+    completed: orders?.filter(o => o.status === "completed").length || 0,
+    cancelled: orders?.filter(o => o.status === "cancelled").length || 0,
+    hold: orders?.filter(o => o.status === "hold").length || 0,
+  };
+
   // Status update mutation
   const updateStatusMutation = useMutation({
-    mutationFn: async ({ id, status }: { id: number, status: string }) => {
+    mutationFn: async ({ id, status }: { id: number; status: string }) => {
       const response = await fetch(`/api/orders/${id}`, {
-        method: 'PUT',
-        credentials: 'include',
+        method: "PUT",
+        credentials: "include",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ status })
+        body: JSON.stringify({ status }),
       });
-      
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || "Failed to update status");
       }
-      
+
       return response.json();
     },
     onSuccess: (data, variables) => {
-      // Show success message first
       let statusLabel = variables.status;
       if (variables.status === "processing") statusLabel = "For Production";
       if (variables.status === "hold") statusLabel = "On Hold";
-      
+
       toast({
         title: "Order Status Updated",
         description: `Order #${variables.id} status changed to ${statusLabel}`,
       });
-      
-      // Update the orders data in the cache directly instead of invalidating
+
       queryClient.setQueryData([API_ENDPOINTS.ORDERS], (oldData: any) => {
         if (!oldData) return oldData;
-        return oldData.map((order: any) => 
-          order.id === variables.id 
+        return oldData.map((order: any) =>
+          order.id === variables.id
             ? { ...order, status: variables.status }
-            : order
+            : order,
         );
       });
     },
@@ -109,114 +713,71 @@ export default function OrdersIndex() {
       });
     },
   });
-  
+
   const handleStatusChange = (order: Order, newStatus: string) => {
-    console.log("Status change initiated:", { orderId: order.id, newStatus });
     updateStatusMutation.mutate({ id: order.id, status: newStatus });
   };
 
-  // Delete mutation
+  // Delete mutation with enhanced error handling
   const deleteMutation = useMutation({
     mutationFn: async (id: number) => {
-      // Use raw fetch instead of apiRequest for better error handling
-      const response = await fetch(`${API_ENDPOINTS.ORDERS}/${id}`, {
-        method: 'DELETE',
-        credentials: 'include',
-      });
-      
-      // Parse the response
-      const data = await response.json();
-      
-      // If response is not ok, throw an error with the message from the server
-      if (!response.ok) {
-        throw new Error(data.message || `Failed to delete order (${response.status})`);
+      // Validate the order ID
+      if (!id || !isValidNumber(id)) {
+        throw new Error("Invalid order ID");
       }
-      
+
+      const response = await fetch(`${API_ENDPOINTS.ORDERS}/${id}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        // Use ApiErrorHandler for proper error handling
+        ApiErrorHandler.handleError(
+          data.message || `Failed to delete order (${response.status})`,
+          response.status,
+          data
+        );
+        throw new Error(
+          data.message || `Failed to delete order (${response.status})`,
+        );
+      }
+
       return data;
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: [API_ENDPOINTS.ORDERS] });
-      
-      // Use the message from the API response if available
-      const message = data?.message || "Order and associated job orders deleted successfully";
-      
+      const message = data?.message || t('orders.order_deleted_successfully');
       toast({
-        title: "Order Deleted",
+        title: t('orders.order_deleted'),
         description: message,
       });
       setDeletingOrder(null);
     },
     onError: (error: any) => {
       console.error("Delete error:", error);
-      
-      // Use the error message
-      const errorMessage = error?.message || "Failed to delete order";
-      
+      const errorMessage = error?.message || t('orders.failed_to_delete_order');
       toast({
-        title: "Error",
+        title: t('orders.error'),
         description: errorMessage,
         variant: "destructive",
       });
+      setDeletingOrder(null); // Reset state on error
     },
   });
 
-  // Bulk delete mutation
-  const bulkDeleteMutation = useMutation({
-    mutationFn: async (orderIds: number[]) => {
-      const results = await Promise.allSettled(
-        orderIds.map(async (id) => {
-          const response = await fetch(`${API_ENDPOINTS.ORDERS}/${id}`, {
-            method: 'DELETE',
-            credentials: 'include',
-          });
-          
-          const data = await response.json();
-          
-          if (!response.ok) {
-            throw new Error(`Order #${id}: ${data.message || 'Failed to delete'}`);
-          }
-          
-          return { id, success: true };
-        })
-      );
-      
-      const successful = results.filter(r => r.status === 'fulfilled').length;
-      const failed = results.filter(r => r.status === 'rejected');
-      
-      return { successful, failed, total: orderIds.length };
-    },
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: [API_ENDPOINTS.ORDERS] });
-      
-      const { successful, failed, total } = data;
-      
-      if (failed.length === 0) {
-        toast({
-          title: "Orders Deleted",
-          description: `Successfully deleted ${successful} order${successful > 1 ? 's' : ''}`,
-        });
-      } else {
-        toast({
-          title: "Partial Success",
-          description: `Deleted ${successful}/${total} orders. ${failed.length} failed.`,
-          variant: "destructive",
-        });
-      }
-      
-      setSelectedOrders([]);
-      setShowBulkDeleteDialog(false);
-    },
-    onError: (error: any) => {
-      console.error("Bulk delete error:", error);
-      toast({
-        title: "Error",
-        description: "Failed to delete selected orders",
-        variant: "destructive",
-      });
-    },
-  });
+  const handleDeleteOrder = (order: Order) => {
+    setDeletingOrder(order);
+  };
 
-  // Selection helper functions
+  const confirmDeleteOrder = () => {
+    if (deletingOrder) {
+      deleteMutation.mutate(deletingOrder.id);
+    }
+  };
+
   const handleSelectOrder = (orderId: number) => {
     setSelectedOrders(prev => 
       prev.includes(orderId) 
@@ -233,563 +794,482 @@ export default function OrdersIndex() {
     }
   };
 
-  const isAllSelected = selectedOrders.length > 0 && selectedOrders.length === filteredOrders?.length;
-
-  const handleDelete = (order: Order) => {
-    setDeletingOrder(order);
+  const handleBulkDelete = () => {
+    setShowBulkDeleteDialog(true);
   };
 
-  const confirmDelete = () => {
-    if (deletingOrder) {
-      deleteMutation.mutate(deletingOrder.id);
-    }
-  };
-
-  // Helper functions to get customer info
-  const getCustomerName = (customerId: string) => {
-    return customers?.find(c => c.id === customerId)?.name || "Unknown";
-  };
-  
-  const getCustomerNameAr = (customerId: string) => {
-    return customers?.find(c => c.id === customerId)?.nameAr || "-";
-  };
-  
-  const getCustomerPlateDrawerCode = (customerId: string) => {
-    return customers?.find(c => c.id === customerId)?.plateDrawerCode || "-";
-  };
-
-  const columns = [
-    {
-      header: (
-        <div className="flex items-center">
-          <input
-            type="checkbox"
-            checked={isAllSelected}
-            onChange={handleSelectAll}
-            className="rounded border-gray-300"
-          />
-        </div>
-      ),
-      accessorKey: "select",
-      cell: (row: Order) => (
-        <div className="flex items-center">
-          <input
-            type="checkbox"
-            checked={selectedOrders.includes(row.id)}
-            onChange={(e) => {
-              e.stopPropagation();
-              handleSelectOrder(row.id);
-            }}
-            onClick={(e) => e.stopPropagation()}
-            className="rounded border-gray-300"
-          />
-        </div>
-      ),
-    },
-    {
-      header: t("orders.order_id"),
-      accessorKey: "id",
-    },
-    {
-      header: t("orders.date"),
-      accessorKey: "date",
-      cell: (row: { date: string }) => formatDateString(row.date),
-    },
-    {
-      header: t("orders.customer"),
-      accessorKey: "customerId",
-      cell: (row: { customerId: string }) => getCustomerName(row.customerId),
-    },
-    {
-      header: t("orders.customer_ar"),
-      accessorKey: "customerId",
-      cell: (row: { customerId: string }) => getCustomerNameAr(row.customerId),
-    },
-    {
-      header: t("orders.plate_drawer_code"),
-      accessorKey: "customerId",
-      cell: (row: { customerId: string }) => getCustomerPlateDrawerCode(row.customerId),
-    },
-    {
-      header: t("orders.status"),
-      accessorKey: "status",
-      cell: (row: { status: string }) => <StatusBadge status={row.status} />,
-    },
-    {
-      header: t("orders.note"),
-      accessorKey: "note",
-      cell: (row: { note: string | null }) => row.note || "-",
-    },
-    {
-      header: "Actions",
-      cell: (row: Order) => (
-        <div className="flex space-x-2">
-          <Link href={`/orders/${row.id}`}>
-            <Button variant="ghost" size="icon" className="text-primary-500 hover:text-primary-700">
-              <span className="material-icons text-sm">visibility</span>
-            </Button>
-          </Link>
-          
-          {/* Status Change Dropdown */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="text-secondary-500 hover:text-secondary-700">
-                <span className="material-icons text-sm">swap_horiz</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem 
-                onClick={() => handleStatusChange(row, "pending")}
-                disabled={row.status === "pending"}
-                className={row.status === "pending" ? "bg-secondary-100" : ""}
-              >
-                <span className="w-3 h-3 rounded-full bg-secondary-300 mr-2"></span>
-                {t("status.pending")}
-              </DropdownMenuItem>
-              <DropdownMenuItem 
-                onClick={() => handleStatusChange(row, "processing")}
-                disabled={row.status === "processing"}
-                className={row.status === "processing" ? "bg-secondary-100" : ""}
-              >
-                <span className="w-3 h-3 rounded-full bg-primary-300 mr-2"></span>
-                {t("status.processing")}
-              </DropdownMenuItem>
-              <DropdownMenuItem 
-                onClick={() => handleStatusChange(row, "hold")}
-                disabled={row.status === "hold"}
-                className={row.status === "hold" ? "bg-secondary-100" : ""}
-              >
-                <span className="w-3 h-3 rounded-full bg-warning-300 mr-2"></span>
-                {t("orders.hold")}
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-          
-          <Button variant="ghost" size="icon" onClick={() => handleDelete(row)} className="text-red-500 hover:text-red-700">
-            <span className="material-icons text-sm">delete</span>
-          </Button>
-        </div>
-      ),
-    },
-  ];
-
-  const quickActions = [
-    {
-      id: "new-order",
-      label: t("orders.new_order"),
-      icon: Plus,
-      onClick: () => window.location.href = "/orders/new",
-      variant: "default" as const
-    },
-    {
-      id: "refresh",
-      label: "Refresh",
-      icon: RefreshCw,
-      onClick: () => {
-        queryClient.invalidateQueries({ queryKey: [API_ENDPOINTS.ORDERS] });
-        queryClient.invalidateQueries({ queryKey: ["/api/customers"] });
-      },
-      variant: "outline" as const
-    },
-    {
-      id: "all-tab",
-      label: "All Orders",
-      icon: Eye,
-      onClick: () => setActiveTab("all"),
-      variant: activeTab === "all" ? "default" : "outline"
-    },
-    {
-      id: "pending-tab",
-      label: "Pending",
-      icon: Filter,
-      onClick: () => setActiveTab("pending"),
-      variant: activeTab === "pending" ? "default" : "outline"
-    }
-  ];
-
-  const tableActions = (
-    <Link href="/orders/new">
-      <Button>
-        <span className="material-icons text-sm mr-1">add</span>
-        {t("orders.new_order")}
-      </Button>
-    </Link>
-  );
-
-  // Mobile card view for orders
-  const renderMobileOrderList = () => {
-    if (!filteredOrders || filteredOrders.length === 0) {
-      return (
-        <div className="text-center py-8 px-4 bg-gray-50 rounded-md">
-          <span className="material-icons text-gray-300 text-3xl mb-2">receipt_long</span>
-          <p className="text-gray-500">
-            {activeTab === "all" 
-              ? t("orders.no_orders") 
-              : t(`orders.no_${activeTab}_orders`)}
-          </p>
-        </div>
+  // Bulk delete mutation
+  const bulkDeleteMutation = useMutation({
+    mutationFn: async (orderIds: number[]) => {
+      const results = await Promise.allSettled(
+        orderIds.map(id => 
+          fetch(`${API_ENDPOINTS.ORDERS}/${id}`, {
+            method: "DELETE",
+            credentials: "include",
+          }).then(response => {
+            if (!response.ok) {
+              throw new Error(`Failed to delete order ${id}`);
+            }
+            return response.json();
+          })
+        )
       );
+      
+      const successful = results.filter(r => r.status === 'fulfilled').length;
+      const failed = results.filter(r => r.status === 'rejected').length;
+      
+      return { successful, failed, total: orderIds.length };
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: [API_ENDPOINTS.ORDERS] });
+      toast({
+        title: t('orders.bulk_delete_completed'),
+        description: t('orders.bulk_delete_success', { 
+          successful: data.successful, 
+          total: data.total 
+        }),
+      });
+      setSelectedOrders([]);
+      setShowBulkDeleteDialog(false);
+    },
+    onError: (error: any) => {
+      console.error("Bulk delete error:", error);
+      toast({
+        title: t('orders.error'),
+        description: t('orders.bulk_delete_error'),
+        variant: "destructive",
+      });
+    },
+  });
+
+  const confirmBulkDelete = () => {
+    if (selectedOrders.length > 0) {
+      bulkDeleteMutation.mutate(selectedOrders);
     }
-    
-    return (
-      <div className="space-y-3">
-        {filteredOrders.map((order) => (
-          <Card key={order.id} className="overflow-hidden hover:shadow-md transition-all border-l-4 border-l-primary-500">
-            <div className="relative">
-              <div 
-                className="absolute top-3 left-3 z-10"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <input
-                  type="checkbox"
-                  checked={selectedOrders.includes(order.id)}
-                  onChange={(e) => {
-                    e.stopPropagation();
-                    handleSelectOrder(order.id);
-                  }}
-                  onClick={(e) => e.stopPropagation()}
-                  className="rounded border-gray-300 w-4 h-4"
-                />
-              </div>
-              <Link href={`/orders/${order.id}`}>
-                <CardHeader className="p-4 pb-3 flex flex-row justify-between items-start bg-gradient-to-r from-gray-50 to-white pl-12">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <span className="material-icons text-sm text-primary-500">receipt_long</span>
-                      <CardTitle className="text-base font-bold text-gray-900">#{order.id}</CardTitle>
-                    </div>
-                    <p className="text-xs text-gray-500 mt-1 font-medium">{formatDateString(order.date)}</p>
-                  </div>
-                  <div className="flex flex-col items-end gap-1">
-                    <StatusBadge status={order.status} />
-                  </div>
-                </CardHeader>
-              <CardContent className="p-4 pt-2">
-                <div className="space-y-3">
-                  <div>
-                    <p className="text-xs text-gray-500 uppercase tracking-wide">{t("orders.customer")}</p>
-                    <p className="text-sm font-semibold text-gray-900 mt-1">
-                      {getCustomerName(order.customerId).length > 32 
-                        ? getCustomerName(order.customerId).substring(0, 32) + '...' 
-                        : getCustomerName(order.customerId)}
-                    </p>
-                  </div>
-                  
-                  {getCustomerNameAr(order.customerId) !== "-" && (
-                    <div>
-                      <p className="text-xs text-gray-500 uppercase tracking-wide">{t("orders.customer_ar")}</p>
-                      <p className="text-sm font-semibold text-gray-900 mt-1">{getCustomerNameAr(order.customerId)}</p>
-                    </div>
-                  )}
-                  
-                  {getCustomerPlateDrawerCode(order.customerId) !== "-" && (
-                    <div className="flex items-center justify-between py-2 px-3 bg-gray-50 rounded-lg">
-                      <p className="text-xs text-gray-600 font-medium">{t("orders.plate_drawer_code")}</p>
-                      <p className="text-sm font-bold text-primary-600">{getCustomerPlateDrawerCode(order.customerId)}</p>
-                    </div>
-                  )}
-                  
-                  {order.note && (
-                    <div className="bg-blue-50 p-3 rounded-lg">
-                      <p className="text-xs text-blue-600 uppercase tracking-wide font-medium">{t("orders.note")}</p>
-                      <p className="text-sm mt-1 text-blue-800 line-clamp-2">{order.note}</p>
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-              <CardFooter className="px-4 py-3 bg-gray-50 flex justify-between items-center">
-                <span className="text-primary-600 text-sm flex items-center font-medium">
-                  {t("orders.view_details")}
-                  <span className="material-icons text-sm ml-1">arrow_forward</span>
-                </span>
-                <div className="flex space-x-2">
-                  {/* Status Change Dropdown for Mobile */}
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                        }}
-                        className="h-8 px-3 text-xs font-medium border-gray-300 hover:bg-gray-100"
-                      >
-                        <span className="material-icons text-sm mr-1">swap_horiz</span>
-                        Status
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-40">
-                      <DropdownMenuItem 
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          handleStatusChange(order, "pending");
-                        }}
-                        disabled={order.status === "pending"}
-                        className={`text-xs py-1 ${order.status === "pending" ? "bg-secondary-100" : ""}`}
-                      >
-                        <span className="w-2 h-2 rounded-full bg-secondary-300 mr-2"></span>
-                        Pending
-                      </DropdownMenuItem>
-                      <DropdownMenuItem 
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          handleStatusChange(order, "processing");
-                        }}
-                        disabled={order.status === "processing"}
-                        className={`text-xs py-1 ${order.status === "processing" ? "bg-secondary-100" : ""}`}
-                      >
-                        <span className="w-2 h-2 rounded-full bg-primary-300 mr-2"></span>
-                        Production
-                      </DropdownMenuItem>
-                      <DropdownMenuItem 
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          handleStatusChange(order, "hold");
-                        }}
-                        disabled={order.status === "hold"}
-                        className={`text-xs py-1 ${order.status === "hold" ? "bg-secondary-100" : ""}`}
-                      >
-                        <span className="w-2 h-2 rounded-full bg-warning-300 mr-2"></span>
-                        Hold
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                  
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      handleDelete(order);
-                    }} 
-                    className="h-8 px-3 text-xs font-medium border-red-300 text-red-600 hover:bg-red-50 hover:border-red-400"
-                  >
-                    <span className="material-icons text-sm mr-1">delete</span>
-                    Delete
-                  </Button>
-                </div>
-              </CardFooter>
-              </Link>
-            </div>
-          </Card>
-        ))}
-      </div>
-    );
   };
 
-  // Mobile view fallback and loading state
-  const renderMobileLoadingState = () => {
+  // Handle smart search
+  const handleSmartSearch = useCallback((query: string) => {
+    setSearchQuery(query);
+    if (query.trim()) {
+      saveRecentSearch(query.trim());
+    }
+  }, [saveRecentSearch]);
+
+  const handleRecentSearchSelect = useCallback((query: string) => {
+    setSearchQuery(query);
+    // Move selected search to top of recent searches
+    saveRecentSearch(query);
+  }, [saveRecentSearch]);
+
+  if (isLoading) {
     return (
-      <div className="space-y-4 animate-pulse">
-        {[...Array(4)].map((_, i) => (
-          <div key={i} className="h-40 bg-gray-100 rounded-lg"></div>
-        ))}
+      <div className="flex items-center justify-center h-96">
+        <div className="text-center">
+          <RefreshCw className="h-8 w-8 animate-spin text-blue-600 mx-auto mb-4" />
+          <p className="text-gray-600">Loading orders...</p>
+        </div>
       </div>
     );
-  };
+  }
 
   return (
-    <div className={`container mx-auto ${isMobile ? "p-3" : "p-6"}`}>
-      <QuickActions
-        title="Quick Actions"
-        actions={quickActions}
-        columns={2}
-      />
-
-      <div className="space-y-6">
-        <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-secondary-900">{t("orders.title")}</h1>
-        {isMobile && (
-          <Link href="/orders/new">
-            <Button className="rounded-full h-10 w-10 p-0">
-              <span className="material-icons text-base">add</span>
-            </Button>
-          </Link>
-        )}
-      </div>
-
-      {/* Bulk Actions Toolbar */}
-      {selectedOrders.length > 0 && (
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
-          <div className={`flex items-center ${isMobile ? "flex-col gap-2" : "justify-between"}`}>
-            <div className="flex items-center gap-3">
-              <span className="text-blue-700 font-medium text-sm">
-                {selectedOrders.length} order{selectedOrders.length > 1 ? 's' : ''} selected
-              </span>
-            </div>
-            <div className={`flex items-center gap-2 ${isMobile ? "w-full" : ""}`}>
+    <div className="space-y-4 sm:space-y-6 px-2 sm:px-0">
+      {/* Header */}
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-900 flex items-center gap-2">
+              <ShoppingCart className="h-6 w-6 sm:h-7 sm:w-7 text-blue-600" />
+              {t('orders.order_management')}
+            </h1>
+            <p className="text-sm sm:text-base text-gray-600 mt-1">{t('orders.manage_track_orders')}</p>
+          </div>
+          
+          {/* Mobile-first action buttons */}
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
+            <div className="flex items-center gap-2 sm:gap-3">
               <Button
                 variant="outline"
-                size={isMobile ? "sm" : "sm"}
-                onClick={() => setSelectedOrders([])}
-                className={isMobile ? "flex-1" : ""}
+                size="sm"
+                onClick={() => refetch()}
+                disabled={isLoading}
+                className="gap-2 flex-1 sm:flex-initial"
               >
-                {isMobile ? "Clear" : "Clear Selection"}
+                <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+                <span className="hidden sm:inline">{t('common.refresh')}</span>
               </Button>
+              
               <Button
-                variant="destructive"
-                size={isMobile ? "sm" : "sm"}
-                onClick={() => setShowBulkDeleteDialog(true)}
-                disabled={bulkDeleteMutation.isPending}
-                className={isMobile ? "flex-1" : ""}
+                variant="outline"
+                size="sm"
+                className="gap-2 flex-1 sm:flex-initial"
               >
-                <span className="material-icons text-sm mr-1">delete</span>
-                {isMobile ? "Delete" : "Delete Selected"}
+                <Download className="h-4 w-4" />
+                <span className="hidden sm:inline">{t('orders.export')}</span>
+              </Button>
+            </div>
+            
+            <Link href="/orders/new" className="w-full sm:w-auto">
+              <Button className="gap-2 w-full sm:w-auto ml-[12px] mr-[12px] mt-[2px] mb-[2px] pt-[6px] pb-[6px] text-center pl-[6px] pr-[6px] bg-blue-600 hover:bg-blue-700">
+                <Plus className="h-4 w-4" />
+                {t('orders.new_order')}
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      {/* Statistics Cards - Mobile Optimized */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-4">
+        <StatsCard 
+          title={t('orders.total_orders')} 
+          value={stats.total} 
+          icon={<ShoppingCart className="h-4 w-4 sm:h-5 sm:w-5" />}
+          color="blue"
+        />
+        <StatsCard 
+          title={t('orders.pending')} 
+          value={stats.pending} 
+          icon={<Clock className="h-4 w-4 sm:h-5 sm:w-5" />}
+          color="amber"
+        />
+        <StatsCard 
+          title={t('orders.processing')} 
+          value={stats.processing} 
+          icon={<Package className="h-4 w-4 sm:h-5 sm:w-5" />}
+          color="blue"
+        />
+        <StatsCard 
+          title={t('orders.completed')} 
+          value={stats.completed} 
+          icon={<CheckCircle className="h-4 w-4 sm:h-5 sm:w-5" />}
+          color="green"
+        />
+        <StatsCard 
+          title={t('orders.on_hold')} 
+          value={stats.hold} 
+          icon={<Pause className="h-4 w-4 sm:h-5 sm:w-5" />}
+          color="red"
+        />
+      </div>
+
+      {/* Search and Filters - Mobile Optimized */}
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
+            <Filter className="h-4 w-4 sm:h-5 sm:w-5" />
+            {t('orders.search_filters')}
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {/* Search Bar */}
+          <div className="w-full">
+            <SmartSearchBox
+              onSearch={handleSmartSearch}
+              placeholder={t('orders.search_by_id_customer')}
+              recentSearches={recentSearches}
+              onRecentSearchSelect={handleRecentSearchSelect}
+              searchSuggestions={searchSuggestions}
+            />
+          </div>
+          
+          {/* Filters Row - Mobile Stack */}
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-2 flex-1">
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger className="w-full sm:w-40">
+                  <SelectValue placeholder={t('orders.filter_by_status')} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">{t('orders.all_status')}</SelectItem>
+                  <SelectItem value="pending">{t('orders.pending')}</SelectItem>
+                  <SelectItem value="processing">{t('orders.processing')}</SelectItem>
+                  <SelectItem value="completed">{t('orders.completed')}</SelectItem>
+                  <SelectItem value="hold">{t('orders.on_hold')}</SelectItem>
+                  <SelectItem value="cancelled">{t('orders.cancelled')}</SelectItem>
+                </SelectContent>
+              </Select>
+              
+              <Select value={sortBy} onValueChange={setSortBy}>
+                <SelectTrigger className="w-full sm:w-40">
+                  <SelectValue placeholder={t('orders.sort_by')} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="date">{t('orders.date')}</SelectItem>
+                  <SelectItem value="id">{t('orders.order_id')}</SelectItem>
+                  <SelectItem value="customer">{t('orders.customer')}</SelectItem>
+                  <SelectItem value="status">{t('orders.status')}</SelectItem>
+                </SelectContent>
+              </Select>
+              
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setSortOrder(sortOrder === "asc" ? "desc" : "asc")}
+                className="gap-2 flex-shrink-0"
+              >
+                {sortOrder === "asc" ? <ArrowUp className="h-4 w-4" /> : <ArrowDown className="h-4 w-4" />}
+                <span className="hidden sm:inline">{sortOrder === "asc" ? t('orders.asc') : t('orders.desc')}</span>
               </Button>
             </div>
           </div>
-        </div>
-      )}
+          
+          {/* Quick Filters */}
+          <div className="flex flex-wrap gap-2">
+            <QuickFilterButton
+              label={t('orders.all')}
+              count={stats.total}
+              isActive={statusFilter === "all"}
+              onClick={() => setStatusFilter("all")}
+            />
+            <QuickFilterButton
+              label={t('orders.pending')}
+              count={stats.pending}
+              isActive={statusFilter === "pending"}
+              onClick={() => setStatusFilter("pending")}
+            />
+            <QuickFilterButton
+              label={t('orders.processing')}
+              count={stats.processing}
+              isActive={statusFilter === "processing"}
+              onClick={() => setStatusFilter("processing")}
+            />
+            <QuickFilterButton
+              label={t('orders.completed')}
+              count={stats.completed}
+              isActive={statusFilter === "completed"}
+              onClick={() => setStatusFilter("completed")}
+            />
+            <QuickFilterButton
+              label={t('orders.on_hold')}
+              count={stats.hold}
+              isActive={statusFilter === "hold"}
+              onClick={() => setStatusFilter("hold")}
+            />
+          </div>
 
-      <Card>
-        <CardHeader className={isMobile ? "pb-3" : ""}>
-          <CardTitle className="flex justify-between items-center">
-            <span className={isMobile ? "text-lg" : ""}>{t("orders.active_production_orders")}</span>
-            {!isMobile && (
-              <Link href="/orders/new">
-                <Button>
-                  <span className="material-icons text-sm mr-1">add</span>
-                  {t("orders.new_order")}
-                </Button>
-              </Link>
-            )}
-          </CardTitle>
-        </CardHeader>
-        <CardContent className={isMobile ? "px-3" : ""}>
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className={`mb-4 ${isMobile ? "grid grid-cols-3 w-full h-auto" : ""}`}>
-              <TabsTrigger 
-                value="all" 
-                className={isMobile ? "text-xs py-2 px-1" : ""}
-              >
-                {isMobile ? "All" : t("orders.all_orders")}
-              </TabsTrigger>
-              <TabsTrigger 
-                value="processing" 
-                className={isMobile ? "text-xs py-2 px-1" : ""}
-              >
-                {isMobile ? "Production" : t("orders.for_production")}
-              </TabsTrigger>
-              <TabsTrigger 
-                value="hold" 
-                className={isMobile ? "text-xs py-2 px-1" : ""}
-              >
-                {isMobile ? "Hold" : t("orders.on_hold")}
-              </TabsTrigger>
-              {!isMobile && (
-                <>
-                  <TabsTrigger value="pending">{t("orders.pending")}</TabsTrigger>
-                  <TabsTrigger value="completed">{t("orders.completed")}</TabsTrigger>
-                </>
-              )}
-            </TabsList>
+          {/* Production Quick Filters */}
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <Zap className="h-4 w-4 text-blue-600" />
+              <label className="text-sm font-medium text-gray-700">
+                Production Presets
+              </label>
+            </div>
             
-            {/* Mobile secondary tabs for remaining statuses */}
-            {isMobile && (
-              <div className="flex gap-2 mb-4 overflow-x-auto">
-                <Button
-                  variant={activeTab === "pending" ? "default" : "outline"}
-                  size="sm"
-                  className="text-xs whitespace-nowrap"
-                  onClick={() => setActiveTab("pending")}
-                >
-                  {t("orders.pending")}
-                </Button>
-                <Button
-                  variant={activeTab === "completed" ? "default" : "outline"}
-                  size="sm"
-                  className="text-xs whitespace-nowrap"
-                  onClick={() => setActiveTab("completed")}
-                >
-                  {t("orders.completed")}
-                </Button>
-              </div>
-            )}
-            
-            <TabsContent value={activeTab} className="mt-0">
-              {isLoading ? (
-                isMobile ? renderMobileLoadingState() : <div className="h-32 bg-gray-100 rounded animate-pulse"></div>
-              ) : isMobile ? (
-                renderMobileOrderList()
-              ) : (
-                <DataTable 
-                  data={filteredOrders || []}
-                  columns={columns as any}
-                  actions={tableActions}
-                  onRowClick={(row) => {
-                    // Use wouter's navigation to stay within the app
-                    window.history.pushState({}, '', `/orders/${row.id}`);
-                    window.dispatchEvent(new PopStateEvent('popstate'));
-                  }}
-                />
-              )}
-            </TabsContent>
-          </Tabs>
+            <div className="flex flex-wrap gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setStatusFilter("processing");
+                  setSortBy("date");
+                  setSortOrder("desc");
+                }}
+                className="text-xs px-3 py-1.5 bg-blue-50 hover:bg-blue-100 border-blue-200 text-blue-800"
+              >
+                <Factory className="h-3 w-3 mr-1" />
+                Ready for Production
+              </Button>
+              
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setStatusFilter("pending");
+                  setSortBy("date");
+                  setSortOrder("asc");
+                }}
+                className="text-xs px-3 py-1.5 bg-yellow-50 hover:bg-yellow-100 border-yellow-200 text-yellow-800"
+              >
+                <Clock className="h-3 w-3 mr-1" />
+                Urgent Orders
+              </Button>
+              
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setStatusFilter("all");
+                  setSortBy("date");
+                  setSortOrder("desc");
+                }}
+                className="text-xs px-3 py-1.5 bg-green-50 hover:bg-green-100 border-green-200 text-green-800"
+              >
+                <Calendar className="h-3 w-3 mr-1" />
+                Latest Orders
+              </Button>
+              
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setStatusFilter("completed");
+                  setSortBy("date");
+                  setSortOrder("desc");
+                }}
+                className="text-xs px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 border-emerald-200 text-emerald-800"
+              >
+                <CheckCircle className="h-3 w-3 mr-1" />
+                Recent Completed
+              </Button>
+              
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setStatusFilter("hold");
+                  setSortBy("date");
+                  setSortOrder("desc");
+                }}
+                className="text-xs px-3 py-1.5 bg-red-50 hover:bg-red-100 border-red-200 text-red-800"
+              >
+                <AlertCircle className="h-3 w-3 mr-1" />
+                Issues & Hold
+              </Button>
+              
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setStatusFilter("all");
+                  setSortBy("id");
+                  setSortOrder("desc");
+                }}
+                className="text-xs px-3 py-1.5 bg-purple-50 hover:bg-purple-100 border-purple-200 text-purple-800"
+              >
+                <Hash className="h-3 w-3 mr-1" />
+                By Order Number
+              </Button>
+            </div>
+          </div>
         </CardContent>
       </Card>
 
+      {/* Bulk Actions - Mobile Optimized */}
+      {selectedOrders.length > 0 && (
+        <Card className="bg-blue-50 border-blue-200">
+          <CardContent className="p-3 sm:p-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
+              <div className="flex items-center gap-2 flex-1">
+                <input
+                  type="checkbox"
+                  checked={selectedOrders.length === filteredOrders?.length}
+                  onChange={handleSelectAll}
+                  className="w-4 h-4 text-blue-600 rounded border-gray-300 flex-shrink-0"
+                />
+                <span className="text-blue-700 font-medium text-sm sm:text-base">
+                  {selectedOrders.length} {selectedOrders.length !== 1 ? t('orders.orders') : t('orders.order')} {t('orders.selected')}
+                </span>
+              </div>
+              
+              <div className="flex items-center gap-2 w-full sm:w-auto">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setSelectedOrders([])}
+                  className="flex-1 sm:flex-initial"
+                >
+                  {t('orders.clear_selection')}
+                </Button>
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={handleBulkDelete}
+                  className="gap-2 flex-1 sm:flex-initial"
+                >
+                  <Trash2 className="h-4 w-4" />
+                  <span className="hidden sm:inline">{t('orders.delete_selected')}</span>
+                  <span className="sm:hidden">Delete</span>
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Orders Grid - Mobile Optimized */}
+      <div className="space-y-3 sm:space-y-4">
+        {!filteredOrders || filteredOrders.length === 0 ? (
+          <Card>
+            <CardContent className="py-12 sm:py-16 px-4">
+              <div className="text-center">
+                <ShoppingCart className="h-10 w-10 sm:h-12 sm:w-12 text-gray-400 mx-auto mb-4" />
+                <h3 className="text-base sm:text-lg font-medium text-gray-900 mb-2">{t('orders.no_orders_found')}</h3>
+                <p className="text-sm sm:text-base text-gray-600 mb-4">
+                  {searchQuery || statusFilter !== "all" 
+                    ? t('orders.no_orders_match_filters') 
+                    : t('orders.get_started_create_order')}
+                </p>
+                <Link href="/orders/new">
+                  <Button className="inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden group gap-2 bg-blue-600 hover:bg-blue-700 w-full sm:w-auto ml-[12px] mr-[12px] mt-[2px] mb-[2px] pt-[6px] pb-[6px] text-center pl-[6px] pr-[6px]">
+                    <Plus className="h-4 w-4" />
+                    {t('orders.create_order')}
+                  </Button>
+                </Link>
+              </div>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+            {filteredOrders.map((order) => (
+              <OrderCard
+                key={order.id}
+                order={order}
+                customer={getCustomerById(order.customerId)}
+                onStatusChange={handleStatusChange}
+                onDelete={handleDeleteOrder}
+                onSelect={handleSelectOrder}
+                isSelected={selectedOrders.includes(order.id)}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+
       {/* Delete Confirmation Dialog */}
-      <AlertDialog open={!!deletingOrder} onOpenChange={(open) => !open && setDeletingOrder(null)}>
+      <AlertDialog open={!!deletingOrder} onOpenChange={() => setDeletingOrder(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>{t("common.logout_confirm")}</AlertDialogTitle>
+            <AlertDialogTitle>{t('orders.delete_order')}</AlertDialogTitle>
             <AlertDialogDescription>
-              This will permanently delete order #{deletingOrder?.id} and all its associated data including:
-              - Job orders
-              - Rolls
-              - Final products
-              - Quality checks
-              - SMS messages
-              
-              This action cannot be undone.
+              {t('orders.confirm_delete_order', { id: deletingOrder?.id })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
-            <AlertDialogAction 
-              onClick={confirmDelete}
-              className="bg-red-500 hover:bg-red-600"
+            <AlertDialogCancel>{t('orders.cancel')}</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmDeleteOrder}
+              className="bg-red-600 hover:bg-red-700"
             >
-              {t("common.delete")}
+              {t('orders.delete_order')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
 
-      {/* Bulk Delete Confirmation Dialog */}
+      {/* Bulk Delete Dialog */}
       <AlertDialog open={showBulkDeleteDialog} onOpenChange={setShowBulkDeleteDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Multiple Orders</AlertDialogTitle>
+            <AlertDialogTitle>{t('orders.delete_multiple_orders')}</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete {selectedOrders.length} selected order{selectedOrders.length > 1 ? 's' : ''}? This will permanently delete:
-              <br />- Job orders
-              <br />- Rolls
-              <br />- Final products
-              <br />- Quality checks
-              <br />- SMS messages
-              <br /><br />
-              This action cannot be undone.
+              {t('orders.confirm_delete_multiple_orders', { count: selectedOrders.length })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction 
-              onClick={() => bulkDeleteMutation.mutate(selectedOrders)}
-              className="bg-red-500 hover:bg-red-600"
+            <AlertDialogCancel>{t('orders.cancel')}</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmBulkDelete}
               disabled={bulkDeleteMutation.isPending}
+              className="bg-red-600 hover:bg-red-700"
             >
-              {bulkDeleteMutation.isPending ? "Deleting..." : "Delete Selected"}
+              {t('orders.delete_orders')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-      </div>
     </div>
   );
 }

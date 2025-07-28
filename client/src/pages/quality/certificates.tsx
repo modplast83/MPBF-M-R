@@ -3,10 +3,32 @@ import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { Award, Search, Filter, Download, Eye, Plus, Calendar, Building, User } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import {
+  Award,
+  Search,
+  Filter,
+  Download,
+  Eye,
+  Plus,
+  Calendar,
+  Building,
+  User,
+} from "lucide-react";
 import { format } from "date-fns";
 import { useTranslation } from "react-i18next";
 import { useLanguage } from "@/hooks/use-language";
@@ -58,11 +80,11 @@ export default function CertificatesPage() {
   const { isRTL } = useLanguage();
 
   const { data: certificates = [] } = useQuery<TrainingCertificate[]>({
-    queryKey: ["/api/training-certificates"]
+    queryKey: ["/api/training-certificates"],
   });
 
   const { data: trainings = [] } = useQuery<Training[]>({
-    queryKey: ["/api/trainings"]
+    queryKey: ["/api/trainings"],
   });
 
   // Calculate statistics
@@ -73,40 +95,56 @@ export default function CertificatesPage() {
     thisMonth: certificates.filter((c: any) => {
       const issueDate = new Date(c.issuedDate);
       const now = new Date();
-      return issueDate.getMonth() === now.getMonth() && issueDate.getFullYear() === now.getFullYear();
-    }).length
+      return (
+        issueDate.getMonth() === now.getMonth() &&
+        issueDate.getFullYear() === now.getFullYear()
+      );
+    }).length,
   };
 
   // Filter certificates based on search and status
   const filteredCertificates = certificates.filter((certificate: any) => {
-    const matchesSearch = certificate.certificateNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         certificate.issuerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         certificate.companyName.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesStatus = statusFilter === "all" || certificate.status === statusFilter;
-    
+    const matchesSearch =
+      certificate.certificateNumber
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+      certificate.issuerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      certificate.companyName.toLowerCase().includes(searchTerm.toLowerCase());
+
+    const matchesStatus =
+      statusFilter === "all" || certificate.status === statusFilter;
+
     return matchesSearch && matchesStatus;
   });
 
   const getTrainingInfo = (trainingId: number) => {
     const training = trainings.find((t: any) => t.id === trainingId);
-    return training ? {
-      id: training.id,
-      sections: training.trainingSection || "",
-      trainee: training.traineeId,
-      date: training.date
-    } : null;
+    return training
+      ? {
+          id: training.id,
+          sections: training.trainingSection || "",
+          trainee: training.traineeId,
+          date: training.date,
+        }
+      : null;
   };
 
   return (
-    <div className={`min-h-full p-6 space-y-6 ${isRTL ? 'rtl' : ''}`}>
+    <div className={`min-h-full p-6 space-y-6 ${isRTL ? "rtl" : ""}`}>
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">{t("quality.certificates.title")}</h1>
-          <p className="text-gray-600">{t("quality.certificates.description")}</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            {t("quality.certificates.title")}
+          </h1>
+          <p className="text-gray-600">
+            {t("quality.certificates.description")}
+          </p>
         </div>
-        <Button onClick={() => setShowGenerator(true)} className="bg-blue-600 hover:bg-blue-700">
+        <Button
+          onClick={() => setShowGenerator(true)}
+          className="bg-blue-600 hover:bg-blue-700"
+        >
           <Plus className="h-4 w-4 mr-2" />
           {t("quality.certificates.generate_certificate")}
         </Button>
@@ -116,7 +154,9 @@ export default function CertificatesPage() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">{t("quality.certificates.stats.total_certificates")}</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              {t("quality.certificates.stats.total_certificates")}
+            </CardTitle>
             <Award className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -125,29 +165,41 @@ export default function CertificatesPage() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">{t("quality.certificates.stats.active")}</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              {t("quality.certificates.stats.active")}
+            </CardTitle>
             <User className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">{stats.active}</div>
+            <div className="text-2xl font-bold text-green-600">
+              {stats.active}
+            </div>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">{t("quality.certificates.stats.revoked")}</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              {t("quality.certificates.stats.revoked")}
+            </CardTitle>
             <Building className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-red-600">{stats.revoked}</div>
+            <div className="text-2xl font-bold text-red-600">
+              {stats.revoked}
+            </div>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">{t("quality.certificates.stats.this_month")}</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              {t("quality.certificates.stats.this_month")}
+            </CardTitle>
             <Calendar className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-blue-600">{stats.thisMonth}</div>
+            <div className="text-2xl font-bold text-blue-600">
+              {stats.thisMonth}
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -173,13 +225,23 @@ export default function CertificatesPage() {
             <Select value={statusFilter} onValueChange={setStatusFilter}>
               <SelectTrigger className="w-48">
                 <Filter className="h-4 w-4 mr-2" />
-                <SelectValue placeholder={t("quality.certificates.filter_by_status")} />
+                <SelectValue
+                  placeholder={t("quality.certificates.filter_by_status")}
+                />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">{t("quality.certificates.all_status")}</SelectItem>
-                <SelectItem value="active">{t("quality.certificates.status_active")}</SelectItem>
-                <SelectItem value="revoked">{t("quality.certificates.status_revoked")}</SelectItem>
-                <SelectItem value="expired">{t("quality.certificates.status_expired")}</SelectItem>
+                <SelectItem value="all">
+                  {t("quality.certificates.all_status")}
+                </SelectItem>
+                <SelectItem value="active">
+                  {t("quality.certificates.status_active")}
+                </SelectItem>
+                <SelectItem value="revoked">
+                  {t("quality.certificates.status_revoked")}
+                </SelectItem>
+                <SelectItem value="expired">
+                  {t("quality.certificates.status_expired")}
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -189,8 +251,12 @@ export default function CertificatesPage() {
             {filteredCertificates.length === 0 ? (
               <div className="text-center py-12">
                 <Award className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">{t("quality.certificates.no_certificates_found")}</h3>
-                <p className="text-gray-500 mb-4">{t("quality.certificates.get_started_message")}</p>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                  {t("quality.certificates.no_certificates_found")}
+                </h3>
+                <p className="text-gray-500 mb-4">
+                  {t("quality.certificates.get_started_message")}
+                </p>
                 <Button onClick={() => setShowGenerator(true)}>
                   <Plus className="h-4 w-4 mr-2" />
                   {t("quality.certificates.generate_certificate")}
@@ -198,45 +264,73 @@ export default function CertificatesPage() {
               </div>
             ) : (
               filteredCertificates.map((certificate: any) => (
-                <Card key={certificate.id} className="hover:shadow-md transition-shadow">
+                <Card
+                  key={certificate.id}
+                  className="hover:shadow-md transition-shadow"
+                >
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div className="flex-1">
                         <div className="flex items-center gap-4 mb-2">
                           <h3 className="text-lg font-semibold text-gray-900">
-                            {t("quality.certificates.certificate_number", { number: certificate.certificateNumber })}
+                            {t("quality.certificates.certificate_number", {
+                              number: certificate.certificateNumber,
+                            })}
                           </h3>
-                          <Badge className={
-                            certificate.status === "active" ? "bg-green-100 text-green-800" :
-                            certificate.status === "revoked" ? "bg-red-100 text-red-800" :
-                            certificate.status === "expired" ? "bg-gray-100 text-gray-800" :
-                            "bg-blue-100 text-blue-800"
-                          }>
-                            {t(`quality.certificates.status_${certificate.status}`)}
+                          <Badge
+                            className={
+                              certificate.status === "active"
+                                ? "bg-green-100 text-green-800"
+                                : certificate.status === "revoked"
+                                  ? "bg-red-100 text-red-800"
+                                  : certificate.status === "expired"
+                                    ? "bg-gray-100 text-gray-800"
+                                    : "bg-blue-100 text-blue-800"
+                            }
+                          >
+                            {t(
+                              `quality.certificates.status_${certificate.status}`,
+                            )}
                           </Badge>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600">
                           <div className="flex items-center gap-2">
                             <Building className="h-4 w-4" />
-                            {t("quality.certificates.company")}: {certificate.companyName}
+                            {t("quality.certificates.company")}:{" "}
+                            {certificate.companyName}
                           </div>
                           <div className="flex items-center gap-2">
                             <User className="h-4 w-4" />
-                            {t("quality.certificates.issuer")}: {certificate.issuerName}
+                            {t("quality.certificates.issuer")}:{" "}
+                            {certificate.issuerName}
                           </div>
                           <div className="flex items-center gap-2">
                             <Calendar className="h-4 w-4" />
-                            {t("quality.certificates.issued")}: {format(new Date(certificate.issuedDate), "MMM dd, yyyy")}
+                            {t("quality.certificates.issued")}:{" "}
+                            {format(
+                              new Date(certificate.issuedDate),
+                              "MMM dd, yyyy",
+                            )}
                           </div>
                         </div>
                         {certificate.validUntil && (
                           <div className="mt-2 text-sm text-gray-600">
-                            <strong>{t("quality.certificates.valid_until")}:</strong> {format(new Date(certificate.validUntil), "MMM dd, yyyy")}
+                            <strong>
+                              {t("quality.certificates.valid_until")}:
+                            </strong>{" "}
+                            {format(
+                              new Date(certificate.validUntil),
+                              "MMM dd, yyyy",
+                            )}
                           </div>
                         )}
                         {getTrainingInfo(certificate.trainingId) && (
                           <div className="mt-2 text-sm text-gray-700">
-                            <strong>{t("quality.certificates.training")}:</strong> {getTrainingInfo(certificate.trainingId)?.sections} - {getTrainingInfo(certificate.trainingId)?.trainee}
+                            <strong>
+                              {t("quality.certificates.training")}:
+                            </strong>{" "}
+                            {getTrainingInfo(certificate.trainingId)?.sections}{" "}
+                            - {getTrainingInfo(certificate.trainingId)?.trainee}
                           </div>
                         )}
                       </div>
@@ -261,9 +355,12 @@ export default function CertificatesPage() {
       <Dialog open={showGenerator} onOpenChange={setShowGenerator}>
         <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>{t("quality.certificates.generate_training_certificate")}</DialogTitle>
+            <DialogTitle>
+              {t("quality.certificates.generate_training_certificate")}
+            </DialogTitle>
             <DialogDescription>
-              Generate and manage training certificates for quality management purposes
+              Generate and manage training certificates for quality management
+              purposes
             </DialogDescription>
           </DialogHeader>
           <div className="p-4 text-center text-gray-500">

@@ -1,8 +1,27 @@
 import { useTranslation } from "react-i18next";
 import { useLanguage } from "@/hooks/use-language";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Clock, Trophy, AlertTriangle, TrendingUp, ArrowRight, Users, Calendar, GraduationCap, Award, CalendarDays, MapPin, DollarSign } from "lucide-react";
+import {
+  Clock,
+  Trophy,
+  AlertTriangle,
+  TrendingUp,
+  ArrowRight,
+  Users,
+  Calendar,
+  GraduationCap,
+  Award,
+  CalendarDays,
+  MapPin,
+  DollarSign,
+} from "lucide-react";
 import { Link } from "wouter";
 
 interface HRModuleCardProps {
@@ -13,33 +32,49 @@ interface HRModuleCardProps {
   color: string;
 }
 
-function HRModuleCard({ title, description, icon: IconComponent, path, color }: HRModuleCardProps) {
+function HRModuleCard({
+  title,
+  description,
+  icon: IconComponent,
+  path,
+  color,
+}: HRModuleCardProps) {
   const { isRTL } = useLanguage();
-  
+
   return (
     <Link href={path}>
       <Card className="group overflow-hidden transition-all duration-300 hover:shadow-xl hover:scale-[1.02] cursor-pointer bg-gradient-to-br from-white to-slate-50 border-0 shadow-md h-full">
-        <CardHeader className={`${color} text-white p-6 relative overflow-hidden`}>
+        <CardHeader
+          className={`${color} text-white p-6 relative overflow-hidden`}
+        >
           <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
-          <CardTitle className={`flex items-center relative z-10 ${isRTL ? 'flex-row-reverse' : ''}`}>
+          <CardTitle
+            className={`flex items-center relative z-10 ${isRTL ? "flex-row-reverse" : ""}`}
+          >
             <div className="bg-white/20 p-3 rounded-xl backdrop-blur-sm">
               <IconComponent className="h-6 w-6 text-white" />
             </div>
-            <span className={`font-bold text-lg ${isRTL ? 'mr-4' : 'ml-4'}`}>{title}</span>
+            <span className={`font-bold text-lg ${isRTL ? "mr-4" : "ml-4"}`}>
+              {title}
+            </span>
           </CardTitle>
         </CardHeader>
         <CardContent className="p-6">
           <CardDescription className="text-slate-600 text-sm leading-relaxed mb-4">
             {description}
           </CardDescription>
-          <div className={`flex justify-end ${isRTL ? 'flex-row-reverse' : ''}`}>
-            <Button 
-              variant="ghost" 
-              size="sm" 
+          <div
+            className={`flex justify-end ${isRTL ? "flex-row-reverse" : ""}`}
+          >
+            <Button
+              variant="ghost"
+              size="sm"
               className="text-slate-700 hover:text-slate-900 hover:bg-slate-100 group-hover:bg-slate-800 group-hover:text-white transition-all duration-300"
             >
-              <span className={isRTL ? 'ml-2' : 'mr-2'}>Access</span>
-              <ArrowRight className={`h-4 w-4 group-hover:translate-x-1 transition-transform ${isRTL ? 'rotate-180' : ''}`} />
+              <span className={isRTL ? "ml-2" : "mr-2"}>Access</span>
+              <ArrowRight
+                className={`h-4 w-4 group-hover:translate-x-1 transition-transform ${isRTL ? "rotate-180" : ""}`}
+              />
             </Button>
           </div>
         </CardContent>
@@ -55,17 +90,20 @@ export default function HRIndex() {
   const hrModules = [
     {
       title: t("hr.attendance.title", "Attendance"),
-      description: t("hr.attendance.description", "Manage employee attendance and track working hours"),
+      description: t(
+        "hr.attendance.description",
+        "Manage employee attendance and track working hours",
+      ),
       icon: Clock,
       path: "/hr/enhanced-attendance",
-      color: "bg-gradient-to-br from-blue-500 to-blue-600"
+      color: "bg-gradient-to-br from-blue-500 to-blue-600",
     },
     {
       title: t("hr.employee_management.title"),
       description: t("hr.employee_management.description"),
       icon: Users,
       path: "/hr/employee-management",
-      color: "bg-gradient-to-br from-green-500 to-green-600"
+      color: "bg-gradient-to-br from-green-500 to-green-600",
     },
 
     {
@@ -73,42 +111,44 @@ export default function HRIndex() {
       description: t("hr.overtime_leave.description"),
       icon: CalendarDays,
       path: "/hr/overtime-leave",
-      color: "bg-gradient-to-br from-orange-500 to-orange-600"
+      color: "bg-gradient-to-br from-orange-500 to-orange-600",
     },
     {
       title: t("hr.geofence_management.title"),
       description: t("hr.geofence_management.description"),
       icon: MapPin,
       path: "/hr/geofences",
-      color: "bg-gradient-to-br from-cyan-500 to-cyan-600"
+      color: "bg-gradient-to-br from-cyan-500 to-cyan-600",
     },
     {
       title: "Payroll & Performance",
       description: "Manage payroll records and employee performance reviews",
       icon: DollarSign,
       path: "/hr/payroll-performance",
-      color: "bg-gradient-to-br from-emerald-500 to-emerald-600"
+      color: "bg-gradient-to-br from-emerald-500 to-emerald-600",
     },
     {
       title: t("hr.employee_of_month.title"),
       description: t("hr.employee_of_month.performance_evaluation"),
       icon: Trophy,
       path: "/hr/employee-of-month",
-      color: "bg-gradient-to-br from-yellow-500 to-yellow-600"
+      color: "bg-gradient-to-br from-yellow-500 to-yellow-600",
     },
     {
       title: t("hr.violations_complaints.title"),
       description: t("hr.violations_complaints.investigation_notes"),
       icon: AlertTriangle,
       path: "/hr/violations-complaints",
-      color: "bg-gradient-to-br from-red-500 to-red-600"
-    }
+      color: "bg-gradient-to-br from-red-500 to-red-600",
+    },
   ];
 
   return (
-    <div className={`min-h-full ${isRTL ? 'rtl' : 'ltr'}`}>
+    <div className={`min-h-full ${isRTL ? "rtl" : "ltr"}`}>
       {/* Header Section */}
-      <div className={`mb-12 text-center ${isRTL ? 'text-right' : 'text-left'}`}>
+      <div
+        className={`mb-12 text-center ${isRTL ? "text-right" : "text-left"}`}
+      >
         <div className="flex items-center justify-center mb-6">
           <div className="bg-gradient-to-br from-slate-800 to-slate-900 p-4 rounded-2xl shadow-lg">
             <Users className="h-12 w-12 text-white" />
@@ -135,23 +175,29 @@ export default function HRIndex() {
           />
         ))}
       </div>
-      
+
       {/* Stats Overview */}
       <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-6 border border-slate-200/50 text-center">
           <Calendar className="h-8 w-8 text-blue-500 mx-auto mb-3" />
           <h3 className="text-lg font-bold text-slate-800 mb-2">Attendance</h3>
-          <p className="text-slate-600 text-sm">Track employee work hours and attendance patterns</p>
+          <p className="text-slate-600 text-sm">
+            Track employee work hours and attendance patterns
+          </p>
         </div>
         <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-6 border border-slate-200/50 text-center">
           <Trophy className="h-8 w-8 text-yellow-500 mx-auto mb-3" />
           <h3 className="text-lg font-bold text-slate-800 mb-2">Performance</h3>
-          <p className="text-slate-600 text-sm">Evaluate and recognize outstanding employees</p>
+          <p className="text-slate-600 text-sm">
+            Evaluate and recognize outstanding employees
+          </p>
         </div>
         <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-6 border border-slate-200/50 text-center">
           <AlertTriangle className="h-8 w-8 text-red-500 mx-auto mb-3" />
           <h3 className="text-lg font-bold text-slate-800 mb-2">Issues</h3>
-          <p className="text-slate-600 text-sm">Manage violations and workplace complaints</p>
+          <p className="text-slate-600 text-sm">
+            Manage violations and workplace complaints
+          </p>
         </div>
       </div>
     </div>

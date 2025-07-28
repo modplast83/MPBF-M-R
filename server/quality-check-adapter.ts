@@ -38,7 +38,9 @@ export interface FrontendQualityCheck {
 /**
  * Transforms database quality check to frontend expected format
  */
-export function adaptToFrontend(dbCheck: DatabaseQualityCheck): FrontendQualityCheck {
+export function adaptToFrontend(
+  dbCheck: DatabaseQualityCheck,
+): FrontendQualityCheck {
   return {
     id: dbCheck.id,
     checkTypeId: dbCheck.check_type_id,
@@ -50,15 +52,17 @@ export function adaptToFrontend(dbCheck: DatabaseQualityCheck): FrontendQualityC
     timestamp: dbCheck.checked_at || dbCheck.created_at,
     checklistResults: dbCheck.checklist_results || [],
     parameterValues: dbCheck.parameter_values || [],
-    issueSeverity: dbCheck.issue_severity,
-    imageUrls: dbCheck.image_urls || []
+    issueSeverity: dbCheck.issue_severity ?? null,
+    imageUrls: dbCheck.image_urls || [],
   };
 }
 
 /**
  * Transforms frontend quality check to database format
  */
-export function adaptToDatabase(frontendCheck: Partial<FrontendQualityCheck>): Partial<DatabaseQualityCheck> {
+export function adaptToDatabase(
+  frontendCheck: Partial<FrontendQualityCheck>,
+): Partial<DatabaseQualityCheck> {
   const dbCheck: Partial<DatabaseQualityCheck> = {
     check_type_id: frontendCheck.checkTypeId,
     checked_by: frontendCheck.performedBy,
@@ -71,15 +75,15 @@ export function adaptToDatabase(frontendCheck: Partial<FrontendQualityCheck>): P
   if (frontendCheck.checklistResults) {
     dbCheck.checklist_results = frontendCheck.checklistResults;
   }
-  
+
   if (frontendCheck.parameterValues) {
     dbCheck.parameter_values = frontendCheck.parameterValues;
   }
-  
-  if (frontendCheck.issueSeverity) {
-    dbCheck.issue_severity = frontendCheck.issueSeverity;
+
+  if (frontendCheck.issueSeverity !== undefined) {
+    dbCheck.issue_severity = frontendCheck.issueSeverity || null;
   }
-  
+
   if (frontendCheck.imageUrls) {
     dbCheck.image_urls = frontendCheck.imageUrls;
   }

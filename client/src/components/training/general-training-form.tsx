@@ -2,79 +2,110 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { format } from "date-fns";
-import { CalendarIcon, User, Clock, BookOpen, Award, Plus, X } from "lucide-react";
+import {
+  CalendarIcon,
+  User,
+  Clock,
+  BookOpen,
+  Award,
+  Plus,
+  X,
+} from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useToast } from "@/hooks/use-toast";
 import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 
 // Training Categories and their fields
 const TRAINING_CATEGORIES = {
-  "Extrusion": [
+  Extrusion: [
     "Machine Setup and Operation",
     "Material Handling",
     "Temperature Control",
     "Quality Control",
     "Safety Procedures",
     "Troubleshooting",
-    "Maintenance Basics"
+    "Maintenance Basics",
   ],
-  "Printing": [
+  Printing: [
     "Print Setup",
     "Ink Management",
     "Registration Control",
     "Color Matching",
     "Quality Inspection",
     "Equipment Cleaning",
-    "Waste Reduction"
+    "Waste Reduction",
   ],
-  "Cutting": [
+  Cutting: [
     "Blade Selection",
     "Cutting Parameters",
     "Material Handling",
     "Precision Control",
     "Safety Protocols",
     "Edge Quality",
-    "Tool Maintenance"
+    "Tool Maintenance",
   ],
-  "Maintenance": [
+  Maintenance: [
     "Preventive Maintenance",
     "Electrical Systems",
     "Mechanical Systems",
     "Hydraulic Systems",
     "Safety Lockout",
     "Parts Inventory",
-    "Documentation"
+    "Documentation",
   ],
-  "Warehouse": [
+  Warehouse: [
     "Inventory Management",
     "Material Handling",
     "Storage Systems",
     "Order Processing",
     "Safety Procedures",
     "Quality Control",
-    "Documentation"
+    "Documentation",
   ],
-  "Safety": [
+  Safety: [
     "Personal Protective Equipment",
     "Emergency Procedures",
     "Hazard Identification",
     "Chemical Safety",
     "Fire Safety",
     "First Aid",
-    "Incident Reporting"
-  ]
+    "Incident Reporting",
+  ],
 };
 
 // General Training Schema
@@ -83,10 +114,23 @@ const generalTrainingSchema = z.object({
   date: z.date({
     required_error: "Training date is required",
   }),
-  trainingCategory: z.enum(["Extrusion", "Printing", "Cutting", "Maintenance", "Warehouse", "Safety"]),
-  trainingFields: z.array(z.string()).min(1, "At least one training field is required"),
+  trainingCategory: z.enum([
+    "Extrusion",
+    "Printing",
+    "Cutting",
+    "Maintenance",
+    "Warehouse",
+    "Safety",
+  ]),
+  trainingFields: z
+    .array(z.string())
+    .min(1, "At least one training field is required"),
   notes: z.string().optional(),
-  duration: z.number().min(0.5, "Duration must be at least 30 minutes").max(8, "Duration cannot exceed 8 hours").optional(),
+  duration: z
+    .number()
+    .min(0.5, "Duration must be at least 30 minutes")
+    .max(8, "Duration cannot exceed 8 hours")
+    .optional(),
   location: z.string().optional(),
   instructor: z.string().optional(),
 });
@@ -99,16 +143,24 @@ interface GeneralTrainingFormProps {
   editingTraining?: any;
 }
 
-export default function GeneralTrainingForm({ isOpen, onClose, editingTraining }: GeneralTrainingFormProps) {
+export default function GeneralTrainingForm({
+  isOpen,
+  onClose,
+  editingTraining,
+}: GeneralTrainingFormProps) {
   const { t } = useTranslation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const [selectedCategory, setSelectedCategory] = useState<string>(editingTraining?.trainingCategory || "");
-  const [selectedFields, setSelectedFields] = useState<string[]>(editingTraining?.trainingFields || []);
+  const [selectedCategory, setSelectedCategory] = useState<string>(
+    editingTraining?.trainingCategory || "",
+  );
+  const [selectedFields, setSelectedFields] = useState<string[]>(
+    editingTraining?.trainingFields || [],
+  );
 
   // Fetch users/employees for trainee selection
   const { data: users = [] } = useQuery({
-    queryKey: ['/api/users'],
+    queryKey: ["/api/users"],
   });
 
   const form = useForm<GeneralTrainingFormData>({
@@ -131,27 +183,27 @@ export default function GeneralTrainingForm({ isOpen, onClose, editingTraining }
       const trainingData = {
         ...data,
         trainingId: generateTrainingId(),
-        status: 'scheduled',
-        type: 'general'
+        status: "scheduled",
+        type: "general",
       };
 
-      const response = await fetch('/api/trainings', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(trainingData)
+      const response = await fetch("/api/trainings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(trainingData),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to create training');
+        throw new Error("Failed to create training");
       }
       return response.json();
     },
     onSuccess: () => {
       toast({
         title: "Success",
-        description: "Training created successfully"
+        description: "Training created successfully",
       });
-      queryClient.invalidateQueries({ queryKey: ['/api/trainings'] });
+      queryClient.invalidateQueries({ queryKey: ["/api/trainings"] });
       form.reset();
       setSelectedFields([]);
       onClose();
@@ -160,45 +212,45 @@ export default function GeneralTrainingForm({ isOpen, onClose, editingTraining }
       toast({
         title: "Error",
         description: error.message || "Failed to create training",
-        variant: "destructive"
+        variant: "destructive",
       });
-    }
+    },
   });
 
   // Update training mutation
   const updateTrainingMutation = useMutation({
     mutationFn: async (data: GeneralTrainingFormData) => {
       const response = await fetch(`/api/trainings/${editingTraining.id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to update training');
+        throw new Error("Failed to update training");
       }
       return response.json();
     },
     onSuccess: () => {
       toast({
         title: "Success",
-        description: "Training updated successfully"
+        description: "Training updated successfully",
       });
-      queryClient.invalidateQueries({ queryKey: ['/api/trainings'] });
+      queryClient.invalidateQueries({ queryKey: ["/api/trainings"] });
       onClose();
     },
     onError: (error: any) => {
       toast({
         title: "Error",
         description: error.message || "Failed to update training",
-        variant: "destructive"
+        variant: "destructive",
       });
-    }
+    },
   });
 
   const generateTrainingId = () => {
     const date = new Date();
-    const dateStr = date.toISOString().slice(0, 10).replace(/-/g, '');
+    const dateStr = date.toISOString().slice(0, 10).replace(/-/g, "");
     const timeStr = date.getTime().toString().slice(-4);
     return `GTR-${dateStr}-${timeStr}`;
   };
@@ -206,17 +258,17 @@ export default function GeneralTrainingForm({ isOpen, onClose, editingTraining }
   const handleCategoryChange = (category: string) => {
     setSelectedCategory(category);
     setSelectedFields([]);
-    form.setValue('trainingCategory', category as any);
-    form.setValue('trainingFields', []);
+    form.setValue("trainingCategory", category as any);
+    form.setValue("trainingFields", []);
   };
 
   const handleFieldToggle = (field: string) => {
     const newFields = selectedFields.includes(field)
-      ? selectedFields.filter(f => f !== field)
+      ? selectedFields.filter((f) => f !== field)
       : [...selectedFields, field];
-    
+
     setSelectedFields(newFields);
-    form.setValue('trainingFields', newFields);
+    form.setValue("trainingFields", newFields);
   };
 
   const onSubmit = (data: GeneralTrainingFormData) => {
@@ -227,17 +279,24 @@ export default function GeneralTrainingForm({ isOpen, onClose, editingTraining }
     }
   };
 
-  const availableFields = selectedCategory ? TRAINING_CATEGORIES[selectedCategory as keyof typeof TRAINING_CATEGORIES] || [] : [];
+  const availableFields = selectedCategory
+    ? TRAINING_CATEGORIES[
+        selectedCategory as keyof typeof TRAINING_CATEGORIES
+      ] || []
+    : [];
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
-            {editingTraining ? "Edit General Training" : "Create General Training"}
+            {editingTraining
+              ? "Edit General Training"
+              : "Create General Training"}
           </DialogTitle>
           <DialogDescription>
-            Create or manage general employee training sessions across different departments
+            Create or manage general employee training sessions across different
+            departments
           </DialogDescription>
         </DialogHeader>
 
@@ -257,7 +316,7 @@ export default function GeneralTrainingForm({ isOpen, onClose, editingTraining }
                           variant="outline"
                           className={cn(
                             "w-full pl-3 text-left font-normal",
-                            !field.value && "text-muted-foreground"
+                            !field.value && "text-muted-foreground",
                           )}
                         >
                           {field.value ? (
@@ -274,9 +333,7 @@ export default function GeneralTrainingForm({ isOpen, onClose, editingTraining }
                         mode="single"
                         selected={field.value}
                         onSelect={field.onChange}
-                        disabled={(date) =>
-                          date < new Date("1900-01-01")
-                        }
+                        disabled={(date) => date < new Date("1900-01-01")}
                         initialFocus
                       />
                     </PopoverContent>
@@ -302,8 +359,8 @@ export default function GeneralTrainingForm({ isOpen, onClose, editingTraining }
                     <SelectContent>
                       {users.map((user: any) => (
                         <SelectItem key={user.id} value={user.id}>
-                          {user.firstName && user.lastName 
-                            ? `${user.firstName} ${user.lastName}` 
+                          {user.firstName && user.lastName
+                            ? `${user.firstName} ${user.lastName}`
                             : user.username}
                         </SelectItem>
                       ))}
@@ -321,11 +378,11 @@ export default function GeneralTrainingForm({ isOpen, onClose, editingTraining }
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Training Category *</FormLabel>
-                  <Select 
+                  <Select
                     onValueChange={(value) => {
                       field.onChange(value);
                       handleCategoryChange(value);
-                    }} 
+                    }}
                     value={field.value}
                   >
                     <FormControl>
@@ -360,7 +417,10 @@ export default function GeneralTrainingForm({ isOpen, onClose, editingTraining }
                         onChange={() => handleFieldToggle(field)}
                         className="rounded border-gray-300"
                       />
-                      <label htmlFor={field} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                      <label
+                        htmlFor={field}
+                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                      >
                         {field}
                       </label>
                     </div>
@@ -369,7 +429,11 @@ export default function GeneralTrainingForm({ isOpen, onClose, editingTraining }
                 {selectedFields.length > 0 && (
                   <div className="flex flex-wrap gap-1">
                     {selectedFields.map((field) => (
-                      <Badge key={field} variant="secondary" className="text-xs">
+                      <Badge
+                        key={field}
+                        variant="secondary"
+                        className="text-xs"
+                      >
                         {field}
                         <Button
                           type="button"
@@ -402,7 +466,9 @@ export default function GeneralTrainingForm({ isOpen, onClose, editingTraining }
                       max="8"
                       placeholder="2"
                       {...field}
-                      onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                      onChange={(e) =>
+                        field.onChange(parseFloat(e.target.value) || 0)
+                      }
                     />
                   </FormControl>
                   <FormMessage />
@@ -418,7 +484,10 @@ export default function GeneralTrainingForm({ isOpen, onClose, editingTraining }
                 <FormItem>
                   <FormLabel>Location</FormLabel>
                   <FormControl>
-                    <Input placeholder="Training room, Production floor, etc." {...field} />
+                    <Input
+                      placeholder="Training room, Production floor, etc."
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -463,14 +532,19 @@ export default function GeneralTrainingForm({ isOpen, onClose, editingTraining }
               <Button type="button" variant="outline" onClick={onClose}>
                 Cancel
               </Button>
-              <Button 
-                type="submit" 
-                disabled={createTrainingMutation.isPending || updateTrainingMutation.isPending}
-              >
-                {createTrainingMutation.isPending || updateTrainingMutation.isPending 
-                  ? "Saving..." 
-                  : editingTraining ? "Update Training" : "Create Training"
+              <Button
+                type="submit"
+                disabled={
+                  createTrainingMutation.isPending ||
+                  updateTrainingMutation.isPending
                 }
+              >
+                {createTrainingMutation.isPending ||
+                updateTrainingMutation.isPending
+                  ? "Saving..."
+                  : editingTraining
+                    ? "Update Training"
+                    : "Create Training"}
               </Button>
             </div>
           </form>

@@ -1,0 +1,40 @@
+Error creating order: error: insert or update on table "orders" violates foreign key constraint "orders_customer_id_fkey"
+    at file:///home/runner/workspace/node_modules/@neondatabase/serverless/index.mjs:1087:33
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async AIAssistantService.createOrderRecord (/home/runner/workspace/server/ai-assistant-service.ts:1452:22)
+    at async AIAssistantService.executeCreateAction (/home/runner/workspace/server/ai-assistant-service.ts:746:18)
+    at async AIAssistantService.processAssistantQuery (/home/runner/workspace/server/ai-assistant-service.ts:298:37)
+    at async <anonymous> (/home/runner/workspace/server/ai-routes.ts:17:22) {
+  length: 272,
+  severity: 'ERROR',
+  code: '23503',
+  detail: 'Key (customer_id)=(Price House) is not present in table "customers".',
+  hint: undefined,
+  position: undefined,
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: 'public',
+  table: 'orders',
+  column: undefined,
+  dataType: undefined,
+  constraint: 'orders_customer_id_fkey',
+  file: 'ri_triggers.c',
+  line: '2608',
+  routine: 'ri_ReportViolation'
+}
+Error executing action: Error: Failed to create order: insert or update on table "orders" violates foreign key constraint "orders_customer_id_fkey"
+    at AIAssistantService.createOrderRecord (/home/runner/workspace/server/ai-assistant-service.ts:1474:13)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async AIAssistantService.executeCreateAction (/home/runner/workspace/server/ai-assistant-service.ts:746:18)
+    at async AIAssistantService.processAssistantQuery (/home/runner/workspace/server/ai-assistant-service.ts:298:37)
+    at async <anonymous> (/home/runner/workspace/server/ai-routes.ts:17:22)
+Failed to execute create_order: Error: Failed to create order: insert or update on table "orders" violates foreign key constraint "orders_customer_id_fkey"
+    at AIAssistantService.createOrderRecord (/home/runner/workspace/server/ai-assistant-service.ts:1474:13)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async AIAssistantService.executeCreateAction (/home/runner/workspace/server/ai-assistant-service.ts:746:18)
+    at async AIAssistantService.processAssistantQuery (/home/runner/workspace/server/ai-assistant-service.ts:298:37)
+    at async <anonymous> (/home/runner/workspace/server/ai-routes.ts:17:22)
+11:28:07 AM [express] POST /api/ai/assistant 200 in 6925ms :: {"response":"I will create a new order …
+11:28:26 AM [express] GET /api/notifications 304 in 929ms :: []
+11:28:26 AM [express] GET /api/notifications/unread-count 304 in 3731ms

@@ -35,14 +35,14 @@ export function CategoryForm({ category, onSuccess }: CategoryFormProps) {
   const isEditing = !!category;
   const [formSuccess, setFormSuccess] = useState<string | null>(null);
   const [formError, setFormError] = useState<string | null>(null);
-  
+
   // Create validation schema
   const formSchema = isEditing
     ? insertCategorySchema
     : insertCategorySchema.extend({
         id: z.string().min(1, "Category ID is required"),
       });
-  
+
   // Set up the form
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -51,19 +51,19 @@ export function CategoryForm({ category, onSuccess }: CategoryFormProps) {
       name: category?.name || "",
       code: category?.code || "",
     },
-    mode: "onChange" // Enable real-time validation
+    mode: "onChange", // Enable real-time validation
   });
 
   // Watch fields for validation status
   const idValue = form.watch("id");
   const nameValue = form.watch("name");
   const codeValue = form.watch("code");
-  
+
   // Determine field status
   const getFieldStatus = (fieldName: string, value: string) => {
     if (!value) return "idle";
     const fieldState = form.getFieldState(fieldName);
-    
+
     if (fieldState.isDirty) {
       return fieldState.invalid ? "invalid" : "valid";
     }
@@ -74,23 +74,29 @@ export function CategoryForm({ category, onSuccess }: CategoryFormProps) {
   const mutation = useMutation({
     mutationFn: async (values: z.infer<typeof formSchema>) => {
       if (isEditing) {
-        await apiRequest("PUT", `${API_ENDPOINTS.CATEGORIES}/${category.id}`, values);
+        await apiRequest(
+          "PUT",
+          `${API_ENDPOINTS.CATEGORIES}/${category.id}`,
+          values,
+        );
       } else {
         await apiRequest("POST", API_ENDPOINTS.CATEGORIES, values);
       }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [API_ENDPOINTS.CATEGORIES] });
-      
+
       // Show success message
-      setFormSuccess(`Category ${isEditing ? "updated" : "created"} successfully!`);
+      setFormSuccess(
+        `Category ${isEditing ? "updated" : "created"} successfully!`,
+      );
       setFormError(null);
-      
+
       toast({
         title: `Category ${isEditing ? "Updated" : "Created"}`,
         description: `The category has been ${isEditing ? "updated" : "created"} successfully.`,
       });
-      
+
       // Clear the form after a delay for better UX
       setTimeout(() => {
         form.reset();
@@ -98,9 +104,11 @@ export function CategoryForm({ category, onSuccess }: CategoryFormProps) {
       }, 1500);
     },
     onError: (error) => {
-      setFormError(`Failed to ${isEditing ? "update" : "create"} category: ${error}`);
+      setFormError(
+        `Failed to ${isEditing ? "update" : "create"} category: ${error}`,
+      );
       setFormSuccess(null);
-      
+
       toast({
         title: "Error",
         description: `Failed to ${isEditing ? "update" : "create"} category: ${error}`,
@@ -108,7 +116,7 @@ export function CategoryForm({ category, onSuccess }: CategoryFormProps) {
       });
     },
   });
-  
+
   // Reset form messages when form changes
   useEffect(() => {
     if (form.formState.isDirty) {
@@ -116,14 +124,14 @@ export function CategoryForm({ category, onSuccess }: CategoryFormProps) {
       setFormError(null);
     }
   }, [form.formState.isDirty]);
-  
+
   // Form submission handler
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     setFormSuccess(null);
     setFormError(null);
     mutation.mutate(values);
   };
-  
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
@@ -133,9 +141,11 @@ export function CategoryForm({ category, onSuccess }: CategoryFormProps) {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           {/* Form success and error messages */}
-          {formSuccess && <FormSuccess message={formSuccess} className="mb-4" />}
+          {formSuccess && (
+            <FormSuccess message={formSuccess} className="mb-4" />
+          )}
           {formError && <FormError message={formError} className="mb-4" />}
-          
+
           {!isEditing && (
             <FormField
               control={form.control}
@@ -149,10 +159,10 @@ export function CategoryForm({ category, onSuccess }: CategoryFormProps) {
                     </FormTooltip>
                   </div>
                   <FormControl>
-                    <Input 
-                      placeholder="Enter category ID" 
+                    <Input
+                      placeholder="Enter category ID"
                       status={getFieldStatus("id", idValue)}
-                      {...field} 
+                      {...field}
                     />
                   </FormControl>
                   <FormDescription>
@@ -163,7 +173,7 @@ export function CategoryForm({ category, onSuccess }: CategoryFormProps) {
               )}
             />
           )}
-          
+
           <FormField
             control={form.control}
             name="name"
@@ -176,17 +186,17 @@ export function CategoryForm({ category, onSuccess }: CategoryFormProps) {
                   </FormTooltip>
                 </div>
                 <FormControl>
-                  <Input 
-                    placeholder="Enter category name" 
+                  <Input
+                    placeholder="Enter category name"
                     status={getFieldStatus("name", nameValue)}
-                    {...field} 
+                    {...field}
                   />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          
+
           <FormField
             control={form.control}
             name="code"
@@ -199,29 +209,25 @@ export function CategoryForm({ category, onSuccess }: CategoryFormProps) {
                   </FormTooltip>
                 </div>
                 <FormControl>
-                  <Input 
-                    placeholder="Enter category code" 
+                  <Input
+                    placeholder="Enter category code"
                     status={getFieldStatus("code", codeValue)}
-                    {...field} 
+                    {...field}
                   />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          
-          <motion.div 
+
+          <motion.div
             className="flex justify-end space-x-2"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2 }}
           >
             {onSuccess && (
-              <Button
-                type="button"
-                variant="outline"
-                onClick={onSuccess}
-              >
+              <Button type="button" variant="outline" onClick={onSuccess}>
                 Cancel
               </Button>
             )}

@@ -15,10 +15,12 @@ export async function comparePasswords(supplied: string, stored: string) {
       console.log("Password comparison failed: empty password provided");
       return false;
     }
-    
+
     // Check if stored password is in the expected format (has a salt)
-    if (!stored.includes('.')) {
-      console.log("Password in legacy format (no salt), performing direct comparison");
+    if (!stored.includes(".")) {
+      console.log(
+        "Password in legacy format (no salt), performing direct comparison",
+      );
       // For compatibility with initial setup or unencrypted passwords
       // Simply compare the raw passwords as a fallback
       return supplied === stored;
@@ -27,25 +29,29 @@ export async function comparePasswords(supplied: string, stored: string) {
     // Normal secure comparison with salt
     const parts = stored.split(".");
     if (parts.length !== 2) {
-      console.log(`Password in invalid format: expected 2 parts but got ${parts.length}`);
+      console.log(
+        `Password in invalid format: expected 2 parts but got ${parts.length}`,
+      );
       return false;
     }
-    
+
     const [hashed, salt] = parts;
-    
+
     if (!hashed || !salt) {
       console.log("Password malformed: missing hash or salt component");
       return false;
     }
-    
+
     const hashedBuf = Buffer.from(hashed, "hex");
     const suppliedBuf = (await scryptAsync(supplied, salt, 64)) as Buffer;
-    
+
     if (hashedBuf.length !== suppliedBuf.length) {
-      console.log(`Buffer length mismatch: stored=${hashedBuf.length}, supplied=${suppliedBuf.length}`);
+      console.log(
+        `Buffer length mismatch: stored=${hashedBuf.length}, supplied=${suppliedBuf.length}`,
+      );
       return false;
     }
-    
+
     return timingSafeEqual(hashedBuf, suppliedBuf);
   } catch (error) {
     console.error("Error during password comparison:", error);
@@ -58,5 +64,5 @@ export function requireAuth(req: any, res: any, next: any) {
   if (req.isAuthenticated && req.isAuthenticated()) {
     return next();
   }
-  res.status(401).json({ message: 'Authentication required' });
+  res.status(401).json({ message: "Authentication required" });
 }
