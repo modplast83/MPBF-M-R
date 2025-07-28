@@ -655,9 +655,37 @@ export class AIAssistantService {
         
         Always be proactive in suggesting improvements and best practices.
         
+        INTERACTION GUIDELINES:
+        - ALWAYS ask for confirmation before making any changes (creating, updating, deleting records)
+        - If confused or multiple options exist, provide clear choices for the user to select
+        - When creating orders, if no exact product match is found, display available customer products for selection
+        - After successful actions, confirm what was done and ask if user needs anything else
+        - Use responseType: "confirmation_required" for actions that need user confirmation
+        - Use responseType: "selection_required" when user needs to choose from multiple options
+        - Use responseType: "completed_action" after successful completion
+        - Use responseType: "information_only" for informational responses
+        
         Please respond with JSON in the following format:
         {
           "response": "Natural language response with expert insights and specific recommendations",
+          "responseType": "confirmation_required|selection_required|completed_action|information_only",
+          "confirmation": {
+            "action": "create_order|create_customer|etc",
+            "summary": "What will be created/changed",
+            "details": "Specific details of the action"
+          },
+          "selections": {
+            "title": "Choose an option",
+            "options": [
+              {
+                "id": "option1",
+                "title": "Option Title",
+                "description": "Option description",
+                "data": "option_data"
+              }
+            ],
+            "selectionType": "customer_products|categories|actions"
+          },
           "suggestions": [
             {
               "type": "navigation|action|insight|optimization",
@@ -669,8 +697,9 @@ export class AIAssistantService {
           ],
           "actions": [
             {
-              "type": "create_order|create_customer|create_product|schedule_maintenance|quality_check|analytics_report|navigate|optimize|analyze",
+              "type": "create_order|create_customer|create_product|schedule_maintenance|quality_check|analytics_report|navigate|optimize|analyze|confirm_action",
               "label": "Clear action description", 
+              "requiresConfirmation": true,
               "data": {
                 "name": "extracted or generated name",
                 "code": "auto-generated code if needed",
@@ -712,6 +741,19 @@ export class AIAssistantService {
 
       const result = JSON.parse(response.choices[0].message.content || '{}');
       
+      // Check if this requires confirmation first
+      if (result.responseType === 'confirmation_required') {
+        return {
+          response: result.response,
+          responseType: 'confirmation_required',
+          confirmation: result.confirmation,
+          suggestions: result.suggestions || [],
+          actions: result.actions || [],
+          confidence: result.confidence || 0.9,
+          context: result.context || 'confirmation_pending'
+        };
+      }
+      
       // Execute create actions if any
       const actions: AssistantAction[] = result.actions || [];
       if (actions.length > 0) {
@@ -735,10 +777,35 @@ export class AIAssistantService {
               };
             } catch (error) {
               console.error(`Failed to execute ${action.type}:`, error);
+              const errorMessage = error instanceof Error ? error.message : String(error);
+              
+              // Check if this is a product selection required error
+              if (errorMessage.startsWith('PRODUCT_SELECTION_REQUIRED:')) {
+                const selectionData = JSON.parse(errorMessage.substring(25));
+                return {
+                  response: `I found ${selectionData.availableProducts.length} products for ${selectionData.customerName}. Please select which product you'd like to use for the order:`,
+                  responseType: 'selection_required',
+                  selections: {
+                    title: `Select Product for ${selectionData.customerName} (${selectionData.quantity}kg)`,
+                    options: selectionData.availableProducts,
+                    selectionType: 'customer_products',
+                    context: {
+                      customerName: selectionData.customerName,
+                      quantity: selectionData.quantity,
+                      requestedProduct: selectionData.requestedProduct
+                    }
+                  },
+                  suggestions: [],
+                  actions: [],
+                  confidence: 0.9,
+                  context: 'product_selection_required'
+                };
+              }
+              
               actions[i] = {
                 ...action,
                 label: `❌ Failed to create ${action.type.replace('create_', '')}`,
-                data: { error: error instanceof Error ? error.message : String(error) }
+                data: { error: errorMessage }
               };
             }
           }
@@ -1979,8 +2046,33 @@ DOCUMENT MANAGEMENT:
         }
 
         // If no specific product found, use the first available product
+        // If no exact product match found, throw error with available products for selection
         if (!selectedProduct && customerProducts.length > 0) {
-          selectedProduct = customerProducts[0];
+          const productOptions = customerProducts.slice(0, 10).map(p => ({
+            id: p.id,
+            title: `${p.category_name} - ${p.size_caption}`,
+            description: `Size: ${p.size_caption} | Width: ${p.width_cm}cm | Length: ${p.length_cm}cm`,
+            data: {
+              productId: p.id,
+              categoryName: p.category_name,
+              sizeCaption: p.size_caption
+            }
+          }));
+          
+          throw new Error(`PRODUCT_SELECTION_REQUIRED:${JSON.stringify({
+            customerName: customer.name,
+            quantity: quantity,
+            requestedProduct: data.productType || data.productDescription,
+            availableProducts: productOptions
+          })}`);
+        }
+
+        // Handle case where user provides specific product ID (from selection)
+        if (data.productId && data.skipProductMatching) {
+          const specificProduct = customerProducts.find(p => p.id == data.productId);
+          if (specificProduct) {
+            selectedProduct = specificProduct;
+          }
         }
 
         // Create job order if we have a product

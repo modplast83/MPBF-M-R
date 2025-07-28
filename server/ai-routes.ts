@@ -271,6 +271,74 @@ router.post("/troubleshoot", async (req, res) => {
   }
 });
 
+// Confirm action endpoint
+router.post("/confirm-action", async (req, res) => {
+  try {
+    const { actionType, actionData, confirmed } = req.body;
+    
+    if (!confirmed) {
+      res.json({ success: false, message: 'Action cancelled by user' });
+      return;
+    }
+    
+    const result = await aiService.executeCreateAction({
+      type: actionType,
+      label: 'Confirmed Action',
+      data: actionData
+    });
+    
+    res.json({
+      success: true,
+      result,
+      message: `Successfully completed ${actionType.replace('create_', '').toUpperCase()}`
+    });
+  } catch (error) {
+    console.error('Confirm action error:', error);
+    res.status(500).json({ 
+      success: false,
+      error: error instanceof Error ? error.message : String(error)
+    });
+  }
+});
+
+// Select option endpoint
+router.post("/select-option", async (req, res) => {
+  try {
+    const { selectionType, selectedOption, context } = req.body;
+    
+    if (selectionType === 'customer_products') {
+      // Create order with selected product
+      const result = await aiService.executeCreateAction({
+        type: 'create_order',
+        label: 'Create Order with Selected Product',
+        data: {
+          customerName: context.customerName,
+          quantity: context.quantity,
+          productId: selectedOption.data.productId,
+          skipProductMatching: true
+        }
+      });
+      
+      res.json({
+        success: true,
+        result,
+        message: `Successfully created order with ${selectedOption.title}`
+      });
+    } else {
+      res.status(400).json({ 
+        success: false,
+        error: 'Unsupported selection type'
+      });
+    }
+  } catch (error) {
+    console.error('Select option error:', error);
+    res.status(500).json({ 
+      success: false,
+      error: error instanceof Error ? error.message : String(error)
+    });
+  }
+});
+
 // Health check for AI services
 router.get("/health", async (req, res) => {
   try {

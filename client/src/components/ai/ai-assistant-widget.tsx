@@ -32,7 +32,10 @@ import {
   MicOff,
   Volume2,
   VolumeX,
-  Languages
+  Languages,
+  Check,
+  X,
+  ShoppingCart
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -43,6 +46,23 @@ interface AssistantMessage {
   timestamp: Date;
   suggestions?: AssistantSuggestion[];
   actions?: AssistantAction[];
+  responseType?: 'confirmation_required' | 'selection_required' | 'completed_action' | 'information_only';
+  confirmation?: {
+    action: string;
+    summary: string;
+    details: string;
+  };
+  selections?: {
+    title: string;
+    options: Array<{
+      id: string;
+      title: string;
+      description: string;
+      data: any;
+    }>;
+    selectionType: string;
+    context?: any;
+  };
 }
 
 interface AssistantSuggestion {
@@ -280,7 +300,10 @@ export function AIAssistantWidget({
         content: data.response,
         timestamp: new Date(),
         suggestions: data.suggestions,
-        actions: data.actions
+        actions: data.actions,
+        responseType: data.responseType,
+        confirmation: data.confirmation,
+        selections: data.selections
       };
       setMessages(prev => [...prev, assistantMessage]);
       
@@ -295,6 +318,54 @@ export function AIAssistantWidget({
         description: t("ai.assistant_error_desc"),
         variant: "destructive"
       });
+    }
+  });
+
+  const confirmActionMutation = useMutation({
+    mutationFn: async ({ actionType, actionData, confirmed }: any) => {
+      const response = await fetch('/api/ai/confirm-action', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ actionType, actionData, confirmed })
+      });
+      return response.json();
+    },
+    onSuccess: (data) => {
+      if (data.success) {
+        const confirmMessage: AssistantMessage = {
+          id: Date.now().toString() + '_confirm',
+          type: 'assistant',
+          content: data.message,
+          timestamp: new Date(),
+          responseType: 'completed_action'
+        };
+        setMessages(prev => [...prev, confirmMessage]);
+        toast({ description: data.message });
+      }
+    }
+  });
+
+  const selectOptionMutation = useMutation({
+    mutationFn: async ({ selectionType, selectedOption, context }: any) => {
+      const response = await fetch('/api/ai/select-option', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ selectionType, selectedOption, context })
+      });
+      return response.json();
+    },
+    onSuccess: (data) => {
+      if (data.success) {
+        const successMessage: AssistantMessage = {
+          id: Date.now().toString() + '_success',
+          type: 'assistant',
+          content: data.message,
+          timestamp: new Date(),
+          responseType: 'completed_action'
+        };
+        setMessages(prev => [...prev, successMessage]);
+        toast({ description: data.message });
+      }
     }
   });
 
@@ -668,6 +739,84 @@ export function AIAssistantWidget({
                   )}
                 >
                   <div className="text-sm">{message.content}</div>
+                  
+                  {/* Confirmation Dialog */}
+                  {message.responseType === 'confirmation_required' && message.confirmation && (
+                    <div className="mt-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                      <div className="flex items-center gap-2 mb-2">
+                        <AlertTriangle className="h-4 w-4 text-yellow-600" />
+                        <span className="text-sm font-medium text-yellow-800">Confirmation Required</span>
+                      </div>
+                      <div className="text-xs text-yellow-700 mb-3">
+                        <div className="font-medium">{message.confirmation.summary}</div>
+                        <div className="mt-1">{message.confirmation.details}</div>
+                      </div>
+                      <div className="flex gap-2">
+                        <Button
+                          size="sm"
+                          onClick={() => confirmActionMutation.mutate({
+                            actionType: message.confirmation!.action,
+                            actionData: message.actions?.[0]?.data,
+                            confirmed: true
+                          })}
+                          disabled={confirmActionMutation.isPending}
+                          className="bg-green-600 hover:bg-green-700 text-white"
+                        >
+                          <Check className="h-3 w-3 mr-1" />
+                          Confirm
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => confirmActionMutation.mutate({
+                            actionType: message.confirmation!.action,
+                            actionData: message.actions?.[0]?.data,
+                            confirmed: false
+                          })}
+                          disabled={confirmActionMutation.isPending}
+                        >
+                          <X className="h-3 w-3 mr-1" />
+                          Cancel
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Product Selection */}
+                  {message.responseType === 'selection_required' && message.selections && (
+                    <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                      <div className="flex items-center gap-2 mb-2">
+                        <ShoppingCart className="h-4 w-4 text-blue-600" />
+                        <span className="text-sm font-medium text-blue-800">{message.selections.title}</span>
+                      </div>
+                      <div className="space-y-2 max-h-48 overflow-y-auto">
+                        {message.selections.options.map((option) => (
+                          <div
+                            key={option.id}
+                            className="p-2 bg-white border border-blue-100 rounded cursor-pointer hover:bg-blue-50 transition-colors"
+                            onClick={() => selectOptionMutation.mutate({
+                              selectionType: message.selections!.selectionType,
+                              selectedOption: option,
+                              context: message.selections!.context
+                            })}
+                          >
+                            <div className="text-sm font-medium text-blue-900">{option.title}</div>
+                            <div className="text-xs text-blue-700">{option.description}</div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Completed Action */}
+                  {message.responseType === 'completed_action' && (
+                    <div className="mt-3 p-2 bg-green-50 border border-green-200 rounded-lg">
+                      <div className="flex items-center gap-2">
+                        <CheckCircle className="h-4 w-4 text-green-600" />
+                        <span className="text-sm font-medium text-green-800">Action Completed</span>
+                      </div>
+                    </div>
+                  )}
                   
                   {message.suggestions && message.suggestions.length > 0 && (
                     <div className="mt-3 space-y-2">
