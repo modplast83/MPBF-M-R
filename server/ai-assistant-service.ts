@@ -678,6 +678,10 @@ export class AIAssistantService {
                 "customerId": "only use if user specifically provides customer ID",
                 "categoryId": "specific category ID",
                 "itemId": "specific item ID",
+                "quantity": "extracted numeric quantity only without units (e.g., 100, 50, 200)",
+                "productType": "extracted product type (e.g., T-shirt bags, trash bags, rolls)",
+                "productDescription": "any product details mentioned",
+                "originalMessage": "preserve user's original message for context",
                 "actionPath": "navigation path",
                 "analysisType": "type of analysis to perform",
                 "parameters": "additional parameters"
@@ -715,7 +719,15 @@ export class AIAssistantService {
           const action = actions[i];
           if (action.type.startsWith('create_')) {
             try {
-              const createdRecord = await this.executeCreateAction(action);
+              // Add original message context to action data for better processing
+              const enhancedAction = {
+                ...action,
+                data: {
+                  ...action.data,
+                  originalMessage: message // Pass the original user message for product matching
+                }
+              };
+              const createdRecord = await this.executeCreateAction(enhancedAction);
               actions[i] = {
                 ...action,
                 label: `✅ Created ${action.type.replace('create_', '').toUpperCase()}`,
@@ -1902,19 +1914,109 @@ DOCUMENT MANAGEMENT:
         [orderData.customerId, orderData.note, orderData.status, orderData.userId]
       );
 
-      // If products are provided, create job orders
+      const orderId = result.rows[0].id;
+
+      // Enhanced job order creation logic
+      let jobOrdersCreated = 0;
+
+      // If products are explicitly provided, create job orders
       if (data.products && Array.isArray(data.products)) {
-        const orderId = result.rows[0].id;
         for (const product of data.products) {
           await this.db.query(
             `INSERT INTO job_orders (order_id, customer_product_id, quantity, status) 
              VALUES ($1, $2, $3, 'pending')`,
             [orderId, product.customerProductId, product.quantity || 100]
           );
+          jobOrdersCreated++;
+        }
+      }
+      // Always try to create at least one job order by finding matching products
+      else {
+        // Get customer products to find matching ones
+        const customerProductsResult = await this.db.query(
+          `SELECT cp.*, c.name as category_name, i.name as item_name 
+           FROM customer_products cp
+           LEFT JOIN categories c ON cp.category_id = c.id
+           LEFT JOIN items i ON cp.item_id = i.id
+           WHERE cp.customer_id = $1
+           ORDER BY cp.id
+           LIMIT 20`,
+          [customerId]
+        );
+        
+        const customerProducts = customerProductsResult.rows;
+        let selectedProduct = null;
+
+        // Try to match product based on description, type, or any text in the original data
+        const searchTerms = [
+          data.productType,
+          data.productDescription,
+          data.description,
+          data.product,
+          data.item,
+          data.note,
+          data.notes,
+          // Extract product keywords from the original message/request
+          ...(typeof data.originalMessage === 'string' ? data.originalMessage.toLowerCase().split(/\s+/) : [])
+        ].filter(Boolean);
+
+        if (searchTerms.length > 0 && customerProducts.length > 0) {
+          // Try exact or partial matches for common product terms
+          for (const term of searchTerms) {
+            if (typeof term === 'string') {
+              const lowerTerm = term.toLowerCase();
+              selectedProduct = customerProducts.find(cp => 
+                cp.category_name?.toLowerCase().includes(lowerTerm) ||
+                cp.item_name?.toLowerCase().includes(lowerTerm) ||
+                cp.size_caption?.toLowerCase().includes(lowerTerm) ||
+                (lowerTerm.includes('bag') && (cp.category_name?.toLowerCase().includes('bag') || cp.item_name?.toLowerCase().includes('bag'))) ||
+                (lowerTerm.includes('t-shirt') && cp.category_name?.toLowerCase().includes('t-shirt')) ||
+                (lowerTerm.includes('trash') && cp.category_name?.toLowerCase().includes('trash'))
+              );
+              if (selectedProduct) break;
+            }
+          }
+        }
+
+        // If no specific product found, use the first available product
+        if (!selectedProduct && customerProducts.length > 0) {
+          selectedProduct = customerProducts[0];
+        }
+
+        // Create job order if we have a product
+        if (selectedProduct) {
+          // Extract and parse quantity from various possible fields
+          let quantity = 100; // Default quantity
+          const quantityInput = data.quantity || data.qty || data.amount;
+          
+          if (quantityInput) {
+            // Parse numeric value from string (e.g., "100kg" -> 100, "250" -> 250)
+            const numericValue = typeof quantityInput === 'string' 
+              ? parseFloat(quantityInput.replace(/[^\d.]/g, ''))
+              : quantityInput;
+            
+            if (!isNaN(numericValue) && numericValue > 0) {
+              quantity = numericValue;
+            }
+          }
+          
+          await this.db.query(
+            `INSERT INTO job_orders (order_id, customer_product_id, quantity, status) 
+             VALUES ($1, $2, $3, 'pending')`,
+            [orderId, selectedProduct.id, quantity]
+          );
+          jobOrdersCreated++;
+          console.log(`Auto-created job order for customer ${customerId}: ${selectedProduct.category_name} - ${selectedProduct.size_caption}, Quantity: ${quantity}kg`);
         }
       }
 
-      return result.rows[0];
+      console.log(`Order created successfully. Job orders created: ${jobOrdersCreated}`);
+      
+      // Return enhanced result with job order info
+      return {
+        ...result.rows[0],
+        jobOrdersCreated: jobOrdersCreated
+      };
     } catch (error) {
       console.error('Error creating order:', error);
       const errorMessage = error instanceof Error ? error.message : String(error);
