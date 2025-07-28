@@ -618,9 +618,6 @@ export default function AIAssistantPage() {
                                         {getSuggestionIcon(suggestion.type)}
                                         <div className="flex-1 min-w-0">
                                           <div className="font-medium">{suggestion.title}</div>
-                                          <div className="text-xs opacity-75 mt-1">
-                                            {suggestion.description}
-                                          </div>
                                         </div>
                                         {suggestion.actionUrl && (
                                           <ExternalLink className="h-4 w-4 flex-shrink-0" />
