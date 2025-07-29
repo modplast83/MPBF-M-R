@@ -75,11 +75,11 @@ export const sessions = pgTable(
   (table) => [index("IDX_session_expire").on(table.expire)],
 );
 
-// Users table with employee profile data
+// Users table with employee profile data (Replit Auth compatible)
 export const users = pgTable("users", {
-  id: varchar("id").primaryKey().notNull(), // UID
-  username: varchar("username").unique().notNull(), // Username
-  password: text("password"), // Password - hashed
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`), // UID - Replit ID or generated UUID
+  username: varchar("username").unique(), // Username - optional for Replit Auth
+  password: text("password"), // Password - hashed (not used with Replit Auth)
   email: varchar("email").unique(), // Email
   firstName: varchar("first_name"), // First name
   lastName: varchar("last_name"), // Last name

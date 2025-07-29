@@ -1,3 +1,6 @@
+// DEPRECATED: This is the old local auth system
+// New Replit Auth system is in useAuth.ts
+
 import {
   createContext,
   ReactNode,

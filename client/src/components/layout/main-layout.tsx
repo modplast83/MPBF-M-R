@@ -3,7 +3,7 @@ import Sidebar from "@/components/layout/sidebar";
 import Header from "@/components/layout/header";
 import { FloatingAIAssistant } from "@/components/ai/floating-ai-assistant";
 import { useSidebar } from "@/hooks/use-sidebar";
-import { useAuth } from "@/hooks/use-auth-v2";
+import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/hooks/use-language";
 import { useLocation } from "wouter";
 import { useIsMobile } from "@/hooks/use-mobile";
