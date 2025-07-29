@@ -1955,24 +1955,36 @@ DOCUMENT MANAGEMENT:
   async createOrderRecord(data: any): Promise<any> {
     try {
       let customerId = data.customerId;
+      let resolvedCustomer: any = null;
       
-      // Try to resolve customer by name first
+      // Always try to resolve customer by name first if customerName is provided
       if (data.customerName) {
-        const customer = await this.findCustomerByName(data.customerName);
-        if (customer) {
-          customerId = customer.id;
+        resolvedCustomer = await this.findCustomerByName(data.customerName);
+        if (resolvedCustomer && resolvedCustomer.id) {
+          customerId = resolvedCustomer.id;
           console.log(`Resolved customer "${data.customerName}" to ID: ${customerId}`);
         } else {
           throw new Error(`Customer "${data.customerName}" not found. Available customers can be viewed in the customers module.`);
         }
       }
-      // If customerId is not provided or looks like a name, try to find customer by name
-      else if (!customerId || customerId.length > 10 || /[^\w-]/.test(customerId)) {
-        const customerName = data.customerId || data.customer;
+      // If customerId looks like a name (contains spaces, special chars, or is too long), try to find by name
+      else if (customerId && (customerId.includes(' ') || customerId.length > 10 || /[^\w-]/.test(customerId))) {
+        console.log(`Attempting to resolve customer name: "${customerId}"`);
+        resolvedCustomer = await this.findCustomerByName(customerId);
+        if (resolvedCustomer && resolvedCustomer.id) {
+          customerId = resolvedCustomer.id;
+          console.log(`Resolved customer name "${data.customerId}" to ID: ${customerId}`);
+        } else {
+          throw new Error(`Customer "${customerId}" not found. Please use a valid customer ID or ensure the customer exists in the system.`);
+        }
+      }
+      // If still no customerId, try other fields
+      else if (!customerId) {
+        const customerName = data.customer || data.customerName;
         if (customerName) {
-          const customer = await this.findCustomerByName(customerName);
-          if (customer) {
-            customerId = customer.id;
+          resolvedCustomer = await this.findCustomerByName(customerName);
+          if (resolvedCustomer && resolvedCustomer.id) {
+            customerId = resolvedCustomer.id;
             console.log(`Resolved customer "${customerName}" to ID: ${customerId}`);
           } else {
             throw new Error(`Customer "${customerName}" not found. Available customers can be viewed in the customers module.`);
@@ -1980,10 +1992,18 @@ DOCUMENT MANAGEMENT:
         }
       }
       
-      // Validate required fields
+      // Final validation - ensure we have a valid customer ID
       if (!customerId) {
         throw new Error('Customer ID or customer name is required for order creation');
       }
+      
+      // Validate that the customer ID exists in database
+      const customerCheck = await this.db.query('SELECT id, name FROM customers WHERE id = $1', [customerId]);
+      if (customerCheck.rows.length === 0) {
+        throw new Error(`Customer with ID "${customerId}" does not exist in the database. Please verify the customer ID or create the customer first.`);
+      }
+      
+      console.log(`Validated customer ID: ${customerId} (${customerCheck.rows[0].name})`)
 
       const orderData = {
         customerId: customerId,
