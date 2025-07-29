@@ -9479,7 +9479,7 @@ COMMIT;
   });
 
   // AI Assistant routes
-  const aiRoutes = (await import("./ai-routes.js")).default;
+  const aiRoutes = (await import("./ai-routes-new.js")).default;
   app.use("/api/ai", aiRoutes);
 
   const httpServer = createServer(app);

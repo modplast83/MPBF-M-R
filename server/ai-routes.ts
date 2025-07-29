@@ -1,9 +1,9 @@
 import express from "express";
-import { AIAssistantService } from "./ai-assistant-service.js";
+import { AnthropicAIAssistantService } from "./anthropic-ai-service.js";
 import { pool } from "./db.js";
 
 const router = express.Router();
-const aiService = new AIAssistantService(pool);
+const aiService = new AnthropicAIAssistantService(pool);
 
 // AI Assistant chat endpoint
 router.post("/assistant", async (req, res) => {
@@ -14,7 +14,7 @@ router.post("/assistant", async (req, res) => {
       return res.status(400).json({ error: "Message is required" });
     }
 
-    const response = await aiService.processAssistantQuery({
+    const response = await aiService.processMessage({
       message: message.trim(),
       context
     });
@@ -38,7 +38,7 @@ router.get("/production-insights", async (req, res) => {
       return res.status(400).json({ error: "Invalid timeframe. Use '7d' or '30d'" });
     }
 
-    const insights = await aiService.getProductionInsights(timeframe as string);
+    const insights = await aiService.analyzeProduction();
     res.json(insights);
   } catch (error) {
     console.error("Production insights error:", error);
@@ -54,9 +54,10 @@ router.get("/quality-recommendations", async (req, res) => {
   try {
     const { productId } = req.query;
     
-    const recommendations = await aiService.generateQualityRecommendations(
-      productId as string
-    );
+    const recommendations = await aiService.processMessage({
+      message: `Provide quality recommendations for product ID: ${productId}`,
+      context: { currentPage: 'quality' }
+    });
     
     res.json({ recommendations });
   } catch (error) {
@@ -73,7 +74,10 @@ router.post("/workflow-suggestions", async (req, res) => {
   try {
     const { context } = req.body;
     
-    const suggestions = await aiService.generateWorkflowSuggestions(context);
+    const suggestions = await aiService.processMessage({
+      message: "Provide workflow suggestions and optimization recommendations",
+      context
+    });
     res.json({ suggestions });
   } catch (error) {
     console.error("Workflow suggestions error:", error);
@@ -93,14 +97,24 @@ router.post("/create-records", async (req, res) => {
       return res.status(400).json({ error: "Type and data are required" });
     }
     
-    const action = { type: `create_${type}`, data };
-    const result = await aiService.executeCreateAction(action);
-    
-    res.json({ 
-      success: true, 
-      message: `${type.charAt(0).toUpperCase() + type.slice(1)} created successfully`,
-      data: result 
-    });
+    if (type === 'order') {
+      const result = await aiService.createOrderRecord(data);
+      res.json({ 
+        success: true, 
+        message: "Order created successfully",
+        data: result 
+      });
+    } else {
+      const response = await aiService.processMessage({
+        message: `Create a new ${type} with the provided data`,
+        context: { action: 'create', type, data }
+      });
+      res.json({ 
+        success: true, 
+        message: `${type.charAt(0).toUpperCase() + type.slice(1)} creation request processed`,
+        response 
+      });
+    }
   } catch (error) {
     console.error("Create records error:", error);
     res.status(500).json({ 
@@ -115,9 +129,10 @@ router.get("/optimize-schedule", async (req, res) => {
   try {
     const { orderId } = req.query;
     
-    const optimizations = await aiService.optimizeProductionSchedule(
-      orderId as string
-    );
+    const optimizations = await aiService.processMessage({
+      message: `Optimize production schedule for order ID: ${orderId}`,
+      context: { currentPage: 'production', action: 'optimize' }
+    });
     
     res.json({ optimizations });
   } catch (error) {
@@ -132,7 +147,10 @@ router.get("/optimize-schedule", async (req, res) => {
 // Predictive maintenance endpoint
 router.get("/predictive-maintenance", async (req, res) => {
   try {
-    const suggestions = await aiService.getPredictiveMaintenance();
+    const suggestions = await aiService.processMessage({
+      message: "Provide predictive maintenance recommendations based on current machine status and usage patterns",
+      context: { currentPage: 'maintenance', action: 'predict' }
+    });
     res.json({ suggestions });
   } catch (error) {
     console.error("Predictive maintenance error:", error);
