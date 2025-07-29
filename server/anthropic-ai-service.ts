@@ -645,8 +645,8 @@ Please analyze this request and provide a professional response with actionable 
       const [rollsData, qualityData, machineData] = await Promise.all([
         this.db.query(`
           SELECT current_stage, COUNT(*) as count, 
-                 AVG(quantity) as avg_quantity,
-                 SUM(waste_quantity) as total_waste
+                 AVG(quantity::numeric) as avg_quantity,
+                 SUM(waste_quantity::numeric) as total_waste
           FROM rolls 
           WHERE status = 'active' 
           GROUP BY current_stage
