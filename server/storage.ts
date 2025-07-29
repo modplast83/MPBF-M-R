@@ -785,6 +785,7 @@ export class MemStorage {
       id,
       password: user.password ?? null,
       isAdmin: user.isAdmin ?? false,
+      role: user.role ?? "user",
       isActive: user.isActive ?? true,
       sectionId: user.sectionId ?? null,
       email: user.email ?? null,

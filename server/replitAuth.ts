@@ -8,6 +8,13 @@ import memoize from "memoizee";
 import connectPg from "connect-pg-simple";
 import { storage } from "./storage";
 
+// Extend session to include custom properties
+declare module "express-session" {
+  interface SessionData {
+    redirectAfterLogin?: string;
+  }
+}
+
 if (!process.env.REPLIT_DOMAINS) {
   throw new Error("Environment variable REPLIT_DOMAINS not provided");
 }
@@ -106,8 +113,8 @@ export async function setupAuth(app: Express) {
     try {
       const user = {};
       updateUserSession(user, tokens);
-      await upsertUser(tokens.claims());
-      verified(null, user);
+      const dbUser = await upsertUser(tokens.claims());
+      verified(null, dbUser);
     } catch (error) {
       console.error("Authentication error:", error);
       verified(error as Error);

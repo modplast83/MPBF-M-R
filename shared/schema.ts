@@ -86,6 +86,7 @@ export const users = pgTable("users", {
   bio: text("bio"), // Bio
   profileImageUrl: varchar("profile_image_url"), // Profile image URL
   isAdmin: boolean("is_admin").default(false).notNull(), // True for administrators, false for regular users
+  role: text("role").default("user").notNull(), // User role (admin, user, manager, etc.)
   phone: text("phone"),
   isActive: boolean("is_active").default(true),
   sectionId: text("section_id").references(() => sections.id), // UserSection
