@@ -158,7 +158,7 @@ export async function setupAuth(app: Express) {
   app.get("/api/login", (req, res, next) => {
     console.log("Initiating Replit Auth login flow");
     console.log("Hostname:", req.hostname);
-    console.log("Available strategies:", passport._strategies);
+    console.log("Available strategies:", Object.keys((passport as any)._strategies || {}));
     console.log("REPL_ID:", process.env.REPL_ID);
     console.log("REPLIT_DOMAINS:", process.env.REPLIT_DOMAINS);
     
