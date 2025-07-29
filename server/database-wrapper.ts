@@ -1,10 +1,12 @@
 
+import { pool } from './db.js';
+
 export class DatabaseWrapper {
   private maxRetries = 3;
   private retryDelay = 1000;
 
   async executeQuery(query: string, params?: any[]): Promise<any> {
-    let lastError: Error;
+    let lastError: Error | null = null;
     
     for (let attempt = 1; attempt <= this.maxRetries; attempt++) {
       try {
@@ -14,8 +16,9 @@ export class DatabaseWrapper {
         lastError = error as Error;
         console.error(`Database query attempt ${attempt} failed:`, error);
         
-        // Check if it's a connection error
-        if (error.code === '57P01' || error.code === 'ECONNRESET') {
+        // Check if it's a connection error - properly type error
+        const typedError = error as any;
+        if (typedError?.code === '57P01' || typedError?.code === 'ECONNRESET') {
           if (attempt < this.maxRetries) {
             console.log(`Retrying in ${this.retryDelay}ms...`);
             await new Promise(resolve => setTimeout(resolve, this.retryDelay));
@@ -28,7 +31,11 @@ export class DatabaseWrapper {
       }
     }
     
-    throw lastError;
+    // This should never be null by this point, but add safety check
+    if (lastError) {
+      throw lastError;
+    }
+    throw new Error('Query failed after maximum retries');
   }
 
   async healthCheck(): Promise<boolean> {

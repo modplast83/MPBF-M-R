@@ -37,8 +37,12 @@ export const ButtonPulse = ({
       className={`relative ${className}`}
       onClick={handleClick}
       whileTap={{ scale: 0.95 }}
-      // Explicitly cast props to avoid type conflicts with motion props
-      {...(props as React.ButtonHTMLAttributes<HTMLButtonElement>)}
+      // Remove problematic props that conflict with motion.button
+      {...Object.fromEntries(
+        Object.entries(props).filter(([key]) => 
+          !['onDrag', 'onDragStart', 'onDragEnd'].includes(key)
+        )
+      )}
     >
       {isPulsing && (
         <motion.span

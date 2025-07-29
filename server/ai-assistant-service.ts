@@ -487,15 +487,17 @@ export class AIAssistantService {
 
   async getProductionInsights(timeframe: string = '7d'): Promise<ProductionAnalysis> {
     try {
-      // Get production data from database  
+      // Get production data from database with parameterized query
+      const intervalDays = timeframe === '7d' ? 7 : 30;
       const ordersQuery = `
         SELECT o.*, jo.*, r.current_stage, r.status as roll_status
         FROM orders o
         LEFT JOIN job_orders jo ON o.id = jo.order_id
         LEFT JOIN rolls r ON jo.id = r.job_order_id
-        WHERE o.date >= CURRENT_DATE - INTERVAL '${timeframe === '7d' ? '7 days' : '30 days'}'
+        WHERE o.date >= CURRENT_DATE - INTERVAL $1::text
         ORDER BY o.date DESC
       `;
+      const intervalString = `${intervalDays} days`;
 
       const machineQuery = `
         SELECT s.name as section_name, m.name as machine_name, m.is_active
@@ -504,7 +506,7 @@ export class AIAssistantService {
       `;
 
       const [ordersResult, machinesResult] = await Promise.all([
-        this.db.query(ordersQuery),
+        this.db.query(ordersQuery, [intervalString]),
         this.db.query(machineQuery)
       ]);
 
