@@ -250,6 +250,7 @@ export const SIDEBAR_ITEMS = [
           { title: "Import & Export", path: "/system/import-export" },
           { title: "SMS Management", path: "/system/sms" },
           { title: "Server Management", path: "/system/server-restart" },
+          { title: "Theme Settings", path: "/theme-settings" },
         ],
       },
     ],

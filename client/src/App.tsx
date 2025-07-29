@@ -53,6 +53,8 @@ import CustomerInfoPage from "@/pages/public/customer-info";
 import NotificationsPage from "@/pages/notifications";
 import MainLayout from "@/components/layout/main-layout";
 import { useAuth } from "@/hooks/useAuth";
+import { useTheme } from "@/hooks/use-theme";
+import ThemeSettings from "@/pages/ThemeSettings";
 import { PermissionsProvider } from "@/hooks/use-permissions";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
 import { useEffect } from "react";
@@ -197,6 +199,7 @@ function Router() {
       <Route path="/quality/certificates" component={QualityCertificatesPage} />
       <Route path="/employee-dashboard" component={EmployeeDashboard} />
       <Route path="/customer-info" component={CustomerInfoPage} />
+      <Route path="/theme-settings" component={ThemeSettings} />
       <Route component={NotFound} />
     </Switch>
   );
@@ -204,6 +207,7 @@ function Router() {
 
 function App() {
   const { user } = useAuth();
+  const { isLoading: themeLoading } = useTheme();
 
   // Remove any existing demo data flag
   useEffect(() => {
