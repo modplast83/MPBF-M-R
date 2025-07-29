@@ -73,8 +73,8 @@ async function upsertUser(claims: any) {
       lastName: claims["last_name"],
       bio: claims["bio"],
       profileImageUrl: claims["profile_image_url"],
-      // Keep existing role if it's an update or set default role
-      role: existingUser?.role || "user", // Preserve existing role or set default for new users
+      // Keep existing admin status if it's an update or set default
+      isAdmin: existingUser?.isAdmin || false, // Preserve existing admin status or set default for new users
       isActive: true, // Assume active by default
       // Preserve other fields if user exists
       phone: existingUser?.phone || null,
@@ -104,7 +104,7 @@ export async function setupAuth(app: Express) {
     verified: passport.AuthenticateCallback,
   ) => {
     try {
-      const user = {};
+      const user = {} as any;
       updateUserSession(user, tokens);
       await upsertUser(tokens.claims());
       verified(null, user);
@@ -159,24 +159,11 @@ export async function setupAuth(app: Express) {
   app.get("/api/callback", (req, res, next) => {
     console.log("Received callback from Replit Auth");
 
-    // Get redirectURL from session if available
-    const redirectAfterLogin = req.session.redirectAfterLogin || "/";
-
     passport.authenticate(`replitauth:${req.hostname}`, {
-      successReturnToOrRedirect: redirectAfterLogin,
-      failureRedirect: "/auth",
+      successReturnToOrRedirect: "/",
+      failureRedirect: "/",
       failureMessage: "Authentication failed with Replit Auth",
     })(req, res, next);
-  });
-
-  // Store redirect URL for after login completes
-  app.get("/api/set-redirect", (req, res) => {
-    const { redirectTo } = req.query;
-    if (redirectTo && typeof redirectTo === "string") {
-      req.session.redirectAfterLogin = redirectTo;
-      console.log("Set redirect after login to:", redirectTo);
-    }
-    res.json({ success: true });
   });
 
   app.get("/api/logout", (req, res) => {
