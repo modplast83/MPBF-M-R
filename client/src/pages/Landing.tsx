@@ -12,7 +12,16 @@ export default function Landing() {
             Welcome to the advanced production management system. Please log in to continue.
           </p>
           <Button 
-            onClick={() => window.location.href = '/api/login'}
+            onClick={() => {
+              // For development, get the current host to determine redirect
+              const currentHost = window.location.host;
+              if (currentHost.includes('localhost')) {
+                // Redirect to production domain for OAuth
+                window.location.href = '/api/login';
+              } else {
+                window.location.href = '/api/login';
+              }
+            }}
             className="w-full"
           >
             Log In with Replit

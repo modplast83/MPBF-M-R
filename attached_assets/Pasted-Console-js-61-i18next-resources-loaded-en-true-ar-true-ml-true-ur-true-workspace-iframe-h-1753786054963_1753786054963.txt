@@ -1,0 +1,309 @@
+Console.js:61 i18next resources loaded: {en: true, ar: true, ml: true, ur: true}
+workspace_iframe.html?initialPath=%2F&id=%3Ar2fd%3A:1 Unrecognized feature: 'ambient-light-sensor'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar2fd%3A:1 Unrecognized feature: 'battery'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar2fd%3A:1 Unrecognized feature: 'execution-while-not-rendered'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar2fd%3A:1 Unrecognized feature: 'execution-while-out-of-viewport'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar2fd%3A:1 Unrecognized feature: 'layout-animations'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar2fd%3A:1 Unrecognized feature: 'legacy-image-formats'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar2fd%3A:1 Unrecognized feature: 'navigation-override'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar2fd%3A:1 Unrecognized feature: 'oversized-images'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar2fd%3A:1 Unrecognized feature: 'publickey-credentials'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar2fd%3A:1 Unrecognized feature: 'speaker-selection'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar2fd%3A:1 Unrecognized feature: 'unoptimized-images'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar2fd%3A:1 Unrecognized feature: 'unsized-media'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar2fd%3A:1 Allow attribute will take precedence over 'allowfullscreen'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar2fd%3A:1 Allow attribute will take precedence over 'allowpaymentrequest'.
+VM105:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM63:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM75:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM767:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM121:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM122:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM141:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM142:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM143:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM55:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM1059:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM1060:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+Network.js:219 Fetch finished loading: GET "https://011969c2-0d61-458f-be12-a650c28c1ec4-00-1hnxwefdzf33k.sisko.replit.dev/api/auth/user".
+window.fetch @ Network.js:219
+(anonymous) @ queryClient.ts:100
+fetchFn @ query.ts:457
+run @ retryer.ts:153
+start @ retryer.ts:218
+fetch @ query.ts:576
+#executeFetch @ queryObserver.ts:333
+onSubscribe @ queryObserver.ts:104
+subscribe @ subscribable.ts:11
+(anonymous) @ useBaseQuery.ts:100
+subscribeToStore @ react-dom-client.development.js:6108
+react-stack-bottom-frame @ react-dom-client.development.js:23949
+runWithFiberInDEV @ react-dom-client.development.js:1519
+commitHookEffectListMount @ react-dom-client.development.js:11905
+commitHookPassiveMountEffects @ react-dom-client.development.js:12026
+commitPassiveMountOnFiber @ react-dom-client.development.js:13841
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:13815
+commitPassiveMountOnFiber @ react-dom-client.development.js:13957
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:13815
+commitPassiveMountOnFiber @ react-dom-client.development.js:13957
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:13815
+commitPassiveMountOnFiber @ react-dom-client.development.js:13957
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:13815
+commitPassiveMountOnFiber @ react-dom-client.development.js:13957
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:13815
+commitPassiveMountOnFiber @ react-dom-client.development.js:13957
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:13815
+commitPassiveMountOnFiber @ react-dom-client.development.js:13834
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:13815
+commitPassiveMountOnFiber @ react-dom-client.development.js:13957
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:13815
+commitPassiveMountOnFiber @ react-dom-client.development.js:13834
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:13815
+commitPassiveMountOnFiber @ react-dom-client.development.js:13834
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:13815
+commitPassiveMountOnFiber @ react-dom-client.development.js:13957
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:13815
+commitPassiveMountOnFiber @ react-dom-client.development.js:13957
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:13815
+commitPassiveMountOnFiber @ react-dom-client.development.js:13834
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:13815
+commitPassiveMountOnFiber @ react-dom-client.development.js:13844
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:13815
+commitPassiveMountOnFiber @ react-dom-client.development.js:13834
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:13815
+commitPassiveMountOnFiber @ react-dom-client.development.js:13957
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:13815
+commitPassiveMountOnFiber @ react-dom-client.development.js:13834
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:13815
+commitPassiveMountOnFiber @ react-dom-client.development.js:13957
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:13815
+commitPassiveMountOnFiber @ react-dom-client.development.js:13834
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:13815
+commitPassiveMountOnFiber @ react-dom-client.development.js:13853
+flushPassiveEffects @ react-dom-client.development.js:15737
+flushPendingEffects @ react-dom-client.development.js:15702
+performSyncWorkOnRoot @ react-dom-client.development.js:16228
+flushSyncWorkAcrossRoots_impl @ react-dom-client.development.js:16079
+flushSpawnedWork @ react-dom-client.development.js:15677
+commitRoot @ react-dom-client.development.js:15403
+commitRootWhenReady @ react-dom-client.development.js:14652
+performWorkOnRoot @ react-dom-client.development.js:14575
+performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:16216
+performWorkUntilDeadline @ scheduler.development.js:45
+<Router>
+exports.jsxDEV @ react-jsx-dev-runtime.development.js:346
+App @ App.tsx:227
+react-stack-bottom-frame @ react-dom-client.development.js:23863
+renderWithHooks @ react-dom-client.development.js:5529
+updateFunctionComponent @ react-dom-client.development.js:8897
+beginWork @ react-dom-client.development.js:10522
+runWithFiberInDEV @ react-dom-client.development.js:1519
+performUnitOfWork @ react-dom-client.development.js:15132
+workLoopSync @ react-dom-client.development.js:14956
+renderRootSync @ react-dom-client.development.js:14936
+performWorkOnRoot @ react-dom-client.development.js:14419
+performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:16216
+performWorkUntilDeadline @ scheduler.development.js:45
+<App>
+exports.jsxDEV @ react-jsx-dev-runtime.development.js:346
+(anonymous) @ main.tsx:22
+VM64:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM768:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM56:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM106:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM1062:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM76:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM1063:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM144:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM123:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM145:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM146:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM124:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+_app-424ade17f85111cf.js:18 Fetch finished loading: POST "https://replit.com/graphql".
+(anonymous) @ _app-424ade17f85111cf.js:18
+(anonymous) @ _app-424ade17f85111cf.js:20
+e @ _app-424ade17f85111cf.js:23
+t.subscribe @ _app-424ade17f85111cf.js:23
+e.consumeQueue @ _app-424ade17f85111cf.js:20
+(anonymous) @ _app-424ade17f85111cf.js:20
+n @ _app-424ade17f85111cf.js:18
+setTimeout
+(anonymous) @ _app-424ade17f85111cf.js:18
+e.scheduleQueueConsumption @ _app-424ade17f85111cf.js:20
+(anonymous) @ _app-424ade17f85111cf.js:20
+e @ _app-424ade17f85111cf.js:23
+t.subscribe @ _app-424ade17f85111cf.js:23
+(anonymous) @ _app-424ade17f85111cf.js:20
+e @ _app-424ade17f85111cf.js:23
+t.subscribe @ _app-424ade17f85111cf.js:23
+e.try @ _app-424ade17f85111cf.js:20
+e.start @ _app-424ade17f85111cf.js:20
+t.request @ _app-424ade17f85111cf.js:20
+(anonymous) @ _app-424ade17f85111cf.js:40
+(anonymous) @ _app-424ade17f85111cf.js:40
+(anonymous) @ _app-424ade17f85111cf.js:20
+(anonymous) @ _app-424ade17f85111cf.js:40
+e.execute @ _app-424ade17f85111cf.js:40
+e.getObservableFromLink @ _app-424ade17f85111cf.js:23
+(anonymous) @ _app-424ade17f85111cf.js:23
+(anonymous) @ _app-424ade17f85111cf.js:23
+(anonymous) @ _app-424ade17f85111cf.js:20
+(anonymous) @ _app-424ade17f85111cf.js:20
+s @ _app-424ade17f85111cf.js:20
+e.mutate @ _app-424ade17f85111cf.js:23
+e.mutate @ _app-424ade17f85111cf.js:23
+(anonymous) @ _app-424ade17f85111cf.js:20
+t @ 2555-548c050719b5d891.js:1
+n @ _app-424ade17f85111cf.js:18
+setTimeout
+(anonymous) @ _app-424ade17f85111cf.js:18
+onCompleted @ 2555-548c050719b5d891.js:1
+(anonymous) @ _app-424ade17f85111cf.js:20
+Promise.then
+(anonymous) @ _app-424ade17f85111cf.js:20
+t @ 2555-548c050719b5d891.js:1
+n @ _app-424ade17f85111cf.js:18
+setTimeout
+(anonymous) @ _app-424ade17f85111cf.js:18
+onCompleted @ 2555-548c050719b5d891.js:1
+(anonymous) @ _app-424ade17f85111cf.js:20
+Promise.then
+(anonymous) @ _app-424ade17f85111cf.js:20
+t @ 2555-548c050719b5d891.js:1
+n @ _app-424ade17f85111cf.js:18
+setTimeout
+(anonymous) @ _app-424ade17f85111cf.js:18
+onCompleted @ 2555-548c050719b5d891.js:1
+(anonymous) @ _app-424ade17f85111cf.js:20
+Promise.then
+(anonymous) @ _app-424ade17f85111cf.js:20
+t @ 2555-548c050719b5d891.js:1
+n @ _app-424ade17f85111cf.js:18
+setTimeout
+(anonymous) @ _app-424ade17f85111cf.js:18
+onCompleted @ 2555-548c050719b5d891.js:1
+(anonymous) @ _app-424ade17f85111cf.js:20
+Promise.then
+(anonymous) @ _app-424ade17f85111cf.js:20
+t @ 2555-548c050719b5d891.js:1
+n @ _app-424ade17f85111cf.js:18

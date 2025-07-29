@@ -163,8 +163,15 @@ export async function setupAuth(app: Express) {
     console.log("REPL_ID:", process.env.REPL_ID);
     console.log("REPLIT_DOMAINS:", process.env.REPLIT_DOMAINS);
     
-    // Use host header (includes port) instead of hostname for localhost
+    // For localhost development, redirect to the production domain for OAuth
     const hostWithPort = req.get('host') || req.hostname;
+    if (hostWithPort.includes('localhost')) {
+      const productionDomain = process.env.REPLIT_DOMAINS!.split(',')[0];
+      const redirectUrl = `https://${productionDomain}/api/login`;
+      console.log("Redirecting localhost to production domain for OAuth:", redirectUrl);
+      return res.redirect(redirectUrl);
+    }
+    
     const strategyName = `replitauth:${hostWithPort}`;
     console.log("Using strategy:", strategyName);
     
