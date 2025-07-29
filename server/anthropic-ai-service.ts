@@ -108,13 +108,13 @@ export class AnthropicAIAssistantService {
 
 ### CORE SETUP TABLES
 1. **categories** - Product categories (Roll Trash Bag, T-Shirt Bag, etc.)
-   - id (text), name (text), code (text), nameAr (text)
+   - id (text), name (text), code (text), name_ar (text)
 
 2. **items** - Product items within categories
    - id (text), categoryId (FK), name (text), fullName (text)
 
 3. **customers** - Customer information with bilingual support
-   - id (text), code (text), name (text), nameAr (text), userId (FK), plateDrawerCode (text)
+   - id (text), code (text), name (text), name_ar (text), user_id (FK), plate_drawer_code (text)
 
 4. **customer_products** - Detailed product specifications for each customer
    - id (serial), customerId (FK), categoryId (FK), itemId (FK), sizeCaption, width, leftF, rightF, thickness, thicknessOne, printingCylinder, lengthCm, cuttingLength, rawMaterial, masterBatchId (FK), printed, cuttingUnit, unitWeight, unitQty, packageKg, packing, punching, cover, volum, knife, notes, clicheFrontDesign, clicheBackDesign
@@ -223,28 +223,41 @@ export class AnthropicAIAssistantService {
     }
   }
 
-  // Enhanced customer search with fuzzy matching
+  // Enhanced customer search with fuzzy matching for both English and Arabic names
   async findCustomerByName(customerName: string): Promise<any> {
     try {
-      // First try exact match
+      console.log(`Searching for customer: "${customerName}"`);
+      
+      // First try exact match on name, name_ar, and code columns
       const exactMatch = await this.db.query(
-        'SELECT * FROM customers WHERE LOWER(name) = LOWER($1) OR LOWER("nameAr") = LOWER($1) OR LOWER(code) = LOWER($1)',
+        'SELECT * FROM customers WHERE LOWER(name) = LOWER($1) OR LOWER(name_ar) = LOWER($1) OR LOWER(code) = LOWER($1)',
         [customerName]
       );
       
       if (exactMatch.rows.length > 0) {
+        console.log(`Found exact match for customer: ${exactMatch.rows[0].name} (${exactMatch.rows[0].id})`);
         return exactMatch.rows[0];
       }
 
-      // Fuzzy search fallback
-      const allCustomers = await this.db.query('SELECT * FROM customers');
+      // Fuzzy search fallback on all customer records
+      const allCustomers = await this.db.query('SELECT * FROM customers LIMIT 1000'); // Limit for performance
+      console.log(`Performing fuzzy search across ${allCustomers.rows.length} customers`);
+      
       const fuse = new Fuse(allCustomers.rows, {
-        keys: ['name', 'nameAr', 'code'],
-        threshold: 0.4
+        keys: ['name', 'name_ar', 'code'], // Using correct column name name_ar
+        threshold: 0.4,
+        includeScore: true
       });
       
       const results = fuse.search(customerName);
-      return results.length > 0 ? results[0].item : null;
+      if (results.length > 0) {
+        const bestMatch = results[0].item;
+        console.log(`Found fuzzy match: ${bestMatch.name} (${bestMatch.id}) with score ${results[0].score}`);
+        return bestMatch;
+      }
+      
+      console.log(`No customer found for: "${customerName}"`);
+      return null;
     } catch (error) {
       console.error('Error finding customer:', error);
       return null;
