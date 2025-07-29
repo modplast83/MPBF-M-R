@@ -158,11 +158,17 @@ export async function setupAuth(app: Express) {
   app.get("/api/login", (req, res, next) => {
     console.log("Initiating Replit Auth login flow");
     console.log("Hostname:", req.hostname);
+    console.log("Host header:", req.get('host'));
     console.log("Available strategies:", Object.keys((passport as any)._strategies || {}));
     console.log("REPL_ID:", process.env.REPL_ID);
     console.log("REPLIT_DOMAINS:", process.env.REPLIT_DOMAINS);
     
-    passport.authenticate(`replitauth:${req.hostname}`, {
+    // Use host header (includes port) instead of hostname for localhost
+    const hostWithPort = req.get('host') || req.hostname;
+    const strategyName = `replitauth:${hostWithPort}`;
+    console.log("Using strategy:", strategyName);
+    
+    return passport.authenticate(strategyName, {
       prompt: "login consent",
       scope: ["openid", "email", "profile", "offline_access"],
     })(req, res, next);
@@ -170,8 +176,12 @@ export async function setupAuth(app: Express) {
 
   app.get("/api/callback", (req, res, next) => {
     console.log("Received callback from Replit Auth");
+    
+    // Use host header (includes port) instead of hostname for localhost
+    const hostWithPort = req.get('host') || req.hostname;
+    console.log("Callback using strategy:", `replitauth:${hostWithPort}`);
 
-    passport.authenticate(`replitauth:${req.hostname}`, {
+    passport.authenticate(`replitauth:${hostWithPort}`, {
       successReturnToOrRedirect: "/",
       failureRedirect: "/",
       failureMessage: "Authentication failed with Replit Auth",
