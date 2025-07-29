@@ -114,7 +114,13 @@ export async function setupAuth(app: Express) {
     }
   };
 
-  for (const domain of process.env.REPLIT_DOMAINS!.split(",")) {
+  // Add localhost support for development
+  const domains = process.env.REPLIT_DOMAINS!.split(",");
+  if (process.env.NODE_ENV === "development") {
+    domains.push("localhost:5000");
+  }
+  
+  for (const domain of domains) {
     const protocol = process.env.NODE_ENV === "production" ? "https" : "http";
     const strategy = new Strategy(
       {
@@ -126,6 +132,7 @@ export async function setupAuth(app: Express) {
       verify,
     );
     passport.use(strategy);
+    console.log("Registered strategy for domain:", domain);
   }
 
   passport.serializeUser((user: Express.User, cb) => cb(null, user));
@@ -150,6 +157,11 @@ export async function setupAuth(app: Express) {
 
   app.get("/api/login", (req, res, next) => {
     console.log("Initiating Replit Auth login flow");
+    console.log("Hostname:", req.hostname);
+    console.log("Available strategies:", passport._strategies);
+    console.log("REPL_ID:", process.env.REPL_ID);
+    console.log("REPLIT_DOMAINS:", process.env.REPLIT_DOMAINS);
+    
     passport.authenticate(`replitauth:${req.hostname}`, {
       prompt: "login consent",
       scope: ["openid", "email", "profile", "offline_access"],
