@@ -117,7 +117,7 @@ import { exec } from "child_process";
 import { promisify } from "util";
 import fileUpload from "express-fileupload";
 // Removed non-existent type utility imports
-import { setupAuth, isAuthenticated } from "./replitAuth";
+import { setupAuth } from "./auth";
 import { ensureAdminUser } from "./user-seed";
 import { setupHRRoutes } from "./hr-routes";
 import { setupBottleneckRoutes } from "./bottleneck-routes";
@@ -157,8 +157,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Setup authentication
   setupAuth(app);
-
-  // Auth routes are handled in replitAuth.ts
 
   // File Upload Route
   app.post("/api/upload", async (req: Request, res: Response) => {

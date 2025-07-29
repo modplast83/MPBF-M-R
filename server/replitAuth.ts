@@ -73,8 +73,8 @@ async function upsertUser(claims: any) {
       lastName: claims["last_name"],
       bio: claims["bio"],
       profileImageUrl: claims["profile_image_url"],
-      // Keep existing admin status if it's an update or set default
-      isAdmin: existingUser?.isAdmin || false, // Preserve existing admin status or set default for new users
+      // Keep existing role if it's an update or set default role
+      role: existingUser?.role || "user", // Preserve existing role or set default for new users
       isActive: true, // Assume active by default
       // Preserve other fields if user exists
       phone: existingUser?.phone || null,
@@ -104,7 +104,7 @@ export async function setupAuth(app: Express) {
     verified: passport.AuthenticateCallback,
   ) => {
     try {
-      const user = {} as any;
+      const user = {};
       updateUserSession(user, tokens);
       await upsertUser(tokens.claims());
       verified(null, user);
@@ -114,13 +114,7 @@ export async function setupAuth(app: Express) {
     }
   };
 
-  // Add localhost support for development
-  const domains = process.env.REPLIT_DOMAINS!.split(",");
-  if (process.env.NODE_ENV === "development") {
-    domains.push("localhost:5000");
-  }
-  
-  for (const domain of domains) {
+  for (const domain of process.env.REPLIT_DOMAINS!.split(",")) {
     const protocol = process.env.NODE_ENV === "production" ? "https" : "http";
     const strategy = new Strategy(
       {
@@ -132,7 +126,6 @@ export async function setupAuth(app: Express) {
       verify,
     );
     passport.use(strategy);
-    console.log("Registered strategy for domain:", domain);
   }
 
   passport.serializeUser((user: Express.User, cb) => cb(null, user));
@@ -157,25 +150,7 @@ export async function setupAuth(app: Express) {
 
   app.get("/api/login", (req, res, next) => {
     console.log("Initiating Replit Auth login flow");
-    console.log("Hostname:", req.hostname);
-    console.log("Host header:", req.get('host'));
-    console.log("Available strategies:", Object.keys((passport as any)._strategies || {}));
-    console.log("REPL_ID:", process.env.REPL_ID);
-    console.log("REPLIT_DOMAINS:", process.env.REPLIT_DOMAINS);
-    
-    // For localhost development, redirect to the production domain for OAuth
-    const hostWithPort = req.get('host') || req.hostname;
-    if (hostWithPort.includes('localhost')) {
-      const productionDomain = process.env.REPLIT_DOMAINS!.split(',')[0];
-      const redirectUrl = `https://${productionDomain}/api/login`;
-      console.log("Redirecting localhost to production domain for OAuth:", redirectUrl);
-      return res.redirect(redirectUrl);
-    }
-    
-    const strategyName = `replitauth:${hostWithPort}`;
-    console.log("Using strategy:", strategyName);
-    
-    return passport.authenticate(strategyName, {
+    passport.authenticate(`replitauth:${req.hostname}`, {
       prompt: "login consent",
       scope: ["openid", "email", "profile", "offline_access"],
     })(req, res, next);
@@ -183,16 +158,25 @@ export async function setupAuth(app: Express) {
 
   app.get("/api/callback", (req, res, next) => {
     console.log("Received callback from Replit Auth");
-    
-    // Use host header (includes port) instead of hostname for localhost
-    const hostWithPort = req.get('host') || req.hostname;
-    console.log("Callback using strategy:", `replitauth:${hostWithPort}`);
 
-    passport.authenticate(`replitauth:${hostWithPort}`, {
-      successReturnToOrRedirect: "/",
-      failureRedirect: "/",
+    // Get redirectURL from session if available
+    const redirectAfterLogin = req.session.redirectAfterLogin || "/";
+
+    passport.authenticate(`replitauth:${req.hostname}`, {
+      successReturnToOrRedirect: redirectAfterLogin,
+      failureRedirect: "/auth",
       failureMessage: "Authentication failed with Replit Auth",
     })(req, res, next);
+  });
+
+  // Store redirect URL for after login completes
+  app.get("/api/set-redirect", (req, res) => {
+    const { redirectTo } = req.query;
+    if (redirectTo && typeof redirectTo === "string") {
+      req.session.redirectAfterLogin = redirectTo;
+      console.log("Set redirect after login to:", redirectTo);
+    }
+    res.json({ success: true });
   });
 
   app.get("/api/logout", (req, res) => {

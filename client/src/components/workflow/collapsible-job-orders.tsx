@@ -14,7 +14,7 @@ import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { RollDialog } from "@/components/workflow/roll-dialog";
-import { useAuth } from "@/hooks/useAuth";
+import { AuthProvider } from "@/hooks/useAuth";
 import {
   JobOrder,
   Roll,
@@ -431,13 +431,17 @@ export function CollapsibleJobOrdersForExtrusion() {
   return (
     <div className="space-y-4">
       {/* Roll Creation Dialog */}
-      <RollDialog
-        open={isRollDialogOpen}
-        onOpenChange={setIsRollDialogOpen}
-        jobOrder={selectedJobOrder}
-        onSubmit={handleRollDialogSubmit}
-        isLoading={createRollMutation.isPending}
-      />
+      <AuthProvider>
+        {(user) => (
+          <RollDialog
+            open={isRollDialogOpen}
+            onOpenChange={setIsRollDialogOpen}
+            jobOrder={selectedJobOrder}
+            onSubmit={handleRollDialogSubmit}
+            isLoading={createRollMutation.isPending}
+          />
+        )}
+      </AuthProvider>
       {filteredJobOrders.length === 0 ? (
         <Card className="bg-white border border-dashed border-secondary-200">
           <CardContent className="py-6 text-center">
