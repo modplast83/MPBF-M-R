@@ -97,99 +97,105 @@ import AIAssistantPage from "@/pages/ai-assistant";
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
 
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <Switch>
+        <Route path="*" component={Landing} />
+      </Switch>
+    );
+  }
+
   return (
     <Switch>
-      {isLoading || !isAuthenticated ? (
-        <Route path="/" component={Landing} />
-      ) : (
-        <>
-          <Route path="/" component={Dashboard} />
-          <Route path="/ai-assistant" component={AIAssistantPage} />
-          <Route path="/my-dashboard" component={MyDashboard} />
-          <Route path="/setup" component={SetupIndex} />
-          <Route path="/setup/categories" component={Categories} />
-          <Route path="/setup/products" component={Products} />
-          <Route path="/setup/customers" component={Customers} />
-          <Route path="/setup/items" component={Items} />
-          <Route path="/setup/sections" component={Sections} />
-          <Route path="/setup/machines" component={Machines} />
-          <Route path="/setup/machine-parts" component={MachineParts} />
-          <Route path="/setup/users" component={Users} />
-          <Route path="/setup/aba-formulas" component={AbaFormulas} />
-          <Route path="/orders" component={OrdersIndex} />
-          <Route path="/orders/new" component={NewOrderPage} />
-          <Route path="/orders/:id" component={OrderDetails} />
-          <Route path="/workflow" component={WorkflowIndex} />
-          <Route path="/production" component={ProductionIndex} />
-          <Route path="/warehouse" component={WarehouseIndex} />
-          <Route path="/warehouse/raw-materials" component={RawMaterials} />
-          <Route path="/warehouse/final-products" component={FinalProducts} />
-          <Route path="/reports" component={ReportsIndex} />
-          <Route path="/reports/performance" component={PerformancePage} />
-          <Route path="/reports/production" component={ProductionReportsPage} />
-          <Route path="/reports/warehouse" component={WarehouseReportsPage} />
-          <Route path="/reports/quality" component={QualityReportsPage} />
-          <Route path="/reports/workflow" component={WorkflowReportsPage} />
-          <Route path="/reports/jo-mix" component={JoMixReports} />
-          <Route path="/reports/customer-info-report" component={CustomerInfoReport} />
-          <Route path="/quality" component={QualityIndex} />
-          <Route path="/quality/unified-dashboard" component={UnifiedQualityDashboard} />
-          <Route path="/quality/check-types" component={QualityCheckTypes} />
-          <Route path="/quality/checks" component={QualityChecks} />
-          <Route path="/quality/violations" component={QualityViolations} />
-          <Route path="/quality/corrective-actions" component={QualityCorrectiveActions} />
-          <Route path="/quality/penalties" component={QualityPenalties} />
-          <Route path="/quality/training" component={QualityTraining} />
-          <Route path="/quality/reports" component={QualityReports} />
-          <Route path="/system" component={SystemIndex} />
-          <Route path="/system/database" component={Database} />
-          <Route path="/system/permissions" component={Permissions} />
-          <Route path="/system/import-export" component={ImportExport} />
-          <Route path="/system/sms" component={SmsIndex} />
-          <Route path="/notifications" component={NotificationsPage} />
-          <Route path="/system/email-config" component={EmailConfiguration} />
-          <Route path="/system/server-restart" component={ServerRestart} />
-          <Route path="/tools" component={ToolsPage} />
-          <Route path="/tools/order-design" component={OrderDesignPage} />
-          <Route path="/tools/bag-weight" component={BagWeightCalculator} />
-          <Route path="/tools/ink-consumption" component={InkConsumptionCalculator} />
-          <Route path="/tools/utilities" component={UtilityTools} />
-          <Route path="/tools/cost-calculator" component={CostCalculatorPage} />
-          <Route path="/tools/mix-colors" component={MixColorsCalculator} />
-          <Route path="/cliches" component={ClichePage} />
-          <Route path="/documents" component={ProfessionalDocumentsIndex} />
-          <Route path="/documents/by-type/:type" component={DocumentsByType} />
-          <Route path="/documents/view/:id" component={DocumentView} />
-          <Route path="/documents/edit/:id" component={DocumentEdit} />
-          <Route path="/documents/new" component={DocumentNew} />
-          <Route path="/documents/templates" component={DocumentTemplates} />
-          <Route path="/documents/archive" component={DocumentArchive} />
-          <Route path="/hr" component={HRIndex} />
-          <Route path="/hr/employee-of-month" component={EmployeeOfMonthPage} />
-          <Route path="/hr/attendance" component={AttendancePage} />
-          <Route path="/hr/enhanced-attendance" component={EnhancedAttendancePage} />
-          <Route path="/hr/overtime-leave" component={OvertimeLeave} />
-          <Route path="/hr/geofences" component={GeofenceManagement} />
-          <Route path="/hr/training" component={HRTrainingPage} />
-          <Route path="/hr/violations-complaints" component={ViolationsComplaintsPage} />
-          <Route path="/hr/violation-trends" component={ViolationTrendsPage} />
-          <Route path="/maintenance" component={MaintenancePage} />
-          <Route path="/maintenance/requests" component={MaintenanceRequestsPage} />
-          <Route path="/maintenance/actions" component={MaintenanceActionsPage} />
-          <Route path="/maintenance/schedule" component={MaintenanceSchedulePage} />
-          <Route path="/maintenance/dashboard" component={MaintenanceDashboard} />
-          <Route path="/production/mix-materials" component={MixMaterialsPage} />
-          <Route path="/production/job-orders" component={JobOrdersPage} />
-          <Route path="/production/job-orders-monitor" component={JobOrdersMonitorPage} />
-          <Route path="/production/jo-mix" component={JoMixPage} />
-          <Route path="/production/rolls-pro" component={RollsProPage} />
-          <Route path="/production/bottleneck-dashboard" component={BottleneckDashboard} />
-          <Route path="/production/metrics-input" component={MetricsInputPage} />
-          <Route path="/production/iot-monitor" component={IoTMonitor} />
-          <Route path="/quality/certificates" component={QualityCertificatesPage} />
-          <Route path="/employee-dashboard" component={EmployeeDashboard} />
-        </>
-      )}
+      <Route path="/" component={Dashboard} />
+      <Route path="/ai-assistant" component={AIAssistantPage} />
+      <Route path="/my-dashboard" component={MyDashboard} />
+      <Route path="/setup" component={SetupIndex} />
+      <Route path="/setup/categories" component={Categories} />
+      <Route path="/setup/products" component={Products} />
+      <Route path="/setup/customers" component={Customers} />
+      <Route path="/setup/items" component={Items} />
+      <Route path="/setup/sections" component={Sections} />
+      <Route path="/setup/machines" component={Machines} />
+      <Route path="/setup/machine-parts" component={MachineParts} />
+      <Route path="/setup/users" component={Users} />
+      <Route path="/setup/aba-formulas" component={AbaFormulas} />
+      <Route path="/orders" component={OrdersIndex} />
+      <Route path="/orders/new" component={NewOrderPage} />
+      <Route path="/orders/:id" component={OrderDetails} />
+      <Route path="/workflow" component={WorkflowIndex} />
+      <Route path="/production" component={ProductionIndex} />
+      <Route path="/warehouse" component={WarehouseIndex} />
+      <Route path="/warehouse/raw-materials" component={RawMaterials} />
+      <Route path="/warehouse/final-products" component={FinalProducts} />
+      <Route path="/reports" component={ReportsIndex} />
+      <Route path="/reports/performance" component={PerformancePage} />
+      <Route path="/reports/production" component={ProductionReportsPage} />
+      <Route path="/reports/warehouse" component={WarehouseReportsPage} />
+      <Route path="/reports/quality" component={QualityReportsPage} />
+      <Route path="/reports/workflow" component={WorkflowReportsPage} />
+      <Route path="/reports/jo-mix" component={JoMixReports} />
+      <Route path="/reports/customer-info-report" component={CustomerInfoReport} />
+      <Route path="/quality" component={QualityIndex} />
+      <Route path="/quality/unified-dashboard" component={UnifiedQualityDashboard} />
+      <Route path="/quality/check-types" component={QualityCheckTypes} />
+      <Route path="/quality/checks" component={QualityChecks} />
+      <Route path="/quality/violations" component={QualityViolations} />
+      <Route path="/quality/corrective-actions" component={QualityCorrectiveActions} />
+      <Route path="/quality/penalties" component={QualityPenalties} />
+      <Route path="/quality/training" component={QualityTraining} />
+      <Route path="/quality/reports" component={QualityReports} />
+      <Route path="/system" component={SystemIndex} />
+      <Route path="/system/database" component={Database} />
+      <Route path="/system/permissions" component={Permissions} />
+      <Route path="/system/import-export" component={ImportExport} />
+      <Route path="/system/sms" component={SmsIndex} />
+      <Route path="/notifications" component={NotificationsPage} />
+      <Route path="/system/email-config" component={EmailConfiguration} />
+      <Route path="/system/server-restart" component={ServerRestart} />
+      <Route path="/tools" component={ToolsPage} />
+      <Route path="/tools/order-design" component={OrderDesignPage} />
+      <Route path="/tools/bag-weight" component={BagWeightCalculator} />
+      <Route path="/tools/ink-consumption" component={InkConsumptionCalculator} />
+      <Route path="/tools/utilities" component={UtilityTools} />
+      <Route path="/tools/cost-calculator" component={CostCalculatorPage} />
+      <Route path="/tools/mix-colors" component={MixColorsCalculator} />
+      <Route path="/cliches" component={ClichePage} />
+      <Route path="/documents" component={ProfessionalDocumentsIndex} />
+      <Route path="/documents/by-type/:type" component={DocumentsByType} />
+      <Route path="/documents/view/:id" component={DocumentView} />
+      <Route path="/documents/edit/:id" component={DocumentEdit} />
+      <Route path="/documents/new" component={DocumentNew} />
+      <Route path="/documents/templates" component={DocumentTemplates} />
+      <Route path="/documents/archive" component={DocumentArchive} />
+      <Route path="/hr" component={HRIndex} />
+      <Route path="/hr/employee-of-month" component={EmployeeOfMonthPage} />
+      <Route path="/hr/attendance" component={AttendancePage} />
+      <Route path="/hr/enhanced-attendance" component={EnhancedAttendancePage} />
+      <Route path="/hr/overtime-leave" component={OvertimeLeave} />
+      <Route path="/hr/geofences" component={GeofenceManagement} />
+      <Route path="/hr/training" component={HRTrainingPage} />
+      <Route path="/hr/violations-complaints" component={ViolationsComplaintsPage} />
+      <Route path="/hr/violation-trends" component={ViolationTrendsPage} />
+      <Route path="/maintenance" component={MaintenancePage} />
+      <Route path="/maintenance/requests" component={MaintenanceRequestsPage} />
+      <Route path="/maintenance/actions" component={MaintenanceActionsPage} />
+      <Route path="/maintenance/schedule" component={MaintenanceSchedulePage} />
+      <Route path="/maintenance/dashboard" component={MaintenanceDashboard} />
+      <Route path="/production/mix-materials" component={MixMaterialsPage} />
+      <Route path="/production/job-orders" component={JobOrdersPage} />
+      <Route path="/production/job-orders-monitor" component={JobOrdersMonitorPage} />
+      <Route path="/production/jo-mix" component={JoMixPage} />
+      <Route path="/production/rolls-pro" component={RollsProPage} />
+      <Route path="/production/bottleneck-dashboard" component={BottleneckDashboard} />
+      <Route path="/production/metrics-input" component={MetricsInputPage} />
+      <Route path="/production/iot-monitor" component={IoTMonitor} />
+      <Route path="/quality/certificates" component={QualityCertificatesPage} />
+      <Route path="/employee-dashboard" component={EmployeeDashboard} />
       <Route path="/customer-info" component={CustomerInfoPage} />
       <Route component={NotFound} />
     </Switch>
