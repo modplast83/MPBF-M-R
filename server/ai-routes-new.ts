@@ -62,6 +62,47 @@ router.post("/assistant", async (req, res) => {
   }
 });
 
+// AI-Powered Customer Matching Suggestions endpoint
+router.post("/customer-suggestions", async (req, res) => {
+  try {
+    const { searchQuery, limit = 5 } = req.body;
+    
+    if (!searchQuery || typeof searchQuery !== 'string') {
+      return res.status(400).json({ 
+        error: 'Search query is required',
+        suggestions: [],
+        searchAnalysis: {
+          queryType: 'invalid',
+          suggestedCategories: [],
+          businessTypeGuess: 'unknown'
+        }
+      });
+    }
+    
+    console.log(`🔍 Customer suggestions request for: "${searchQuery}"`);
+    
+    const result = await aiService.getCustomerMatchingSuggestions(searchQuery, limit);
+    
+    res.json({
+      success: true,
+      searchQuery,
+      ...result,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('Customer suggestions error:', error);
+    res.status(500).json({ 
+      error: 'Customer suggestions service unavailable',
+      suggestions: [],
+      searchAnalysis: {
+        queryType: 'error',
+        suggestedCategories: [],
+        businessTypeGuess: 'unknown'
+      }
+    });
+  }
+});
+
 // Production insights endpoint
 router.get("/production-insights", async (req, res) => {
   try {

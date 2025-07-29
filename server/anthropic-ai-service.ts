@@ -223,10 +223,10 @@ export class AnthropicAIAssistantService {
     }
   }
 
-  // Enhanced customer search with fuzzy matching for both English and Arabic names
+  // Enhanced customer search with intelligent matching suggestions
   async findCustomerByName(customerName: string): Promise<any> {
     try {
-      console.log(`Searching for customer: "${customerName}"`);
+      console.log(`🔍 Searching for customer: "${customerName}"`);
       
       // First try exact match on name, name_ar, and code columns
       const exactMatch = await this.db.query(
@@ -235,13 +235,13 @@ export class AnthropicAIAssistantService {
       );
       
       if (exactMatch.rows.length > 0) {
-        console.log(`Found exact match for customer: ${exactMatch.rows[0].name} (${exactMatch.rows[0].id})`);
+        console.log(`✅ Found exact match for customer: ${exactMatch.rows[0].name} (${exactMatch.rows[0].id})`);
         return exactMatch.rows[0];
       }
 
       // Fuzzy search fallback on all customer records
       const allCustomers = await this.db.query('SELECT * FROM customers LIMIT 1000'); // Limit for performance
-      console.log(`Performing fuzzy search across ${allCustomers.rows.length} customers`);
+      console.log(`🔎 Performing fuzzy search across ${allCustomers.rows.length} customers`);
       
       const fuse = new Fuse(allCustomers.rows, {
         keys: ['name', 'name_ar', 'code'], // Using correct column name name_ar
@@ -252,16 +252,255 @@ export class AnthropicAIAssistantService {
       const results = fuse.search(customerName);
       if (results.length > 0) {
         const bestMatch = results[0].item;
-        console.log(`Found fuzzy match: ${bestMatch.name} (${bestMatch.id}) with score ${results[0].score}`);
+        console.log(`💡 Found fuzzy match: ${bestMatch.name} (${bestMatch.id}) with score ${results[0].score}`);
         return bestMatch;
       }
       
-      console.log(`No customer found for: "${customerName}"`);
+      console.log(`❌ No customer found for: "${customerName}"`);
+      
+      // Generate AI-powered suggestions for not found customers
+      console.log(`🤖 Generating AI suggestions for: "${customerName}"`);
+      const suggestions = await this.getCustomerMatchingSuggestions(customerName, 3);
+      
+      if (suggestions.suggestions.length > 0) {
+        console.log(`💡 Found ${suggestions.suggestions.length} alternative suggestions`);
+        // Return the suggestion with details for better error messaging
+        return {
+          notFound: true,
+          searchQuery: customerName,
+          suggestions: suggestions.suggestions,
+          searchAnalysis: suggestions.searchAnalysis
+        };
+      }
+      
       return null;
     } catch (error) {
       console.error('Error finding customer:', error);
       return null;
     }
+  }
+
+  // AI-Powered Customer Matching Suggestions
+  async getCustomerMatchingSuggestions(searchQuery: string, limit: number = 5): Promise<{
+    suggestions: Array<{
+      customer: any;
+      matchScore: number;
+      matchReason: string;
+      confidence: number;
+    }>;
+    searchAnalysis: {
+      queryType: string;
+      suggestedCategories: string[];
+      businessTypeGuess: string;
+    };
+  }> {
+    try {
+      console.log(`🤖 AI-Powered Customer Matching for: "${searchQuery}"`);
+      
+      // Get all customers for comprehensive analysis
+      const allCustomers = await this.db.query(`
+        SELECT c.*, 
+               COUNT(o.id) as order_count,
+               MAX(o.date) as last_order_date,
+               STRING_AGG(DISTINCT cat.name, ', ') as product_categories
+        FROM customers c
+        LEFT JOIN orders o ON c.id = o.customer_id
+        LEFT JOIN job_orders jo ON o.id = jo.order_id
+        LEFT JOIN customer_products cp ON jo.customer_product_id = cp.id
+        LEFT JOIN categories cat ON cp.category_id = cat.id
+        GROUP BY c.id, c.name, c.name_ar, c.code, c.user_id, c.plate_drawer_code
+        ORDER BY order_count DESC
+        LIMIT 1000
+      `);
+
+      const customers = allCustomers.rows;
+      console.log(`📊 Analyzing ${customers.length} customers with enhanced data`);
+
+      // Advanced fuzzy search with multiple matching strategies
+      const fuseOptions = [
+        // Strategy 1: Exact name matching (high weight)
+        {
+          keys: ['name', 'name_ar', 'code'],
+          threshold: 0.2,
+          weight: 1.0,
+          strategy: 'exact_match'
+        },
+        // Strategy 2: Partial name matching (medium weight)
+        {
+          keys: ['name', 'name_ar'],
+          threshold: 0.4,
+          weight: 0.8,
+          strategy: 'partial_name'
+        },
+        // Strategy 3: Business category matching (lower weight)
+        {
+          keys: ['product_categories'],
+          threshold: 0.6,
+          weight: 0.6,
+          strategy: 'business_category'
+        }
+      ];
+
+      const allSuggestions: Array<{
+        customer: any;
+        matchScore: number;
+        matchReason: string;
+        confidence: number;
+        strategy: string;
+      }> = [];
+
+      // Apply each matching strategy
+      for (const strategy of fuseOptions) {
+        const fuse = new Fuse(customers, {
+          keys: strategy.keys,
+          threshold: strategy.threshold,
+          includeScore: true,
+          includeMatches: true
+        });
+
+        const results = fuse.search(searchQuery);
+        
+        for (const result of results.slice(0, limit * 2)) { // Get more for deduplication
+          const customer = result.item;
+          const score = 1 - (result.score || 0); // Convert to positive score
+          const weightedScore = score * strategy.weight;
+          
+          // Determine match reason based on matched fields
+          let matchReason = '';
+          if (result.matches) {
+            const matchedFields = result.matches.map(m => m.key).join(', ');
+            switch (strategy.strategy) {
+              case 'exact_match':
+                matchReason = `Strong match in ${matchedFields}`;
+                break;
+              case 'partial_name':
+                matchReason = `Similar name pattern in ${matchedFields}`;
+                break;
+              case 'business_category':
+                matchReason = `Related business category: ${matchedFields}`;
+                break;
+            }
+          }
+
+          // Calculate confidence based on multiple factors
+          let confidence = weightedScore;
+          
+          // Boost confidence for active customers
+          if (customer.order_count > 0) {
+            confidence += 0.1;
+          }
+          
+          // Boost confidence for recent customers
+          if (customer.last_order_date) {
+            const daysSinceLastOrder = (Date.now() - new Date(customer.last_order_date).getTime()) / (1000 * 60 * 60 * 24);
+            if (daysSinceLastOrder < 30) confidence += 0.15;
+            else if (daysSinceLastOrder < 90) confidence += 0.1;
+          }
+
+          // Boost confidence for customers with Arabic names if search contains Arabic
+          const hasArabicSearch = /[\u0600-\u06FF]/.test(searchQuery);
+          const hasArabicName = customer.name_ar && /[\u0600-\u06FF]/.test(customer.name_ar);
+          if (hasArabicSearch && hasArabicName) {
+            confidence += 0.2;
+          }
+
+          allSuggestions.push({
+            customer,
+            matchScore: weightedScore,
+            matchReason,
+            confidence: Math.min(confidence, 1.0), // Cap at 1.0
+            strategy: strategy.strategy
+          });
+        }
+      }
+
+      // Deduplicate and sort by confidence
+      const uniqueSuggestions = allSuggestions
+        .filter((suggestion, index, self) => 
+          index === self.findIndex(s => s.customer.id === suggestion.customer.id)
+        )
+        .sort((a, b) => b.confidence - a.confidence)
+        .slice(0, limit);
+
+      // Analyze search query to provide insights
+      const searchAnalysis = this.analyzeSearchQuery(searchQuery);
+
+      console.log(`💡 Generated ${uniqueSuggestions.length} AI-powered suggestions`);
+      
+      return {
+        suggestions: uniqueSuggestions.map(s => ({
+          customer: s.customer,
+          matchScore: s.matchScore,
+          matchReason: s.matchReason,
+          confidence: s.confidence
+        })),
+        searchAnalysis
+      };
+    } catch (error) {
+      console.error('Error generating customer matching suggestions:', error);
+      return {
+        suggestions: [],
+        searchAnalysis: {
+          queryType: 'unknown',
+          suggestedCategories: [],
+          businessTypeGuess: 'unknown'
+        }
+      };
+    }
+  }
+
+  // Analyze search query to provide intelligent insights
+  private analyzeSearchQuery(query: string): {
+    queryType: string;
+    suggestedCategories: string[];
+    businessTypeGuess: string;
+  } {
+    const lowerQuery = query.toLowerCase();
+    const hasArabic = /[\u0600-\u06FF]/.test(query);
+    const hasNumbers = /\d/.test(query);
+    
+    // Determine query type
+    let queryType = 'name_search';
+    if (hasNumbers && query.length <= 10) queryType = 'code_search';
+    if (hasArabic) queryType = 'arabic_name_search';
+    
+    // Suggest product categories based on keywords
+    const suggestedCategories: string[] = [];
+    const categoryKeywords = {
+      'Roll Trash Bag': ['trash', 'garbage', 'waste', 'نفايات', 'قمامة'],
+      'T-Shirt Bag': ['tshirt', 't-shirt', 'shopping', 'تيشيرت', 'تسوق'],
+      'Food Bag': ['food', 'restaurant', 'طعام', 'مطعم'],
+      'Medical Bag': ['medical', 'hospital', 'pharmacy', 'طبي', 'مستشفى', 'صيدلية']
+    };
+    
+    for (const [category, keywords] of Object.entries(categoryKeywords)) {
+      if (keywords.some(keyword => lowerQuery.includes(keyword))) {
+        suggestedCategories.push(category);
+      }
+    }
+    
+    // Guess business type
+    let businessTypeGuess = 'general';
+    const businessKeywords = {
+      'retail': ['store', 'shop', 'market', 'محل', 'متجر', 'سوق'],
+      'manufacturing': ['factory', 'industrial', 'production', 'مصنع', 'صناعي'],
+      'medical': ['clinic', 'hospital', 'pharmacy', 'عيادة', 'مستشفى', 'صيدلية'],
+      'restaurant': ['restaurant', 'cafe', 'food', 'مطعم', 'مقهى', 'طعام'],
+      'trading': ['trading', 'import', 'export', 'تجارة', 'استيراد', 'تصدير']
+    };
+    
+    for (const [type, keywords] of Object.entries(businessKeywords)) {
+      if (keywords.some(keyword => lowerQuery.includes(keyword))) {
+        businessTypeGuess = type;
+        break;
+      }
+    }
+    
+    return {
+      queryType,
+      suggestedCategories,
+      businessTypeGuess
+    };
   }
 
   // Professional AI assistant with Claude Sonnet 4
@@ -497,12 +736,20 @@ Please analyze this request and provide a professional response with actionable 
       let customerId = data.customerId;
       let resolvedCustomer: any = null;
       
-      // Enhanced customer resolution with multiple fallback strategies
+      // Enhanced customer resolution with AI-powered suggestions
       if (data.customerName) {
         resolvedCustomer = await this.findCustomerByName(data.customerName);
         if (resolvedCustomer && resolvedCustomer.id) {
           customerId = resolvedCustomer.id;
           console.log(`✓ Resolved customer "${data.customerName}" to ID: ${customerId}`);
+        } else if (resolvedCustomer && resolvedCustomer.notFound && resolvedCustomer.suggestions) {
+          // Customer not found but we have AI suggestions
+          const topSuggestions = resolvedCustomer.suggestions.slice(0, 3);
+          const suggestionsList = topSuggestions.map(s => 
+            `${s.customer.name} (${s.customer.id}) - ${s.matchReason} (${Math.round(s.confidence * 100)}% match)`
+          ).join('\n');
+          
+          throw new Error(`Customer "${data.customerName}" not found. Did you mean one of these?\n\n${suggestionsList}\n\nPlease verify the customer name or create the customer first.`);
         } else {
           throw new Error(`Customer "${data.customerName}" not found. Please verify the customer name or create the customer first.`);
         }
