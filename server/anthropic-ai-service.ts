@@ -506,6 +506,14 @@ export class AnthropicAIAssistantService {
   // Professional AI assistant with Claude Sonnet 4
   async processMessage(request: AssistantRequest): Promise<AssistantResponse> {
     try {
+      console.log(`🧠 AI Processing: "${request.message}" with context:`, request.context);
+      
+      // Check API key
+      if (!process.env.ANTHROPIC_API_KEY) {
+        console.error("❌ ANTHROPIC_API_KEY not found");
+        throw new Error("ANTHROPIC_API_KEY not configured");
+      }
+      
       const databaseSchema = this.getDatabaseSchema();
       const databaseStats = await this.getDatabaseStatistics();
       
@@ -552,6 +560,8 @@ Always respond with a JSON object containing:
 
 Be concise but comprehensive. Focus on practical business value.`;
 
+      console.log(`🔄 Calling Anthropic API with model: ${DEFAULT_MODEL_STR}`);
+      
       const response = await anthropic.messages.create({
         model: DEFAULT_MODEL_STR, // "claude-sonnet-4-20250514"
         max_tokens: 4000,
@@ -560,28 +570,64 @@ Be concise but comprehensive. Focus on practical business value.`;
           role: 'user',
           content: `User Message: "${request.message}"
 
-Please analyze this request and provide a professional response with actionable insights. Consider the current system state and provide relevant suggestions or actions.`
+Please analyze this request and provide a professional response with actionable insights. Consider the current system state and provide relevant suggestions or actions.
+
+IMPORTANT: Always respond with a JSON object that includes at minimum:
+{
+  "response": "Your detailed response text here",
+  "confidence": 0.9,
+  "context": "Brief context summary",
+  "responseType": "information_only"
+}`
         }]
       });
 
+      console.log(`✅ Anthropic API response received:`, {
+        usage: response.usage,
+        model: response.model,
+        contentType: response.content[0]?.type,
+        contentLength: response.content[0]?.type === 'text' ? response.content[0].text.length : 0
+      });
+
       const responseText = response.content[0].type === 'text' ? response.content[0].text : JSON.stringify(response.content[0]);
+      console.log(`📝 Raw AI response:`, responseText.substring(0, 500) + (responseText.length > 500 ? '...' : ''));
       
       // Try to parse as JSON first
       try {
-        const jsonResponse = JSON.parse(responseText);
+        // Clean the response text to extract JSON if wrapped in code blocks
+        let cleanResponseText = responseText.trim();
+        
+        // Remove markdown code block formatting if present
+        if (cleanResponseText.startsWith('```json')) {
+          cleanResponseText = cleanResponseText.replace(/^```json\s*/, '').replace(/\s*```$/, '');
+        } else if (cleanResponseText.startsWith('```')) {
+          cleanResponseText = cleanResponseText.replace(/^```\s*/, '').replace(/\s*```$/, '');
+        }
+        
+        console.log(`🔍 Attempting to parse JSON response...`);
+        const jsonResponse = JSON.parse(cleanResponseText);
+        
+        console.log(`✅ Successfully parsed JSON response:`, {
+          hasResponse: !!jsonResponse.response,
+          responseLength: jsonResponse.response?.length || 0,
+          hasSuggestions: Array.isArray(jsonResponse.suggestions),
+          hasActions: Array.isArray(jsonResponse.actions)
+        });
+        
         return {
           response: jsonResponse.response || responseText,
-          suggestions: jsonResponse.suggestions || [],
-          actions: jsonResponse.actions || [],
-          confidence: jsonResponse.confidence || 0.9,
+          suggestions: Array.isArray(jsonResponse.suggestions) ? jsonResponse.suggestions : [],
+          actions: Array.isArray(jsonResponse.actions) ? jsonResponse.actions : [],
+          confidence: typeof jsonResponse.confidence === 'number' ? jsonResponse.confidence : 0.9,
           context: jsonResponse.context || "Professional AI analysis",
           responseType: jsonResponse.responseType || 'information_only',
           ...jsonResponse
         };
       } catch (parseError) {
+        console.warn(`⚠️ JSON parsing failed, using fallback:`, parseError);
         // Fallback to text response if JSON parsing fails
         return {
-          response: responseText,
+          response: responseText || "I understand your request. Let me provide you with information about our production management system.",
           suggestions: this.generateContextualSuggestions(request),
           actions: [],
           confidence: 0.85,

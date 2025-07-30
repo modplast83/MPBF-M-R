@@ -56,7 +56,11 @@ const AIAssistantPage = () => {
     "What's our production efficiency this week?",
     "Show me quality control metrics",
     "Generate maintenance schedule report",
-    "Analyze bottleneck trends"
+    "Analyze bottleneck trends",
+    "Create a new order for customer ABC Company",
+    "What are the current inventory levels?",
+    "Show me recent machine maintenance status",
+    "Help me optimize our workflow processes"
   ];
 
   useEffect(() => {
@@ -82,15 +86,35 @@ const AIAssistantPage = () => {
       const response = await fetch('/api/ai/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: inputValue }),
+        body: JSON.stringify({ 
+          message: inputValue,
+          context: {
+            currentPage: 'ai-assistant',
+            timestamp: new Date().toISOString()
+          }
+        }),
       });
 
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
       const data = await response.json();
+      console.log('AI Response:', data);
+
+      let assistantContent = '';
+      if (data.error) {
+        assistantContent = `I encountered an error: ${data.error}`;
+      } else if (data.response) {
+        assistantContent = data.response;
+      } else {
+        assistantContent = 'I received an empty response. Please try rephrasing your question.';
+      }
 
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         type: 'assistant',
-        content: data.response || 'I apologize, but I encountered an error processing your request.',
+        content: assistantContent,
         timestamp: new Date(),
         status: 'sent'
       };
@@ -98,10 +122,24 @@ const AIAssistantPage = () => {
       setMessages(prev => [...prev, assistantMessage]);
     } catch (error) {
       console.error('AI chat error:', error);
+      let errorContent = 'I\'m experiencing technical difficulties. ';
+      
+      if (error instanceof Error) {
+        if (error.message.includes('500')) {
+          errorContent += 'The AI service is currently unavailable. Please try again in a few moments.';
+        } else if (error.message.includes('404')) {
+          errorContent += 'The AI endpoint was not found. Please contact support.';
+        } else {
+          errorContent += `Error: ${error.message}`;
+        }
+      } else {
+        errorContent += 'Please try again later.';
+      }
+
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         type: 'assistant',
-        content: 'I apologize, but I\'m experiencing technical difficulties. Please try again later.',
+        content: errorContent,
         timestamp: new Date(),
         status: 'error'
       };
@@ -172,7 +210,12 @@ const AIAssistantPage = () => {
                       "w-full justify-start text-left h-auto p-3 transition-all duration-200 hover:scale-[1.02]",
                       action.color
                     )}
-                    onClick={() => setInputValue(action.label)}
+                    onClick={() => {
+                      setInputValue(action.label);
+                      if (inputRef.current) {
+                        inputRef.current.focus();
+                      }
+                    }}
                   >
                     <action.icon className="w-4 h-4 mr-3" />
                     <span className="text-sm font-medium">{action.label}</span>
@@ -194,10 +237,18 @@ const AIAssistantPage = () => {
                 {suggestions.map((suggestion, index) => (
                   <button
                     key={index}
-                    onClick={() => setInputValue(suggestion)}
-                    className="w-full text-left p-2 text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-colors duration-150"
+                    onClick={() => {
+                      setInputValue(suggestion);
+                      if (inputRef.current) {
+                        inputRef.current.focus();
+                      }
+                    }}
+                    className="w-full text-left p-3 text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-colors duration-150 border border-transparent hover:border-slate-200 hover:shadow-sm"
                   >
-                    "{suggestion}"
+                    <span className="flex items-start">
+                      <span className="text-slate-400 mr-2 mt-0.5">💡</span>
+                      <span>"{suggestion}"</span>
+                    </span>
                   </button>
                 ))}
               </CardContent>

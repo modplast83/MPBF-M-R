@@ -53,16 +53,34 @@ export function AIAssistantDashboard({ className }: AIAssistantDashboardProps) {
       const response = await fetch('/api/ai/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message })
+        body: JSON.stringify({ 
+          message,
+          context: {
+            currentPage: 'ai-dashboard',
+            activeTab,
+            timestamp: new Date().toISOString()
+          }
+        })
       });
-      if (!response.ok) throw new Error('Failed to send message');
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || `HTTP ${response.status}`);
+      }
       return response.json();
     },
     onSuccess: (data) => {
       setMessages(prev => [...prev, {
         id: Date.now().toString(),
         type: 'assistant',
-        content: data.response,
+        content: data.response || 'I received an empty response. Please try again.',
+        timestamp: new Date()
+      }]);
+    },
+    onError: (error) => {
+      setMessages(prev => [...prev, {
+        id: Date.now().toString(),
+        type: 'assistant',
+        content: `Error: ${error instanceof Error ? error.message : 'Unknown error occurred'}`,
         timestamp: new Date()
       }]);
     }

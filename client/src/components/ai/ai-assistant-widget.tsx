@@ -277,7 +277,7 @@ export function AIAssistantWidget({
   // Mutation for sending assistant queries
   const assistantMutation = useMutation({
     mutationFn: async (message: string) => {
-      const response = await fetch('/api/ai/assistant', {
+      const response = await fetch('/api/ai/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -285,12 +285,17 @@ export function AIAssistantWidget({
           context: {
             currentPage: location,
             userId: user?.id,
-            userRole: user?.isAdmin ? 'admin' : 'user'
+            userRole: user?.isAdmin ? 'admin' : 'user',
+            widget: true,
+            timestamp: new Date().toISOString()
           }
         })
       });
       
-      if (!response.ok) throw new Error('Failed to process query');
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || `HTTP ${response.status}`);
+      }
       return response.json();
     },
     onSuccess: (data) => {
