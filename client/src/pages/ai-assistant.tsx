@@ -394,7 +394,7 @@ const AIAssistantPage = () => {
                 </ScrollArea>
 
                 {/* Input Area */}
-                <div className="border-t border-slate-100 p-6 bg-gradient-to-r from-slate-50/80 to-blue-50/40">
+                <div className="border-t border-slate-100 p-6 bg-gradient-to-r from-slate-50/80 to-blue-50/40 pt-[0px] pb-[0px]">
                   <div className="flex items-end space-x-4">
                     <div className="flex-1 relative">
                       <Input
