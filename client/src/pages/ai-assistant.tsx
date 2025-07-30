@@ -46,10 +46,34 @@ const AIAssistantPage = () => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const quickActions = [
-    { icon: TrendingUp, label: 'Production Insights', color: 'bg-blue-500/10 text-blue-600 border-blue-200' },
-    { icon: AlertCircle, label: 'Quality Analysis', color: 'bg-red-500/10 text-red-600 border-red-200' },
-    { icon: Users, label: 'HR Summary', color: 'bg-green-500/10 text-green-600 border-green-200' },
-    { icon: Settings, label: 'System Health', color: 'bg-purple-500/10 text-purple-600 border-purple-200' },
+    { 
+      icon: TrendingUp, 
+      label: 'Production Analysis', 
+      description: 'Get real-time production insights',
+      color: 'bg-blue-500/10 text-blue-600 border-blue-200 hover:bg-blue-500/20',
+      prompt: 'Analyze current production performance and identify optimization opportunities'
+    },
+    { 
+      icon: AlertCircle, 
+      label: 'Quality Control', 
+      description: 'Review quality metrics and issues',
+      color: 'bg-red-500/10 text-red-600 border-red-200 hover:bg-red-500/20',
+      prompt: 'Show me quality control metrics and identify any potential issues'
+    },
+    { 
+      icon: Users, 
+      label: 'HR Analytics', 
+      description: 'Employee performance and attendance',
+      color: 'bg-green-500/10 text-green-600 border-green-200 hover:bg-green-500/20',
+      prompt: 'Provide HR analytics including attendance, performance, and staffing insights'
+    },
+    { 
+      icon: Settings, 
+      label: 'System Status', 
+      description: 'Check system health and performance',
+      color: 'bg-purple-500/10 text-purple-600 border-purple-200 hover:bg-purple-500/20',
+      prompt: 'Check system health, machine status, and overall operational performance'
+    },
   ];
 
   const suggestions = [
@@ -194,12 +218,15 @@ const AIAssistantPage = () => {
           {/* Sidebar */}
           <div className="lg:col-span-1 space-y-6">
             {/* Quick Actions */}
-            <Card className="border-0 shadow-xl bg-white/70 backdrop-blur-sm">
-              <CardHeader className="pb-3">
+            <Card className="border-0 shadow-xl bg-white/80 backdrop-blur-sm">
+              <CardHeader className="pb-4">
                 <CardTitle className="text-lg font-semibold flex items-center">
                   <Target className="w-5 h-5 mr-2 text-blue-600" />
                   Quick Actions
                 </CardTitle>
+                <p className="text-sm text-slate-500 mt-1">
+                  Click to ask AI about key areas
+                </p>
               </CardHeader>
               <CardContent className="space-y-3">
                 {quickActions.map((action, index) => (
@@ -211,29 +238,37 @@ const AIAssistantPage = () => {
                       action.color
                     )}
                     onClick={() => {
-                      setInputValue(action.label);
+                      setInputValue(action.prompt);
                       if (inputRef.current) {
                         inputRef.current.focus();
                       }
                     }}
                   >
-                    <action.icon className="w-4 h-4 mr-3" />
-                    <span className="text-sm font-medium">{action.label}</span>
-                    <ChevronRight className="w-3 h-3 ml-auto opacity-50" />
+                    <div className="flex items-start w-full">
+                      <action.icon className="w-5 h-5 mr-3 mt-0.5 flex-shrink-0" />
+                      <div className="flex-1 text-left">
+                        <div className="text-sm font-medium">{action.label}</div>
+                        <div className="text-xs opacity-70 mt-1">{action.description}</div>
+                      </div>
+                      <ChevronRight className="w-4 h-4 ml-2 opacity-50 flex-shrink-0" />
+                    </div>
                   </Button>
                 ))}
               </CardContent>
             </Card>
 
             {/* Suggestions */}
-            <Card className="border-0 shadow-xl bg-white/70 backdrop-blur-sm">
-              <CardHeader className="pb-3">
+            <Card className="border-0 shadow-xl bg-white/80 backdrop-blur-sm">
+              <CardHeader className="pb-4">
                 <CardTitle className="text-lg font-semibold flex items-center">
                   <Lightbulb className="w-5 h-5 mr-2 text-amber-500" />
-                  Suggestions
+                  Smart Suggestions
                 </CardTitle>
+                <p className="text-sm text-slate-500 mt-1">
+                  Popular questions to get started
+                </p>
               </CardHeader>
-              <CardContent className="space-y-2">
+              <CardContent className="space-y-3">
                 {suggestions.map((suggestion, index) => (
                   <button
                     key={index}
@@ -243,11 +278,11 @@ const AIAssistantPage = () => {
                         inputRef.current.focus();
                       }
                     }}
-                    className="w-full text-left p-3 text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-colors duration-150 border border-transparent hover:border-slate-200 hover:shadow-sm"
+                    className="w-full text-left p-3 text-sm text-slate-600 hover:text-slate-900 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 rounded-lg transition-all duration-200 border border-transparent hover:border-slate-200 hover:shadow-md group"
                   >
                     <span className="flex items-start">
-                      <span className="text-slate-400 mr-2 mt-0.5">💡</span>
-                      <span>"{suggestion}"</span>
+                      <span className="text-amber-500 mr-2 mt-0.5 group-hover:text-amber-600 transition-colors">💡</span>
+                      <span className="group-hover:font-medium transition-all">"{suggestion}"</span>
                     </span>
                   </button>
                 ))}
@@ -359,16 +394,16 @@ const AIAssistantPage = () => {
                 </ScrollArea>
 
                 {/* Input Area */}
-                <div className="border-t border-slate-100 p-4 bg-gradient-to-r from-slate-50 to-blue-50/30">
-                  <div className="flex items-end space-x-3">
+                <div className="border-t border-slate-100 p-6 bg-gradient-to-r from-slate-50/80 to-blue-50/40">
+                  <div className="flex items-end space-x-4">
                     <div className="flex-1 relative">
                       <Input
                         ref={inputRef}
                         value={inputValue}
                         onChange={(e) => setInputValue(e.target.value)}
                         onKeyPress={handleKeyPress}
-                        placeholder="Type your question here..."
-                        className="pr-12 min-h-[44px] resize-none border-slate-200 bg-white/80 backdrop-blur-sm focus:ring-blue-500 focus:border-blue-500"
+                        placeholder="Ask me about production metrics, quality issues, or system status..."
+                        className="pr-16 min-h-[48px] resize-none border-slate-200 bg-white/90 backdrop-blur-sm focus:ring-blue-500 focus:border-blue-500 shadow-sm text-base"
                         disabled={isLoading}
                       />
                       <Button
