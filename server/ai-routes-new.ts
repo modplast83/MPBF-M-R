@@ -14,34 +14,67 @@ router.post("/assistant", async (req, res) => {
       return res.status(400).json({ error: "Message is required" });
     }
 
-    // Handle order creation actions
+    // Handle order creation actions with enhanced processing
     if (message.toLowerCase().includes('create') && message.toLowerCase().includes('order')) {
       try {
-        // Extract order details from message
+        console.log(`🔄 Processing order creation request: "${message}"`);
+        
+        // Extract order details from message with improved parsing
         const orderData = {
           customerName: extractCustomerName(message),
+          productName: extractProductName(message),
+          productType: extractProductType(message),
           quantity: extractQuantity(message),
           originalMessage: message,
           userId: context?.userId
         };
 
-        if (orderData.customerName) {
+        console.log(`📊 Extracted order data:`, orderData);
+
+        if (orderData.customerName || orderData.quantity) {
           const orderResult = await aiService.createOrderRecord(orderData);
-          return res.json({
-            response: `Successfully created order for ${orderResult.customerName}! Order ID: ${orderResult.id}`,
-            responseType: 'completed_action',
-            actions: [{
-              type: 'create_order',
-              label: '✅ Created ORDER',
-              requiresConfirmation: false,
-              data: orderResult
-            }],
-            confidence: 0.95,
-            context: "Order creation completed"
-          });
+          
+          // Handle different response types from enhanced order creation
+          if (orderResult.success === false && orderResult.responseType === 'selection_required') {
+            return res.json(orderResult);
+          }
+          
+          if (orderResult.success === false && orderResult.responseType === 'confirmation_required') {
+            return res.json(orderResult);
+          }
+          
+          if (orderResult.success === true) {
+            return res.json(orderResult);
+          }
+          
+          // Legacy response format for backward compatibility
+          if (orderResult.id) {
+            return res.json({
+              response: `Successfully created order for ${orderResult.customerName}! Order ID: ${orderResult.id}`,
+              responseType: 'completed_action',
+              actions: [{
+                type: 'create_order',
+                label: '✅ Order Created',
+                data: orderResult
+              }],
+              confidence: 0.95,
+              context: "Order creation completed"
+            });
+          }
         }
       } catch (orderError) {
         console.error('Order creation error:', orderError);
+        
+        // Enhanced error handling with customer suggestions
+        if (orderError instanceof Error && orderError.message.includes('not found')) {
+          return res.json({
+            response: orderError.message,
+            responseType: 'information_only',
+            confidence: 0.8,
+            context: "Customer resolution needed"
+          });
+        }
+        
         // Fall through to general AI response
       }
     }
@@ -364,6 +397,51 @@ function extractQuantity(message: string): number | null {
   const numberMatch = message.match(/(\d+(?:\.\d+)?)/);
   if (numberMatch) {
     return parseFloat(numberMatch[1]);
+  }
+  
+  return null;
+}
+
+// Helper function to extract product name from message
+function extractProductName(message: string): string | null {
+  const patterns = [
+    /(?:product|item)\s+([A-Za-z\s\u0600-\u06FF0-9.-]+?)(?:\s+(?:with|and|,|quantity|\d|$))/i,
+    /([A-Za-z\s\u0600-\u06FF0-9.-]+?)\s+(?:product|item|bag|roll)/i,
+    /(?:bag|roll|sheet)\s+([A-Za-z\s\u0600-\u06FF0-9.-]+?)(?:\s+(?:with|and|,|\d|$))/i
+  ];
+  
+  for (const pattern of patterns) {
+    const match = message.match(pattern);
+    if (match && match[1]) {
+      const productName = match[1].trim();
+      const excludeWords = ['order', 'create', 'new', 'with', 'and', 'the', 'a', 'an', 'for', 'customer'];
+      if (!excludeWords.includes(productName.toLowerCase()) && productName.length > 1) {
+        console.log(`📦 Extracted product name: "${productName}"`);
+        return productName;
+      }
+    }
+  }
+  
+  return null;
+}
+
+// Helper function to extract product type from message
+function extractProductType(message: string): string | null {
+  const typePatterns = [
+    /(?:t-?shirt|tshirt)/i,
+    /(?:trash|garbage|waste)/i,
+    /(?:food|restaurant)/i,
+    /(?:medical|hospital)/i,
+    /(?:roll|bag|sheet)/i,
+    /(?:\d+(?:G|g|cm|mm|inch))/i // Size specifications like 30G, 25cm, etc.
+  ];
+  
+  for (const pattern of typePatterns) {
+    const match = message.match(pattern);
+    if (match) {
+      console.log(`🏷️ Extracted product type: "${match[0]}"`);
+      return match[0].toLowerCase();
+    }
   }
   
   return null;

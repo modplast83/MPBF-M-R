@@ -781,38 +781,161 @@ IMPORTANT: Always respond with a JSON object that includes at minimum:
     try {
       let customerId = data.customerId;
       let resolvedCustomer: any = null;
+      let customerProducts: any[] = [];
+      
+      console.log(`🔄 Creating order with data:`, { customerName: data.customerName, customerId: data.customerId, quantity: data.quantity });
       
       // Enhanced customer resolution with AI-powered suggestions
-      if (data.customerName) {
-        resolvedCustomer = await this.findCustomerByName(data.customerName);
+      if (data.customerName || data.customerId) {
+        const searchName = data.customerName || data.customerId;
+        console.log(`🔍 Searching for customer: "${searchName}"`);
+        
+        resolvedCustomer = await this.findCustomerByName(searchName);
+        
         if (resolvedCustomer && resolvedCustomer.id) {
           customerId = resolvedCustomer.id;
-          console.log(`✓ Resolved customer "${data.customerName}" to ID: ${customerId}`);
-        } else if (resolvedCustomer && resolvedCustomer.notFound && resolvedCustomer.suggestions) {
-          // Customer not found but we have AI suggestions
-          const topSuggestions = resolvedCustomer.suggestions.slice(0, 3);
-          const suggestionsList = topSuggestions.map(s => 
-            `${s.customer.name} (${s.customer.id}) - ${s.matchReason} (${Math.round(s.confidence * 100)}% match)`
-          ).join('\n');
+          console.log(`✅ Resolved customer "${searchName}" to ID: ${customerId}`);
           
-          throw new Error(`Customer "${data.customerName}" not found. Did you mean one of these?\n\n${suggestionsList}\n\nPlease verify the customer name or create the customer first.`);
+          // Get customer products for validation and suggestion
+          customerProducts = await this.getCustomerProducts(customerId);
+          console.log(`📦 Found ${customerProducts.length} products for customer ${customerId}`);
+          
+        } else if (resolvedCustomer && resolvedCustomer.notFound && resolvedCustomer.suggestions) {
+          // Customer not found but we have AI suggestions - return structured response
+          const topSuggestions = resolvedCustomer.suggestions.slice(0, 5);
+          
+          return {
+            success: false,
+            responseType: 'selection_required',
+            response: `I couldn't find a customer named "${searchName}". Here are the 5 closest matches I found:`,
+            selections: {
+              title: 'Select the correct customer:',
+              options: topSuggestions.map(s => ({
+                id: s.customer.id,
+                title: s.customer.name + (s.customer.name_ar ? ` (${s.customer.name_ar})` : ''),
+                description: `${s.matchReason} - ${Math.round(s.confidence * 100)}% confidence - ${s.customer.order_count || 0} previous orders`,
+                data: s.customer
+              })),
+              selectionType: 'customer_selection',
+              context: { originalOrder: data, searchQuery: searchName }
+            }
+          };
         } else {
-          throw new Error(`Customer "${data.customerName}" not found. Please verify the customer name or create the customer first.`);
+          // No customer found and no suggestions - offer to create new customer
+          return {
+            success: false,
+            responseType: 'confirmation_required',
+            response: `I couldn't find any customer matching "${searchName}". Would you like me to help you create a new customer with this name?`,
+            confirmation: {
+              action: 'create_customer',
+              summary: `Create new customer: ${searchName}`,
+              details: `This will create a new customer record that you can then use for creating orders.`
+            },
+            context: { customerName: searchName, originalOrder: data }
+          };
         }
+      } else {
+        return {
+          success: false,
+          response: 'Please provide a customer name to create an order. For example: "Create order for Modern Sources with 100kg quantity"',
+          responseType: 'information_only'
+        };
       }
       
-      if (!customerId && data.customerId) {
-        resolvedCustomer = await this.findCustomerByName(data.customerId);
-        if (resolvedCustomer && resolvedCustomer.id) {
-          customerId = resolvedCustomer.id;
-          console.log(`✓ Resolved customer "${data.customerId}" to ID: ${customerId}`);
-        } else {
-          throw new Error(`Customer "${data.customerId}" not found. Please use a valid customer ID or ensure the customer exists.`);
+      // Handle product specification and matching
+      if (data.productType || data.productName || data.quantity) {
+        console.log(`🔍 Looking for products matching: ${data.productType || data.productName || 'any product'}`);
+        
+        if (customerProducts.length === 0) {
+          // No products for this customer - offer to create one or suggest products
+          return {
+            success: false,
+            responseType: 'confirmation_required',
+            response: `Customer "${resolvedCustomer.name}" doesn't have any products defined yet. Would you like me to help you create a product for this customer?`,
+            confirmation: {
+              action: 'create_product',
+              summary: `Create new product for ${resolvedCustomer.name}`,
+              details: `This will create a new product that can be used for creating orders for this customer.`
+            },
+            context: { customerId, customerName: resolvedCustomer.name, originalOrder: data }
+          };
         }
-      }
-      
-      if (!customerId) {
-        throw new Error('Customer ID or customer name is required for order creation');
+        
+        // Find matching products for the customer
+        const matchingProducts = await this.findMatchingProducts(customerProducts, data.productType || data.productName || '');
+        
+        if (matchingProducts.length === 0) {
+          // No matching products found - suggest alternatives
+          const topProducts = customerProducts.slice(0, 5);
+          return {
+            success: false,
+            responseType: 'selection_required',
+            response: `I couldn't find a product matching "${data.productType || data.productName}" for ${resolvedCustomer.name}. Here are their available products:`,
+            selections: {
+              title: 'Select a product for the order:',
+              options: topProducts.map(p => ({
+                id: p.id.toString(),
+                title: p.sizeCaption || `${p.widthCm || 0}cm x ${p.lengthCm || 0}cm`,
+                description: `${p.categoryName || 'Unknown Category'} - ${p.punchingType || 'Standard'} - ${p.unitWeight || 0}g per unit`,
+                data: p
+              })),
+              selectionType: 'product_selection',
+              context: { customerId, customerName: resolvedCustomer.name, originalOrder: data }
+            }
+          };
+        }
+        
+        // Use the best matching product
+        const selectedProduct = matchingProducts[0];
+        console.log(`✅ Selected product: ${selectedProduct.sizeCaption} for order`);
+        
+        // Create the order and job order with selected product
+        const orderResult = await this.createOrderWithProduct(customerId, selectedProduct, data.quantity || 100, data);
+        
+        return {
+          success: true,
+          responseType: 'completed_action',
+          response: `✅ Successfully created order for ${resolvedCustomer.name}!\n\nOrder Details:\n- Customer: ${resolvedCustomer.name}\n- Product: ${selectedProduct.sizeCaption}\n- Quantity: ${data.quantity || 100}kg\n- Order ID: ${orderResult.orderId}\n- Job Order ID: ${orderResult.jobOrderId}`,
+          actions: [{
+            type: 'create_order',
+            label: 'Order Created Successfully',
+            data: orderResult
+          }]
+        };
+        
+      } else {
+        // No product specified - show available products for selection
+        if (customerProducts.length > 0) {
+          const topProducts = customerProducts.slice(0, 5);
+          return {
+            success: false,
+            responseType: 'selection_required',
+            response: `Customer "${resolvedCustomer.name}" found! Please select a product for the order:`,
+            selections: {
+              title: 'Available products:',
+              options: topProducts.map(p => ({
+                id: p.id.toString(),
+                title: p.sizeCaption || `${p.widthCm || 0}cm x ${p.lengthCm || 0}cm`,
+                description: `${p.categoryName || 'Unknown Category'} - ${p.punchingType || 'Standard'} - ${p.unitWeight || 0}g per unit`,
+                data: p
+              })),
+              selectionType: 'product_selection',
+              context: { customerId, customerName: resolvedCustomer.name, originalOrder: data }
+            }
+          };
+        } else {
+          return {
+            success: false,
+            responseType: 'confirmation_required',
+            response: `Customer "${resolvedCustomer.name}" found, but they don't have any products defined. Would you like to create a product for them?`,
+            confirmation: {
+              action: 'create_product',
+              summary: `Create product for ${resolvedCustomer.name}`,
+              details: `This will help you set up a product that can be used for orders.`
+            },
+            context: { customerId, customerName: resolvedCustomer.name }
+          };
+        }
       }
 
       // Validate customer exists in database
@@ -906,5 +1029,78 @@ IMPORTANT: Always respond with a JSON object that includes at minimum:
       return match ? parseFloat(match[1]) : null;
     }
     return null;
+  }
+
+  // Get customer products with category information
+  async getCustomerProducts(customerId: string): Promise<any[]> {
+    try {
+      const result = await this.db.query(`
+        SELECT cp.*, c.name as categoryName
+        FROM customer_products cp
+        LEFT JOIN categories c ON cp.category_id = c.id
+        WHERE cp.customer_id = $1
+        ORDER BY cp.size_caption, cp.id
+      `, [customerId]);
+      
+      return result.rows;
+    } catch (error) {
+      console.error('Error getting customer products:', error);
+      return [];
+    }
+  }
+
+  // Find matching products for customer based on product type/name
+  async findMatchingProducts(customerProducts: any[], searchTerm: string): Promise<any[]> {
+    if (!searchTerm || customerProducts.length === 0) {
+      return customerProducts;
+    }
+
+    // Use fuzzy search on customer products
+    const fuse = new Fuse(customerProducts, {
+      keys: ['sizeCaption', 'categoryName', 'punchingType'],
+      threshold: 0.4,
+      includeScore: true
+    });
+
+    const results = fuse.search(searchTerm);
+    return results
+      .sort((a, b) => (a.score || 0) - (b.score || 0)) // Lower score = better match
+      .map(result => result.item);
+  }
+
+  // Create order with specific product and quantity
+  async createOrderWithProduct(customerId: string, product: any, quantity: number, originalData: any): Promise<any> {
+    try {
+      // Create the order
+      const orderResult = await this.db.query(
+        `INSERT INTO orders (customer_id, note, status, user_id, date) 
+         VALUES ($1, $2, 'pending', $3, NOW()) RETURNING *`,
+        [customerId, originalData.note || null, originalData.userId || null]
+      );
+
+      const orderId = orderResult.rows[0].id;
+
+      // Create job order with the selected product
+      const jobOrderResult = await this.db.query(
+        `INSERT INTO job_orders (order_id, customer_product_id, quantity, status) 
+         VALUES ($1, $2, $3, 'pending') RETURNING *`,
+        [orderId, product.id, quantity]
+      );
+
+      const jobOrderId = jobOrderResult.rows[0].id;
+
+      console.log(`✅ Created order ${orderId} with job order ${jobOrderId}`);
+
+      return {
+        orderId,
+        jobOrderId,
+        customerName: originalData.customerName,
+        productName: product.sizeCaption,
+        quantity
+      };
+    } catch (error) {
+      console.error('Error creating order with product:', error);
+      throw error;
+    }
   }
 }
