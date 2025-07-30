@@ -123,110 +123,208 @@ export function AIAssistantWidget({
       
       // Check for speech recognition support
       const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-      
       console.log('SpeechRecognition available:', !!SpeechRecognition);
-      console.log('speechSynthesis available:', 'speechSynthesis' in window);
-      
-      // Always set speech supported to true to show the buttons
-      setSpeechSupported(true);
       
       if (SpeechRecognition) {
-        try {
-          recognitionRef.current = new SpeechRecognition();
-          recognitionRef.current.continuous = false;
-          recognitionRef.current.interimResults = false;
-          recognitionRef.current.lang = voiceLanguage;
+        setSpeechSupported(true);
+        const recognition = new SpeechRecognition();
+        
+        // Configure speech recognition
+        recognition.continuous = false;
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+        recognition.lang = voiceLanguage;
+        
+        // Event handlers
+        recognition.onstart = () => {
+          console.log('Speech recognition started');
+          setIsListening(true);
+          setIsProcessingVoice(false);
+          setGestureAnimation('listening');
           
-          recognitionRef.current.onstart = () => {
-            console.log('Speech recognition started');
-            setIsListening(true);
-            setGestureAnimation('listening');
-            
-            // Trigger haptic feedback if available
-            if (navigator.vibrate) {
-              navigator.vibrate([50, 50, 50]); // Three short vibrations
-            }
-          };
+          // Haptic feedback for start
+          if (navigator.vibrate) {
+            navigator.vibrate([50, 50, 50]); // Three short pulses
+          }
+        };
+        
+        recognition.onresult = (event) => {
+          console.log('Speech recognition result:', event);
+          const transcript = event.results[0][0].transcript;
+          console.log('Recognized speech:', transcript);
           
-          recognitionRef.current.onresult = (event: any) => {
-            const transcript = event.results[0][0].transcript;
-            console.log('Speech recognized:', transcript);
-            setInput(transcript);
-            setIsListening(false);
-            setIsProcessingVoice(true);
-            setGestureAnimation('processing');
-            
-            // Success haptic feedback
-            if (navigator.vibrate) {
-              navigator.vibrate([100, 50, 100]); // Success pattern
-            }
-            
-            // Auto-submit after brief delay for visual feedback
-            setTimeout(async () => {
-              setIsProcessingVoice(false);
-              if (transcript.trim()) {
-                try {
-                  await handleSendMessage();
-                } catch (error) {
-                  console.error('Error submitting voice message:', error);
-                  toast({
-                    title: "Voice Message Error",
-                    description: "Failed to send voice message. Please try again.",
-                    variant: "destructive"
-                  });
-                }
-              }
-              setGestureAnimation('idle');
-            }, 1200);
-          };
+          setInput(transcript);
+          setIsProcessingVoice(true);
+          setGestureAnimation('processing');
           
-          recognitionRef.current.onerror = (event: any) => {
-            console.error('Speech recognition error:', event.error);
-            setIsListening(false);
-            setIsProcessingVoice(false);
+          // Haptic feedback for success
+          if (navigator.vibrate) {
+            navigator.vibrate([100, 30, 100]); // Success pattern
+          }
+          
+          // Auto-send the message after a brief delay
+          setTimeout(() => {
+            handleSendMessage();
+          }, 500);
+        };
+        
+        recognition.onerror = (event) => {
+          console.error('Speech recognition error:', event.error);
+          setIsListening(false);
+          setIsProcessingVoice(false);
+          setGestureAnimation('idle');
+          
+          // Haptic feedback for error
+          if (navigator.vibrate) {
+            navigator.vibrate([200, 100, 200]); // Error pattern
+          }
+          
+          let errorMessage = 'Voice recognition failed';
+          switch (event.error) {
+            case 'network':
+              errorMessage = 'Network error during voice recognition';
+              break;
+            case 'not-allowed':
+              errorMessage = 'Microphone permission denied';
+              break;
+            case 'no-speech':
+              errorMessage = 'No speech detected';
+              break;
+            default:
+              errorMessage = `Voice recognition error: ${event.error}`;
+          }
+          
+          toast({
+            title: "Voice Recognition Error",
+            description: errorMessage,
+            variant: "destructive",
+          });
+        };
+        
+        recognition.onend = () => {
+          console.log('Speech recognition ended');
+          setIsListening(false);
+          if (!isProcessingVoice) {
             setGestureAnimation('idle');
-            
-            // Error haptic feedback
-            if (navigator.vibrate) {
-              navigator.vibrate([200, 100, 200, 100, 200]); // Error pattern
-            }
-            
-            toast({
-              title: "Voice Recognition Error",
-              description: `Speech recognition failed: ${event.error}`,
-              variant: "destructive"
-            });
-          };
-          
-          recognitionRef.current.onend = () => {
-            console.log('Speech recognition ended');
-            if (!isProcessingVoice) {
-              setIsListening(false);
-              setGestureAnimation('idle');
-            }
-          };
-        } catch (error) {
-          console.error('Failed to initialize speech recognition:', error);
-        }
+          }
+        };
+        
+        recognitionRef.current = recognition;
+      } else {
+        console.log('Speech recognition not supported');
+        setSpeechSupported(false);
       }
       
       // Check for speech synthesis support
       if ('speechSynthesis' in window) {
         speechSynthesisRef.current = window.speechSynthesis;
+        console.log('speechSynthesis available:', true);
+      } else {
+        console.log('Speech synthesis not supported');
       }
     };
-
+    
     initializeSpeech();
     
     return () => {
       if (recognitionRef.current) {
         recognitionRef.current.abort();
       }
-      if (speechSynthesisRef.current) {
-        speechSynthesisRef.current.cancel();
+      if (animationTimeoutRef.current) {
+        clearTimeout(animationTimeoutRef.current);
       }
     };
-  }, [toast, voiceLanguage]);
+  }, [voiceLanguage]);
+
+  // Voice language toggle
+  const toggleVoiceLanguage = () => {
+    const newLang = voiceLanguage === 'en-US' ? 'ar-SA' : 'en-US';
+    setVoiceLanguage(newLang);
+    
+    if (recognitionRef.current) {
+      recognitionRef.current.lang = newLang;
+    }
+    
+    toast({
+      title: "Voice Language Changed",
+      description: `Switched to ${newLang === 'en-US' ? 'English' : 'Arabic'}`,
+    });
+  };
+
+  // Start/stop voice recognition
+  const toggleVoiceRecognition = () => {
+    if (!speechSupported) {
+      toast({
+        title: "Voice Recognition Unavailable",
+        description: "Your browser doesn't support voice recognition",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    if (isListening) {
+      recognitionRef.current?.abort();
+      setIsListening(false);
+      setGestureAnimation('idle');
+    } else {
+      try {
+        recognitionRef.current?.start();
+      } catch (error) {
+        console.error('Error starting speech recognition:', error);
+        toast({
+          title: "Voice Recognition Error",
+          description: "Failed to start voice recognition",
+          variant: "destructive",
+        });
+      }
+    }
+  };
+
+  // Speak AI response
+  const speakResponse = (text: string) => {
+    if (!speechSynthesisRef.current || !speechEnabled) return;
+    
+    // Cancel any ongoing speech
+    speechSynthesisRef.current.cancel();
+    
+    // Clean the text for better speech
+    const cleanText = text.replace(/[*_`]/g, '').replace(/\n/g, '. ');
+    
+    const utterance = new SpeechSynthesisUtterance(cleanText);
+    utterance.lang = voiceLanguage;
+    utterance.rate = 0.9;
+    utterance.pitch = 1.0;
+    utterance.volume = 0.8;
+    
+    utterance.onstart = () => {
+      setGestureAnimation('speaking');
+      // Gentle vibration when AI starts speaking
+      if (navigator.vibrate) {
+        navigator.vibrate(200);
+      }
+    };
+    
+    utterance.onend = () => {
+      setGestureAnimation('idle');
+      setIsProcessingVoice(false);
+    };
+    
+    speechSynthesisRef.current.speak(utterance);
+  };
+
+  // Toggle speech synthesis
+  const toggleSpeechSynthesis = () => {
+    setSpeechEnabled(!speechEnabled);
+    
+    if (!speechEnabled) {
+      speechSynthesisRef.current?.cancel();
+    }
+    
+    toast({
+      title: speechEnabled ? "Speech Disabled" : "Speech Enabled",
+      description: speechEnabled ? "AI responses will be silent" : "AI responses will be spoken",
+    });
+  };
 
   // Show welcome message on first load
   useEffect(() => {
@@ -313,8 +411,8 @@ export function AIAssistantWidget({
       setMessages(prev => [...prev, assistantMessage]);
       
       // Speak the response if speech is enabled
-      if (speechEnabled && speechSynthesisRef.current) {
-        speakText(data.response);
+      if (speechEnabled && speechSynthesisRef.current && data.response) {
+        speakResponse(data.response);
       }
     },
     onError: () => {
@@ -885,39 +983,44 @@ export function AIAssistantWidget({
               />
               {speechSupported && (
                 <Button
-                  onClick={isListening ? stopListening : startListening}
+                  onClick={toggleVoiceRecognition}
                   disabled={assistantMutation.isPending}
                   size="sm"
                   variant={isListening ? "destructive" : "outline"}
                   className={cn(
-                    "px-2",
-                    isListening && "animate-pulse"
+                    "px-2 transition-all duration-300",
+                    isListening && "animate-pulse scale-110"
                   )}
-                  title={isListening ? t("ai.stop_listening") : t("ai.start_voice_command")}
+                  title={isListening ? "Stop listening" : "Start voice command"}
                 >
                   {isListening ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
                 </Button>
               )}
               {speechSynthesisRef.current && (
                 <Button
-                  onClick={toggleSpeech}
+                  onClick={toggleSpeechSynthesis}
                   disabled={assistantMutation.isPending}
                   size="sm"
                   variant="outline"
-                  className="px-2"
-                  title={speechEnabled ? t("ai.disable_voice_responses") : t("ai.enable_voice_responses")}
+                  className={cn(
+                    "px-2 transition-colors",
+                    speechEnabled
+                      ? "bg-green-50 hover:bg-green-100 text-green-700"
+                      : "bg-gray-50 hover:bg-gray-100"
+                  )}
+                  title={speechEnabled ? "Disable AI speech" : "Enable AI speech"}
                 >
                   {speechEnabled ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
                 </Button>
               )}
               {speechSupported && (
                 <Button
-                  onClick={toggleLanguage}
+                  onClick={toggleVoiceLanguage}
                   disabled={assistantMutation.isPending}
                   size="sm"
                   variant="outline"
-                  className="px-2 font-bold"
-                  title={voiceLanguage === 'ar-SA' ? t("ai.switch_to_english") : t("ai.switch_to_arabic")}
+                  className="px-2 font-bold bg-blue-50 hover:bg-blue-100"
+                  title={voiceLanguage === 'ar-SA' ? "Switch to English" : "Switch to Arabic"}
                 >
                   {voiceLanguage === 'ar-SA' ? 'ع' : 'EN'}
                 </Button>

@@ -180,9 +180,75 @@ const AIAssistantPage = () => {
     }
   };
 
+  // Voice recognition functionality
+  const [speechSupported, setSpeechSupported] = useState(false);
+  const [voiceLanguage, setVoiceLanguage] = useState('en-US');
+  const recognitionRef = useRef<any>(null);
+  const speechSynthesisRef = useRef<SpeechSynthesis | null>(null);
+  
+  // Initialize speech recognition
+  useEffect(() => {
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    
+    if (SpeechRecognition) {
+      setSpeechSupported(true);
+      const recognition = new SpeechRecognition();
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.lang = voiceLanguage;
+      
+      recognition.onresult = (event: any) => {
+        const transcript = event.results[0][0].transcript;
+        setInputValue(transcript);
+        setIsListening(false);
+        
+        // Auto-send after a brief delay
+        setTimeout(() => {
+          if (transcript.trim()) {
+            handleSendMessage();
+          }
+        }, 500);
+      };
+      
+      recognition.onerror = () => {
+        setIsListening(false);
+      };
+      
+      recognition.onend = () => {
+        setIsListening(false);
+      };
+      
+      recognitionRef.current = recognition;
+    }
+    
+    if ('speechSynthesis' in window) {
+      speechSynthesisRef.current = window.speechSynthesis;
+    }
+  }, [voiceLanguage]);
+
   const toggleListening = () => {
-    setIsListening(!isListening);
-    // Voice recognition logic would go here
+    if (!speechSupported) return;
+    
+    if (isListening) {
+      recognitionRef.current?.abort();
+      setIsListening(false);
+    } else {
+      try {
+        recognitionRef.current?.start();
+        setIsListening(true);
+      } catch (error) {
+        console.error('Voice recognition error:', error);
+      }
+    }
+  };
+
+  const toggleVoiceLanguage = () => {
+    const newLang = voiceLanguage === 'en-US' ? 'ar-SA' : 'en-US';
+    setVoiceLanguage(newLang);
+    
+    if (recognitionRef.current) {
+      recognitionRef.current.lang = newLang;
+    }
   };
 
   return (
