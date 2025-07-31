@@ -23,7 +23,7 @@ export function useThrottle<T extends (...args: any[]) => any>(
   delay: number
 ): T {
   const lastRan = useRef<number>(0);
-  const handler = useRef<NodeJS.Timeout>();
+  const handler = useRef<NodeJS.Timeout | undefined>(undefined);
 
   return useCallback(
     (...args: Parameters<T>) => {
@@ -31,7 +31,9 @@ export function useThrottle<T extends (...args: any[]) => any>(
         callback(...args);
         lastRan.current = Date.now();
       } else {
-        clearTimeout(handler.current);
+        if (handler.current) {
+          clearTimeout(handler.current);
+        }
         handler.current = setTimeout(() => {
           callback(...args);
           lastRan.current = Date.now();
@@ -56,12 +58,12 @@ export function useMemoizedSelector<T, R>(
 // Performance monitoring hook
 export function usePerformanceMonitor(componentName: string) {
   const renderCount = useRef(0);
-  const startTime = useRef<number>();
+  const startTime = useRef<number | undefined>(undefined);
 
   useEffect(() => {
     startTime.current = performance.now();
     renderCount.current++;
-  });
+  }, []); // Only run on mount
 
   useEffect(() => {
     if (startTime.current) {
@@ -72,7 +74,7 @@ export function usePerformanceMonitor(componentName: string) {
         console.warn(`[Performance] ${componentName} render took ${renderTime.toFixed(2)}ms (render #${renderCount.current})`);
       }
     }
-  });
+  }, [componentName]); // Include componentName in dependencies
 
   return {
     renderCount: renderCount.current,
