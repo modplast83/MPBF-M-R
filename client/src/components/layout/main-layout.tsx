@@ -20,6 +20,9 @@ import {
   SheetClose,
 } from "@/components/ui/sheet";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
+import { PageTransition, ParallaxContainer } from "@/components/ui/page-transition";
+import { motion, AnimatePresence } from "framer-motion";
+import { usePageTransition } from "@/hooks/use-page-transition";
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -33,6 +36,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
   const { isRTL } = useLanguage();
   const [location] = useLocation();
   const isMobile = useIsMobile();
+  const transitionState = usePageTransition();
 
   const isAuthPage = location === "/auth";
 
@@ -90,9 +94,25 @@ export default function MainLayout({ children }: MainLayoutProps) {
           isMobile ? "p-3 sm:p-4" : "p-4 sm:p-6 lg:p-8"
         } transition-all duration-300 ease-in-out`}>
           <div className="max-w-full mx-auto h-full">
-            <div className="space-y-6">
-              {children}
-            </div>
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={location}
+                initial={{ opacity: 0, y: 20, scale: 0.98 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -20, scale: 1.02 }}
+                transition={{
+                  duration: 0.4,
+                  ease: [0.22, 1, 0.36, 1]
+                }}
+                className="h-full"
+              >
+                <ParallaxContainer speed={0.2} offset={5}>
+                  <div className="space-y-6">
+                    {children}
+                  </div>
+                </ParallaxContainer>
+              </motion.div>
+            </AnimatePresence>
           </div>
         </main>
       </div>

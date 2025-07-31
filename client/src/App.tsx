@@ -1,5 +1,9 @@
-import { Switch, Route } from "wouter";
+import { Switch, Route, useLocation } from "wouter";
 import { lazy } from "react";
+import { PageTransition, SmoothScroll } from "@/components/ui/page-transition";
+import { AnimatedBackground } from "@/components/ui/animated-background";
+import { AnimatePresence } from "framer-motion";
+import { usePageTransition } from "@/hooks/use-page-transition";
 import Dashboard from "@/pages/dashboard";
 import MyDashboard from "@/pages/my-dashboard";
 import SetupIndex from "@/pages/setup/index";
@@ -104,9 +108,13 @@ import EmployeeDashboard from "@/pages/employee-dashboard";
 import ServerRestart from "@/pages/system/server-restart";
 import EmailConfiguration from "@/pages/system/email-config";
 import AIAssistantPage from "@/pages/ai-assistant";
+import AnimationDemo from "@/pages/animation-demo";
 import { User } from "@shared/schema";
 
 function App() {
+  const [location] = useLocation();
+  const transitionState = usePageTransition();
+
   // Remove any existing demo data flag
   useEffect(() => {
     if (typeof window !== "undefined" && window.localStorage) {
@@ -119,18 +127,32 @@ function App() {
       <AuthProvider>
         {(authContext) => (
           <PermissionsProvider user={authContext.user}>
-            <div>
-              <Switch>
-                <Route path="/auth" component={AuthPage} />
-                <Route path="/customer-info" component={CustomerInfoPage} />
-                <Route path="*">
-                  <MainLayout>
+            <SmoothScroll>
+              <AnimatedBackground variant="gradient">
+                <Switch>
+                  <Route path="/auth">
+                    <PageTransition variant="fade" duration={0.5}>
+                      <AuthPage />
+                    </PageTransition>
+                  </Route>
+                  <Route path="/customer-info">
+                    <PageTransition variant="slide" duration={0.4}>
+                      <CustomerInfoPage />
+                    </PageTransition>
+                  </Route>
+                  <Route path="*">
+                    <MainLayout>
                     <Switch>
                       <ProtectedRoute path="/" component={Dashboard} />
                       <ProtectedRoute
                         path="/ai-assistant"
                         component={AIAssistantPage}
                         module="AI Assistant"
+                      />
+                      <ProtectedRoute
+                        path="/animation-demo"
+                        component={AnimationDemo}
+                        module="Animation Demo"
                       />
                       <ProtectedRoute
                         path="/my-dashboard"
@@ -572,7 +594,8 @@ function App() {
                   </MainLayout>
                 </Route>
               </Switch>
-            </div>
+              </AnimatedBackground>
+            </SmoothScroll>
           </PermissionsProvider>
         )}
       </AuthProvider>
