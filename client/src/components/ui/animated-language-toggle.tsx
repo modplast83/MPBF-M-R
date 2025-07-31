@@ -170,12 +170,15 @@ export default function AnimatedLanguageToggle({
 
     setIsAnimating(true);
 
-    // Small delay for animation
-    setTimeout(() => {
+    // Small delay for animation with cleanup
+    const timer = setTimeout(() => {
       setLanguage(newLanguage);
       setIsAnimating(false);
       setIsOpen(false);
     }, 150);
+
+    // Store timer for potential cleanup
+    return () => clearTimeout(timer);
   };
 
   // Button variant - cycles through all languages

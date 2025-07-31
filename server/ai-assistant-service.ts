@@ -21,6 +21,23 @@ export interface AssistantResponse {
   actions?: AssistantAction[];
   confidence: number;
   context: string;
+  responseType?: 'confirmation_required' | 'selection_required' | 'completed_action' | 'information_only';
+  confirmation?: {
+    action: string;
+    summary: string;
+    details: string;
+  };
+  selections?: {
+    title: string;
+    options: Array<{
+      id: string;
+      title: string;
+      description: string;
+      data: any;
+    }>;
+    selectionType: string;
+    context?: any;
+  };
 }
 
 export interface AssistantSuggestion {
@@ -470,15 +487,17 @@ export class AIAssistantService {
 
   async getProductionInsights(timeframe: string = '7d'): Promise<ProductionAnalysis> {
     try {
-      // Get production data from database  
+      // Get production data from database with parameterized query
+      const intervalDays = timeframe === '7d' ? 7 : 30;
       const ordersQuery = `
         SELECT o.*, jo.*, r.current_stage, r.status as roll_status
         FROM orders o
         LEFT JOIN job_orders jo ON o.id = jo.order_id
         LEFT JOIN rolls r ON jo.id = r.job_order_id
-        WHERE o.date >= CURRENT_DATE - INTERVAL '${timeframe === '7d' ? '7 days' : '30 days'}'
+        WHERE o.date >= CURRENT_DATE - INTERVAL $1::text
         ORDER BY o.date DESC
       `;
+      const intervalString = `${intervalDays} days`;
 
       const machineQuery = `
         SELECT s.name as section_name, m.name as machine_name, m.is_active
@@ -487,7 +506,7 @@ export class AIAssistantService {
       `;
 
       const [ordersResult, machinesResult] = await Promise.all([
-        this.db.query(ordersQuery),
+        this.db.query(ordersQuery, [intervalString]),
         this.db.query(machineQuery)
       ]);
 
@@ -1938,24 +1957,36 @@ DOCUMENT MANAGEMENT:
   async createOrderRecord(data: any): Promise<any> {
     try {
       let customerId = data.customerId;
+      let resolvedCustomer: any = null;
       
-      // Try to resolve customer by name first
+      // Always try to resolve customer by name first if customerName is provided
       if (data.customerName) {
-        const customer = await this.findCustomerByName(data.customerName);
-        if (customer) {
-          customerId = customer.id;
+        resolvedCustomer = await this.findCustomerByName(data.customerName);
+        if (resolvedCustomer && resolvedCustomer.id) {
+          customerId = resolvedCustomer.id;
           console.log(`Resolved customer "${data.customerName}" to ID: ${customerId}`);
         } else {
           throw new Error(`Customer "${data.customerName}" not found. Available customers can be viewed in the customers module.`);
         }
       }
-      // If customerId is not provided or looks like a name, try to find customer by name
-      else if (!customerId || customerId.length > 10 || /[^\w-]/.test(customerId)) {
-        const customerName = data.customerId || data.customer;
+      // If customerId looks like a name (contains spaces, special chars, or is too long), try to find by name
+      else if (customerId && (customerId.includes(' ') || customerId.length > 10 || /[^\w-]/.test(customerId))) {
+        console.log(`Attempting to resolve customer name: "${customerId}"`);
+        resolvedCustomer = await this.findCustomerByName(customerId);
+        if (resolvedCustomer && resolvedCustomer.id) {
+          customerId = resolvedCustomer.id;
+          console.log(`Resolved customer name "${data.customerId}" to ID: ${customerId}`);
+        } else {
+          throw new Error(`Customer "${customerId}" not found. Please use a valid customer ID or ensure the customer exists in the system.`);
+        }
+      }
+      // If still no customerId, try other fields
+      else if (!customerId) {
+        const customerName = data.customer || data.customerName;
         if (customerName) {
-          const customer = await this.findCustomerByName(customerName);
-          if (customer) {
-            customerId = customer.id;
+          resolvedCustomer = await this.findCustomerByName(customerName);
+          if (resolvedCustomer && resolvedCustomer.id) {
+            customerId = resolvedCustomer.id;
             console.log(`Resolved customer "${customerName}" to ID: ${customerId}`);
           } else {
             throw new Error(`Customer "${customerName}" not found. Available customers can be viewed in the customers module.`);
@@ -1963,10 +1994,18 @@ DOCUMENT MANAGEMENT:
         }
       }
       
-      // Validate required fields
+      // Final validation - ensure we have a valid customer ID
       if (!customerId) {
         throw new Error('Customer ID or customer name is required for order creation');
       }
+      
+      // Validate that the customer ID exists in database
+      const customerCheck = await this.db.query('SELECT id, name FROM customers WHERE id = $1', [customerId]);
+      if (customerCheck.rows.length === 0) {
+        throw new Error(`Customer with ID "${customerId}" does not exist in the database. Please verify the customer ID or create the customer first.`);
+      }
+      
+      console.log(`Validated customer ID: ${customerId} (${customerCheck.rows[0].name})`)
 
       const orderData = {
         customerId: customerId,
@@ -2012,7 +2051,7 @@ DOCUMENT MANAGEMENT:
         );
         
         const customerProducts = customerProductsResult.rows;
-        let selectedProduct = null;
+        let selectedProduct: any = null;
 
         // Try to match product based on description, type, or any text in the original data
         const searchTerms = [
@@ -2059,9 +2098,16 @@ DOCUMENT MANAGEMENT:
             }
           }));
           
+          // Get customer name for the error message
+          const customerResult = await this.db.query('SELECT name FROM customers WHERE id = $1', [customerId]);
+          const customerName = customerResult.rows[0]?.name || 'Unknown Customer';
+          
+          // Get default quantity
+          const defaultQuantity = data.quantity || data.qty || data.amount || 100;
+          
           throw new Error(`PRODUCT_SELECTION_REQUIRED:${JSON.stringify({
-            customerName: customer.name,
-            quantity: quantity,
+            customerName: customerName,
+            quantity: defaultQuantity,
             requestedProduct: data.productType || data.productDescription,
             availableProducts: productOptions
           })}`);
@@ -2098,7 +2144,7 @@ DOCUMENT MANAGEMENT:
             [orderId, selectedProduct.id, quantity]
           );
           jobOrdersCreated++;
-          console.log(`Auto-created job order for customer ${customerId}: ${selectedProduct.category_name} - ${selectedProduct.size_caption}, Quantity: ${quantity}kg`);
+          console.log(`Auto-created job order for customer ${customerId}: ${selectedProduct.category_name || 'Unknown'} - ${selectedProduct.size_caption || 'Unknown'}, Quantity: ${quantity}kg`);
         }
       }
 
