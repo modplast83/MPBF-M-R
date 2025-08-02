@@ -363,38 +363,49 @@ export class AIAssistantService {
   // Enhanced method to find specific records by intelligent name matching
   private async findCustomerByName(customerName: string): Promise<any> {
     try {
+      console.log(`🔍 Searching for customer: "${customerName}"`);
+      
       // First try exact match
       const exactQuery = `
         SELECT * FROM customers 
-        WHERE LOWER(name) = LOWER($1) OR LOWER(name_ar) = LOWER($1) OR LOWER(code) = LOWER($1)
+        WHERE LOWER(TRIM(name)) = LOWER(TRIM($1)) 
+           OR LOWER(TRIM(name_ar)) = LOWER(TRIM($1)) 
+           OR LOWER(TRIM(code)) = LOWER(TRIM($1))
         LIMIT 1
       `;
       const exactResult = await this.db.query(exactQuery, [customerName]);
       
       if (exactResult.rows.length > 0) {
+        console.log(`✅ Found exact match: ${exactResult.rows[0].name} (${exactResult.rows[0].id})`);
         return exactResult.rows[0];
       }
 
-      // Then try fuzzy search
+      // Then try fuzzy search with TRIM to handle whitespace issues
       const fuzzyQuery = `
         SELECT *, 
         CASE 
-          WHEN LOWER(name) LIKE LOWER($1) THEN 1
-          WHEN LOWER(name_ar) LIKE LOWER($1) THEN 1
-          WHEN LOWER(name) LIKE LOWER('%' || $1 || '%') THEN 2
-          WHEN LOWER(name_ar) LIKE LOWER('%' || $1 || '%') THEN 2
+          WHEN LOWER(TRIM(name)) LIKE LOWER(TRIM($1)) THEN 1
+          WHEN LOWER(TRIM(name_ar)) LIKE LOWER(TRIM($1)) THEN 1
+          WHEN LOWER(TRIM(name)) LIKE LOWER('%' || TRIM($1) || '%') THEN 2
+          WHEN LOWER(TRIM(name_ar)) LIKE LOWER('%' || TRIM($1) || '%') THEN 2
           ELSE 3
         END as match_score
         FROM customers 
-        WHERE LOWER(name) LIKE LOWER('%' || $1 || '%') 
-           OR LOWER(name_ar) LIKE LOWER('%' || $1 || '%')
-           OR LOWER(code) LIKE LOWER('%' || $1 || '%')
+        WHERE LOWER(TRIM(name)) LIKE LOWER('%' || TRIM($1) || '%') 
+           OR LOWER(TRIM(name_ar)) LIKE LOWER('%' || TRIM($1) || '%')
+           OR LOWER(TRIM(code)) LIKE LOWER('%' || TRIM($1) || '%')
         ORDER BY match_score, name
         LIMIT 5
       `;
       const fuzzyResult = await this.db.query(fuzzyQuery, [customerName]);
       
-      return fuzzyResult.rows.length > 0 ? fuzzyResult.rows[0] : null;
+      if (fuzzyResult.rows.length > 0) {
+        console.log(`🎯 Found fuzzy match: ${fuzzyResult.rows[0].name} (${fuzzyResult.rows[0].id})`);
+        return fuzzyResult.rows[0];
+      }
+      
+      console.log(`❌ No customer found for: "${customerName}"`);
+      return null;
     } catch (error) {
       console.error('Error finding customer:', error);
       return null;
@@ -1961,22 +1972,25 @@ DOCUMENT MANAGEMENT:
       
       // Always try to resolve customer by name first if customerName is provided
       if (data.customerName) {
+        console.log(`🔍 Resolving customer name: "${data.customerName}"`);
         resolvedCustomer = await this.findCustomerByName(data.customerName);
-        if (resolvedCustomer && resolvedCustomer.id) {
+        if (resolvedCustomer && resolvedCustomer.id && !resolvedCustomer.notFound) {
           customerId = resolvedCustomer.id;
-          console.log(`Resolved customer "${data.customerName}" to ID: ${customerId}`);
+          console.log(`✅ Resolved customer "${data.customerName}" to ID: ${customerId}`);
         } else {
+          console.error(`❌ Customer lookup failed for: "${data.customerName}"`);
           throw new Error(`Customer "${data.customerName}" not found. Available customers can be viewed in the customers module.`);
         }
       }
       // If customerId looks like a name (contains spaces, special chars, or is too long), try to find by name
       else if (customerId && (customerId.includes(' ') || customerId.length > 10 || /[^\w-]/.test(customerId))) {
-        console.log(`Attempting to resolve customer name: "${customerId}"`);
+        console.log(`🔍 Attempting to resolve customer name: "${customerId}"`);
         resolvedCustomer = await this.findCustomerByName(customerId);
-        if (resolvedCustomer && resolvedCustomer.id) {
+        if (resolvedCustomer && resolvedCustomer.id && !resolvedCustomer.notFound) {
           customerId = resolvedCustomer.id;
-          console.log(`Resolved customer name "${data.customerId}" to ID: ${customerId}`);
+          console.log(`✅ Resolved customer name "${data.customerId}" to ID: ${customerId}`);
         } else {
+          console.error(`❌ Customer lookup failed for: "${customerId}"`);
           throw new Error(`Customer "${customerId}" not found. Please use a valid customer ID or ensure the customer exists in the system.`);
         }
       }
@@ -1984,11 +1998,13 @@ DOCUMENT MANAGEMENT:
       else if (!customerId) {
         const customerName = data.customer || data.customerName;
         if (customerName) {
+          console.log(`🔍 Resolving customer from fallback fields: "${customerName}"`);
           resolvedCustomer = await this.findCustomerByName(customerName);
-          if (resolvedCustomer && resolvedCustomer.id) {
+          if (resolvedCustomer && resolvedCustomer.id && !resolvedCustomer.notFound) {
             customerId = resolvedCustomer.id;
-            console.log(`Resolved customer "${customerName}" to ID: ${customerId}`);
+            console.log(`✅ Resolved customer "${customerName}" to ID: ${customerId}`);
           } else {
+            console.error(`❌ Customer lookup failed for: "${customerName}"`);
             throw new Error(`Customer "${customerName}" not found. Available customers can be viewed in the customers module.`);
           }
         }
@@ -1999,13 +2015,19 @@ DOCUMENT MANAGEMENT:
         throw new Error('Customer ID or customer name is required for order creation');
       }
       
+      // CRITICAL: Prevent using customer names as IDs (foreign key constraint protection)
+      if (typeof customerId === 'string' && (customerId.includes(' ') || customerId.length > 10 || /[^\w-]/.test(customerId))) {
+        console.error(`🚨 CRITICAL ERROR: Attempting to use customer name "${customerId}" as customer ID. This violates foreign key constraints.`);
+        throw new Error(`Invalid customer ID format: "${customerId}". Customer names cannot be used as IDs. Please ensure customer name resolution worked correctly.`);
+      }
+      
       // Validate that the customer ID exists in database
       const customerCheck = await this.db.query('SELECT id, name FROM customers WHERE id = $1', [customerId]);
       if (customerCheck.rows.length === 0) {
         throw new Error(`Customer with ID "${customerId}" does not exist in the database. Please verify the customer ID or create the customer first.`);
       }
       
-      console.log(`Validated customer ID: ${customerId} (${customerCheck.rows[0].name})`)
+      console.log(`✅ Validated customer ID: ${customerId} (${customerCheck.rows[0].name})`)
 
       const orderData = {
         customerId: customerId,

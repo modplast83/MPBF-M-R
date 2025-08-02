@@ -298,7 +298,7 @@ export function CustomizableDashboardV2() {
     setWidgets(currentWidgets => {
       const items = Array.from(currentWidgets);
       const [reorderedItem] = items.splice(result.source.index, 1);
-      items.splice(result.destination.index, 0, reorderedItem);
+      items.splice(result.destination!.index, 0, reorderedItem);
 
       // Update positions
       const updatedWidgets = items.map((widget, index) => ({
