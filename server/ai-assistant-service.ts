@@ -412,6 +412,60 @@ export class AIAssistantService {
     }
   }
 
+  // Method to get customer details by name (supports both English and Arabic)
+  private async getCustomerDetails(customerName: string): Promise<any> {
+    try {
+      console.log(`🔍 Getting customer details for: "${customerName}"`);
+      
+      // First try to find the customer by name
+      const customer = await this.findCustomerByName(customerName);
+      if (!customer) {
+        return null;
+      }
+
+      // Get detailed customer information including orders and products
+      const detailsQuery = `
+        SELECT 
+          c.*,
+          COUNT(DISTINCT o.id) as total_orders,
+          COUNT(DISTINCT cp.id) as total_products,
+          COUNT(DISTINCT CASE WHEN o.status = 'completed' THEN o.id END) as completed_orders,
+          COUNT(DISTINCT CASE WHEN o.status = 'pending' THEN o.id END) as pending_orders,
+          SUM(CASE WHEN o.status = 'completed' THEN o.total_amount ELSE 0 END) as total_revenue
+        FROM customers c
+        LEFT JOIN orders o ON c.id = o.customer_id
+        LEFT JOIN customer_products cp ON c.id = cp.customer_id
+        WHERE c.id = $1
+        GROUP BY c.id
+      `;
+      
+      const customerDetails = await this.db.query(detailsQuery, [customer.id]);
+      
+      if (customerDetails.rows.length === 0) {
+        return null;
+      }
+
+      // Get customer products
+      const productsQuery = `
+        SELECT cp.*, cat.name as category_name
+        FROM customer_products cp
+        LEFT JOIN categories cat ON cp.category_id = cat.id
+        WHERE cp.customer_id = $1
+        ORDER BY cp.size_caption
+      `;
+      
+      const products = await this.db.query(productsQuery, [customer.id]);
+
+      return {
+        ...customerDetails.rows[0],
+        products: products.rows
+      };
+    } catch (error) {
+      console.error('Error getting customer details:', error);
+      return null;
+    }
+  }
+
   // Enhanced method to get detailed record information
   private async getRecordDetails(tableName: string, recordId: string | number): Promise<any> {
     try {
@@ -576,6 +630,91 @@ export class AIAssistantService {
   async processAssistantQuery(request: AssistantRequest): Promise<AssistantResponse> {
     try {
       const { message, context } = request;
+      
+      // Check for customer details queries with improved patterns
+      console.log(`🔍 Processing message: "${message}"`);
+      
+      // Enhanced patterns for customer queries
+      const arabicCustomerQuery = /(?:عرض|اعرض|معلومات|تفاصيل|ماهي|ما هي).*?(?:العميل|عميل)\s+([^?\s،.]+)/i;
+      const englishCustomerQuery = /(?:show|display|get|customer|details|info).*?(?:customer|for|of)\s+([^?\s.]+)/i;
+      
+      let customerMatch = message.match(arabicCustomerQuery) || message.match(englishCustomerQuery);
+      
+      console.log(`🔍 Customer query detected: ${!!customerMatch}`);
+      
+      if (customerMatch) {
+        const customerName = customerMatch[1];
+        if (customerName) {
+          console.log(`🔍 Detected customer details query for: "${customerName}"`);
+          const customerDetails = await this.getCustomerDetails(customerName.trim());
+          
+          if (customerDetails) {
+            return {
+              response: `معلومات العميل "${customerName}":
+
+📋 **البيانات الأساسية:**
+- رقم العميل: ${customerDetails.id}
+- الاسم (English): ${customerDetails.name}
+- الاسم (العربي): ${customerDetails.name_ar || 'غير محدد'}
+- رمز العميل: ${customerDetails.code}
+
+📊 **إحصائيات الطلبات:**
+- إجمالي الطلبات: ${customerDetails.total_orders || 0}
+- الطلبات المكتملة: ${customerDetails.completed_orders || 0}
+- الطلبات المعلقة: ${customerDetails.pending_orders || 0}
+- إجمالي الإيرادات: ${customerDetails.total_revenue || 0}
+
+🛍️ **المنتجات المتاحة:**
+${customerDetails.products && customerDetails.products.length > 0 ? 
+  customerDetails.products.map(p => `- ${p.size_caption} (${p.category_name || 'فئة غير محددة'})`).join('\n') :
+  'لا توجد منتجات مسجلة لهذا العميل'
+}`,
+              suggestions: ["إنشاء طلب جديد للعميل", "عرض تاريخ الطلبات", "إضافة منتج جديد للعميل"],
+              actions: [
+                {
+                  type: "navigate",
+                  label: "عرض تفاصيل العميل الكاملة",
+                  data: { actionPath: `/customers/${customerDetails.id}` }
+                },
+                {
+                  type: "navigate", 
+                  label: "إنشاء طلب جديد",
+                  data: { actionPath: "/orders/new" }
+                }
+              ],
+              confidence: 0.98,
+              context: `تم العثور على العميل "${customerName}" وعرض تفاصيله الكاملة`,
+              responseType: "information_only",
+              processingTime: Date.now()
+            };
+          } else {
+            return {
+              response: `عذراً، لم أتمكن من العثور على عميل باسم "${customerName}" في قاعدة البيانات. 
+
+🔍 **اقتراحات للبحث:**
+- تأكد من كتابة الاسم بشكل صحيح
+- جرب البحث باستخدام رمز العميل
+- تحقق من قائمة العملاء في قسم إدارة العملاء
+
+📊 **معلومات النظام:**
+- إجمالي العملاء المسجلين: 2,166 عميل
+- يمكن البحث بالاسم العربي أو الإنجليزي`,
+              suggestions: ["البحث في قائمة العملاء", "إضافة عميل جديد", "عرض قائمة العملاء الأكثر نشاطاً"],
+              actions: [
+                {
+                  type: "navigate",
+                  label: "الانتقال إلى قائمة العملاء",
+                  data: { actionPath: "/customers" }
+                }
+              ],
+              confidence: 0.95,
+              context: `لم يتم العثور على العميل "${customerName}" في قاعدة البيانات`,
+              responseType: "information_only",
+              processingTime: Date.now()
+            };
+          }
+        }
+      }
       
       // Get comprehensive database context for AI
       const databaseSchema = this.getDatabaseSchema();

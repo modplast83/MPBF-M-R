@@ -503,10 +503,194 @@ export class AnthropicAIAssistantService {
     };
   }
 
+  // Method to find customer by name (supports Arabic and English)
+  private async findCustomerByName(customerName: string): Promise<any> {
+    try {
+      console.log(`🔍 Searching for customer: "${customerName}"`);
+      
+      // First try exact match in both name and name_ar columns
+      const exactQuery = `
+        SELECT * FROM customers 
+        WHERE LOWER(TRIM(name)) = LOWER(TRIM($1)) 
+           OR LOWER(TRIM(name_ar)) = LOWER(TRIM($1)) 
+           OR LOWER(TRIM(code)) = LOWER(TRIM($1))
+        LIMIT 1
+      `;
+      const exactResult = await this.db.query(exactQuery, [customerName]);
+      
+      if (exactResult.rows.length > 0) {
+        console.log(`✅ Found exact match: ${exactResult.rows[0].name} (${exactResult.rows[0].id})`);
+        return exactResult.rows[0];
+      }
+
+      // Then try fuzzy search with TRIM to handle whitespace issues
+      const fuzzyQuery = `
+        SELECT *, 
+        CASE 
+          WHEN LOWER(TRIM(name)) LIKE LOWER(TRIM($1)) THEN 1
+          WHEN LOWER(TRIM(name_ar)) LIKE LOWER(TRIM($1)) THEN 1
+          WHEN LOWER(TRIM(name)) LIKE LOWER('%' || TRIM($1) || '%') THEN 2
+          WHEN LOWER(TRIM(name_ar)) LIKE LOWER('%' || TRIM($1) || '%') THEN 2
+          ELSE 3
+        END as match_score
+        FROM customers 
+        WHERE LOWER(TRIM(name)) LIKE LOWER('%' || TRIM($1) || '%') 
+           OR LOWER(TRIM(name_ar)) LIKE LOWER('%' || TRIM($1) || '%')
+           OR LOWER(TRIM(code)) LIKE LOWER('%' || TRIM($1) || '%')
+        ORDER BY match_score, name
+        LIMIT 5
+      `;
+      const fuzzyResult = await this.db.query(fuzzyQuery, [customerName]);
+      
+      if (fuzzyResult.rows.length > 0) {
+        console.log(`🎯 Found fuzzy match: ${fuzzyResult.rows[0].name} (${fuzzyResult.rows[0].id})`);
+        return fuzzyResult.rows[0];
+      }
+      
+      console.log(`❌ No customer found for: "${customerName}"`);
+      return null;
+    } catch (error) {
+      console.error('Error finding customer:', error);
+      return null;
+    }
+  }
+
+  // Method to get customer details with orders and products
+  private async getCustomerDetails(customerName: string): Promise<any> {
+    try {
+      console.log(`🔍 Getting customer details for: "${customerName}"`);
+      
+      // First find the customer
+      const customer = await this.findCustomerByName(customerName);
+      if (!customer) {
+        return null;
+      }
+
+      // Get detailed customer information including orders and products
+      const detailsQuery = `
+        SELECT 
+          c.*,
+          COUNT(DISTINCT o.id) as total_orders,
+          COUNT(DISTINCT cp.id) as total_products,
+          COUNT(DISTINCT CASE WHEN o.status = 'completed' THEN o.id END) as completed_orders,
+          COUNT(DISTINCT CASE WHEN o.status = 'pending' THEN o.id END) as pending_orders
+        FROM customers c
+        LEFT JOIN orders o ON c.id = o.customer_id
+        LEFT JOIN customer_products cp ON c.id = cp.customer_id
+        WHERE c.id = $1
+        GROUP BY c.id
+      `;
+      
+      const customerDetails = await this.db.query(detailsQuery, [customer.id]);
+      
+      if (customerDetails.rows.length === 0) {
+        return null;
+      }
+
+      // Get customer products
+      const productsQuery = `
+        SELECT cp.*, cat.name as category_name
+        FROM customer_products cp
+        LEFT JOIN categories cat ON cp.category_id = cat.id
+        WHERE cp.customer_id = $1
+        ORDER BY cp.size_caption
+      `;
+      
+      const products = await this.db.query(productsQuery, [customer.id]);
+
+      return {
+        ...customerDetails.rows[0],
+        products: products.rows
+      };
+    } catch (error) {
+      console.error('Error getting customer details:', error);
+      return null;
+    }
+  }
+
   // Professional AI assistant with Claude Sonnet 4
   async processMessage(request: AssistantRequest): Promise<AssistantResponse> {
     try {
       console.log(`🧠 AI Processing: "${request.message}" with context:`, request.context);
+      
+      // Check for customer details queries first
+      console.log(`🔍 DEBUG: Checking customer query patterns...`);
+      const arabicCustomerQuery = /(?:عرض|اعرض|معلومات|تفاصيل|ماهي|ما هي).*?(?:العميل|عميل)\s+([^?\s،.]+)/i;
+      // Simple English pattern that captures the customer name after "for"
+      const englishCustomerQuery = /for\s+([a-zA-Z0-9]+)/i;
+      
+      let customerMatch = request.message.match(arabicCustomerQuery) || request.message.match(englishCustomerQuery);
+      console.log(`🔍 DEBUG: Customer match result:`, customerMatch);
+      
+      if (customerMatch) {
+        const customerName = customerMatch[1];
+        console.log(`🔍 Detected customer details query for: "${customerName}"`);
+        const customerDetails = await this.getCustomerDetails(customerName.trim());
+        
+        if (customerDetails) {
+          return {
+            response: `معلومات العميل "${customerName}":
+
+📋 **البيانات الأساسية:**
+- رقم العميل: ${customerDetails.id}
+- الاسم (English): ${customerDetails.name}
+- الاسم (العربي): ${customerDetails.name_ar || 'غير محدد'}
+- رمز العميل: ${customerDetails.code}
+
+📊 **إحصائيات الطلبات:**
+- إجمالي الطلبات: ${customerDetails.total_orders || 0}
+- الطلبات المكتملة: ${customerDetails.completed_orders || 0}
+- الطلبات المعلقة: ${customerDetails.pending_orders || 0}
+- إجمالي المنتجات: ${customerDetails.total_products || 0}
+
+🛍️ **المنتجات المتاحة:**
+${customerDetails.products && customerDetails.products.length > 0 ? 
+  customerDetails.products.map(p => `- ${p.size_caption} (${p.category_name || 'فئة غير محددة'})`).join('\n') :
+  'لا توجد منتجات مسجلة لهذا العميل'
+}`,
+            suggestions: ["إنشاء طلب جديد للعميل", "عرض تاريخ الطلبات", "إضافة منتج جديد للعميل"],
+            actions: [
+              {
+                type: "navigate",
+                label: "عرض تفاصيل العميل الكاملة",
+                data: { actionPath: `/customers/${customerDetails.id}` }
+              },
+              {
+                type: "navigate", 
+                label: "إنشاء طلب جديد",
+                data: { actionPath: "/orders/new" }
+              }
+            ],
+            confidence: 0.98,
+            context: `تم العثور على العميل "${customerName}" وعرض تفاصيله الكاملة`,
+            responseType: "information_only"
+          };
+        } else {
+          return {
+            response: `عذراً، لم أتمكن من العثور على عميل باسم "${customerName}" في قاعدة البيانات. 
+
+🔍 **اقتراحات للبحث:**
+- تأكد من كتابة الاسم بشكل صحيح
+- جرب البحث باستخدام رمز العميل
+- تحقق من قائمة العملاء في قسم إدارة العملاء
+
+📊 **معلومات النظام:**
+- إجمالي العملاء المسجلين: 2,166 عميل
+- يمكن البحث بالاسم العربي أو الإنجليزي`,
+            suggestions: ["البحث في قائمة العملاء", "إضافة عميل جديد", "عرض قائمة العملاء الأكثر نشاطاً"],
+            actions: [
+              {
+                type: "navigate",
+                label: "الانتقال إلى قائمة العملاء",
+                data: { actionPath: "/customers" }
+              }
+            ],
+            confidence: 0.95,
+            context: `لم يتم العثور على العميل "${customerName}" في قاعدة البيانات`,
+            responseType: "information_only"
+          };
+        }
+      }
       
       // Check API key
       if (!process.env.ANTHROPIC_API_KEY) {
