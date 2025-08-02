@@ -6,7 +6,6 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useTranslation } from "react-i18next";
 import {
   Bot,
   BarChart3,
@@ -34,14 +33,13 @@ interface ChatMessage {
 }
 
 export function AIAssistantDashboard({ className }: AIAssistantDashboardProps) {
-  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState("chat");
   const [chatInput, setChatInput] = useState("");
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: '1',
       type: 'assistant',
-      content: t("ai.welcome_message"),
+      content: "مرحبًا بك في المساعد الذكي! كيف يمكنني مساعدتك اليوم؟",
       timestamp: new Date()
     }
   ]);
@@ -72,7 +70,7 @@ export function AIAssistantDashboard({ className }: AIAssistantDashboardProps) {
       setMessages(prev => [...prev, {
         id: Date.now().toString(),
         type: 'assistant',
-        content: data.response || 'I received an empty response. Please try again.',
+        content: data.response || 'تم استلام رد فارغ. يرجى المحاولة مرة أخرى.',
         timestamp: new Date()
       }]);
     },
@@ -80,7 +78,7 @@ export function AIAssistantDashboard({ className }: AIAssistantDashboardProps) {
       setMessages(prev => [...prev, {
         id: Date.now().toString(),
         type: 'assistant',
-        content: `Error: ${error instanceof Error ? error.message : 'Unknown error occurred'}`,
+        content: `خطأ: ${error instanceof Error ? error.message : 'حدث خطأ غير معروف'}`,
         timestamp: new Date()
       }]);
     }
@@ -91,7 +89,7 @@ export function AIAssistantDashboard({ className }: AIAssistantDashboardProps) {
     queryKey: ['/api/ai/insights'],
     queryFn: async () => {
       const response = await fetch('/api/ai/insights');
-      if (!response.ok) throw new Error('Failed to fetch insights');
+      if (!response.ok) throw new Error('فشل في جلب التحليلات');
       return response.json();
     },
     enabled: activeTab === "insights",
@@ -120,56 +118,56 @@ export function AIAssistantDashboard({ className }: AIAssistantDashboardProps) {
 
   const suggestionCards = [
     {
-      title: t("ai.production_analysis"),
-      description: t("ai.check_production_status"),
+      title: "تحليل الإنتاج",
+      description: "تحقق من حالة الإنتاج الحالية",
       icon: <BarChart3 className="h-5 w-5" />,
-      action: () => setChatInput(t("ai.production_analysis"))
+      action: () => setChatInput("تحليل الإنتاج")
     },
     {
-      title: t("ai.quality_check"),
-      description: t("ai.review_quality_metrics"),
+      title: "فحص الجودة",
+      description: "مراجعة مؤشرات الجودة",
       icon: <CheckCircle className="h-5 w-5" />,
-      action: () => setChatInput(t("ai.quality_check"))
+      action: () => setChatInput("فحص الجودة")
     },
     {
-      title: t("ai.maintenance_status"),
-      description: t("ai.check_equipment_health"),
+      title: "حالة الصيانة",
+      description: "تحقق من حالة الماكينات",
       icon: <Wrench className="h-5 w-5" />,
-      action: () => setChatInput(t("ai.maintenance_status"))
+      action: () => setChatInput("حالة الصيانة")
     }
   ];
 
   return (
     <div className={cn("w-full space-y-6", className)}>
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between" dir="rtl">
         <div>
           <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-            {t("ai.title")}
+            المساعد الذكي
           </h1>
           <p className="text-muted-foreground text-lg">
-            {t("ai.subtitle")}
+            مساعد ذكي لتسهيل عمليات المصنع
           </p>
         </div>
         <Button onClick={handleRefresh} variant="outline">
-          <RefreshCw className="h-4 w-4 mr-2" />
-          {t("ai.refresh")}
+          <RefreshCw className="h-4 w-4 ml-2" />
+          تحديث
         </Button>
       </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6" dir="rtl">
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="chat" className="flex items-center gap-2">
             <Bot className="h-4 w-4" />
-            {t("ai.chat")}
+            المحادثة
           </TabsTrigger>
           <TabsTrigger value="insights" className="flex items-center gap-2">
             <BarChart3 className="h-4 w-4" />
-            {t("ai.insights")}
+            التحليلات
           </TabsTrigger>
           <TabsTrigger value="automation" className="flex items-center gap-2">
             <Settings className="h-4 w-4" />
-            {t("ai.automation")}
+            الأتمتة
           </TabsTrigger>
         </TabsList>
 
@@ -180,9 +178,9 @@ export function AIAssistantDashboard({ className }: AIAssistantDashboardProps) {
             <div className="lg:col-span-3">
               <Card className="h-[600px] flex flex-col">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
+                  <CardTitle className="flex items-center gap-2" dir="rtl">
                     <MessageSquare className="h-5 w-5" />
-                    {t("ai.chat_assistant")}
+                    مساعد المحادثة
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="flex-1 flex flex-col">
@@ -211,17 +209,17 @@ export function AIAssistantDashboard({ className }: AIAssistantDashboardProps) {
                       {sendMessageMutation.isPending && (
                         <div className="flex justify-start">
                           <div className="bg-muted p-3 rounded-lg">
-                            <p className="text-sm">{t("ai.thinking")}...</p>
+                            <p className="text-sm">جارٍ التفكير...</p>
                           </div>
                         </div>
                       )}
                     </div>
                   </ScrollArea>
-                  <div className="flex gap-2 mt-4">
+                  <div className="flex gap-2 mt-4" dir="rtl">
                     <Input
                       value={chatInput}
                       onChange={(e) => setChatInput(e.target.value)}
-                      placeholder={t("ai.chat_placeholder")}
+                      placeholder="اكتب سؤالك هنا..."
                       onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
                       disabled={sendMessageMutation.isPending}
                     />
@@ -234,8 +232,8 @@ export function AIAssistantDashboard({ className }: AIAssistantDashboardProps) {
             </div>
 
             {/* Quick Suggestions */}
-            <div className="space-y-4">
-              <h3 className="font-semibold">{t("ai.quick_actions")}</h3>
+            <div className="space-y-4" dir="rtl">
+              <h3 className="font-semibold">إجراءات سريعة</h3>
               {suggestionCards.map((card, index) => (
                 <Card key={index} className="cursor-pointer hover:shadow-md transition-shadow" onClick={card.action}>
                   <CardContent className="p-4">
@@ -254,23 +252,23 @@ export function AIAssistantDashboard({ className }: AIAssistantDashboardProps) {
         </TabsContent>
 
         {/* Insights Tab */}
-        <TabsContent value="insights" className="space-y-6">
+        <TabsContent value="insights" className="space-y-6" dir="rtl">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <TrendingUp className="h-5 w-5 text-green-500" />
-                  {t("ai.production_insights")}
+                  رؤى الإنتاج
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
                   <div className="flex justify-between">
-                    <span className="text-sm">{t("ai.efficiency")}</span>
+                    <span className="text-sm">الكفاءة</span>
                     <span className="font-medium">{insights?.efficiency || '87%'}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-sm">{t("ai.output_rate")}</span>
+                    <span className="text-sm">معدل الإنتاج</span>
                     <span className="font-medium">{insights?.outputRate || '92%'}</span>
                   </div>
                 </div>
@@ -281,17 +279,17 @@ export function AIAssistantDashboard({ className }: AIAssistantDashboardProps) {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <CheckCircle className="h-5 w-5 text-blue-500" />
-                  {t("ai.quality_metrics")}
+                  مقاييس الجودة
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
                   <div className="flex justify-between">
-                    <span className="text-sm">{t("ai.quality_score")}</span>
+                    <span className="text-sm">درجة الجودة</span>
                     <span className="font-medium">{insights?.qualityScore || '96%'}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-sm">{t("ai.defect_rate")}</span>
+                    <span className="text-sm">معدل العيوب</span>
                     <span className="font-medium">{insights?.defectRate || '2.1%'}</span>
                   </div>
                 </div>
@@ -302,18 +300,18 @@ export function AIAssistantDashboard({ className }: AIAssistantDashboardProps) {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Wrench className="h-5 w-5 text-orange-500" />
-                  {t("ai.maintenance_alerts")}
+                  تنبيهات الصيانة
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
                   <div className="flex justify-between">
-                    <span className="text-sm">{t("ai.pending_maintenance")}</span>
+                    <span className="text-sm">أعمال صيانة معلقة</span>
                     <span className="font-medium">{insights?.pendingMaintenance || '3'}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-sm">{t("ai.next_scheduled")}</span>
-                    <span className="font-medium text-xs">{insights?.nextScheduled || t("ai.tomorrow")}</span>
+                    <span className="text-sm">الصيانة المجدولة القادمة</span>
+                    <span className="font-medium text-xs">{insights?.nextScheduled || 'غداً'}</span>
                   </div>
                 </div>
               </CardContent>
@@ -325,14 +323,14 @@ export function AIAssistantDashboard({ className }: AIAssistantDashboardProps) {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Lightbulb className="h-5 w-5 text-yellow-500" />
-                {t("ai.recommendations")}
+                التوصيات
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
                 {(insights?.recommendations || [
-                  { type: 'optimization', message: t("ai.sample_recommendation_1"), priority: 'medium' },
-                  { type: 'maintenance', message: t("ai.sample_recommendation_2"), priority: 'high' }
+                  { type: 'optimization', message: 'يفضل إعادة جدولة أوامر الإنتاج مساءً لتحسين الكفاءة', priority: 'medium' },
+                  { type: 'maintenance', message: 'الصيانة الوقائية للآلة A3 مطلوبة خلال 24 ساعة', priority: 'high' }
                 ]).map((rec: any, index: number) => (
                   <div key={index} className="flex items-start gap-3 p-3 border rounded-lg">
                     <div className={cn(
@@ -344,7 +342,7 @@ export function AIAssistantDashboard({ className }: AIAssistantDashboardProps) {
                       <p className="text-sm">{rec.message}</p>
                     </div>
                     <Badge variant="outline" className="text-xs">
-                      {rec.priority}
+                      {rec.priority === 'high' ? 'عالي' : rec.priority === 'medium' ? 'متوسط' : 'منخفض'}
                     </Badge>
                   </div>
                 ))}
@@ -354,64 +352,64 @@ export function AIAssistantDashboard({ className }: AIAssistantDashboardProps) {
         </TabsContent>
 
         {/* Automation Tab */}
-        <TabsContent value="automation" className="space-y-6">
+        <TabsContent value="automation" className="space-y-6" dir="rtl">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Card>
               <CardHeader>
-                <CardTitle>{t("ai.auto_quality_checks")}</CardTitle>
+                <CardTitle>الفحوصات الآلية للجودة</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-muted-foreground mb-4">
-                  {t("ai.auto_quality_desc")}
+                  فعل فحص الجودة التلقائي لتقليل التدخل البشري وتحسين الكفاءة
                 </p>
                 <Button className="w-full">
-                  <Play className="h-4 w-4 mr-2" />
-                  {t("ai.enable")}
+                  <Play className="h-4 w-4 ml-2" />
+                  تفعيل
                 </Button>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader>
-                <CardTitle>{t("ai.smart_scheduling")}</CardTitle>
+                <CardTitle>الجدولة الذكية</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-muted-foreground mb-4">
-                  {t("ai.smart_scheduling_desc")}
+                  تحسين ترتيب أوامر التشغيل بناءً على الأداء والطاقة المتاحة
                 </p>
                 <Button className="w-full">
-                  <Play className="h-4 w-4 mr-2" />
-                  {t("ai.activate")}
+                  <Play className="h-4 w-4 ml-2" />
+                  تنشيط
                 </Button>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader>
-                <CardTitle>{t("ai.predictive_alerts")}</CardTitle>
+                <CardTitle>تنبيهات تنبؤية</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-muted-foreground mb-4">
-                  {t("ai.predictive_alerts_desc")}
+                  تلقي تنبيهات ذكية قبل حدوث أعطال أو انخفاض الأداء
                 </p>
                 <Button className="w-full">
-                  <Play className="h-4 w-4 mr-2" />
-                  {t("ai.configure")}
+                  <Play className="h-4 w-4 ml-2" />
+                  تكوين
                 </Button>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader>
-                <CardTitle>{t("ai.workflow_optimization")}</CardTitle>
+                <CardTitle>تحسين سير العمل</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-muted-foreground mb-4">
-                  {t("ai.workflow_optimization_desc")}
+                  اقتراحات لتحسين تسلسل العمليات وتقليل الهدر
                 </p>
                 <Button className="w-full">
-                  <Play className="h-4 w-4 mr-2" />
-                  {t("ai.optimize")}
+                  <Play className="h-4 w-4 ml-2" />
+                  تحسين
                 </Button>
               </CardContent>
             </Card>

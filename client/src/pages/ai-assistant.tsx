@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -37,7 +36,6 @@ interface Message {
 }
 
 const AIAssistantPage = () => {
-  const { t } = useTranslation();
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [isListening, setIsListening] = useState(false);
@@ -48,43 +46,43 @@ const AIAssistantPage = () => {
   const quickActions = [
     { 
       icon: TrendingUp, 
-      label: 'Production Analysis', 
-      description: 'Get real-time production insights',
+      label: 'تحليل الإنتاج', 
+      description: 'الحصول على رؤى الإنتاج في الوقت الفعلي',
       color: 'bg-blue-500/10 text-blue-600 border-blue-200 hover:bg-blue-500/20',
-      prompt: 'Analyze current production performance and identify optimization opportunities'
+      prompt: 'حلل الأداء الإنتاجي الحالي وحدد فرص التحسين'
     },
     { 
       icon: AlertCircle, 
-      label: 'Quality Control', 
-      description: 'Review quality metrics and issues',
+      label: 'مراقبة الجودة', 
+      description: 'مراجعة مؤشرات الجودة والمشاكل',
       color: 'bg-red-500/10 text-red-600 border-red-200 hover:bg-red-500/20',
-      prompt: 'Show me quality control metrics and identify any potential issues'
+      prompt: 'أظهر لي مؤشرات مراقبة الجودة وحدد أي مشاكل محتملة'
     },
     { 
       icon: Users, 
-      label: 'HR Analytics', 
-      description: 'Employee performance and attendance',
+      label: 'تحليلات الموارد البشرية', 
+      description: 'أداء الموظفين والحضور',
       color: 'bg-green-500/10 text-green-600 border-green-200 hover:bg-green-500/20',
-      prompt: 'Provide HR analytics including attendance, performance, and staffing insights'
+      prompt: 'قدم تحليلات الموارد البشرية بما في ذلك الحضور والأداء ورؤى التوظيف'
     },
     { 
       icon: Settings, 
-      label: 'System Status', 
-      description: 'Check system health and performance',
+      label: 'حالة النظام', 
+      description: 'فحص صحة النظام والأداء',
       color: 'bg-purple-500/10 text-purple-600 border-purple-200 hover:bg-purple-500/20',
-      prompt: 'Check system health, machine status, and overall operational performance'
+      prompt: 'تحقق من صحة النظام وحالة الماكينات والأداء التشغيلي العام'
     },
   ];
 
   const suggestions = [
-    "What's our production efficiency this week?",
-    "Show me quality control metrics",
-    "Generate maintenance schedule report",
-    "Analyze bottleneck trends",
-    "Create a new order for customer ABC Company",
-    "What are the current inventory levels?",
-    "Show me recent machine maintenance status",
-    "Help me optimize our workflow processes"
+    "ما هي كفاءة الإنتاج لدينا هذا الأسبوع؟",
+    "أظهر لي مؤشرات مراقبة الجودة",
+    "اعمل تقرير جدولة الصيانة",
+    "حلل اتجاهات الاختناقات",
+    "أنشئ طلبية جديدة للعميل شركة قريش",
+    "ما هي مستويات المخزون الحالية؟",
+    "أظهر لي حالة صيانة الماكينات الأخيرة",
+    "ساعدني في تحسين عمليات سير العمل لدينا"
   ];
 
   useEffect(() => {
@@ -128,11 +126,11 @@ const AIAssistantPage = () => {
 
       let assistantContent = '';
       if (data.error) {
-        assistantContent = `I encountered an error: ${data.error}`;
+        assistantContent = `واجهت خطأ: ${data.error}`;
       } else if (data.response) {
         assistantContent = data.response;
       } else {
-        assistantContent = 'I received an empty response. Please try rephrasing your question.';
+        assistantContent = 'تلقيت ردًا فارغًا. يرجى إعادة صياغة سؤالك.';
       }
 
       const assistantMessage: Message = {
@@ -146,18 +144,18 @@ const AIAssistantPage = () => {
       setMessages(prev => [...prev, assistantMessage]);
     } catch (error) {
       console.error('AI chat error:', error);
-      let errorContent = 'I\'m experiencing technical difficulties. ';
+      let errorContent = 'أواجه صعوبات تقنية. ';
       
       if (error instanceof Error) {
         if (error.message.includes('500')) {
-          errorContent += 'The AI service is currently unavailable. Please try again in a few moments.';
+          errorContent += 'خدمة الذكاء الاصطناعي غير متاحة حاليًا. يرجى المحاولة مرة أخرى بعد لحظات.';
         } else if (error.message.includes('404')) {
-          errorContent += 'The AI endpoint was not found. Please contact support.';
+          errorContent += 'لم يتم العثور على نقطة نهاية الذكاء الاصطناعي. يرجى الاتصال بالدعم.';
         } else {
-          errorContent += `Error: ${error.message}`;
+          errorContent += `خطأ: ${error.message}`;
         }
       } else {
-        errorContent += 'Please try again later.';
+        errorContent += 'يرجى المحاولة مرة أخرى لاحقًا.';
       }
 
       const errorMessage: Message = {
@@ -266,14 +264,14 @@ const AIAssistantPage = () => {
               </div>
               <div>
                 <h1 className="text-2xl font-bold bg-gradient-to-r from-slate-900 to-slate-600 bg-clip-text text-transparent">
-                  AI Assistant
+                  المساعد الذكي
                 </h1>
-                <p className="text-sm text-slate-500">Intelligent manufacturing insights</p>
+                <p className="text-sm text-slate-500">رؤى ذكية للتصنيع</p>
               </div>
             </div>
             <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-              <Zap className="w-3 h-3 mr-1" />
-              Online
+              <Zap className="w-3 h-3 ml-1" />
+              متصل
             </Badge>
           </div>
         </div>
@@ -286,12 +284,12 @@ const AIAssistantPage = () => {
             {/* Quick Actions */}
             <Card className="border-0 shadow-xl bg-white/80 backdrop-blur-sm">
               <CardHeader className="pb-4">
-                <CardTitle className="text-lg font-semibold flex items-center">
-                  <Target className="w-5 h-5 mr-2 text-blue-600" />
-                  Quick Actions
+                <CardTitle className="text-lg font-semibold flex items-center" dir="rtl">
+                  <Target className="w-5 h-5 ml-2 text-blue-600" />
+                  إجراءات سريعة
                 </CardTitle>
-                <p className="text-sm text-slate-500 mt-1">
-                  Click to ask AI about key areas
+                <p className="text-sm text-slate-500 mt-1" dir="rtl">
+                  انقر لسؤال الذكاء الاصطناعي حول المجالات الرئيسية
                 </p>
               </CardHeader>
               <CardContent className="space-y-3">
@@ -326,12 +324,12 @@ const AIAssistantPage = () => {
             {/* Suggestions */}
             <Card className="border-0 shadow-xl bg-white/80 backdrop-blur-sm">
               <CardHeader className="pb-4">
-                <CardTitle className="text-lg font-semibold flex items-center">
-                  <Lightbulb className="w-5 h-5 mr-2 text-amber-500" />
-                  Smart Suggestions
+                <CardTitle className="text-lg font-semibold flex items-center" dir="rtl">
+                  <Lightbulb className="w-5 h-5 ml-2 text-amber-500" />
+                  اقتراحات ذكية
                 </CardTitle>
-                <p className="text-sm text-slate-500 mt-1">
-                  Popular questions to get started
+                <p className="text-sm text-slate-500 mt-1" dir="rtl">
+                  أسئلة شائعة للبدء
                 </p>
               </CardHeader>
               <CardContent className="space-y-3">
@@ -361,19 +359,19 @@ const AIAssistantPage = () => {
             <Card className="border-0 shadow-2xl bg-white/80 backdrop-blur-sm h-[calc(100vh-12rem)]">
               <CardHeader className="border-b border-slate-100 bg-gradient-to-r from-slate-50 to-blue-50/30">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
+                  <div className="flex items-center space-x-3" dir="rtl">
                     <MessageSquare className="w-5 h-5 text-blue-600" />
                     <div>
-                      <CardTitle className="text-lg">Conversation</CardTitle>
+                      <CardTitle className="text-lg">المحادثة</CardTitle>
                       <p className="text-sm text-slate-500 mt-1">
-                        Ask me anything about your production system
+                        اسألني أي شيء حول نظام الإنتاج الخاص بك
                       </p>
                     </div>
                   </div>
                   <div className="flex items-center space-x-2">
                     <Badge variant="outline" className="text-xs">
-                      <Clock className="w-3 h-3 mr-1" />
-                      Real-time
+                      <Clock className="w-3 h-3 ml-1" />
+                      وقت حقيقي
                     </Badge>
                   </div>
                 </div>
@@ -388,10 +386,10 @@ const AIAssistantPage = () => {
                         <Sparkles className="w-12 h-12 text-blue-600" />
                       </div>
                       <h3 className="text-xl font-semibold text-slate-900 mb-2">
-                        Welcome to AI Assistant
+                        مرحبًا بك في المساعد الذكي
                       </h3>
                       <p className="text-slate-500 max-w-md">
-                        I'm here to help you analyze production data, generate insights, and optimize your manufacturing operations.
+                        أنا هنا لمساعدتك في تحليل بيانات الإنتاج وإنشاء الرؤى وتحسين عمليات التصنيع الخاصة بك.
                       </p>
                     </div>
                   ) : (
@@ -449,7 +447,7 @@ const AIAssistantPage = () => {
                                 <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }} />
                                 <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
                               </div>
-                              <span className="text-sm text-slate-500">Thinking...</span>
+                              <span className="text-sm text-slate-500">جارٍ التفكير...</span>
                             </div>
                           </div>
                         </div>
@@ -468,7 +466,7 @@ const AIAssistantPage = () => {
                         value={inputValue}
                         onChange={(e) => setInputValue(e.target.value)}
                         onKeyPress={handleKeyPress}
-                        placeholder="Ask me about production metrics, quality issues, or system status..."
+                        placeholder="اسألني عن مؤشرات الإنتاج، مشاكل الجودة، أو حالة النظام..."
                         className="pr-16 min-h-[48px] resize-none border-slate-200 bg-white/90 backdrop-blur-sm focus:ring-blue-500 focus:border-blue-500 shadow-sm text-base"
                         disabled={isLoading}
                       />
@@ -494,18 +492,18 @@ const AIAssistantPage = () => {
                       disabled={!inputValue.trim() || isLoading}
                       className="h-11 px-6 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg transition-all duration-200 hover:shadow-xl disabled:opacity-50"
                     >
-                      <Send className="w-4 h-4 mr-2" />
-                      Send
+                      <Send className="w-4 h-4 ml-2" />
+                      إرسال
                     </Button>
                   </div>
 
-                  <div className="flex items-center justify-between mt-3 text-xs text-slate-500">
+                  <div className="flex items-center justify-between mt-3 text-xs text-slate-500" dir="rtl">
                     <div className="flex items-center space-x-4">
-                      <span>Press Enter to send, Shift+Enter for new line</span>
+                      <span>اضغط Enter للإرسال، Shift+Enter لسطر جديد</span>
                     </div>
                     <div className="flex items-center space-x-2">
                       <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                      <span>AI ready</span>
+                      <span>الذكاء الاصطناعي جاهز</span>
                     </div>
                   </div>
                 </div>
