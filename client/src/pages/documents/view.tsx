@@ -126,8 +126,19 @@ export default function DocumentView() {
     }
   }, [document, user]);
 
+  // Function to detect Arabic text
+  const hasArabicText = (text: string) => {
+    const arabicRegex = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/;
+    return arabicRegex.test(text);
+  };
+
   // Print document function
   const handlePrint = () => {
+    const isArabicContent = hasArabicText(document.content);
+    const isArabicTitle = hasArabicText(document.title);
+    const contentClass = isArabicContent ? 'document-content arabic-text' : 'document-content english-text';
+    const titleClass = isArabicTitle ? 'arabic-text' : 'english-text';
+    
     const printContent = `
       <html>
         <head>
@@ -178,6 +189,13 @@ export default function DocumentView() {
             .document-content {
               line-height: 1.6;
               margin: 20px 0;
+              direction: rtl;
+              text-align: right;
+              font-family: 'Tahoma', 'Arial', sans-serif;
+            }
+            .document-content.english {
+              direction: ltr;
+              text-align: left;
             }
             .status-badge {
               background-color: #059669;
@@ -200,6 +218,15 @@ export default function DocumentView() {
               color: #666;
               border-top: 1px solid #e5e7eb;
               padding-top: 20px;
+            }
+            .arabic-text {
+              direction: rtl;
+              text-align: right;
+              font-family: 'Tahoma', 'Arial', sans-serif;
+            }
+            .english-text {
+              direction: ltr;
+              text-align: left;
             }
           </style>
         </head>
@@ -252,11 +279,11 @@ export default function DocumentView() {
           <h2 style="text-align: center; font-size: 24px; font-weight: bold;">
             ${document.documentType}
           </h2>
-          <h1 style="color: #065f46; border-bottom: 2px solid #065f46; padding-bottom: 10px;">
+          <h1 class="${titleClass}" style="color: #065f46; border-bottom: 2px solid #065f46; padding-bottom: 10px;">
             ${document.title}
           </h1>
           
-          <div class="document-content">
+          <div class="${contentClass}">
             ${document.content.replace(/\n/g, '<br>')}
           </div>
           
@@ -359,7 +386,13 @@ export default function DocumentView() {
             </Link>
           </Button>
           <div>
-            <h1 className="text-3xl font-bold">{document.title}</h1>
+            <h1 className={`text-3xl font-bold ${hasArabicText(document.title) ? 'text-right' : 'text-left'}`}
+                style={{
+                  direction: hasArabicText(document.title) ? 'rtl' : 'ltr',
+                  fontFamily: hasArabicText(document.title) ? 'Tahoma, Arial, sans-serif' : 'inherit'
+                }}>
+              {document.title}
+            </h1>
             <p className="text-muted-foreground font-mono">
               {document.documentNumber}
             </p>
@@ -474,7 +507,11 @@ export default function DocumentView() {
           <CardTitle>Document Content</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="prose prose-sm max-w-none whitespace-pre-wrap">
+          <div className={`prose prose-sm max-w-none whitespace-pre-wrap ${hasArabicText(document.content) ? 'text-right' : 'text-left'}`} 
+               style={{
+                 direction: hasArabicText(document.content) ? 'rtl' : 'ltr',
+                 fontFamily: hasArabicText(document.content) ? 'Tahoma, Arial, sans-serif' : 'inherit'
+               }}>
             {document.content}
           </div>
         </CardContent>
