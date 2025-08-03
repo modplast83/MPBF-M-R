@@ -86,10 +86,31 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
     return arabicRegex.test(text);
   };
 
+  // Clean and sanitize HTML content
+  const cleanHTML = (html: string) => {
+    // Remove unnecessary font tags and clean up
+    let cleaned = html
+      .replace(/<font[^>]*>/gi, '')
+      .replace(/<\/font>/gi, '')
+      .replace(/face="[^"]*"/gi, '')
+      .replace(/style="[^"]*font-family:[^;"]*;?[^"]*"/gi, (match) => {
+        // Keep other styles but remove font-family
+        return match.replace(/font-family:[^;"]*;?/gi, '');
+      });
+    
+    // Apply current font family to the entire content
+    if (fontFamily && fontFamily !== fontFamilies[0].value) {
+      cleaned = `<div style="font-family: ${fontFamily};">${cleaned}</div>`;
+    }
+    
+    return cleaned;
+  };
+
   // Update content and detect language
   const updateContent = () => {
     if (editorRef.current) {
-      const content = editorRef.current.innerHTML;
+      let content = editorRef.current.innerHTML;
+      content = cleanHTML(content);
       onChange(content);
       setIsArabic(hasArabicText(editorRef.current.textContent || ''));
     }
@@ -162,9 +183,17 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
   // Set font family
   const setFontFamilyAction = (font: string) => {
     setFontFamily(font);
-    execCommand('fontName', font);
     if (editorRef.current) {
+      // Apply font to the entire editor
       editorRef.current.style.fontFamily = font;
+      
+      // If there's selected text, apply font to selection
+      const selection = window.getSelection();
+      if (selection && selection.rangeCount > 0 && !selection.isCollapsed) {
+        execCommand('fontName', font);
+      }
+      
+      updateContent();
     }
   };
 
@@ -198,23 +227,29 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
 
   // Initialize editor content
   useEffect(() => {
-    if (editorRef.current && value) {
-      editorRef.current.innerHTML = value;
-      setIsArabic(hasArabicText(value));
+    if (editorRef.current && value !== editorRef.current.innerHTML) {
+      editorRef.current.innerHTML = value || '';
+      const textContent = editorRef.current.textContent || '';
+      const shouldBeArabic = hasArabicText(textContent);
+      setIsArabic(shouldBeArabic);
+      
+      // Apply direction and font
+      editorRef.current.style.direction = shouldBeArabic ? 'rtl' : 'ltr';
+      editorRef.current.style.textAlign = shouldBeArabic ? 'right' : 'left';
+      editorRef.current.style.fontFamily = fontFamily;
+      editorRef.current.style.color = textColor;
     }
-  }, []);
+  }, [value]);
 
-  // Auto-detect language on input
+  // Update editor styles when font or language changes
   useEffect(() => {
     if (editorRef.current) {
-      const content = editorRef.current.textContent || '';
-      const shouldBeArabic = hasArabicText(content);
-      if (shouldBeArabic !== isArabic) {
-        editorRef.current.style.direction = shouldBeArabic ? 'rtl' : 'ltr';
-        editorRef.current.style.textAlign = shouldBeArabic ? 'right' : 'left';
-      }
+      editorRef.current.style.fontFamily = fontFamily;
+      editorRef.current.style.color = textColor;
+      editorRef.current.style.direction = isArabic ? 'rtl' : 'ltr';
+      editorRef.current.style.textAlign = isArabic ? 'right' : 'left';
     }
-  }, [value, isArabic]);
+  }, [fontFamily, textColor, isArabic]);
 
   return (
     <Card className={cn("w-full border-2 focus-within:border-blue-500 transition-colors rich-text-editor", className)}>

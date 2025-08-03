@@ -284,7 +284,7 @@ export default function DocumentView() {
           </h1>
           
           <div class="${contentClass}">
-            ${document.content.replace(/\n/g, '<br>')}
+            ${document.content}
           </div>
           
           <div class="print-footer">
@@ -507,12 +507,12 @@ export default function DocumentView() {
           <CardTitle>Document Content</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className={`prose prose-sm max-w-none whitespace-pre-wrap ${hasArabicText(document.content) ? 'text-right' : 'text-left'}`} 
+          <div className={`prose prose-sm max-w-none ${hasArabicText(document.content) ? 'text-right prose-rtl' : 'text-left'}`} 
                style={{
                  direction: hasArabicText(document.content) ? 'rtl' : 'ltr',
                  fontFamily: hasArabicText(document.content) ? 'Tahoma, Arial, sans-serif' : 'inherit'
-               }}>
-            {document.content}
+               }}
+               dangerouslySetInnerHTML={{ __html: document.content }}>
           </div>
         </CardContent>
       </Card>
