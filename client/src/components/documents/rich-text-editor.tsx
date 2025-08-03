@@ -2,6 +2,9 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { 
   Bold, 
   Italic, 
@@ -25,7 +28,11 @@ import {
   Palette,
   Languages,
   Eye,
-  Edit3
+  Edit3,
+  Table,
+  Highlighter,
+  ArrowLeftRight,
+  Plus
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -37,6 +44,26 @@ interface RichTextEditorProps {
   minHeight?: string;
 }
 
+// Font families with Arabic support
+const fontFamilies = [
+  { label: 'Tahoma (عربي)', value: 'Tahoma, Arial, sans-serif', arabic: true },
+  { label: 'Noto Sans Arabic', value: 'Noto Sans Arabic, Arial, sans-serif', arabic: true },
+  { label: 'Arial', value: 'Arial, sans-serif' },
+  { label: 'Times New Roman', value: 'Times New Roman, serif' },
+  { label: 'Helvetica', value: 'Helvetica, Arial, sans-serif' },
+  { label: 'Georgia', value: 'Georgia, serif' },
+  { label: 'Verdana', value: 'Verdana, sans-serif' },
+  { label: 'Courier New', value: 'Courier New, monospace' },
+];
+
+// Common colors for text and highlighting
+const colors = [
+  '#000000', '#1a1a1a', '#333333', '#666666', '#999999', '#cccccc',
+  '#ffffff', '#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff',
+  '#00ffff', '#ff8000', '#8000ff', '#0080ff', '#80ff00', '#ff0080',
+  '#008080', '#800080', '#808000', '#800000', '#008000', '#000080'
+];
+
 export const RichTextEditor: React.FC<RichTextEditorProps> = ({
   value,
   onChange,
@@ -45,9 +72,13 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
   minHeight = "300px"
 }) => {
   const editorRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [isArabic, setIsArabic] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const [fontSize, setFontSize] = useState('14');
+  const [fontFamily, setFontFamily] = useState(fontFamilies[0].value);
+  const [textColor, setTextColor] = useState('#000000');
+  const [highlightColor, setHighlightColor] = useState('#ffff00');
 
   // Detect Arabic text
   const hasArabicText = (text: string) => {
@@ -87,6 +118,23 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
     }
   };
 
+  // Insert HTML at cursor
+  const insertHTML = (html: string) => {
+    if (editorRef.current) {
+      const selection = window.getSelection();
+      if (selection && selection.rangeCount > 0) {
+        const range = selection.getRangeAt(0);
+        range.deleteContents();
+        const fragment = range.createContextualFragment(html);
+        range.insertNode(fragment);
+        range.collapse(false);
+        selection.removeAllRanges();
+        selection.addRange(range);
+      }
+      updateContent();
+    }
+  };
+
   // Toggle text direction
   const toggleDirection = () => {
     if (editorRef.current) {
@@ -96,6 +144,55 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
       editorRef.current.style.textAlign = newDir === 'rtl' ? 'right' : 'left';
       setIsArabic(newDir === 'rtl');
       updateContent();
+    }
+  };
+
+  // Set text color
+  const setTextColorAction = (color: string) => {
+    setTextColor(color);
+    execCommand('foreColor', color);
+  };
+
+  // Set highlight color
+  const setHighlightColorAction = (color: string) => {
+    setHighlightColor(color);
+    execCommand('backColor', color);
+  };
+
+  // Set font family
+  const setFontFamilyAction = (font: string) => {
+    setFontFamily(font);
+    execCommand('fontName', font);
+    if (editorRef.current) {
+      editorRef.current.style.fontFamily = font;
+    }
+  };
+
+  // Insert table
+  const insertTable = (rows: number, cols: number) => {
+    let tableHTML = '<table border="1" style="border-collapse: collapse; width: 100%; margin: 10px 0;">';
+    for (let i = 0; i < rows; i++) {
+      tableHTML += '<tr>';
+      for (let j = 0; j < cols; j++) {
+        tableHTML += '<td style="border: 1px solid #ccc; padding: 8px; min-width: 50px;">&nbsp;</td>';
+      }
+      tableHTML += '</tr>';
+    }
+    tableHTML += '</table>';
+    insertHTML(tableHTML);
+  };
+
+  // Handle image upload
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file && file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const imageUrl = e.target?.result as string;
+        const imageHTML = `<img src="${imageUrl}" alt="Uploaded image" style="max-width: 100%; height: auto; margin: 10px 0;" />`;
+        insertHTML(imageHTML);
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -120,7 +217,16 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
   }, [value, isArabic]);
 
   return (
-    <Card className={cn("w-full border-2 focus-within:border-blue-500 transition-colors", className)}>
+    <Card className={cn("w-full border-2 focus-within:border-blue-500 transition-colors rich-text-editor", className)}>
+      {/* Hidden file input for image upload */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        onChange={handleImageUpload}
+        className="hidden"
+      />
+      
       {/* Toolbar */}
       <div className="flex flex-wrap items-center gap-1 p-3 border-b bg-gray-50/50">
         {/* Text Formatting */}
@@ -303,6 +409,22 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
 
         <Separator orientation="vertical" className="h-6" />
 
+        {/* Font Family */}
+        <div className="flex items-center gap-2">
+          <select
+            value={fontFamily}
+            onChange={(e) => setFontFamilyAction(e.target.value)}
+            className="h-8 px-2 text-sm border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 max-w-[140px]"
+            title="Font Family"
+          >
+            {fontFamilies.map((font) => (
+              <option key={font.value} value={font.value}>
+                {font.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
         {/* Font Size */}
         <div className="flex items-center gap-2">
           <select
@@ -312,6 +434,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
               execCommand('fontSize', e.target.value);
             }}
             className="h-8 px-2 text-sm border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            title="Font Size"
           >
             <option value="1">8px</option>
             <option value="2">10px</option>
@@ -325,14 +448,173 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
 
         <Separator orientation="vertical" className="h-6" />
 
-        {/* Language Toggle */}
+        {/* Text Color */}
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              type="button"
+              variant="ghost" 
+              size="sm"
+              className="h-8 w-8 p-0"
+              title="Text Color"
+            >
+              <div className="relative">
+                <Type className="h-4 w-4" />
+                <div 
+                  className="absolute bottom-0 left-0 w-4 h-1 border border-gray-300"
+                  style={{ backgroundColor: textColor }}
+                />
+              </div>
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-2">
+            <div className="grid grid-cols-6 gap-1">
+              {colors.map((color) => (
+                <button
+                  key={color}
+                  onClick={() => setTextColorAction(color)}
+                  className="w-6 h-6 rounded border border-gray-300 hover:scale-110 transition-transform"
+                  style={{ backgroundColor: color }}
+                  title={color}
+                />
+              ))}
+            </div>
+            <div className="mt-2 flex items-center gap-2">
+              <Label className="text-xs">مخصص:</Label>
+              <Input
+                type="color"
+                value={textColor}
+                onChange={(e) => setTextColorAction(e.target.value)}
+                className="w-8 h-8 p-0 border-0"
+              />
+            </div>
+          </PopoverContent>
+        </Popover>
+
+        {/* Highlight Color */}
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              type="button"
+              variant="ghost" 
+              size="sm"
+              className="h-8 w-8 p-0"
+              title="Highlight Color"
+            >
+              <div className="relative">
+                <Highlighter className="h-4 w-4" />
+                <div 
+                  className="absolute bottom-0 left-0 w-4 h-1 border border-gray-300"
+                  style={{ backgroundColor: highlightColor }}
+                />
+              </div>
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-2">
+            <div className="grid grid-cols-6 gap-1">
+              {colors.map((color) => (
+                <button
+                  key={color}
+                  onClick={() => setHighlightColorAction(color)}
+                  className="w-6 h-6 rounded border border-gray-300 hover:scale-110 transition-transform"
+                  style={{ backgroundColor: color }}
+                  title={color}
+                />
+              ))}
+            </div>
+            <div className="mt-2 flex items-center gap-2">
+              <Label className="text-xs">مخصص:</Label>
+              <Input
+                type="color"
+                value={highlightColor}
+                onChange={(e) => setHighlightColorAction(e.target.value)}
+                className="w-8 h-8 p-0 border-0"
+              />
+            </div>
+          </PopoverContent>
+        </Popover>
+
+        <Separator orientation="vertical" className="h-6" />
+
+        {/* Table */}
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              type="button"
+              variant="ghost" 
+              size="sm"
+              className="h-8 w-8 p-0"
+              title="Insert Table"
+            >
+              <Table className="h-4 w-4" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-3">
+            <div className="space-y-3">
+              <h4 className="font-medium text-sm">إدراج جدول</h4>
+              <div className="grid grid-cols-8 gap-1">
+                {Array.from({ length: 64 }, (_, i) => {
+                  const row = Math.floor(i / 8) + 1;
+                  const col = (i % 8) + 1;
+                  return (
+                    <button
+                      key={i}
+                      onClick={() => insertTable(row, col)}
+                      className="w-4 h-4 border border-gray-300 hover:bg-blue-100 transition-colors"
+                      title={`${row} × ${col}`}
+                    />
+                  );
+                })}
+              </div>
+              <div className="text-xs text-gray-500 text-center">
+                اختر حجم الجدول
+              </div>
+            </div>
+          </PopoverContent>
+        </Popover>
+
+        {/* Image */}
+        <Button
+          type="button"
+          variant="ghost" 
+          size="sm"
+          onClick={() => fileInputRef.current?.click()}
+          className="h-8 w-8 p-0"
+          title="Insert Image"
+        >
+          <Image className="h-4 w-4" />
+        </Button>
+
+        <Separator orientation="vertical" className="h-6" />
+
+        {/* RTL/LTR Toggle */}
         <Button
           type="button"
           variant="ghost" 
           size="sm"
           onClick={toggleDirection}
           className={cn("h-8 w-8 p-0", isArabic && "bg-blue-100 text-blue-600")}
-          title={isArabic ? "Switch to English (LTR)" : "Switch to Arabic (RTL)"}
+          title={isArabic ? "التبديل للإنجليزية (LTR)" : "التبديل للعربية (RTL)"}
+        >
+          <ArrowLeftRight className="h-4 w-4" />
+        </Button>
+
+        {/* Language Detection */}
+        <Button
+          type="button"
+          variant="ghost" 
+          size="sm"
+          onClick={() => {
+            const content = editorRef.current?.textContent || '';
+            const shouldBeArabic = hasArabicText(content);
+            if (editorRef.current) {
+              editorRef.current.style.direction = shouldBeArabic ? 'rtl' : 'ltr';
+              editorRef.current.style.textAlign = shouldBeArabic ? 'right' : 'left';
+              setIsArabic(shouldBeArabic);
+            }
+          }}
+          className="h-8 w-8 p-0"
+          title="كشف اللغة التلقائي"
         >
           <Languages className="h-4 w-4" />
         </Button>
@@ -344,7 +626,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
           size="sm"
           onClick={() => setShowPreview(!showPreview)}
           className={cn("h-8 w-8 p-0", showPreview && "bg-green-100 text-green-600")}
-          title={showPreview ? "Edit Mode" : "Preview Mode"}
+          title={showPreview ? "وضع التحرير" : "وضع المعاينة"}
         >
           {showPreview ? <Edit3 className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
         </Button>
@@ -401,9 +683,10 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
             style={{
               direction: isArabic ? 'rtl' : 'ltr',
               textAlign: isArabic ? 'right' : 'left',
-              fontFamily: isArabic ? 'Tahoma, Arial, sans-serif' : 'inherit',
+              fontFamily: fontFamily,
               minHeight,
-              fontSize: `${parseInt(fontSize) + 10}px`
+              fontSize: `${parseInt(fontSize) + 10}px`,
+              color: textColor
             }}
             data-placeholder={placeholder}
           />
