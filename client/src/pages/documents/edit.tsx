@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { RichTextEditor } from "@/components/documents/rich-text-editor";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Badge } from "@/components/ui/badge";
@@ -307,12 +308,13 @@ export default function DocumentEdit() {
                     name="content"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Content</FormLabel>
+                        <FormLabel>محتوى المستند | Document Content</FormLabel>
                         <FormControl>
-                          <Textarea
-                            placeholder="Enter document content"
-                            rows={12}
-                            {...field}
+                          <RichTextEditor
+                            value={field.value}
+                            onChange={field.onChange}
+                            placeholder="ابدأ كتابة محتوى المستند هنا... يدعم العربية والإنجليزية مع التنسيق التلقائي"
+                            minHeight="400px"
                           />
                         </FormControl>
                         <FormMessage />
