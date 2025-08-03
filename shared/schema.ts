@@ -2235,6 +2235,140 @@ export const documentSubscriptions = pgTable("document_subscriptions", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+// Document Versions - Advanced version control system
+export const documentVersions = pgTable("document_versions", {
+  id: serial("id").primaryKey(),
+  documentId: integer("document_id")
+    .notNull()
+    .references(() => documents.id, { onDelete: "cascade" }),
+  versionNumber: text("version_number").notNull(), // 1.0, 1.1, 2.0, etc.
+  majorVersion: integer("major_version").notNull(), // 1, 2, 3, etc.
+  minorVersion: integer("minor_version").notNull().default(0), // 0, 1, 2, etc.
+  patchVersion: integer("patch_version").notNull().default(0), // 0, 1, 2, etc.
+  
+  // Version content and metadata
+  title: text("title").notNull(),
+  content: text("content").notNull(), // Rich text content at this version
+  summary: text("summary"), // What changed in this version
+  changeType: text("change_type").notNull().default("minor"), // "major", "minor", "patch", "hotfix"
+  changeLog: text("change_log"), // Detailed changes description
+  
+  // Version status and workflow
+  status: text("status").notNull().default("draft"), // "draft", "under_review", "approved", "published", "archived", "obsolete"
+  isActive: boolean("is_active").default(false), // Only one version can be active at a time
+  isCurrent: boolean("is_current").default(false), // Current working version
+  
+  // Author and tracking
+  createdBy: text("created_by")
+    .notNull()
+    .references(() => users.id),
+  reviewedBy: text("reviewed_by").references(() => users.id),
+  approvedBy: text("approved_by").references(() => users.id),
+  
+  // Version relationships
+  basedOnVersionId: integer("based_on_version_id").references(() => documentVersions.id), // Parent version
+  mergedFromVersionId: integer("merged_from_version_id").references(() => documentVersions.id), // For merge tracking
+  
+  // Content analysis
+  wordCount: integer("word_count").default(0),
+  characterCount: integer("character_count").default(0),
+  contentHash: text("content_hash"), // For detecting identical content
+  
+  // Metadata preservation
+  documentMetadata: jsonb("document_metadata").default(sql`'{}'`), // Snapshot of document metadata at version creation
+  
+  // Timestamps
+  createdAt: timestamp("created_at").defaultNow(),
+  publishedAt: timestamp("published_at"),
+  archivedAt: timestamp("archived_at"),
+});
+
+// Document Version Comparisons - Track comparisons made between versions
+export const documentVersionComparisons = pgTable("document_version_comparisons", {
+  id: serial("id").primaryKey(),
+  documentId: integer("document_id")
+    .notNull()
+    .references(() => documents.id, { onDelete: "cascade" }),
+  fromVersionId: integer("from_version_id")
+    .notNull()
+    .references(() => documentVersions.id),
+  toVersionId: integer("to_version_id")
+    .notNull()
+    .references(() => documentVersions.id),
+  
+  // Comparison results
+  comparisonData: jsonb("comparison_data").default(sql`'{}'`), // Detailed diff data
+  addedContent: text("added_content"), // Content added
+  removedContent: text("removed_content"), // Content removed
+  modifiedSections: text("modified_sections").array().default(sql`'{}'`), // List of modified sections
+  
+  // Comparison metadata
+  comparisonType: text("comparison_type").notNull().default("content"), // "content", "metadata", "full"
+  performedBy: text("performed_by")
+    .notNull()
+    .references(() => users.id),
+  
+  // Statistics
+  additionsCount: integer("additions_count").default(0),
+  deletionsCount: integer("deletions_count").default(0),
+  modificationsCount: integer("modifications_count").default(0),
+  
+  // Timestamps
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Document Version Conflicts - Track merge conflicts and resolution
+export const documentVersionConflicts = pgTable("document_version_conflicts", {
+  id: serial("id").primaryKey(),
+  documentId: integer("document_id")
+    .notNull()
+    .references(() => documents.id, { onDelete: "cascade" }),
+  baseVersionId: integer("base_version_id")
+    .notNull()
+    .references(() => documentVersions.id),
+  conflictingVersionId: integer("conflicting_version_id")
+    .notNull()
+    .references(() => documentVersions.id),
+  
+  // Conflict details
+  conflictType: text("conflict_type").notNull(), // "content", "metadata", "approval"
+  conflictSection: text("conflict_section"), // Which part of document has conflict
+  baseContent: text("base_content"), // Original content
+  conflictingContent: text("conflicting_content"), // Conflicting content
+  resolvedContent: text("resolved_content"), // Final resolved content
+  
+  // Resolution tracking
+  status: text("status").notNull().default("unresolved"), // "unresolved", "resolved", "auto_resolved"
+  resolutionStrategy: text("resolution_strategy"), // "manual", "accept_base", "accept_incoming", "merge"
+  resolvedBy: text("resolved_by").references(() => users.id),
+  resolutionNotes: text("resolution_notes"),
+  
+  // Timestamps
+  detectedAt: timestamp("detected_at").defaultNow(),
+  resolvedAt: timestamp("resolved_at"),
+});
+
+// Document Version Tags - Semantic tags for versions (release, beta, etc.)
+export const documentVersionTags = pgTable("document_version_tags", {
+  id: serial("id").primaryKey(),
+  versionId: integer("version_id")
+    .notNull()
+    .references(() => documentVersions.id, { onDelete: "cascade" }),
+  tagName: text("tag_name").notNull(), // "stable", "beta", "release", "hotfix", "experimental"
+  tagType: text("tag_type").notNull().default("semantic"), // "semantic", "custom", "milestone"
+  description: text("description"),
+  color: text("color").default("#3b82f6"), // Tag color for UI
+  
+  // Tag metadata
+  createdBy: text("created_by")
+    .notNull()
+    .references(() => users.id),
+  isProtected: boolean("is_protected").default(false), // Protected tags cannot be deleted
+  
+  // Timestamps
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 // Zod schemas for Documents
 export const insertDocumentSchema = createInsertSchema(documents).omit({
   id: true,
@@ -2249,6 +2383,52 @@ export const insertDocumentSchema = createInsertSchema(documents).omit({
   expiryDate: z.string().nullish().transform(val => val && val.trim() !== '' ? new Date(val) : undefined),
   reviewDate: z.string().nullish().transform(val => val && val.trim() !== '' ? new Date(val) : undefined),
 });
+
+// Document Version Control Schemas
+export const insertDocumentVersionSchema = createInsertSchema(documentVersions).omit({
+  id: true,
+  createdAt: true,
+  publishedAt: true,
+  archivedAt: true,
+  versionNumber: true, // Will be auto-generated
+  wordCount: true, // Will be auto-calculated
+  characterCount: true, // Will be auto-calculated
+  contentHash: true, // Will be auto-generated
+}).extend({
+  documentId: z.number(),
+  majorVersion: z.number().min(1),
+  minorVersion: z.number().min(0).default(0),
+  patchVersion: z.number().min(0).default(0),
+});
+
+export const insertDocumentVersionComparisonSchema = createInsertSchema(documentVersionComparisons).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertDocumentVersionConflictSchema = createInsertSchema(documentVersionConflicts).omit({
+  id: true,
+  detectedAt: true,
+  resolvedAt: true,
+});
+
+export const insertDocumentVersionTagSchema = createInsertSchema(documentVersionTags).omit({
+  id: true,
+  createdAt: true,
+});
+
+// Type exports for version control
+export type InsertDocumentVersion = z.infer<typeof insertDocumentVersionSchema>;
+export type DocumentVersion = typeof documentVersions.$inferSelect;
+
+export type InsertDocumentVersionComparison = z.infer<typeof insertDocumentVersionComparisonSchema>;
+export type DocumentVersionComparison = typeof documentVersionComparisons.$inferSelect;
+
+export type InsertDocumentVersionConflict = z.infer<typeof insertDocumentVersionConflictSchema>;
+export type DocumentVersionConflict = typeof documentVersionConflicts.$inferSelect;
+
+export type InsertDocumentVersionTag = z.infer<typeof insertDocumentVersionTagSchema>;
+export type DocumentVersionTag = typeof documentVersionTags.$inferSelect;
 export type InsertDocument = z.infer<typeof insertDocumentSchema>;
 export type Document = typeof documents.$inferSelect;
 

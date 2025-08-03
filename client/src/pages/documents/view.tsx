@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useParams } from "wouter";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -20,17 +20,20 @@ import {
   Share2,
   MessageSquare,
   Clock,
-  Printer
+  Printer,
+  GitBranch
 } from "lucide-react";
 import { Link } from "wouter";
 import { format } from "date-fns";
 import { useAuth } from "@/hooks/use-auth-v2";
+import VersionControlPanel from "@/components/documents/version-control-panel";
 
 export default function DocumentView() {
   const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [showVersionControl, setShowVersionControl] = useState(false);
 
   // Parse ID and validate it
   const documentId = id ? parseInt(id, 10) : null;
@@ -411,6 +414,14 @@ export default function DocumentView() {
             <Download className="h-4 w-4 mr-2" />
             Download
           </Button>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => setShowVersionControl(true)}
+          >
+            <GitBranch className="h-4 w-4 mr-2" />
+            Versions
+          </Button>
           <Button variant="outline" size="sm" asChild>
             <Link to={`/documents/${documentId}/edit`}>
               <Edit className="h-4 w-4 mr-2" />
@@ -580,6 +591,13 @@ export default function DocumentView() {
           </p>
         </CardContent>
       </Card>
+
+      {/* Version Control Panel */}
+      <VersionControlPanel 
+        documentId={documentId!}
+        isOpen={showVersionControl}
+        onClose={() => setShowVersionControl(false)}
+      />
     </div>
   );
 }

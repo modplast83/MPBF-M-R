@@ -3,6 +3,7 @@ import fileUpload from "express-fileupload";
 import path from "path";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import documentVersionRoutes from "./document-version-routes";
 
 const app = express();
 
@@ -105,6 +106,9 @@ app.use((req, res, next) => {
 
 (async () => {
   const server = await registerRoutes(app);
+  
+  // Add document version control routes
+  app.use("/api", documentVersionRoutes);
 
   // Database health check endpoint
   app.get("/api/health/database", async (req: Request, res: Response) => {
