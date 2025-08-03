@@ -17,6 +17,7 @@ import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogFooter,
@@ -84,7 +85,7 @@ export default function SmsManagementPage() {
   const [showNewSmsDialog, setShowNewSmsDialog] = useState(false);
 
   // Form for sending new SMS
-  const sendSmsForm = useForm<SendSmsFormValues>({
+  const sendSmsForm = useForm({
     resolver: zodResolver(sendSmsSchema),
     defaultValues: {
       recipientPhone: "",
@@ -216,6 +217,9 @@ export default function SmsManagementPage() {
               <DialogContent className="sm:max-w-md">
                 <DialogHeader>
                   <DialogTitle>Filter SMS Messages</DialogTitle>
+                  <DialogDescription>
+                    Filter SMS messages by status and other criteria.
+                  </DialogDescription>
                 </DialogHeader>
                 <div className="space-y-4 py-4">
                   <div className="space-y-2">
@@ -282,6 +286,9 @@ export default function SmsManagementPage() {
             <DialogContent className="sm:max-w-md">
               <DialogHeader>
                 <DialogTitle>Send New SMS Message</DialogTitle>
+                <DialogDescription>
+                  Send an SMS message to a customer or contact.
+                </DialogDescription>
               </DialogHeader>
               <Form {...sendSmsForm}>
                 <form

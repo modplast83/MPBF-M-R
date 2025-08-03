@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { apiRequest } from "@/lib/queryClient";
 import { Separator } from "@/components/ui/separator";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -68,10 +68,7 @@ export default function VersionControlPanel({ documentId, isOpen, onClose }: Ver
   // Create new version mutation
   const createVersionMutation = useMutation({
     mutationFn: async (versionData: any) => {
-      return apiRequest(`/api/documents/${documentId}/versions`, {
-        method: "POST",
-        body: JSON.stringify(versionData),
-      });
+      return apiRequest(`/api/documents/${documentId}/versions`, "POST", versionData);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [`/api/documents/${documentId}/versions`] });
@@ -83,9 +80,7 @@ export default function VersionControlPanel({ documentId, isOpen, onClose }: Ver
   // Activate version mutation
   const activateVersionMutation = useMutation({
     mutationFn: async (versionId: number) => {
-      return apiRequest(`/api/documents/${documentId}/versions/${versionId}/activate`, {
-        method: "PUT",
-      });
+      return apiRequest(`/api/documents/${documentId}/versions/${versionId}/activate`, "PUT");
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [`/api/documents/${documentId}/versions`] });
@@ -97,9 +92,7 @@ export default function VersionControlPanel({ documentId, isOpen, onClose }: Ver
   // Compare versions mutation
   const compareVersionsMutation = useMutation({
     mutationFn: async ({ fromId, toId }: { fromId: number; toId: number }) => {
-      return apiRequest(`/api/versions/${fromId}/compare/${toId}`, {
-        method: "POST",
-      });
+      return apiRequest(`/api/versions/${fromId}/compare/${toId}`, "POST");
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [`/api/documents/${documentId}/comparisons`] });
@@ -110,9 +103,7 @@ export default function VersionControlPanel({ documentId, isOpen, onClose }: Ver
   // Rollback version mutation
   const rollbackVersionMutation = useMutation({
     mutationFn: async (targetVersionId: number) => {
-      return apiRequest(`/api/documents/${documentId}/rollback/${targetVersionId}`, {
-        method: "POST",
-      });
+      return apiRequest(`/api/documents/${documentId}/rollback/${targetVersionId}`, "POST");
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [`/api/documents/${documentId}/versions`] });
@@ -172,6 +163,9 @@ export default function VersionControlPanel({ documentId, isOpen, onClose }: Ver
             <GitBranch className="h-5 w-5" />
             Document Version Control
           </DialogTitle>
+          <DialogDescription>
+            Manage versions, compare changes, and track document history.
+          </DialogDescription>
         </DialogHeader>
 
         <Tabs defaultValue="versions" className="w-full">
@@ -442,6 +436,9 @@ function CreateVersionDialog({ onCreateVersion }: { onCreateVersion: (data: any)
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle>Create New Version</DialogTitle>
+          <DialogDescription>
+            Create a new version of this document with version tracking.
+          </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>

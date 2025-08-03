@@ -65,17 +65,14 @@ export function SmsDialog({
 
   const sendMutation = useMutation({
     mutationFn: async (data: FormData) => {
-      return apiRequest("/api/sms-messages", {
-        method: "POST",
-        data: {
-          recipientPhone: data.recipientPhone,
-          recipientName: data.recipientName || null,
-          message: data.message,
-          customerId: customerId || null,
-          orderId: orderId || null,
-          jobOrderId: jobOrderId || null,
-          messageType,
-        },
+      return apiRequest("/api/sms-messages", "POST", {
+        recipientPhone: data.recipientPhone,
+        recipientName: data.recipientName || null,
+        message: data.message,
+        customerId: customerId || null,
+        orderId: orderId || null,
+        jobOrderId: jobOrderId || null,
+        messageType,
       });
     },
     onSuccess: () => {

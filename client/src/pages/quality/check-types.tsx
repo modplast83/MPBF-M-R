@@ -80,7 +80,7 @@ export default function QualityCheckTypes() {
   const [checklistInput, setChecklistInput] = useState("");
   const [parameterInput, setParameterInput] = useState("");
 
-  const form = useForm<CheckTypeForm>({
+  const form = useForm({
     resolver: zodResolver(checkTypeSchema),
     defaultValues: {
       name: "",

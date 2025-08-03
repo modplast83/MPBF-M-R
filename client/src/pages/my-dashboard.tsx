@@ -490,8 +490,18 @@ export default function MyDashboard() {
     return `${hours}h ${minutes}m`;
   };
 
-  // Quick actions
-  const quickActions = [];
+  // Quick actions with proper type definition
+  type QuickAction = {
+    id: string;
+    title: string;
+    description: string;
+    icon: React.ComponentType<any>;
+    action: () => void;
+    color: string;
+    enabled: boolean;
+  };
+
+  const quickActions: QuickAction[] = [];
 
   // Time attendance actions
   if (!todayAttendance?.checkInTime) {
