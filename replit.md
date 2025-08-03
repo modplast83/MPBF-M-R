@@ -30,7 +30,7 @@ Preferred communication style: Simple, everyday language.
     - **Job Order Monitoring**: Real-time quantity tracking across extrusion, printing, and cutting stages with statistics and mobile-responsive design.
     - **Negative Balance Management**: Allows material mixing even with insufficient raw material stock, creating negative balances.
     - **Geofence Management**: Interactive map for location selection, geofence creation, and enforcement for attendance operations with GPS location requirement.
-    - **Document Management**: Comprehensive document viewing, printing, and robust document number generation.
+    - **Document Management**: Comprehensive document viewing, printing, and robust document number generation with professional rich text editor supporting Arabic/English, fonts, colors, tables, and images.
     - **Cascading Deletes**: Ensures data integrity by automatically removing associated records (e.g., deleting an order removes job orders and rolls).
     - **Production Workflow**: Manages order processing, job order generation, material mixing, quality checks, and IoT monitoring.
     - **Quantity Calculation Enhancement**: Automatic extra quantity calculation for job orders based on product punching type (e.g., T-Shirt, Banana).
@@ -38,6 +38,7 @@ Preferred communication style: Simple, everyday language.
     - **HR Violations & Complaints**: Comprehensive system for managing various violation types with repeat offense tracking and detailed documentation.
     - **My Dashboard**: Personalized user dashboard with attendance tracking, quick actions, performance overview, and maintenance request submission.
     - **Customer Information Registration**: Public-facing registration page for collecting business information with address validation and auto-translation.
+    - **Professional Rich Text Editor**: Advanced document editor with multi-font support (Tahoma, Arial, Times New Roman), RTL/LTR toggle, automatic Arabic language detection, color picker for text and highlighting, table insertion (up to 8x8), image upload, and complete formatting tools with preview mode.
 
 ### System Design Choices
 - **UI/UX**: Emphasis on modern, professional UI with Radix UI and Tailwind CSS, featuring gradient backgrounds, glass effects, and consistent design patterns.
