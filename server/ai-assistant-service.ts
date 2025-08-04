@@ -669,7 +669,26 @@ ${customerDetails.products && customerDetails.products.length > 0 ?
   customerDetails.products.map(p => `- ${p.size_caption} (${p.category_name || 'فئة غير محددة'})`).join('\n') :
   'لا توجد منتجات مسجلة لهذا العميل'
 }`,
-              suggestions: ["إنشاء طلب جديد للعميل", "عرض تاريخ الطلبات", "إضافة منتج جديد للعميل"],
+              suggestions: [
+                {
+                  type: "action",
+                  title: "إنشاء طلب جديد للعميل",
+                  description: "إنشاء طلب جديد لهذا العميل",
+                  priority: "medium"
+                },
+                {
+                  type: "navigation",
+                  title: "عرض تاريخ الطلبات",
+                  description: "عرض جميع طلبات العميل السابقة",
+                  priority: "medium"
+                },
+                {
+                  type: "action",
+                  title: "إضافة منتج جديد للعميل",
+                  description: "إضافة منتج جديد لهذا العميل",
+                  priority: "medium"
+                }
+              ],
               actions: [
                 {
                   type: "navigate",
@@ -684,8 +703,7 @@ ${customerDetails.products && customerDetails.products.length > 0 ?
               ],
               confidence: 0.98,
               context: `تم العثور على العميل "${customerName}" وعرض تفاصيله الكاملة`,
-              responseType: "information_only",
-              processingTime: Date.now()
+              responseType: "information_only"
             };
           } else {
             return {
@@ -699,7 +717,26 @@ ${customerDetails.products && customerDetails.products.length > 0 ?
 📊 **معلومات النظام:**
 - إجمالي العملاء المسجلين: 2,166 عميل
 - يمكن البحث بالاسم العربي أو الإنجليزي`,
-              suggestions: ["البحث في قائمة العملاء", "إضافة عميل جديد", "عرض قائمة العملاء الأكثر نشاطاً"],
+              suggestions: [
+                {
+                  type: "navigation",
+                  title: "البحث في قائمة العملاء",
+                  description: "الانتقال إلى صفحة العملاء للبحث",
+                  priority: "high"
+                },
+                {
+                  type: "action",
+                  title: "إضافة عميل جديد",
+                  description: "إنشاء عميل جديد في النظام",
+                  priority: "medium"
+                },
+                {
+                  type: "insight",
+                  title: "عرض قائمة العملاء الأكثر نشاطاً",
+                  description: "عرض العملاء الذين لديهم أكثر الطلبات",
+                  priority: "low"
+                }
+              ],
               actions: [
                 {
                   type: "navigate",
@@ -709,8 +746,7 @@ ${customerDetails.products && customerDetails.products.length > 0 ?
               ],
               confidence: 0.95,
               context: `لم يتم العثور على العميل "${customerName}" في قاعدة البيانات`,
-              responseType: "information_only",
-              processingTime: Date.now()
+              responseType: "information_only"
             };
           }
         }
