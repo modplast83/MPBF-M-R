@@ -9482,6 +9482,63 @@ COMMIT;
   const aiRoutes = (await import("./ai-routes-new.js")).default;
   app.use("/api/ai", aiRoutes);
 
+  // OpenAI GPT-4o Direct Test Route
+  app.post("/api/test-openai", async (req: Request, res: Response) => {
+    try {
+      const { message } = req.body;
+      
+      if (!message) {
+        return res.status(400).json({ error: "Message is required" });
+      }
+
+      // Import OpenAI directly
+      const OpenAI = (await import("openai")).default;
+      const openai = new OpenAI({ 
+        apiKey: process.env.OPENAI_API_KEY
+      });
+
+      console.log("🧪 Testing OpenAI GPT-4o directly...");
+      
+      const completion = await openai.chat.completions.create({
+        model: "gpt-4o",
+        messages: [
+          {
+            role: "system",
+            content: "أنت مساعد ذكي لنظام إدارة الإنتاج في مصنع أكياس بلاستيكية. تجيب باللغة العربية وتقدم معلومات مفيدة حول الإنتاج والجودة."
+          },
+          {
+            role: "user",
+            content: message
+          }
+        ],
+        max_tokens: 500,
+        temperature: 0.7
+      });
+
+      const response = completion.choices[0]?.message?.content;
+      
+      console.log("✅ OpenAI GPT-4o responded successfully");
+      
+      res.json({
+        response: response || "لا يوجد رد من OpenAI",
+        model: "gpt-4o",
+        usage: completion.usage,
+        success: true,
+        responseType: "information_only",
+        confidence: 0.95,
+        context: "اختبار مباشر لـ OpenAI GPT-4o"
+      });
+
+    } catch (error) {
+      console.error("❌ OpenAI test error:", error);
+      res.status(500).json({ 
+        error: "OpenAI test failed", 
+        details: error instanceof Error ? error.message : "Unknown error",
+        success: false
+      });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
