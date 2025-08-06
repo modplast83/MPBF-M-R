@@ -9494,7 +9494,8 @@ COMMIT;
       // Import OpenAI directly
       const OpenAI = (await import("openai")).default;
       const openai = new OpenAI({ 
-        apiKey: process.env.OPENAI_API_KEY
+        apiKey: process.env.OPENAI_API_KEY,
+        organization: process.env.OPENAI_ORG_ID
       });
 
       console.log("🧪 Testing OpenAI GPT-4o directly...");
