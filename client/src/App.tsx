@@ -37,6 +37,7 @@ import QualityReportsPage from "@/pages/reports/quality";
 import WorkflowReportsPage from "@/pages/reports/workflow";
 import JoMixReports from "@/pages/reports/jo-mix";
 import CustomerInfoReport from "@/pages/reports/customer-info-report";
+import PerformanceReportsPage from "@/pages/reports/performance-reports";
 import SystemIndex from "@/pages/system/index";
 // Quality Module imports
 import QualityIndex from "@/pages/quality/index";
@@ -288,6 +289,11 @@ function App() {
                         path="/reports/customer-info-report"
                         component={CustomerInfoReport}
                         module="Customer Information Reports"
+                      />
+                      <ProtectedRoute
+                        path="/reports/performance-reports"
+                        component={PerformanceReportsPage}
+                        module="Performance Reports"
                       />
                       <ProtectedRoute
                         path="/quality"

@@ -9482,6 +9482,10 @@ COMMIT;
   const aiRoutes = (await import("./ai-routes-new.js")).default;
   app.use("/api/ai", aiRoutes);
 
+  // Performance Reports routes
+  const performanceReportRoutes = (await import("./performance-report-routes.js")).default;
+  app.use("/api/performance-reports", performanceReportRoutes);
+
   // OpenAI GPT-4o Direct Test Route
   app.post("/api/test-openai", async (req: Request, res: Response) => {
     try {
