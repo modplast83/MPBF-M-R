@@ -1,9 +1,11 @@
 import express from "express";
 import { AnthropicAIAssistantService } from "./anthropic-ai-service.js";
+import { AIAssistantService } from "./ai-assistant-service.js";
 import { pool } from "./db.js";
 
 const router = express.Router();
-const aiService = new AnthropicAIAssistantService(pool);
+const anthropicService = new AnthropicAIAssistantService(pool);
+const openaiService = new AIAssistantService(pool);
 
 // Main AI Assistant chat endpoint
 router.post("/assistant", async (req, res) => {
@@ -32,7 +34,10 @@ router.post("/assistant", async (req, res) => {
         console.log(`📊 Extracted order data:`, orderData);
 
         if (orderData.customerName || orderData.quantity) {
-          const orderResult = await aiService.createOrderRecord(orderData);
+          const orderResult = await anthropicService.processMessage({ 
+            message: message, 
+            context: context 
+          });
           
           // Handle different response types from enhanced order creation
           if (orderResult.success === false && orderResult.responseType === 'selection_required') {
@@ -79,8 +84,8 @@ router.post("/assistant", async (req, res) => {
       }
     }
 
-    // General AI assistant response
-    const response = await aiService.processMessage({
+    // General AI assistant response - use Anthropic as default
+    const response = await anthropicService.processMessage({
       message: message.trim(),
       context
     });
@@ -114,7 +119,7 @@ router.post("/customer-suggestions", async (req, res) => {
     
     console.log(`🔍 Customer suggestions request for: "${searchQuery}"`);
     
-    const result = await aiService.getCustomerMatchingSuggestions(searchQuery, limit);
+    const result = await anthropicService.getCustomerMatchingSuggestions(searchQuery, limit);
     
     res.json({
       success: true,
@@ -136,16 +141,72 @@ router.post("/customer-suggestions", async (req, res) => {
   }
 });
 
-// Production insights endpoint
+// Production insights endpoint using OpenAI
 router.get("/production-insights", async (req, res) => {
   try {
-    const insights = await aiService.analyzeProduction();
+    const insights = await openaiService.processMessage({ 
+      message: "Analyze current production performance and provide insights",
+      context: { type: "production_analysis" }
+    });
     res.json(insights);
   } catch (error) {
     console.error("Production insights error:", error);
     res.status(500).json({ 
       error: "Failed to get production insights",
       details: error instanceof Error ? error.message : String(error)
+    });
+  }
+});
+
+// OpenAI-specific chat endpoint
+router.post("/openai-chat", async (req, res) => {
+  try {
+    const { message, context } = req.body;
+    console.log(`🤖 OpenAI GPT-4o Request - Message: "${message}"`);
+
+    if (!message || typeof message !== 'string') {
+      return res.status(400).json({ error: "Message is required and must be a string" });
+    }
+
+    if (message.trim().length === 0) {
+      return res.status(400).json({ error: "Message cannot be empty" });
+    }
+
+    console.log("✅ Processing message with OpenAI GPT-4o...");
+    const startTime = Date.now();
+    
+    const response = await openaiService.processMessage({
+      message: message.trim(),
+      context: {
+        ...context,
+        aiModel: "openai-gpt4o",
+        requestId: `openai_${Date.now()}`,
+        userAgent: req.headers['user-agent'],
+        ip: req.ip
+      }
+    });
+
+    const processingTime = Date.now() - startTime;
+    console.log(`✅ OpenAI Response generated in ${processingTime}ms`);
+
+    const validatedResponse = {
+      response: response.response || "أنا جاهز لمساعدتك في إدارة الإنتاج باستخدام OpenAI GPT-4o!",
+      suggestions: response.suggestions || [],
+      actions: response.actions || [],
+      confidence: response.confidence || 0.9,
+      context: response.context || "OpenAI GPT-4o Assistant",
+      responseType: response.responseType || 'information_only',
+      aiModel: "OpenAI GPT-4o",
+      processingTime
+    };
+
+    res.json(validatedResponse);
+  } catch (error) {
+    console.error("OpenAI Chat error:", error);
+    res.status(500).json({ 
+      error: "Failed to process OpenAI request",
+      details: error instanceof Error ? error.message : String(error),
+      aiModel: "OpenAI GPT-4o"
     });
   }
 });
@@ -167,7 +228,7 @@ router.post("/chat", async (req, res) => {
     }
 
     // Check if AI service is available
-    if (!aiService) {
+    if (!anthropicService) {
       console.error("❌ AI service not initialized");
       return res.status(500).json({ error: "AI service not available" });
     }
@@ -176,7 +237,7 @@ router.post("/chat", async (req, res) => {
     const startTime = Date.now();
     
     // General AI assistant response
-    const response = await aiService.processMessage({
+    const response = await anthropicService.processMessage({
       message: message.trim(),
       context: {
         ...context,

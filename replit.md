@@ -25,7 +25,7 @@ Preferred communication style: Simple, everyday language.
 - **Core Modules**: Setup Management, Production Workflow, HR Management, Quality Assurance, IoT Integration, Dashboard System, Notification System.
 - **Key Features**:
     - **Voice Recognition**: Comprehensive, multilingual (English/Arabic) voice recognition with speech-to-text and text-to-speech, including gesture animations, haptic feedback, and hands-free interaction.
-    - **AI Assistant**: Dual-model AI system (OpenAI GPT-4o and Anthropic Claude Sonnet 4) for production management context, order creation, customer/product matching with bilingual search capabilities, intelligent suggestions, and workflow guidance. Features enhanced customer lookup supporting both English and Arabic name columns with real-time database queries.
+    - **AI Assistant**: Dual-model AI system (OpenAI GPT-4o and Anthropic Claude Sonnet 4) for production management context, order creation, customer/product matching with bilingual search capabilities, intelligent suggestions, and workflow guidance. Features enhanced customer lookup supporting both English and Arabic name columns with real-time database queries. OpenAI GPT-4o successfully configured and operational, with Anthropic Claude as primary fallback service for comprehensive AI coverage.
     - **Internationalization**: Full bilingual support (English/Arabic) across the entire application, including UI, voice commands, and content.
     - **Job Order Monitoring**: Real-time quantity tracking across extrusion, printing, and cutting stages with statistics and mobile-responsive design.
     - **Negative Balance Management**: Allows material mixing even with insufficient raw material stock, creating negative balances.

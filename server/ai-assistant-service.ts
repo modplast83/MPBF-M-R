@@ -3,10 +3,18 @@ import { Pool } from "pg";
 import Fuse from "fuse.js";
 
 // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
-const openai = new OpenAI({ 
-  apiKey: process.env.OPENAI_API_KEY,
-  organization: process.env.OPENAI_ORG_ID
-});
+let openai: OpenAI | null = null;
+
+try {
+  openai = new OpenAI({ 
+    apiKey: process.env.OPENAI_API_KEY,
+    organization: process.env.OPENAI_ORG_ID
+  });
+  console.log("✅ OpenAI GPT-4o service initialized successfully");
+} catch (error) {
+  console.warn("⚠️ OpenAI initialization failed:", (error as Error).message);
+  console.log("🔄 Falling back to Anthropic Claude for AI functionality");
+}
 
 export interface AssistantRequest {
   message: string;
