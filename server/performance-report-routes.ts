@@ -1,9 +1,9 @@
 import express from "express";
-import { PerformanceReportService } from "./performance-report-service.js";
+import { SimplePerformanceReportService } from "./performance-report-service-simple.js";
 import { pool } from "./db.js";
 
 const router = express.Router();
-const reportService = new PerformanceReportService(pool);
+const reportService = new SimplePerformanceReportService(pool);
 
 // Generate new performance report
 router.post("/generate", async (req, res) => {
@@ -34,7 +34,7 @@ router.post("/generate", async (req, res) => {
 router.get("/history", async (req, res) => {
   try {
     const limit = parseInt(req.query.limit as string) || 10;
-    const reports = await reportService.getStoredReports(limit);
+    const reports = await reportService.getReportHistory(limit);
 
     res.json({
       success: true,
